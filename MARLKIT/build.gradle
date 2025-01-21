@@ -1,0 +1,47 @@
+plugins {
+	id 'buildlogic.marlkit-common-conventions'
+   	id 'org.gradlex.java-module-testing'
+   	id 'jacoco'
+}
+
+
+application {
+    mainClass = 'marlkit.test.GUITestAgent'
+    mainModule = 'marlkit.base'
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs '--add-modules', 'ALL-MODULE-PATH'
+}
+
+javaModuleTesting.whitebox(testing.suites.getByName("test")){
+	requires.add("org.testng")
+	opensTo.add("org.testng")
+	requires.add("org.assertj.core")
+}
+
+dependencies {
+	api 'io.github.fmichel:madkit:6.0.0'
+    testImplementation libs.testng
+    testImplementation libs.assertJ
+}
+
+tasks.named('test') {
+    useTestNG()
+    maxParallelForks = "9"
+    minHeapSize = "2048m"
+    maxHeapSize = "4096m"
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = true
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+}
+test.finalizedBy jacocoTestReport

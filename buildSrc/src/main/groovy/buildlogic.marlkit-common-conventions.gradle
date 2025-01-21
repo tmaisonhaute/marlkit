@@ -1,0 +1,37 @@
+plugins {
+	id 'buildlogic.java-common-conventions'
+    id 'org.gradlex.extra-java-module-info'    
+}
+
+
+extraJavaModuleInfo {
+    automaticModule("com.beust:jcommander", "com.beust.jcommander")
+    automaticModule("org.webjars:jquery", "org.webjars.jquery")
+    automaticModule("commons-collections:commons-collections", "org.apache.commons.collections")
+  
+    module("commons-beanutils:commons-beanutils", "org.apache.commons.beanutils") {
+        requiresTransitive("org.apache.commons.logging")
+        requires("java.sql")
+        requires("java.desktop")
+        exportAllPackages() 
+    }
+    
+    module("org.apache.commons:commons-configuration2","org.apache.commons.configuration2") {
+        patchRealModule()
+        requires ("org.apache.commons.beanutils")
+        requires ("org.apache.commons.text")
+        requires ("org.apache.commons.lang3")
+
+        exportAllPackages() 
+    }
+    
+    module("org.apache.commons:commons-text", "org.apache.commons.text"){
+        patchRealModule()
+        requires("org.apache.commons.lang3")
+        exportAllPackages() 
+    }
+    module("org.apache.commons:commons-lang3", "org.apache.commons.lang3"){
+        patchRealModule()
+        exportAllPackages() 
+    }
+}
