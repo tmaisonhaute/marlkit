@@ -1,8 +1,9 @@
 package agent;
 import java.util.List;
 
-import environment.Observation;
-import learning.Policy;
+import agent.action.Action;
+import environment.observation.Observation;
+import learning.policy.Policy;
 
 
 /**

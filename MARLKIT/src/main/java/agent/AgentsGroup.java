@@ -1,8 +1,12 @@
 package agent;
 import environment.*;
+import environment.observation.Observation;
 
 import java.util.List;
 import java.util.Map;
+
+import agent.action.Action;
+
 import java.util.HashMap;
 
 /**

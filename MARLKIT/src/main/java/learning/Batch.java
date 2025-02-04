@@ -2,8 +2,10 @@ package learning;
 import java.util.ArrayList;
 import java.util.List;
 
-import agent.Action;
+import agent.action.Action;
 import environment.*;
+import environment.observation.Observation;
+import environment.reward.Reward;
 
 /**
  * Represents a batch of data used for learning.

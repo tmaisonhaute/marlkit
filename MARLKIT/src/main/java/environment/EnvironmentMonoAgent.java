@@ -1,8 +1,11 @@
 package environment;
 
-import agent.Action;
-import agent.Agent;
-import util.Pair;
+import agent.*;
+import agent.action.Action;
+import environment.observation.Observation;
+import environment.reward.*;
+import environment.state.State;
+import util.*;
 
 /**
  * Represents a mono-agent environment.

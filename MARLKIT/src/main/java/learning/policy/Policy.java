@@ -1,8 +1,10 @@
-package learning;
+package learning.policy;
+import java.util.ArrayList;
 import java.util.List;
 
-import agent.Action;
-import environment.Observation;
+import agent.action.Action;
+import environment.observation.Observation;
+import learning.*;
 
 /**
  * Represents a policy that an agent follows to take actions based on observations.
@@ -22,7 +24,13 @@ public interface Policy {
      * @param observations the list of observations based on which the actions are taken
      * @return the list of actions taken
      */
-	public abstract List<Action> takeActionsList(List<Observation> observations);
+	public default List<Action> takeActionsList(List<Observation> observations){
+		List<Action> actions = new ArrayList<Action>();
+		for(Observation o : observations) {
+			actions.add(takeAction(o));
+		}
+		return actions;
+	}
 
 	/**
      * Learns from a batch of data.

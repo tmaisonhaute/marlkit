@@ -1,9 +1,12 @@
 package environment;
 import java.util.Map;
 
-import agent.Action;
 import agent.Agent;
 import agent.AgentsGroup;
+import agent.action.Action;
+import environment.observation.Observation;
+import environment.reward.Reward;
+import environment.state.State;
 import util.Pair;
 
 /**

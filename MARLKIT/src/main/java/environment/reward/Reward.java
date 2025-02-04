@@ -1,4 +1,4 @@
-package environment;
+package environment.reward;
 
 /**
  * Represents a reward in the environment.
