@@ -20,6 +20,11 @@ public abstract class Agent {
      */
 	public Action takeAction(Observation obs) {
 		return policy.takeAction(obs);
+		/*
+		 * on get l'env, 
+		 * On prend l'observation
+		 * 
+		 */
 	}
 
 	/**

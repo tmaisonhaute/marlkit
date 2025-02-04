@@ -26,4 +26,12 @@
 open module marlkit.base {
 	requires transitive madkit.base;
 	exports marlkit.test;
+	exports environment;
+	exports environment.observation;
+	exports environment.reward;
+	exports environment.state;
+	exports agent;
+	exports agent.action;
+	exports learning;
+	exports learning.policy;
 }

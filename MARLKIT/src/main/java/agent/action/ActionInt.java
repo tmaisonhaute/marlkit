@@ -1,9 +1,9 @@
 package agent.action;
 
-public class actionInt implements Action {
+public class ActionInt implements Action {
 	private int value;
 
-	public actionInt(int value) {
+	public ActionInt(int value) {
 		this.value = value;
 	}
 

@@ -13,6 +13,17 @@ import util.*;
 public class State2DGridInt extends State2DGrid<Integer> {
 	private int[][] grid;
 	
+	/**
+	 * Constructor of the class State2DGridInt
+	 * 
+	 * @param nbLines          the number of lines of the grid
+	 * @param nbCols           the number of columns of the grid
+	 * @param defaultValue     the default value of the grid
+	 * @param agentViewRange   the range of the agent's view
+	 * @param neumannNeighbors whether the neighbors are the neumann neighbors or
+	 *                         the moore neighbors
+	 * 
+	 */
 	public State2DGridInt(int nbLines, int nbCols, int defaultValue, int agentViewRange, boolean neumannNeighbors) {
 		this.grid = new int[nbLines][nbCols];
 		this.nbLines = nbLines;
