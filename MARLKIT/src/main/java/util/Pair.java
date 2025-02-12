@@ -1,8 +1,8 @@
 package util;
 
-public class Pair<T,U> {
-	private final T first;
-	private final U second;
+public class Pair<T, U > {
+	private T first;
+	private U second;
 	public Pair(T first, U second) {
 		this.first = first;
 		this.second = second;
@@ -13,6 +13,17 @@ public class Pair<T,U> {
 	public U getSecond() {
 		return second;
 	}
-	
+
+	public void setFirst(T first) {
+		this.first = first;
+	}
+
+	public void setSecond(U second) {
+		this.second = second;
+	}
+	public Pair<T, U> clone(){
+		return new Pair<T, U>(first, second);
+	}
+
 	
 }

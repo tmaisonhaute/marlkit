@@ -10,6 +10,10 @@ import learning.Batch;
 public class PolicyRandom implements Policy {
 	private List<Action> actionsSet;
 	
+	public PolicyRandom(List<Action> actionsSet) {
+		this.actionsSet = actionsSet;
+	}
+	
 	@Override
 	public Action takeAction(Observation obs) {
 		Random random = new Random();

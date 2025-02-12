@@ -35,11 +35,18 @@ public class Tuple {
 		}
 		return new Tuple(newL);
 	}
-	public Tuple mul(double m){
+	public Tuple multiply(double m){
 		List<Double> newL = new ArrayList<Double>();
 		for(int i = 0; i < this.getSize(); i ++) {
 			Double v = this.getValue(i) * m;
 			newL.set(i, v);
+		}
+		return new Tuple(newL);
+	}
+	public Tuple clone() {
+		List<Double> newL = new ArrayList<Double>();
+		for (int i = 0; i < this.getSize(); i++) {
+			newL.set(i, this.getValue(i));
 		}
 		return new Tuple(newL);
 	}

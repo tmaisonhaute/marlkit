@@ -1,7 +1,7 @@
 package agent.action;
 
 public class ActionInt implements Action {
-	private int value;
+	protected int value;
 
 	public ActionInt(int value) {
 		this.value = value;

@@ -7,7 +7,7 @@ import util.Tuple;
 
 public class ObservationPositionsValues implements Observation {
 
-	private List<ObservationPositionValue> obs;
+	protected List<ObservationPositionValue> obs;
 	
 	public ObservationPositionsValues() {
 		obs = new ArrayList<>();

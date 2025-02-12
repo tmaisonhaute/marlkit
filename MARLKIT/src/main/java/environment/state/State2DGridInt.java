@@ -6,12 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import agent.Agent;
-import environment.observation.*;
-import util.*;
+import agent.MLKAgent;
+import environment.observation.Observation;
+import environment.observation.ObservationPositionValue;
+import environment.observation.ObservationPositionsValues;
+import util.Pair;
+import util.Tuple;
 
 public class State2DGridInt extends State2DGrid<Integer> {
-	private int[][] grid;
+	protected int[][] grid;
 	
 	/**
 	 * Constructor of the class State2DGridInt
@@ -24,7 +27,7 @@ public class State2DGridInt extends State2DGrid<Integer> {
 	 *                         the moore neighbors
 	 * 
 	 */
-	public State2DGridInt(int nbLines, int nbCols, int defaultValue, int agentViewRange, boolean neumannNeighbors) {
+	public State2DGridInt(int nbLines, int nbCols, int agentViewRange, boolean neumannNeighbors) {
 		this.grid = new int[nbLines][nbCols];
 		this.nbLines = nbLines;
 		this.nbCols = nbCols;
@@ -32,10 +35,19 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		this.neumannNeighbors = neumannNeighbors;
 	}
 	public State2DGridInt(int nbLines, int nbCols) {
-		this(nbLines, nbCols, 0, Integer.MAX_VALUE, true);
+		this(nbLines, nbCols, Integer.MAX_VALUE, true);
 	}
 	
-	public void addAgent(Agent agent, int x, int y) {
+	@Override
+	public void reset() {
+		for (int i = 0; i < nbLines; i++) {
+			for (int j = 0; j < nbCols; j++) {
+				grid[i][j] = 0;
+			}
+		}
+	}
+	
+	public void addAgent(MLKAgent agent, int x, int y) {
 		if (x >= nbLines || x < 0 || y >= nbCols || y < 0) {
 			throw new ArrayIndexOutOfBoundsException("L'agent ne peut pas être placé en position (" + x + ";" + y + ")");
 		}
@@ -43,34 +55,47 @@ public class State2DGridInt extends State2DGrid<Integer> {
 	}
 	
 	@Override
-	public Map<Agent, Observation> getObservations() {
-		List<Agent> agents = new ArrayList<>(agentsPosition.keySet());
-		Map<Agent, Observation> obsMap = new HashMap<>();
+	public Map<MLKAgent, Observation> getObservations() {
+		List<MLKAgent> agents = new ArrayList<>(agentsPosition.keySet());
+		Map<MLKAgent, Observation> obsMap = new HashMap<>();
 		
-		for (Agent a : agents) {
+		for (MLKAgent a : agents) {
 			obsMap.put(a, ObservationAtCells(getNeighbors(a)));
 		}
 		return obsMap;
-		
 	}
 
 	@Override
 	public Integer getValue(int row, int col) {
-		// TODO Auto-generated method stub
-		return null;
+		return grid[row][col];
+	}
+	@Override
+	public Integer getValue(Pair<Integer, Integer> position) {
+		return getValue(position.getFirst(), position.getSecond());
 	}
 
 	@Override
 	public void setValue(int row, int col, Integer value) {
-		// TODO Auto-generated method stub
+		grid[row][col] = value;
+	}
+	@Override
+    public void setValue(Pair<Integer, Integer> position, Integer value) {
+		setValue(position.getFirst(), position.getSecond(), value);
 	}
 
 	@Override
 	public void print() {
-		// TODO Auto-generated method stub
+		String txt = "";
+		for (int i = 0; i < nbLines; i++) {
+			for (int j = 0; j < nbCols; j++) {
+				txt += grid[i][j] + "\t";
+			}
+			txt += "\n";
+		}
+		System.out.println(txt);
 	}
 	
-	protected List<Cell> getNeighbors(Agent a){
+	protected List<Cell> getNeighbors(MLKAgent a){
 		Pair<Integer, Integer> apos = this.agentsPosition.get(a);
 		int ax = apos.getFirst();
 		int ay = apos.getSecond();
@@ -90,7 +115,6 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		}else {
 			throw new Error("Not implemented yet");
 		}
-		
 	}
 	
 	protected ObservationPositionsValues ObservationAtCells(List<Cell> cells) {
@@ -100,7 +124,6 @@ public class State2DGridInt extends State2DGrid<Integer> {
 			obs.add(new ObservationPositionValue(position, c.val));
 		}
 		return obs;
-		
 	}
 }
 

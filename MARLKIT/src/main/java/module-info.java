@@ -34,4 +34,6 @@ open module marlkit.base {
 	exports agent.action;
 	exports learning;
 	exports learning.policy;
+	exports util;
+	exports simulation;
 }

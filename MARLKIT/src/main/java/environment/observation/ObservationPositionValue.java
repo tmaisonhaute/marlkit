@@ -1,9 +1,9 @@
 package environment.observation;
-import util.*;
+import util.Tuple;
 
 public class ObservationPositionValue implements Observation {
-	private Tuple position;
-	private double value;
+	protected Tuple position;
+	protected double value;
 	
 	public ObservationPositionValue(Tuple position, double value) {
 		this.position = position;
@@ -26,7 +26,7 @@ public class ObservationPositionValue implements Observation {
 	public Observation add(Observation other) {
 		if (other instanceof ObservationPositionValue) {
 			ObservationPositionValue o = (ObservationPositionValue) other ;
-			Tuple newPos = (this.position.add(o.position)).mul(1/2);
+			Tuple newPos = (this.position.add(o.position)).multiply(1/2);
 			double newVal = (this.getValue() + o.getValue())/2;
 			return new ObservationPositionValue(newPos, newVal);
 		}else {

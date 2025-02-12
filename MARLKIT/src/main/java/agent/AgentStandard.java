@@ -1,16 +1,34 @@
 package agent;
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
+
 import java.util.List;
 
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.policy.Policy;
-
+import madkit.messages.ObjectMessage;
+import madkit.simulation.SimuAgent;
 
 /**
  * Represents an agent in the multi-agent system.
  */
-public abstract class Agent {
+public class AgentStandard extends SimuAgent implements MLKAgent{
 	public Policy policy;
+	
+	public AgentStandard(Policy policy) {
+		this.policy = policy;
+	}
+	
+	@Override
+	protected void onActivation() {
+		requestRole(getCommunity(), getModelGroup(), "mlkagent");
+	}
+	
+	@Override
+	public void sendInfo() {
+		ObjectMessage<MLKAgent> messageAgent = new ObjectMessage<>(this);
+		broadcast(messageAgent, getAgentsWithRole(getCommunity(), getModelGroup(), ENVIRONMENT_ROLE));
+	}
 
 	/**
      * Takes an action based on a single observation.
@@ -35,6 +53,17 @@ public abstract class Agent {
      */
 	public List<Action> takeActionList(List<Observation> observations){
 		return policy.takeActionsList(observations);
+	}
+
+	@Override
+	public Policy getPolicy() {
+		return policy;
+	}
+
+	@Override
+	public void setPolicy(Policy policy) {
+		this.policy = policy;
+		
 	}
 	
 }

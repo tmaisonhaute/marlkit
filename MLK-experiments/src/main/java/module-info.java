@@ -25,5 +25,6 @@
  */
 open module marlkit.xp {
 	requires marlkit.base;
+	requires madkit.base;
 	exports marlkit.hello;
 }
