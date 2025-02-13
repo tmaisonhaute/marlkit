@@ -1,12 +1,10 @@
 package agent;
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
-
 import java.util.List;
 
 import agent.action.Action;
+import environment.MLKEnvironment;
 import environment.observation.Observation;
 import learning.policy.Policy;
-import madkit.messages.ObjectMessage;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -26,8 +24,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	
 	@Override
 	public void sendInfo() {
-		ObjectMessage<MLKAgent> messageAgent = new ObjectMessage<>(this);
-		broadcast(messageAgent, getAgentsWithRole(getCommunity(), getModelGroup(), ENVIRONMENT_ROLE));
+		((MLKEnvironment) getEnvironment()).setupAgent(this);
 	}
 
 	/**

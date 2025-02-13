@@ -1,54 +1,46 @@
 package simulation;
 
-import java.time.Instant;
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
+
+import java.util.logging.Level;
 
 import madkit.kernel.Activator;
+import madkit.simulation.SimuOrganization;
+import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 
 public class MLKSchedulerStandard extends TickBasedScheduler {
 	private Activator agentSendInfo;
-	private Activator envGetInfo;
 	
 	private Activator step;
 	
-	private int counter;
-	private Instant begin;
+	private MethodActivator viewers;
+	
 	
 	@Override
 	protected void onActivation() {
-		throw new RuntimeException("on est dans le mdk scheduler");
-//		getLogger().setLevel(Level.FINER);
-//		super.onActivation();
-//		
-//		agentSendInfo = new MethodActivator(getModelGroup(), "mlkagent", "sendInfo");
-//		addActivator(agentSendInfo);
-//		envGetInfo = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "receiveAgentsInfo");
-//		addActivator(envGetInfo);
-//		
-//		step = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
-//		addActivator(step);
+		getLogger().setLevel(Level.INFO);
+		super.onActivation();
+		
+		setPause(50);
+		
+		agentSendInfo = new MethodActivator(getModelGroup(), "mlkagent", "sendInfo");
+		addActivator(agentSendInfo);
+		
+		step = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
+		addActivator(step);
+		viewers = new MethodActivator(getEngineGroup(), SimuOrganization.VIEWER_ROLE, "display");
+		addActivator(viewers);
 	}
 	
 	public void agentShareInformation(){
 		agentSendInfo.execute();
-		envGetInfo.execute();
 	}
 	
 	@Override
 	public void doSimulationStep() {
-		counter++;
-
+		super.doSimulationStep();
 		step.execute();
-//		logSpeed();
 	}
 	
-//	private void logSpeed() {
-//		if (begin == null) {
-//			begin = Instant.now();
-//		} 
-//		if(counter%100 == 0) {
-//			getLogger().info(() -> ""+Duration.between(begin,Instant.now()).toMillis());
-//			begin = null;
-//		}
-//	}
 }

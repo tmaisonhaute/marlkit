@@ -11,7 +11,7 @@ public abstract class State2DGrid<T> implements State{
 	protected int nbCols;
 	protected int agentViewRange;
 	protected boolean neumannNeighbors;
-	protected Map<MLKAgent, Pair<Integer, Integer>> agentsPosition;
+	protected Map<MLKAgent, Pair<Integer, Integer>> agentsPosition = new HashMap<>();
 	
 	public abstract void reset();
 	public abstract T getValue(int row, int col);
@@ -33,5 +33,12 @@ public abstract class State2DGrid<T> implements State{
     	position.setSecond(new_j);
     	agentsPosition.put(agent, position);
     }
+
+	public int getWidth() {
+		return nbLines;
+	}
+	public int getHeight() {
+		return nbCols;
+	}
 }
 

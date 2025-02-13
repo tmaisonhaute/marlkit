@@ -14,5 +14,9 @@ import util.Triple;
 public interface MLKEnvironment {
 	public abstract void reset();
 	
+	public abstract void receiveAgentInfo(MLKAgent agent);
+	
 	public abstract Map<MLKAgent, Triple<Observation, Action, Reward>> step();
+
+	void setupAgent(MLKAgent agent);
 }

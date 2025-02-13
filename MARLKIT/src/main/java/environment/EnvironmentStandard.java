@@ -9,15 +9,17 @@ import agent.action.Action;
 import environment.observation.Observation;
 import environment.reward.Reward;
 import environment.state.State;
-import madkit.messages.ObjectMessage;
-import madkit.simulation.SimuEnvironment;
+import madkit.simulation.environment.Environment2D;
 import util.Pair;
 import util.Triple;
 
-public abstract class EnvironmentStandard extends SimuEnvironment implements MLKEnvironment {
+public abstract class EnvironmentStandard extends Environment2D implements MLKEnvironment {
 
 	protected AgentsGroup agents;
-	protected State state;
+	
+	public EnvironmentStandard(int width, int height) {
+        super(width, height);
+	}
 	
 	@Override
 	protected void onActivation() {
@@ -25,15 +27,13 @@ public abstract class EnvironmentStandard extends SimuEnvironment implements MLK
 		requestRole(getCommunity(), getModelGroup(), "mlkenvironment");
 		agents = new AgentsGroup();
 	}
-	public void receiveAgentsInfo() {
-		ObjectMessage<MLKAgent> messageAgent = getMailbox().next();
-		while (messageAgent != null){
-			MLKAgent agent = messageAgent.getContent();
-			agents.addAgent(agent);
-		}
-		setup();
+
+	public void receiveAgentInfo(MLKAgent agent) {
+		agents.addAgent(agent);
 	}
-	protected abstract void setup();
+	protected abstract void setupState();
+	@Override
+	public abstract void setupAgent(MLKAgent agent);
 	
 	/**
      * Resets the environment to its initial state.
@@ -42,24 +42,17 @@ public abstract class EnvironmentStandard extends SimuEnvironment implements MLK
      */
 	public abstract void reset();
 	
-//	@Override
-//	protected void onLive() {
-//		super.onLive();
-//		step();
-//	}
-	
 
 	public Map<MLKAgent, Triple<Observation, Action, Reward>> step(){
 		Map<MLKAgent,Observation> observations = getObservation();
 		Map<MLKAgent, Action> actions = new HashMap<>();
 		actions = agents.allAgentsTakeAction(observations);
 		Map<MLKAgent, Pair<Action, Reward>> result = dynamics(actions);
-		printState();
 		return combine_obs_act_reward(result, observations);
 		
 	}
 	public Map<MLKAgent,Observation> getObservation(){
-		return state.getObservations();
+		return getState().getObservations();
 	}
 	
 	public abstract Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions);
@@ -86,7 +79,10 @@ public abstract class EnvironmentStandard extends SimuEnvironment implements MLK
 	}
 
 	protected void printState() {
-		state.print();
+		getState().print();
 	}
+	
+	protected abstract State getState();
+
 	
 }

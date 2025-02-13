@@ -16,8 +16,8 @@ import util.Pair;
 @EngineAgents(
         scheduler=MLKSchedulerStandard.class,
         environment = EnvPushTheBlock.class,
-        model = MLKModel.class,
-        viewers = {ViewerPTB.class}
+        model = MLKModel.class
+   ,     viewers = {ViewerPTB.class}
 )
 public class LauncherPTB extends MLKLauncher{
 
@@ -28,22 +28,22 @@ public class LauncherPTB extends MLKLauncher{
 		Action goUp = new Action2DMove(new Pair<>(-1, 0));
 		Action goDown = new Action2DMove(new Pair<>(1, 0));
 		List<Action> possibleActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
-		PolicyRandom policy = new PolicyRandom(possibleActions);
-		AgentStandard ag = new AgentStandard(policy);
-		launchAgent(ag);
+		int nbAgents = 2;
+		for (int i = 0; i < nbAgents; i++) {
+			PolicyRandom policy = new PolicyRandom(possibleActions);
+			AgentStandard ag = new AgentStandard(policy);
+			launchAgent(ag);
+		}
 		
 		((MLKSchedulerStandard) getScheduler()).agentShareInformation();
-		throw new RuntimeException("on est dans le mlk launcher");
 		
-	}
-	@Override
-	public void onSimulationStart() {
 	}
 	
 	public static void main(String[] args) {
 		executeThisAgent(
-				"--agentLogLevel", "ALL"
-				, "--start"
+				"--agentLogLevel", "INFO"
+//				,"--noLog"
+//				, "--start"
 //				,"--viewers",MyViewer.class.getName()
         );
     }

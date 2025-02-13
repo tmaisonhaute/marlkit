@@ -8,47 +8,55 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
 import environment.EnvironmentStandard;
+import environment.observation.Observation;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
+import environment.state.State;
 import environment.state.State2DGridInt;
 import util.Pair;
+import util.Triple;
 
 public class EnvPushTheBlock extends EnvironmentStandard {
 
-	State2DGridInt state;
-	private final int width = 6;
-	private final int height = 6;
+	protected State2DGridInt state;
 	
+	public EnvPushTheBlock() {
+		super(6, 6);
+	}
 	
-	public int getWidth() {
-		return width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
+//	public int getWidth() {
+//		return width;
+//	}
+//
+//	public int getHeight() {
+//		return height;
+//	}
 
 	@Override
 	protected void onActivation() {
 		super.onActivation();
-		state = new State2DGridInt(width, height);
+		state = new State2DGridInt(getWidth(), getHeight());
+		setupState();
 	}
 	
 	@Override
-	public void setup() {
-		RandomGenerator rg = prng();
-		for(MLKAgent ag : agents.getAgents()) {
-			int i = rg.nextInt(width-2)+1;
-			int j = rg.nextInt(height-2)+1;
-            state.addAgent(ag, i, j);
-		}
+	public void setupState() {
 		placeBlock();
+	}
+	
+	@Override
+	public void setupAgent(MLKAgent agent) {
+		agents.addAgent(agent);
+		RandomGenerator rg = prng();
+		int i = rg.nextInt(getWidth()-2)+1;
+		int j = rg.nextInt(getHeight()-2)+1;
+        state.addAgent(agent, i, j);
 	}
 	
 	protected void placeBlock() {
 		RandomGenerator rg = prng();
-		int i = rg.nextInt(width - 2) + 1;
-		int j = rg.nextInt(height - 2) + 1;
+		int i = rg.nextInt(getWidth() - 2) + 1;
+		int j = rg.nextInt(getHeight() - 2) + 1;
 		state.setValue(i, j, 1);
 	}
 	
@@ -57,13 +65,18 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		state.reset();
 		RandomGenerator rg = prng();
 		for(MLKAgent ag : agents.getAgents()) {
-			int i = rg.nextInt(width-2)+1;
-			int j = rg.nextInt(height-2)+1;
+			int i = rg.nextInt(getWidth()-2)+1;
+			int j = rg.nextInt(getHeight()-2)+1;
             state.addAgent(ag, i, j);
 		}
-		int i = rg.nextInt(width-2)+1;
-		int j = rg.nextInt(height-2)+1;
+		int i = rg.nextInt(getWidth()-2)+1;
+		int j = rg.nextInt(getHeight()-2)+1;
 		state.setValue(i, j, 1);
+	}
+	
+	@Override
+	public Map<MLKAgent, Triple<Observation, Action, Reward>> step(){
+		return super.step();
 	}
 
 	@Override
@@ -80,8 +93,8 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 				Pair<Integer, Integer> newBlockPos = newPosition.clone();
 				newBlockPos.setFirst(newBlockPos.getFirst() + action.getValue().getFirst());
 				newBlockPos.setSecond(newBlockPos.getSecond() + action.getValue().getSecond());
-				if (newBlockPos.getFirst() < 0 || newBlockPos.getFirst() >= width 
-						|| newBlockPos.getSecond() < 0|| newBlockPos.getSecond() >= height) {
+				if (newBlockPos.getFirst() < 0 || newBlockPos.getFirst() >= getWidth() 
+						|| newBlockPos.getSecond() < 0|| newBlockPos.getSecond() >= getHeight()) {
 					reward.setReward(1);
 					placeBlock();
 				} else {
@@ -95,6 +108,9 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 
 	public Map<MLKAgent, Pair<Integer, Integer>> getAgentsPositions() {
 		return state.getAgentsPositions();
-		
+	}
+	
+	protected State getState() {
+		return state;
 	}
 }
