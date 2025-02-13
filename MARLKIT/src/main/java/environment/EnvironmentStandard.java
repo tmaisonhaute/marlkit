@@ -9,9 +9,9 @@ import agent.action.Action;
 import environment.observation.Observation;
 import environment.reward.Reward;
 import environment.state.State;
+import learning.Experience;
 import madkit.simulation.environment.Environment2D;
 import util.Pair;
-import util.Triple;
 
 public abstract class EnvironmentStandard extends Environment2D implements MLKEnvironment {
 
@@ -43,12 +43,14 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	public abstract void reset();
 	
 
-	public Map<MLKAgent, Triple<Observation, Action, Reward>> step(){
+	public Map<MLKAgent, Experience> step(){
 		Map<MLKAgent,Observation> observations = getObservation();
 		Map<MLKAgent, Action> actions = new HashMap<>();
 		actions = agents.allAgentsTakeAction(observations);
 		Map<MLKAgent, Pair<Action, Reward>> result = dynamics(actions);
-		return combine_obs_act_reward(result, observations);
+		Map<MLKAgent, Experience> experiences = combine_obs_act_reward(result, observations);
+		sendFeedbackExperience(experiences);
+		return experiences;
 		
 	}
 	public Map<MLKAgent,Observation> getObservation(){
@@ -57,26 +59,36 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	
 	public abstract Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions);
 	
-	protected Map<MLKAgent, Triple<Observation, Action, Reward>> combine_obs_act_reward(Map<MLKAgent, Pair<Action, Reward>> actionRewardMap,
-			Map<MLKAgent, Observation> observationMap ){
-		Map<MLKAgent, Triple<Observation, Action, Reward>> combinedMap = new HashMap<>();
-		
-		for (Map.Entry<MLKAgent, Observation> entry : observationMap.entrySet()) {
+	protected void sendFeedbackExperience(Map<MLKAgent,Experience> experiences){
+		for (Map.Entry<MLKAgent, Experience> entry : experiences.entrySet()) {
 			MLKAgent agent = entry.getKey();
-			Observation observation = entry.getValue();
-			Pair<Action, Reward> actionRewardPair = actionRewardMap.get(agent);
-			
-			if (actionRewardPair != null) {
-				Triple<Observation, Action, Reward> triple = new Triple<>(
-						observation,
-						actionRewardPair.getFirst(),
-						actionRewardPair.getSecond()
-						);
-				combinedMap.put(agent, triple);
-			}
+			Experience experience = entry.getValue();
+			agent.feedbackExperience(experience);
 		}
-		return combinedMap;
 	}
+	
+
+	protected Map<MLKAgent, Experience> combine_obs_act_reward(Map<MLKAgent, Pair<Action, Reward>> actionRewardMap,
+	        Map<MLKAgent, Observation> observationMap) {
+	    Map<MLKAgent, Experience> combinedMap = new HashMap<>();
+	
+	    for (Map.Entry<MLKAgent, Observation> entry : observationMap.entrySet()) {
+	        MLKAgent agent = entry.getKey();
+	        Observation observation = entry.getValue();
+	        Pair<Action, Reward> actionRewardPair = actionRewardMap.get(agent);
+	
+	        if (actionRewardPair != null) {
+	            Experience experience = new Experience(
+	                    observation,
+	                    actionRewardPair.getFirst(),
+	                    actionRewardPair.getSecond()
+	            );
+	            combinedMap.put(agent, experience);
+	        }
+	    }
+	    return combinedMap;
+	}
+
 
 	protected void printState() {
 		getState().print();

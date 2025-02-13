@@ -22,7 +22,7 @@ public class PolicyRandom implements Policy {
 
 
 	@Override
-	public void learn_on_batch(Batch batch) {
+	public void learnOnBatch(Batch batch) {
 		//No learning
 		return;
 	}

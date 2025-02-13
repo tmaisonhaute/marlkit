@@ -4,6 +4,9 @@ import java.util.List;
 import agent.action.Action;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
+import environment.reward.Reward;
+import learning.Batch;
+import learning.Experience;
 import learning.policy.Policy;
 import madkit.simulation.SimuAgent;
 
@@ -12,9 +15,11 @@ import madkit.simulation.SimuAgent;
  */
 public class AgentStandard extends SimuAgent implements MLKAgent{
 	public Policy policy;
+	public Batch pastExperiences;
 	
 	public AgentStandard(Policy policy) {
 		this.policy = policy;
+		pastExperiences = new Batch();
 	}
 	
 	@Override
@@ -35,11 +40,6 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
      */
 	public Action takeAction(Observation obs) {
 		return policy.takeAction(obs);
-		/*
-		 * on get l'env, 
-		 * On prend l'observation
-		 * 
-		 */
 	}
 
 	/**
@@ -60,6 +60,19 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	@Override
 	public void setPolicy(Policy policy) {
 		this.policy = policy;
+		
+	}
+	
+	public void feedbackExperience(Observation obs, Action act, Reward rew) {
+		pastExperiences.addExperience(obs, act, rew);
+	}
+	public void feedbackExperience(Experience experience) {
+		pastExperiences.addExperience(experience);
+	}
+
+	@Override
+	public void learnOnBatch() {
+		policy.learnOnBatch(pastExperiences);
 		
 	}
 	

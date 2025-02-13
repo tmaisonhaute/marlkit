@@ -3,10 +3,7 @@ package environment;
 import java.util.Map;
 
 import agent.MLKAgent;
-import agent.action.Action;
-import environment.observation.Observation;
-import environment.reward.Reward;
-import util.Triple;
+import learning.Experience;
 
 /**
  * Represents an environment in which agents operate.
@@ -16,7 +13,7 @@ public interface MLKEnvironment {
 	
 	public abstract void receiveAgentInfo(MLKAgent agent);
 	
-	public abstract Map<MLKAgent, Triple<Observation, Action, Reward>> step();
+	public abstract Map<MLKAgent, Experience> step();
 
 	void setupAgent(MLKAgent agent);
 }

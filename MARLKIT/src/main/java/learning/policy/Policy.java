@@ -37,7 +37,7 @@ public interface Policy {
      * 
      * @param batch the batch of data to learn from
      */
-	public abstract void learn_on_batch(Batch batch);
+	public abstract void learnOnBatch(Batch batch);
 }
 
 

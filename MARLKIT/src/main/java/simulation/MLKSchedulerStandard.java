@@ -11,6 +11,7 @@ import madkit.simulation.scheduler.TickBasedScheduler;
 
 public class MLKSchedulerStandard extends TickBasedScheduler {
 	private Activator agentSendInfo;
+	private Activator agentLearn;
 	
 	private Activator step;
 	
@@ -26,6 +27,8 @@ public class MLKSchedulerStandard extends TickBasedScheduler {
 		
 		agentSendInfo = new MethodActivator(getModelGroup(), "mlkagent", "sendInfo");
 		addActivator(agentSendInfo);
+		agentLearn = new MethodActivator(getModelGroup(), "mlkagent", "learnOnBatch");
+		addActivator(agentLearn);
 		
 		step = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
 		addActivator(step);
@@ -41,6 +44,7 @@ public class MLKSchedulerStandard extends TickBasedScheduler {
 	public void doSimulationStep() {
 		super.doSimulationStep();
 		step.execute();
+		agentLearn.execute();
 	}
 	
 }

@@ -8,13 +8,12 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
 import environment.EnvironmentStandard;
-import environment.observation.Observation;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
 import environment.state.State;
 import environment.state.State2DGridInt;
+import learning.Experience;
 import util.Pair;
-import util.Triple;
 
 public class EnvPushTheBlock extends EnvironmentStandard {
 
@@ -75,7 +74,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	}
 	
 	@Override
-	public Map<MLKAgent, Triple<Observation, Action, Reward>> step(){
+	public Map<MLKAgent, Experience> step(){
 		return super.step();
 	}
 

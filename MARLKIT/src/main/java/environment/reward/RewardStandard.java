@@ -8,8 +8,7 @@ public class RewardStandard implements Reward {
 	}
 	
 	@Override
-	public double getReward() {
-		// TODO Auto-generated method stub
+	public double getValue() {
 		return value;
 	}
 	@Override

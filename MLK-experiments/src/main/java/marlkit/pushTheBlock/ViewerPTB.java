@@ -36,13 +36,11 @@ public class ViewerPTB extends Viewer2D {
 	@Override
 	public void render() {
 		super.render();
-		getLogger().info(() -> "\n\nRendering");
 		List<Agent> envs = stateProbe.getAgents();
 		for (Agent env : envs) {
 			State2DGridInt s = stateProbe.getPropertyValue(env);
 			for (Pair<Integer, Integer> pos : s.getAgentsPositions().values()){
 				getGraphics().setFill(RED);
-				getLogger().info(() -> "\n\nDrawing agent at position : " + pos.getFirst() + ":" + pos.getSecond());
 				getGraphics().fillOval(pos.getFirst()*cellSize, pos.getSecond()*cellSize, agentSize, agentSize);
 			}
 			
