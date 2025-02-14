@@ -1,4 +1,4 @@
-package marlkit.pushTheBlock;
+package marlkit.pushtheblock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +13,9 @@ import simulation.MLKModel;
 import simulation.MLKSchedulerStandard;
 import util.Pair;
 
-@EngineAgents(
-        scheduler=MLKSchedulerStandard.class,
-        environment = EnvPushTheBlock.class,
-        model = MLKModel.class
-   ,     viewers = {ViewerPTB.class}
-)
-public class LauncherPTB extends MLKLauncher{
+@EngineAgents(scheduler = MLKSchedulerStandard.class, environment = EnvPushTheBlock.class, model = MLKModel.class, viewers = {
+		ViewerPTB.class })
+public class LauncherPTB extends MLKLauncher {
 
 	@Override
 	protected void onLaunchSimulatedAgents() {
@@ -34,19 +30,18 @@ public class LauncherPTB extends MLKLauncher{
 			AgentStandard ag = new AgentStandard(policy);
 			launchAgent(ag);
 		}
-		
+
+		// TODO why not doing this call on agents in the previous loop?
 		((MLKSchedulerStandard) getScheduler()).agentShareInformation();
-		
+
 	}
-	
+
 	public static void main(String[] args) {
-		executeThisAgent(
-				"--agentLogLevel", "INFO"
+		executeThisAgent("--agentLogLevel", "INFO"
 //				,"--noLog"
 //				, "--start"
 //				,"--viewers",MyViewer.class.getName()
-        );
-    }
-	
+		);
+	}
 
 }

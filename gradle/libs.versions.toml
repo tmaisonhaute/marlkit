@@ -2,25 +2,27 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-controlsfx = "11.2.1"
-commonsConfiguration2 = "2.11.0"
+assertJ = "3.27.3"
 commonsBeanutils = "1.9.4"
-picocli = "4.7.6"
-fastutil = "8.5.15"
-typetools = "0.6.3"
-testng = "latest.release"
+commonsConfiguration2 = "2.11.0"
 concurrentunit = "0.4.6"
-slf4j = "latest.release"
-assertJ = "latest.release"
+controlsfx = "11.2.1"
+fastutil = "8.5.15"
+madkit = "6.0.2"
+picocli = "4.7.6"
+slf4j = "2.1.0-alpha1"
+testng = "7.10.2"
+typetools = "0.6.3"
 
 [libraries]
-controlsfx = { module = "org.controlsfx:controlsfx", version.ref = "controlsfx" }
-commonsConfiguration2 = { module = "org.apache.commons:commons-configuration2", version.ref = "commonsConfiguration2" }
-commonsBeanutils = { module = "commons-beanutils:commons-beanutils", version.ref = "commonsBeanutils" }
-picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
-fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
-typetools = { module = "net.jodah:typetools", version.ref = "typetools" }
-testng = { module = "org.testng:testng", version.ref = "testng" }
-concurrentunit = { module = "net.jodah:concurrentunit", version.ref = "concurrentunit" }
-slf4j = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 assertJ = { module = "org.assertj:assertj-core", version.ref = "assertJ" }
+commonsBeanutils = { module = "commons-beanutils:commons-beanutils", version.ref = "commonsBeanutils" }
+commonsConfiguration2 = { module = "org.apache.commons:commons-configuration2", version.ref = "commonsConfiguration2" }
+concurrentunit = { module = "net.jodah:concurrentunit", version.ref = "concurrentunit" }
+controlsfx = { module = "org.controlsfx:controlsfx", version.ref = "controlsfx" }
+fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
+madkit = { module = "io.github.fmichel:madkit", version.ref = "madkit" }
+picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
+slf4j = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+testng = { module = "org.testng:testng", version.ref = "testng" }
+typetools = { module = "net.jodah:typetools", version.ref = "typetools" }

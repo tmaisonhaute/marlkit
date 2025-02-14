@@ -1,4 +1,4 @@
-package marlkit.pushTheBlock;
+package marlkit.pushtheblock;
 
 import java.util.HashMap;
 import java.util.Map;

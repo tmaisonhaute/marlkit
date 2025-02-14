@@ -21,7 +21,7 @@ javaModuleTesting.whitebox(testing.suites.getByName("test")){
 }
 
 dependencies {
-	api 'io.github.fmichel:madkit:6.0.1'
+	api libs.madkit
     testImplementation libs.testng
     testImplementation libs.assertJ
 }
