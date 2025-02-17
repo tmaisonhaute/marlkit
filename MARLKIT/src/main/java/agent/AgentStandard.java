@@ -4,6 +4,7 @@ import java.util.List;
 import agent.action.Action;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
+import environment.observation.ObservationPositionsValues;
 import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
@@ -39,6 +40,8 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
      * @return the action taken
      */
 	public Action takeAction(Observation obs) {
+		getLogger().info("Observation: " + obs);
+		System.out.println("size : " + ((ObservationPositionsValues)obs).getListObs().size());
 		return policy.takeAction(obs);
 	}
 
@@ -60,7 +63,6 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	@Override
 	public void setPolicy(Policy policy) {
 		this.policy = policy;
-		
 	}
 	
 	public void feedbackExperience(Observation obs, Action act, Reward rew) {
@@ -73,6 +75,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	@Override
 	public void learnOnBatch() {
 		policy.learnOnBatch(pastExperiences);
+		pastExperiences.clear();
 		
 	}
 	

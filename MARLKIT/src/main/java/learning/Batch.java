@@ -83,6 +83,13 @@ public class Batch {
 	public void addExperience(Experience experience) {
 		experiences.add(experience);
 	}
+	
+	/**
+	 * Clears the batch.
+	 */
+	public void clear() {
+		experiences.clear();
+	}
 }
 
 

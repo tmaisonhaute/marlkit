@@ -7,8 +7,8 @@ import agent.MLKAgent;
 import util.Pair;
 
 public abstract class State2DGrid<T> implements State{
-	protected int nbLines;
-	protected int nbCols;
+	protected int width;
+	protected int height;
 	protected int agentViewRange;
 	protected boolean neumannNeighbors;
 	protected Map<MLKAgent, Pair<Integer, Integer>> agentsPosition = new HashMap<>();
@@ -27,18 +27,18 @@ public abstract class State2DGrid<T> implements State{
     }
     public void moveAgent(MLKAgent agent, Pair<Integer, Integer> move) {
     	Pair<Integer, Integer> position = agentsPosition.get(agent).clone();
-    	int new_i = Math.max(0, Math.min(nbLines - 1, position.getFirst() + move.getFirst()));
-    	int new_j = Math.max(0, Math.min(nbCols - 1, position.getSecond() + move.getSecond()));
+    	int new_i = Math.max(0, Math.min(width - 1, position.getFirst() + move.getFirst()));
+    	int new_j = Math.max(0, Math.min(height - 1, position.getSecond() + move.getSecond()));
 		position.setFirst(new_i);
     	position.setSecond(new_j);
     	agentsPosition.put(agent, position);
     }
 
 	public int getWidth() {
-		return nbLines;
+		return width;
 	}
 	public int getHeight() {
-		return nbCols;
+		return height;
 	}
 }
 

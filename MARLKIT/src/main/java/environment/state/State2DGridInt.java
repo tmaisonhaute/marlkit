@@ -29,8 +29,8 @@ public class State2DGridInt extends State2DGrid<Integer> {
 	 */
 	public State2DGridInt(int nbLines, int nbCols, int agentViewRange, boolean neumannNeighbors) {
 		this.grid = new int[nbLines][nbCols];
-		this.nbLines = nbLines;
-		this.nbCols = nbCols;
+		this.width = nbLines;
+		this.height = nbCols;
 		this.agentViewRange = agentViewRange;
 		this.neumannNeighbors = neumannNeighbors;
 	}
@@ -40,15 +40,15 @@ public class State2DGridInt extends State2DGrid<Integer> {
 	
 	@Override
 	public void reset() {
-		for (int i = 0; i < nbLines; i++) {
-			for (int j = 0; j < nbCols; j++) {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
 				grid[i][j] = 0;
 			}
 		}
 	}
 	
 	public void addAgent(MLKAgent agent, int x, int y) {
-		if (x >= nbLines || x < 0 || y >= nbCols || y < 0) {
+		if (x >= width || x < 0 || y >= height || y < 0) {
 			throw new ArrayIndexOutOfBoundsException("L'agent ne peut pas être placé en position (" + x + ";" + y + ")");
 		}
 		agentsPosition.put(agent, new Pair<Integer, Integer>(x, y));
@@ -60,7 +60,7 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		Map<MLKAgent, Observation> obsMap = new HashMap<>();
 		
 		for (MLKAgent a : agents) {
-			obsMap.put(a, ObservationAtCells(getNeighbors(a)));
+			obsMap.put(a, ObservationAtCells(getNeighbors(a), a));
 		}
 		return obsMap;
 	}
@@ -86,8 +86,8 @@ public class State2DGridInt extends State2DGrid<Integer> {
 	@Override
 	public void print() {
 		String txt = "";
-		for (int i = 0; i < nbLines; i++) {
-			for (int j = 0; j < nbCols; j++) {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
 				txt += grid[i][j] + "\t";
 			}
 			txt += "\n";
@@ -106,7 +106,7 @@ public class State2DGridInt extends State2DGrid<Integer> {
 				for(int j = -r + Math.abs(i); j <= r - Math.abs(i); j ++) {
 					int x = i + ax;
 					int y = j + ay;
-					if (x >= 0 && x < nbLines && y >= 0 && y < nbCols) {
+					if (x >= 0 && x < width && y >= 0 && y < height) {
 						cells.add(new Cell(x, y, grid[x][y]));	
 					}
 				}
@@ -117,13 +117,19 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		}
 	}
 	
-	protected ObservationPositionsValues ObservationAtCells(List<Cell> cells) {
-		ObservationPositionsValues obs = new ObservationPositionsValues();
-		for(Cell c : cells) {
-			Tuple position = new Tuple(Arrays.asList( (double) c.x, (double)c.y));
-			obs.add(new ObservationPositionValue(position, c.val));
-		}
-		return obs;
+	protected ObservationPositionsValues ObservationAtCells(List<Cell> cells, MLKAgent agent) {
+	    ObservationPositionsValues obs = new ObservationPositionsValues();
+	    Pair<Integer, Integer> agentPos = agentsPosition.get(agent);
+	    int agentX = agentPos.getFirst();
+	    int agentY = agentPos.getSecond();
+
+	    for (Cell c : cells) {
+	        if (c.val != 0) {
+	        	Tuple relativePosition = new Tuple(Arrays.asList((double) (c.x - agentX), (double) (c.y - agentY)));
+	            obs.add(new ObservationPositionValue(relativePosition, c.val));
+	        }
+	    }
+	    return obs;
 	}
 }
 

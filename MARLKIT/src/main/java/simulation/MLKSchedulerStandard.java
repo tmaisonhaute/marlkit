@@ -16,6 +16,8 @@ public class MLKSchedulerStandard extends TickBasedScheduler {
 	private Activator step;
 
 	private MethodActivator viewers;
+	
+	private int counter = 0;
 
 	@Override
 	protected void onActivation() {
@@ -42,8 +44,11 @@ public class MLKSchedulerStandard extends TickBasedScheduler {
 	@Override
 	public void doSimulationStep() {
 		super.doSimulationStep();
+		counter++;
 		step.execute();
-		agentLearn.execute();
+		if (counter % 100 == 0) {
+			agentLearn.execute();
+		}
 		viewers.execute();
 	}
 

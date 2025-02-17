@@ -2,6 +2,7 @@ package util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Tuple {
 	private List<Double> values;
@@ -50,5 +51,18 @@ public class Tuple {
 		}
 		return new Tuple(newL);
 	}
+	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tuple tuple = (Tuple) o;
+        return size == tuple.size && Objects.equals(values, tuple.values);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(values, size);
+    }
 	
 }

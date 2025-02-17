@@ -5,4 +5,5 @@ package environment.observation;
  */
 public interface Observation {
 	Observation add(Observation other);
+	
 }

@@ -1,4 +1,6 @@
 package environment.observation;
+import java.util.Objects;
+
 import util.Tuple;
 
 public class ObservationPositionValue implements Observation {
@@ -33,5 +35,23 @@ public class ObservationPositionValue implements Observation {
 			throw new IllegalArgumentException("Impossible to add a ObservationPositionValue element with an element which isn't.");
 		}
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ObservationPositionValue that = (ObservationPositionValue) o;
+        return Double.compare(that.value, value) == 0 && Objects.equals(position, that.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(position, value);
+    }
+    
+    @Override
+    public String toString() {
+    	return "(" + position.toString() + " -> " + value + ")";
+    }
 	
 }

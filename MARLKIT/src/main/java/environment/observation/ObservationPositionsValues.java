@@ -26,6 +26,9 @@ public class ObservationPositionsValues implements Observation {
 	public ObservationPositionValue getObs(int index) {
 		return obs.get(index);
 	}
+	public List<ObservationPositionValue> getListObs(){
+		return obs;
+	}
 	
 	@Override
 	public Observation add(Observation other) {
@@ -42,6 +45,15 @@ public class ObservationPositionsValues implements Observation {
 		}else {
 			throw new IllegalArgumentException("Impossible to add a ObservationPositionsValues element with an element which isn't.");
 		}
+	}
+	
+	@Override
+	public String toString() {
+		String s = "";
+		for (ObservationPositionValue o : obs) {
+			s += o.toString() + " ";
+		}
+		return s;
 	}
 
 }

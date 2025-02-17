@@ -60,8 +60,10 @@ public class PolicyMonteCarlo implements Policy {
 	
 	    int rewardLen = experiences.size();
 	    double[] cumulRewards = new double[rewardLen];
+	    double totRewards = 0;
 	    for (int j = rewardLen - 1; j >= 0; j--) {
 	        cumulRewards[j] = experiences.get(j).getRewardValue() + (j + 1 < rewardLen ? cumulRewards[j + 1] * gamma : 0);
+	        totRewards += experiences.get(j).getRewardValue();
 	    }
 	
 	    for (int k = 0; k < rewardLen; k++) {
@@ -76,6 +78,8 @@ public class PolicyMonteCarlo implements Policy {
 	        Q.put(stateAction, rewardMoyen * nb / (nb + 1) + cumulReward * 1 / (nb + 1));
 	        nbSelected.put(stateAction, nb + 1);
 	    }
+	    
+	    System.out.println("Total rewards: " + totRewards);
 	}
 
 	

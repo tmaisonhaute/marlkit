@@ -24,6 +24,10 @@ dependencies {
 	api libs.madkit
     testImplementation libs.testng
     testImplementation libs.assertJ
+   	testImplementation 'org.mockito:mockito-core:5.15.2'
+
+    
+    
 }
 
 tasks.named('test') {
