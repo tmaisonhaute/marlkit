@@ -12,24 +12,18 @@ import environment.reward.Reward;
 import environment.reward.RewardStandard;
 import environment.state.State;
 import environment.state.State2DGridInt;
-import learning.Experience;
 import util.Pair;
 
 public class EnvPushTheBlock extends EnvironmentStandard {
 
 	protected State2DGridInt state;
+	private static int width = 12;
+	private static int height = 12;
 	
 	public EnvPushTheBlock() {
-		super(6, 6);
+		super(width, height);
 	}
 	
-//	public int getWidth() {
-//		return width;
-//	}
-//
-//	public int getHeight() {
-//		return height;
-//	}
 
 	@Override
 	protected void onActivation() {
@@ -47,15 +41,15 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	public void setupAgent(MLKAgent agent) {
 		agents.addAgent(agent);
 		RandomGenerator rg = prng();
-		int i = rg.nextInt(getWidth()-2)+1;
-		int j = rg.nextInt(getHeight()-2)+1;
+		int i = rg.nextInt(getWidth()-1)+1;
+		int j = rg.nextInt(getHeight()-1)+1;
         state.addAgent(agent, i, j);
 	}
 	
 	protected void placeBlock() {
 		RandomGenerator rg = prng();
-		int i = rg.nextInt(getWidth() - 2) + 1;
-		int j = rg.nextInt(getHeight() - 2) + 1;
+		int i = rg.nextInt(getWidth() - 1) + 1;
+		int j = rg.nextInt(getHeight() - 1) + 1;
 		state.setValue(i, j, 1);
 	}
 	
@@ -64,19 +58,15 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		state.reset();
 		RandomGenerator rg = prng();
 		for(MLKAgent ag : agents.getAgents()) {
-			int i = rg.nextInt(getWidth()-2)+1;
-			int j = rg.nextInt(getHeight()-2)+1;
+			int i = rg.nextInt(getWidth()-1)+1;
+			int j = rg.nextInt(getHeight()-1)+1;
             state.addAgent(ag, i, j);
 		}
-		int i = rg.nextInt(getWidth()-2)+1;
-		int j = rg.nextInt(getHeight()-2)+1;
+		int i = rg.nextInt(getWidth()-1)+1;
+		int j = rg.nextInt(getHeight()-1)+1;
 		state.setValue(i, j, 1);
 	}
 	
-	@Override
-	public Map<MLKAgent, Experience> step(){
-		return super.step();
-	}
 
 	@Override
 	public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {

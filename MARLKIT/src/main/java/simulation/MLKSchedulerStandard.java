@@ -24,13 +24,11 @@ public class MLKSchedulerStandard extends TickBasedScheduler {
 		getLogger().setLevel(Level.INFO);
 		super.onActivation();
 
-		setPause(50);
-
 		agentSendInfo = new MethodActivator(getModelGroup(), "mlkagent", "sendInfo");
 		addActivator(agentSendInfo);
 		agentLearn = new MethodActivator(getModelGroup(), "mlkagent", "learnOnBatch");
 		addActivator(agentLearn);
-
+		
 		step = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
 		addActivator(step);
 		viewers = new MethodActivator(getEngineGroup(), SimuOrganization.VIEWER_ROLE, "display");
@@ -44,11 +42,17 @@ public class MLKSchedulerStandard extends TickBasedScheduler {
 	@Override
 	public void doSimulationStep() {
 		super.doSimulationStep();
-		counter++;
 		step.execute();
 		if (counter % 100 == 0) {
 			agentLearn.execute();
 		}
+		if (counter % 10000 == 0 && counter >= 1000000) {
+			setPause(50);
+		}
+		else if(counter %10000 == 100) {
+			setPause(0);
+		}
+		counter++;
 		viewers.execute();
 	}
 

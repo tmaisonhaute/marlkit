@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import agent.action.Action;
 import environment.observation.Observation;
@@ -44,11 +45,29 @@ public class AgentsGroup {
      */
 	public List<MLKAgent> getAgents(){
 		return agents;
-		
 	}
 
 	public void addAgent(MLKAgent agent) {
 		agents.add(agent);
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(agents);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AgentsGroup other = (AgentsGroup) obj;
+		return Objects.equals(agents, other.agents);
+	}
+	
+	
 
 }

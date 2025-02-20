@@ -8,6 +8,7 @@ import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
 import learning.policy.Policy;
+import learning.policy.PolicyMonteCarlo;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -63,6 +64,12 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	public void setPolicy(Policy policy) {
 		this.policy = policy;
 	}
+	
+	public void setEpsilon(double epsilon) {
+		PolicyMonteCarlo pmc = (PolicyMonteCarlo) getPolicy();
+		pmc.setEpsilon(epsilon);
+	}
+	
 	
 	public void feedbackExperience(Observation obs, Action act, Reward rew) {
 		pastExperiences.addExperience(obs, act, rew);

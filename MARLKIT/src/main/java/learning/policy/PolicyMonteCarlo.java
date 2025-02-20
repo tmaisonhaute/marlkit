@@ -12,29 +12,42 @@ import learning.Experience;
 import madkit.kernel.AgentLogger;
 import util.Pair;
 
-public class PolicyMonteCarlo implements Policy {
+public class PolicyMonteCarlo extends PolicyEpsilon {
 	
 	private Map<Pair<Observation, Action>, Double> Q;
     private Map<Pair<Observation, Action>, Integer> nbSelected;
     private List<Action> actionsSet;
     private int numberOfActions;
     private double gamma;
-    private double eps;
     private Random random;
 
-    public PolicyMonteCarlo(List<Action> actionsSet) {
-        this.Q = new HashMap<>();
-        this.nbSelected = new HashMap<>();
-        this.actionsSet = actionsSet;
-        this.numberOfActions = actionsSet.size();
-        this.gamma = 0.95;
-        this.eps = 0.05;
-        this.random = new Random();
+    
+	public PolicyMonteCarlo(List<Action> actionsSet, double epsilon, double epsilonDecrease) {
+		super(epsilon, epsilonDecrease);
+		this.Q = new HashMap<>();
+		this.nbSelected = new HashMap<>();
+		this.actionsSet = actionsSet;
+		this.numberOfActions = actionsSet.size();
+		this.gamma = 0.95;
+		this.random = new Random();
+	}
+    
+    public PolicyMonteCarlo(List<Action> actionsSet, double epsilon) {
+    	this(actionsSet, epsilon, 0.0);
     }
 
+	public PolicyMonteCarlo(List<Action> actionsSet) {
+		this(actionsSet, 0.05);
+	}
+
+
+	public Map<Pair<Observation, Action>, Double> getQ() {
+    	return Q;
+    }
+    
     @Override
     public Action takeAction(Observation obs) {
-        if (random.nextDouble() < eps) {
+        if (random.nextDouble() < getEpsilon()) {
             return actionsSet.get(random.nextInt(numberOfActions));
         }
 
@@ -58,30 +71,51 @@ public class PolicyMonteCarlo implements Policy {
     @Override
 	public void learnOnBatch(Batch batch, AgentLogger logger) {
 	    List<Experience> experiences = batch.getExperiences();
+	    double[] cumulativeRewards = computeCumulativeRewards(experiences, logger);
+	    updateQ(experiences, cumulativeRewards);
+	    
+	    updateEpsilon();
+	    
+	    logger.info("size Q: " + Q.size());
+	    logger.info("Epsilon : " + getEpsilon());
+	    logger.info("nbit : " + getNbIterations());
+	}
+    
+    protected double[] computeCumulativeRewards(List<Experience> experiences, AgentLogger logger) {
+    	int experiencesLength = experiences.size();
+    	double[] cumulativeRewards = new double[experiencesLength];
+    	double totalRewards = 0;
+    	for (int j = experiencesLength - 1; j >= 0; j--) {
+    		cumulativeRewards[j] = experiences.get(j).getRewardValue() + (j + 1 < experiencesLength ? cumulativeRewards[j + 1] * gamma : 0);
+    		totalRewards += experiences.get(j).getRewardValue();
+    	}
+    	logger.info("Total rewards: " + totalRewards);
+    	return cumulativeRewards;
+    }
+
+	protected void updateQ(List<Experience> experiences, double[] cumulRewards) {
+		int experiencesLength = experiences.size();
+	    for (int k = 0; k < experiencesLength; k++) {
+	        Pair<Observation, Action> stateAction = createStateAction(experiences.get(k));
+	        double cumulativeReward = cumulRewards[k];
 	
-	    int rewardLen = experiences.size();
-	    double[] cumulRewards = new double[rewardLen];
-	    double totRewards = 0;
-	    for (int j = rewardLen - 1; j >= 0; j--) {
-	        cumulRewards[j] = experiences.get(j).getRewardValue() + (j + 1 < rewardLen ? cumulRewards[j + 1] * gamma : 0);
-	        totRewards += experiences.get(j).getRewardValue();
-	    }
-	
-	    for (int k = 0; k < rewardLen; k++) {
-	        Observation state = experiences.get(k).getObservation();
-	        Action action = experiences.get(k).getAction();
-	        double cumulReward = cumulRewards[k];
-	        Pair<Observation, Action> stateAction = new Pair<>(state, action);
-	
-	        double rewardMoyen = Q.getOrDefault(stateAction, 0.0);
+	        double averageReward = Q.getOrDefault(stateAction, 0.0);
 	        int nb = nbSelected.getOrDefault(stateAction, 0);
 	
-	        Q.put(stateAction, rewardMoyen * nb / (nb + 1) + cumulReward * 1 / (nb + 1));
+	        Q.put(stateAction, averageReward * nb / (nb + 1) + cumulativeReward * 1 / (nb + 1));
 	        nbSelected.put(stateAction, nb + 1);
 	    }
-	    logger.info("Total rewards: " + totRewards);
-	    logger.info("size Q: " + Q.size());
 	}
+
+	protected Pair<Observation, Action> createStateAction(Experience experience) {
+		Observation state = experience.getObservation();
+		Action action = experience.getAction();
+		return new Pair<>(state, action);
+	}
+
+
+
+	
 
 	
 	

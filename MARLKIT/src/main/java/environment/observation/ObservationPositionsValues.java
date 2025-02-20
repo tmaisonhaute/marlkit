@@ -2,6 +2,7 @@ package environment.observation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import util.Tuple;
 
@@ -60,12 +61,18 @@ public class ObservationPositionsValues implements Observation {
 	}
 	
 	@Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o instanceof ObservationPositionsValues opv) {
+	public int hashCode() {
+		return Objects.hash(obs);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+        if (obj instanceof ObservationPositionsValues opv) {
         	return getListObs().equals(opv.getListObs());
         }
         return false;
-    }
+	}
+	
 
 }

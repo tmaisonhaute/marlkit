@@ -1,5 +1,7 @@
 package util;
 
+import java.util.Objects;
+
 public class Triple<T, U, V> {
     private T first;
     private U second;
@@ -38,4 +40,24 @@ public class Triple<T, U, V> {
     public Triple<T, U, V> clone() {
         return new Triple<T, U, V>(first, second, third);
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(first, second, third);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Triple other = (Triple) obj;
+		return Objects.equals(first, other.first) && Objects.equals(second, other.second)
+				&& Objects.equals(third, other.third);
+	}
+    
+    
 }

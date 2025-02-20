@@ -1,5 +1,6 @@
 package marlkit.pushtheblock;
 
+import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.RED;
 import static javafx.scene.paint.Color.YELLOW;
 import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
@@ -17,16 +18,16 @@ import util.Pair;
  */
 public class ViewerPTB extends Viewer2D {
 	PropertyProbe<State2DGridInt> stateProbe;
-	private static final double cellSize = 50;
-	private static final double agentSize = 50;
+	private static final double CELLSIZE = 50;
+	private static final double AGENTSIZE = 50;
 
 	@Override
 	protected void onActivation() {
 		super.onActivation();
 		stateProbe = new PropertyProbe<>(getModelGroup(), ENVIRONMENT_ROLE, "state");
 		addProbe(stateProbe);
-		getGUI().getCanvas().setWidth(getEnvironment().getWidth() * cellSize);
-		getGUI().getCanvas().setHeight(getEnvironment().getHeight() * cellSize);
+		getGUI().getCanvas().setWidth(getEnvironment().getWidth() * CELLSIZE);
+		getGUI().getCanvas().setHeight(getEnvironment().getHeight() * CELLSIZE);
 		getGUI().setSynchroPainting(false);
 	}
 
@@ -44,17 +45,22 @@ public class ViewerPTB extends Viewer2D {
 			State2DGridInt s = stateProbe.getPropertyValue(env);
 			for (Pair<Integer, Integer> pos : s.getAgentsPositions().values()) {
 				getGraphics().setFill(RED);
-				getGraphics().fillOval(pos.getFirst() * cellSize, pos.getSecond() * cellSize, agentSize, agentSize);
+				getGraphics().fillOval(pos.getFirst() * CELLSIZE, pos.getSecond() * CELLSIZE, AGENTSIZE, AGENTSIZE);
 			}
 
 			for (int i = 0; i < s.getWidth(); i++) {
 				for (int j = 0; j < s.getHeight(); j++) {
 					if (s.getValue(i, j) == 1) {
 						getGraphics().setFill(YELLOW);
-						getGraphics().fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+						getGraphics().fillRect(i * CELLSIZE, j * CELLSIZE, CELLSIZE, CELLSIZE);
 					}
 				}
 			}
+		}
+		for (int i = 0; i < getEnvironment().getWidth(); i++) {
+			getGraphics().setStroke(BLACK);
+			getGraphics().strokeLine(i * CELLSIZE, 0, i * CELLSIZE, getEnvironment().getHeight() * CELLSIZE);
+			getGraphics().strokeLine(0, i * CELLSIZE, getEnvironment().getWidth() * CELLSIZE, i * CELLSIZE);
 		}
 	}
 }

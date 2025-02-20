@@ -32,23 +32,13 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		agents.addAgent(agent);
 	}
 	protected abstract void setupState();
-	@Override
-	public abstract void setupAgent(MLKAgent agent);
-	
-	/**
-     * Resets the environment to its initial state.
-     * 
-     * @return a map of agents to their initial observations
-     */
-	public abstract void reset();
-	
 
 	public Map<MLKAgent, Experience> step(){
 		Map<MLKAgent,Observation> observations = getObservation();
 		Map<MLKAgent, Action> actions = new HashMap<>();
 		actions = agents.allAgentsTakeAction(observations);
 		Map<MLKAgent, Pair<Action, Reward>> result = dynamics(actions);
-		Map<MLKAgent, Experience> experiences = combine_obs_act_reward(result, observations);
+		Map<MLKAgent, Experience> experiences = combineObsActReward(result, observations);
 		sendFeedbackExperience(experiences);
 		return experiences;
 		
@@ -68,7 +58,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	}
 	
 
-	protected Map<MLKAgent, Experience> combine_obs_act_reward(Map<MLKAgent, Pair<Action, Reward>> actionRewardMap,
+	protected Map<MLKAgent, Experience> combineObsActReward(Map<MLKAgent, Pair<Action, Reward>> actionRewardMap,
 	        Map<MLKAgent, Observation> observationMap) {
 	    Map<MLKAgent, Experience> combinedMap = new HashMap<>();
 	

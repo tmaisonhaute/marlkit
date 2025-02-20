@@ -11,7 +11,6 @@ import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 import simulation.MLKSchedulerStandard;
-import util.Pair;
 
 @EngineAgents(scheduler = MLKSchedulerStandard.class, environment = EnvPushTheBlock.class, model = MLKModel.class, viewers = {
 		ViewerPTB.class })
@@ -19,15 +18,14 @@ public class LauncherPTB extends MLKLauncher {
 
 	@Override
 	protected void onLaunchSimulatedAgents() {
-		Action goLeft = new Action2DMove(new Pair<>(0, -1));
-		Action goRight = new Action2DMove(new Pair<>(0, 1));
-		Action goUp = new Action2DMove(new Pair<>(-1, 0));
-		Action goDown = new Action2DMove(new Pair<>(1, 0));
+		Action goLeft = Action2DMove.left(); 
+		Action goRight = Action2DMove.right();
+		Action goUp = Action2DMove.up(); 
+		Action goDown = Action2DMove.down();
 		List<Action> possibleActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
 		int nbAgents = 1;
 		for (int i = 0; i < nbAgents; i++) {
-//			PolicyRandom policy = new PolicyRandom(possibleActions);
-			PolicyMonteCarlo policy = new PolicyMonteCarlo(possibleActions);
+			PolicyMonteCarlo policy = new PolicyMonteCarlo(possibleActions, 1.0, 0.001);
 			AgentStandard ag = new AgentStandard(policy);
 			launchAgent(ag);
 		}
@@ -40,7 +38,7 @@ public class LauncherPTB extends MLKLauncher {
 	public static void main(String[] args) {
 		executeThisAgent("--agentLogLevel", "INFO"
 //				,"--noLog"
-//				, "--start"
+				, "--start"
 //				,"--viewers",MyViewer.class.getName()
 		);
 	}

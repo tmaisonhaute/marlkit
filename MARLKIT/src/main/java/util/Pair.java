@@ -1,5 +1,7 @@
 package util;
 
+import java.util.Objects;
+
 public class Pair<T, U > {
 	private T first;
 	private U second;
@@ -25,15 +27,28 @@ public class Pair<T, U > {
 		return new Pair<T, U>(first, second);
 	}
 	
+	
+	
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
+	public String toString() {
+		return "Pair [first=" + first + ", second=" + second + "]";
+	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(first, second);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		if (o instanceof Pair other) {
+		if (obj instanceof Pair other) {
 			return first.equals(other.first) && second.equals(other.second);
 		}
 		return false;
 	}
+	
+	
+	
 	
 
 	
