@@ -54,7 +54,7 @@ public class Batch {
 	 * @return the list of experiences
 	 */
 	public List<Experience> getExperiences() {
-		return new ArrayList<>(experiences);
+		return experiences;
 	}
     
 	/**

@@ -11,7 +11,8 @@ import madkit.simulation.scheduler.TickBasedScheduler;
 
 public class MLKSchedulerStandard extends TickBasedScheduler {
 	private Activator agentSendInfo;
-	private Activator agentLearn;
+	private Activator agentUpdatePolicy;
+	private Activator agentEndEpisode;
 
 	private Activator step;
 
@@ -23,11 +24,14 @@ public class MLKSchedulerStandard extends TickBasedScheduler {
 	protected void onActivation() {
 		getLogger().setLevel(Level.INFO);
 		super.onActivation();
-
-		agentSendInfo = new MethodActivator(getModelGroup(), "mlkagent", "sendInfo");
+		final String roleAgent = "mlkagent";
+		agentSendInfo = new MethodActivator(getModelGroup(), roleAgent, "sendInfo");
 		addActivator(agentSendInfo);
-		agentLearn = new MethodActivator(getModelGroup(), "mlkagent", "learnOnBatch");
-		addActivator(agentLearn);
+		agentEndEpisode = new MethodActivator(getModelGroup(), roleAgent, "endEpisode");
+		addActivator(agentEndEpisode);
+		agentUpdatePolicy = new MethodActivator(getModelGroup(), roleAgent, "updatePolicy");
+		addActivator(agentUpdatePolicy);
+		
 		
 		step = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
 		addActivator(step);
@@ -43,13 +47,14 @@ public class MLKSchedulerStandard extends TickBasedScheduler {
 	public void doSimulationStep() {
 		super.doSimulationStep();
 		step.execute();
+		agentUpdatePolicy.execute(counter);
 		if (counter % 100 == 0) {
-			agentLearn.execute();
+			agentEndEpisode.execute();
 		}
-		if (counter % 10000 == 0 && counter >= 1000000) {
+		if (counter % 100000 == 0 && counter >= 1000000) {
 			setPause(50);
 		}
-		else if(counter %10000 == 100) {
+		else if(counter %100000 == 100) {
 			setPause(0);
 		}
 		counter++;

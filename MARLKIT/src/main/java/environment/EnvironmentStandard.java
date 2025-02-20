@@ -35,8 +35,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 
 	public Map<MLKAgent, Experience> step(){
 		Map<MLKAgent,Observation> observations = getObservation();
-		Map<MLKAgent, Action> actions = new HashMap<>();
-		actions = agents.allAgentsTakeAction(observations);
+		Map<MLKAgent, Action> actions = agents.allAgentsTakeAction(observations);
 		Map<MLKAgent, Pair<Action, Reward>> result = dynamics(actions);
 		Map<MLKAgent, Experience> experiences = combineObsActReward(result, observations);
 		sendFeedbackExperience(experiences);

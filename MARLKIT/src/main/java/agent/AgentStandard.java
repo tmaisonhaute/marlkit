@@ -77,13 +77,22 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	public void feedbackExperience(Experience experience) {
 		pastExperiences.addExperience(experience);
 	}
+	
+	@Override
+	public void updatePolicy(int timestep) {
+		if (policy.getLearningFrequency() > 0 && timestep % policy.getLearningFrequency() == 0) {
+			learnOnBatch();
+		}
+	}
 
 	@Override
 	public void learnOnBatch() {
-		getLogger().info("Learning on batch");
 		policy.learnOnBatch(pastExperiences, getLogger());
-		pastExperiences.clear();
-		
+	}
+	
+	@Override
+	public void endEpisode() {
+		policy.endEpisode(pastExperiences, getLogger());
 	}
 	
 }

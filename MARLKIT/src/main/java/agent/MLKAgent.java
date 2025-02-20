@@ -13,11 +13,14 @@ public interface MLKAgent {
 	
 	public void setPolicy(Policy policy);
 	
-	public void learnOnBatch();
-
 	public abstract void feedbackExperience(Observation obs, Action act, Reward rew);
 	public abstract void feedbackExperience(Experience experience);
-
+	
 	public Action takeAction(Observation obs);
+	
+	public void updatePolicy(int timestep);
+	public void learnOnBatch();
+	public void endEpisode();
+
 	
 }

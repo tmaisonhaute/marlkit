@@ -25,7 +25,16 @@ public class PolicyRandom implements Policy {
 	@Override
 	public void learnOnBatch(Batch batch, AgentLogger logger) {
 		//No learning
-		return;
+	}
+
+	@Override
+	public void endEpisode(Batch batch, AgentLogger logger) {
+		// No learning
+	}
+
+	@Override
+	public int getLearningFrequency() {
+		return 0;
 	}
 
 }

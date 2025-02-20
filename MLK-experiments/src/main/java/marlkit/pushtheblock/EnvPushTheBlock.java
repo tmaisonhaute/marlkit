@@ -17,11 +17,9 @@ import util.Pair;
 public class EnvPushTheBlock extends EnvironmentStandard {
 
 	protected State2DGridInt state;
-	private static int width = 12;
-	private static int height = 12;
 	
 	public EnvPushTheBlock() {
-		super(width, height);
+		super(12, 12);
 	}
 	
 

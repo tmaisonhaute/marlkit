@@ -11,6 +11,13 @@ import madkit.kernel.AgentLogger;
  * Represents a policy that an agent follows to take actions based on observations.
  */
 public interface Policy {
+	
+	/** 
+	 * Returns the frequency of learning.
+	 * 0 means no call for learnOnBatch
+	 */
+	public abstract int getLearningFrequency();
+	
 	/**
      * Takes an action based on a single observation.
      * 
@@ -26,7 +33,7 @@ public interface Policy {
      * @return the list of actions taken
      */
 	public default List<Action> takeActionsList(List<Observation> observations){
-		List<Action> actions = new ArrayList<Action>();
+		List<Action> actions = new ArrayList<>();
 		for(Observation o : observations) {
 			actions.add(takeAction(o));
 		}
@@ -39,6 +46,14 @@ public interface Policy {
      * @param batch the batch of data to learn from
      */
 	public abstract void learnOnBatch(Batch batch, AgentLogger logger);
+	
+	/**
+     * Ends an episode.
+     * 
+     * @param batch the batch of data to learn from
+     * @param logger the logger of the agent
+     */
+	public abstract void endEpisode(Batch batch, AgentLogger logger);
 }
 
 
