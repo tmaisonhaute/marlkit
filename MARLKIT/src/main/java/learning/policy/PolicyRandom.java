@@ -6,6 +6,7 @@ import java.util.Random;
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
+import madkit.kernel.AgentLogger;
 
 public class PolicyRandom implements Policy {
 	private List<Action> actionsSet;
@@ -22,7 +23,7 @@ public class PolicyRandom implements Policy {
 
 
 	@Override
-	public void learnOnBatch(Batch batch) {
+	public void learnOnBatch(Batch batch, AgentLogger logger) {
 		//No learning
 		return;
 	}

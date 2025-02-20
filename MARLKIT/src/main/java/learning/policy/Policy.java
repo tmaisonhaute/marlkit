@@ -4,7 +4,8 @@ import java.util.List;
 
 import agent.action.Action;
 import environment.observation.Observation;
-import learning.*;
+import learning.Batch;
+import madkit.kernel.AgentLogger;
 
 /**
  * Represents a policy that an agent follows to take actions based on observations.
@@ -37,7 +38,7 @@ public interface Policy {
      * 
      * @param batch the batch of data to learn from
      */
-	public abstract void learnOnBatch(Batch batch);
+	public abstract void learnOnBatch(Batch batch, AgentLogger logger);
 }
 
 

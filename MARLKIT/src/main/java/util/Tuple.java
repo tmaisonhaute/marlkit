@@ -2,23 +2,20 @@ package util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.ListIterator;
 
 public class Tuple {
 	private List<Double> values;
-	private int size;
 
 	public Tuple(List<Double> values) {
 		this.values = values;
-		size = values.size();
 	}
 	
 	public Double getValue(int index) {
-		Double val = values.get(index);
-		return val;
+		return values.get(index);
 	}
 	public int getSize() {
-		return size;
+		return values.size();
 	}
 	
 	public void setValue(int index, Double value) {
@@ -26,18 +23,20 @@ public class Tuple {
 	}
 	
 	public Tuple add(Tuple t){
-		if (t.getSize() != this.size) {
+		if (t.getSize() != this.getSize()) {
 			throw new IllegalArgumentException("Tuple of differents size can't be added");
 		}
-		List<Double> newL = new ArrayList<Double>();
-		for(int i = 0; i < this.getSize(); i ++) {
+		List<Double> newL = new ArrayList<>();
+		for (ListIterator<Double> iterator = newL.listIterator(); iterator.hasNext();) {
+			int i = iterator.nextIndex();
 			Double v = this.getValue(i) + t.getValue(i);
-			newL.set(i, v);
+			newL.add(v);
+			
 		}
 		return new Tuple(newL);
 	}
 	public Tuple multiply(double m){
-		List<Double> newL = new ArrayList<Double>();
+		List<Double> newL = new ArrayList<>();
 		for(int i = 0; i < this.getSize(); i ++) {
 			Double v = this.getValue(i) * m;
 			newL.set(i, v);
@@ -45,7 +44,7 @@ public class Tuple {
 		return new Tuple(newL);
 	}
 	public Tuple clone() {
-		List<Double> newL = new ArrayList<Double>();
+		List<Double> newL = new ArrayList<>();
 		for (int i = 0; i < this.getSize(); i++) {
 			newL.set(i, this.getValue(i));
 		}
@@ -53,16 +52,22 @@ public class Tuple {
 	}
 	
 	@Override
+    public String toString() {
+    	return "" + String.join(", ", values.toString());
+    }
+	
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Tuple tuple = (Tuple) o;
-        return size == tuple.size && Objects.equals(values, tuple.values);
+        if (o instanceof Tuple other) {
+        	return values.equals(other.values);
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(values, size);
+        return values.hashCode();
     }
 	
 }

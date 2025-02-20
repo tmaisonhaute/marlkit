@@ -6,7 +6,7 @@ import java.util.List;
 import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import learning.policy.PolicyRandom;
+import learning.policy.PolicyMonteCarlo;
 import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
@@ -26,7 +26,8 @@ public class LauncherPTB extends MLKLauncher {
 		List<Action> possibleActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
 		int nbAgents = 1;
 		for (int i = 0; i < nbAgents; i++) {
-			PolicyRandom policy = new PolicyRandom(possibleActions);
+//			PolicyRandom policy = new PolicyRandom(possibleActions);
+			PolicyMonteCarlo policy = new PolicyMonteCarlo(possibleActions);
 			AgentStandard ag = new AgentStandard(policy);
 			launchAgent(ag);
 		}

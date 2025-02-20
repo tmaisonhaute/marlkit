@@ -32,8 +32,7 @@ public class ObservationPositionsValues implements Observation {
 	
 	@Override
 	public Observation add(Observation other) {
-		if (other instanceof ObservationPositionsValues) {
-			ObservationPositionsValues o = (ObservationPositionsValues) other;
+		if (other instanceof ObservationPositionsValues o ) {
 			ObservationPositionsValues newObs = new ObservationPositionsValues();
 			for (ObservationPositionValue e : this.obs) {
 				newObs.add(e);
@@ -47,6 +46,10 @@ public class ObservationPositionsValues implements Observation {
 		}
 	}
 	
+	public void addObservationPosition(ObservationPositionValue o) {
+        obs.add(o);
+    }
+	
 	@Override
 	public String toString() {
 		String s = "";
@@ -55,5 +58,14 @@ public class ObservationPositionsValues implements Observation {
 		}
 		return s;
 	}
+	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o instanceof ObservationPositionsValues opv) {
+        	return getListObs().equals(opv.getListObs());
+        }
+        return false;
+    }
 
 }

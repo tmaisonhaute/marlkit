@@ -4,7 +4,6 @@ import java.util.List;
 import agent.action.Action;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
-import environment.observation.ObservationPositionsValues;
 import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
@@ -28,6 +27,8 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		requestRole(getCommunity(), getModelGroup(), "mlkagent");
 	}
 	
+	// TO DO : On launch, the agent should sendInfo()
+	
 	@Override
 	public void sendInfo() {
 		((MLKEnvironment) getEnvironment()).setupAgent(this);
@@ -40,8 +41,6 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
      * @return the action taken
      */
 	public Action takeAction(Observation obs) {
-		getLogger().info("Observation: " + obs);
-		System.out.println("size : " + ((ObservationPositionsValues)obs).getListObs().size());
 		return policy.takeAction(obs);
 	}
 
@@ -74,7 +73,8 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 
 	@Override
 	public void learnOnBatch() {
-		policy.learnOnBatch(pastExperiences);
+		getLogger().info("Learning on batch");
+		policy.learnOnBatch(pastExperiences, getLogger());
 		pastExperiences.clear();
 		
 	}

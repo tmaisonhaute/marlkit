@@ -9,6 +9,7 @@ import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
 import learning.Experience;
+import madkit.kernel.AgentLogger;
 import util.Pair;
 
 public class PolicyMonteCarlo implements Policy {
@@ -55,7 +56,7 @@ public class PolicyMonteCarlo implements Policy {
     }
 
     @Override
-	public void learnOnBatch(Batch batch) {
+	public void learnOnBatch(Batch batch, AgentLogger logger) {
 	    List<Experience> experiences = batch.getExperiences();
 	
 	    int rewardLen = experiences.size();
@@ -78,8 +79,8 @@ public class PolicyMonteCarlo implements Policy {
 	        Q.put(stateAction, rewardMoyen * nb / (nb + 1) + cumulReward * 1 / (nb + 1));
 	        nbSelected.put(stateAction, nb + 1);
 	    }
-	    
-	    System.out.println("Total rewards: " + totRewards);
+	    logger.info("Total rewards: " + totRewards);
+	    logger.info("size Q: " + Q.size());
 	}
 
 	

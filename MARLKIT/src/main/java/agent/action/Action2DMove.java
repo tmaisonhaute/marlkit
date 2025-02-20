@@ -17,4 +17,14 @@ public class Action2DMove implements Action {
 		this.value = value;
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o instanceof Action2DMove a) {
+			return this.value.equals(a.value);
+		}
+		return false;
+	}
+	
 }

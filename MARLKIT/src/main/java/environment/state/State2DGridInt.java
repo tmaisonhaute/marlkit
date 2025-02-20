@@ -60,7 +60,7 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		Map<MLKAgent, Observation> obsMap = new HashMap<>();
 		
 		for (MLKAgent a : agents) {
-			obsMap.put(a, ObservationAtCells(getNeighbors(a), a));
+			obsMap.put(a, observationAtCells(getNeighbors(a), a));
 		}
 		return obsMap;
 	}
@@ -100,13 +100,14 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		int ax = apos.getFirst();
 		int ay = apos.getSecond();
 		if (neumannNeighbors) {
-			List<Cell> cells = new ArrayList<Cell>();
-			int r = agentViewRange;
-			for (int i = -r; i <= r; r++) {
-				for(int j = -r + Math.abs(i); j <= r - Math.abs(i); j ++) {
+			List<Cell> cells = new ArrayList<>();
+			int wLimit = Math.min(this.agentViewRange, getWidth());
+			for (int i = - wLimit; i <= wLimit; i++) {
+				int hLimit = Math.min(this.agentViewRange - Math.abs(i), getHeight());
+				for(int j = -hLimit ; j <= hLimit; j ++) {
 					int x = i + ax;
 					int y = j + ay;
-					if (x >= 0 && x < width && y >= 0 && y < height) {
+					if (x >= 0 && x < getWidth() && y >= 0 && y < getHeight()) {
 						cells.add(new Cell(x, y, grid[x][y]));	
 					}
 				}
@@ -117,8 +118,8 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		}
 	}
 	
-	protected ObservationPositionsValues ObservationAtCells(List<Cell> cells, MLKAgent agent) {
-	    ObservationPositionsValues obs = new ObservationPositionsValues();
+	protected ObservationPositionsValues observationAtCells(List<Cell> cells, MLKAgent agent) {
+	    ObservationPositionsValues observation = new ObservationPositionsValues();
 	    Pair<Integer, Integer> agentPos = agentsPosition.get(agent);
 	    int agentX = agentPos.getFirst();
 	    int agentY = agentPos.getSecond();
@@ -126,10 +127,10 @@ public class State2DGridInt extends State2DGrid<Integer> {
 	    for (Cell c : cells) {
 	        if (c.val != 0) {
 	        	Tuple relativePosition = new Tuple(Arrays.asList((double) (c.x - agentX), (double) (c.y - agentY)));
-	            obs.add(new ObservationPositionValue(relativePosition, c.val));
+	        	observation.addObservationPosition(new ObservationPositionValue(relativePosition, c.val));
 	        }
 	    }
-	    return obs;
+	    return observation;
 	}
 }
 
