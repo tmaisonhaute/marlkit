@@ -51,7 +51,7 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		if (x >= width || x < 0 || y >= height || y < 0) {
 			throw new ArrayIndexOutOfBoundsException("L'agent ne peut pas être placé en position (" + x + ";" + y + ")");
 		}
-		agentsPosition.put(agent, new Pair<Integer, Integer>(x, y));
+		agentsPosition.put(agent, new Pair<>(x, y));
 	}
 	
 	@Override

@@ -26,9 +26,9 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	@Override
 	protected void onActivation() {
 		requestRole(getCommunity(), getModelGroup(), "mlkagent");
+        sendInfo();
 	}
 	
-	// TO DO : On launch, the agent should sendInfo()
 	
 	@Override
 	public void sendInfo() {

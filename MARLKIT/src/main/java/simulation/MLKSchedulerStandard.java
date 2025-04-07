@@ -10,6 +10,10 @@ import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 
 public class MLKSchedulerStandard extends TickBasedScheduler {
+	public static final int EPISODE_DURATION = 100;
+	public static final int MINIMUM_STEP_BEFORE_VIEW = 1000000;
+	public static final int VIEWER_UPDATE_INTERVAL = 100000;
+	
 	private Activator agentSendInfo;
 	private Activator agentUpdatePolicy;
 	private Activator agentEndEpisode;
@@ -48,13 +52,13 @@ public class MLKSchedulerStandard extends TickBasedScheduler {
 		super.doSimulationStep();
 		step.execute();
 		agentUpdatePolicy.execute(counter);
-		if (counter % 100 == 0) {
+		if (counter % EPISODE_DURATION == 0) {
 			agentEndEpisode.execute();
 		}
-		if (counter % 100000 == 0 && counter >= 1000000) {
+		if (counter % VIEWER_UPDATE_INTERVAL == 0 && counter >= MINIMUM_STEP_BEFORE_VIEW) {
 			setPause(50);
 		}
-		else if(counter %100000 == 100) {
+		else if(counter % VIEWER_UPDATE_INTERVAL == EPISODE_DURATION) {
 			setPause(0);
 		}
 		counter++;

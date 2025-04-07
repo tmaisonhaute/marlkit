@@ -16,7 +16,7 @@ public class PolicyRandom implements Policy {
 	}
 	
 	@Override
-	public Action takeAction(Observation obs) {
+	public Action takeAction(Observation observation) {
 		Random random = new Random();
 		return actionsSet.get(random.nextInt(actionsSet.size()));
 	}

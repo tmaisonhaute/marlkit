@@ -52,7 +52,7 @@ public class PolicyMonteCarlo extends PolicyEpsilon {
     }
     
     @Override
-    public Action takeAction(Observation obs) {
+    public Action takeAction(Observation observation) {
         if (random.nextDouble() < getEpsilon()) {
             return actionsSet.get(random.nextInt(numberOfActions));
         }
@@ -60,7 +60,7 @@ public class PolicyMonteCarlo extends PolicyEpsilon {
         Action selectedAction = null;
         double maxVal = Double.NEGATIVE_INFINITY;
         for (Action act : actionsSet) {
-            Pair<Observation, Action> newStateAction = new Pair<>(obs, act);
+            Pair<Observation, Action> newStateAction = new Pair<>(observation, act);
             if (!q.containsKey(newStateAction)) {
                 return act;
             }

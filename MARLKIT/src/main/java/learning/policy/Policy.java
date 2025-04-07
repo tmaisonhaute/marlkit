@@ -21,10 +21,10 @@ public interface Policy {
 	/**
      * Takes an action based on a single observation.
      * 
-     * @param obs the observation based on which the action is taken
+     * @param observation the observation based on which the action is taken
      * @return the action taken
      */
-	public abstract Action takeAction(Observation obs);
+	public abstract Action takeAction(Observation observation);
 
 	/**
      * Takes a list of actions based on a list of observations.

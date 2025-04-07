@@ -66,31 +66,39 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	}
 	
 
+	@SuppressWarnings("exports")
 	@Override
 	public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {
 		Map<MLKAgent, Pair<Action, Reward>> results = new HashMap<>();
 		for (MLKAgent ag : agents.getAgents()) {
 			Reward reward = new RewardStandard(0);
 			Action2DMove action = (Action2DMove) actions.get(ag);
-			//Pair<Integer, Integer> oldPosition = state.getAgentPosition(ag).clone();
+			
 			state.moveAgent(ag, action.getValue());
 			Pair<Integer, Integer> newPosition = state.getAgentPosition(ag).clone();
+			
 			if (state.getValue(newPosition) == 1){
-				state.setValue(newPosition, 0);
-				Pair<Integer, Integer> newBlockPos = newPosition.clone();
-				newBlockPos.setFirst(newBlockPos.getFirst() + action.getValue().getFirst());
-				newBlockPos.setSecond(newBlockPos.getSecond() + action.getValue().getSecond());
-				if (newBlockPos.getFirst() < 0 || newBlockPos.getFirst() >= getWidth() 
-						|| newBlockPos.getSecond() < 0|| newBlockPos.getSecond() >= getHeight()) {
-					reward.setReward(1);
-					placeBlock();
-				} else {
-					state.setValue(newBlockPos, 1);
-				}
+				pushTheBlock(reward, action, newPosition);
 			}
-			results.put(ag, new Pair<Action, Reward>(action, reward));
+			
+			results.put(ag, new Pair<>(action, reward));
 		}
 		return results;
+	}
+
+
+	protected void pushTheBlock(Reward reward, Action2DMove action, Pair<Integer, Integer> newPosition) {
+		state.setValue(newPosition, 0);
+		Pair<Integer, Integer> newBlockPos = newPosition.clone();
+		newBlockPos.setFirst(newBlockPos.getFirst() + action.getValue().getFirst());
+		newBlockPos.setSecond(newBlockPos.getSecond() + action.getValue().getSecond());
+		if (newBlockPos.getFirst() < 0 || newBlockPos.getFirst() >= getWidth() 
+				|| newBlockPos.getSecond() < 0|| newBlockPos.getSecond() >= getHeight()) {
+			reward.setReward(1);
+			placeBlock();
+		} else {
+			state.setValue(newBlockPos, 1);
+		}
 	}
 
 	public Map<MLKAgent, Pair<Integer, Integer>> getAgentsPositions() {
