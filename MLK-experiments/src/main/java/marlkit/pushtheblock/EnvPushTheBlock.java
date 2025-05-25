@@ -17,11 +17,13 @@ import util.Pair;
 public class EnvPushTheBlock extends EnvironmentStandard {
 
 	protected State2DGridInt state;
+	private static final double REWARDBLOCKPUSHEDOUT = 10;
+	private static final double REWARDBLOCKPUSHED = 0.1;
+	private static final double REWARDMOVE = -0.1;
 	
 	public EnvPushTheBlock() {
-		super(12, 12);
+		super(4, 4);
 	}
-	
 
 	@Override
 	protected void onActivation() {
@@ -39,15 +41,15 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	public void setupAgent(MLKAgent agent) {
 		agents.addAgent(agent);
 		RandomGenerator rg = prng();
-		int i = rg.nextInt(getWidth()-1)+1;
-		int j = rg.nextInt(getHeight()-1)+1;
+		int i = rg.nextInt(getWidth());
+		int j = rg.nextInt(getHeight());
         state.addAgent(agent, i, j);
 	}
 	
 	protected void placeBlock() {
 		RandomGenerator rg = prng();
-		int i = rg.nextInt(getWidth() - 1) + 1;
-		int j = rg.nextInt(getHeight() - 1) + 1;
+		int i = rg.nextInt(getWidth());
+		int j = rg.nextInt(getHeight());
 		state.setValue(i, j, 1);
 	}
 	
@@ -56,12 +58,12 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		state.reset();
 		RandomGenerator rg = prng();
 		for(MLKAgent ag : agents.getAgents()) {
-			int i = rg.nextInt(getWidth()-1)+1;
-			int j = rg.nextInt(getHeight()-1)+1;
+			int i = rg.nextInt(getWidth());
+			int j = rg.nextInt(getHeight());
             state.addAgent(ag, i, j);
 		}
-		int i = rg.nextInt(getWidth()-1)+1;
-		int j = rg.nextInt(getHeight()-1)+1;
+		int i = rg.nextInt(getWidth());
+		int j = rg.nextInt(getHeight());
 		state.setValue(i, j, 1);
 	}
 	
@@ -80,6 +82,9 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 			if (state.getValue(newPosition) == 1){
 				pushTheBlock(reward, action, newPosition);
 			}
+			else {
+				reward.setReward(REWARDMOVE);
+			}
 			
 			results.put(ag, new Pair<>(action, reward));
 		}
@@ -94,10 +99,11 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		newBlockPos.setSecond(newBlockPos.getSecond() + action.getValue().getSecond());
 		if (newBlockPos.getFirst() < 0 || newBlockPos.getFirst() >= getWidth() 
 				|| newBlockPos.getSecond() < 0|| newBlockPos.getSecond() >= getHeight()) {
-			reward.setReward(1);
+			reward.setReward(REWARDBLOCKPUSHEDOUT);
 			placeBlock();
 		} else {
 			state.setValue(newBlockPos, 1);
+			reward.setReward(REWARDBLOCKPUSHED);
 		}
 	}
 

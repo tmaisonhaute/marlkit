@@ -29,10 +29,12 @@ open module marlkit.base {
 	exports marlkit.test;
 	exports environment;
 	exports environment.observation;
+	exports environment.observation.wrapperobservationvector;
 	exports environment.reward;
 	exports environment.state;
 	exports agent;
 	exports agent.action;
+	exports agent.action.wrapperactionvector;
 	exports learning;
 	exports learning.policy;
 	exports util;

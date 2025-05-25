@@ -18,7 +18,5 @@ public interface WrapperActionVector {
      * @return the Action representation of the vector
      */
     Action transform(double[] vector);
-    
-    int getSize();
 	
 }

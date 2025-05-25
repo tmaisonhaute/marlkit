@@ -18,5 +18,4 @@ public interface WrapperObservationVector {
      */
     Observation transform(double[] vector);
     
-    int getSize();
 }

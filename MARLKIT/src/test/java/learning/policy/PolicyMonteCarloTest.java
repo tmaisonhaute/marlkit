@@ -1,10 +1,9 @@
 package learning.policy;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.testng.annotations.Test;
 
 import agent.action.Action;
