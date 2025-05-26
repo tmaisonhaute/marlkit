@@ -2,7 +2,6 @@ package util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 public class Tuple {
 	private List<Double> values;
@@ -27,11 +26,9 @@ public class Tuple {
 			throw new IllegalArgumentException("Tuple of differents size can't be added");
 		}
 		List<Double> newL = new ArrayList<>();
-		for (ListIterator<Double> iterator = newL.listIterator(); iterator.hasNext();) {
-			int i = iterator.nextIndex();
+		for (int i = 0; i < this.getSize(); i++) {
 			Double v = this.getValue(i) + t.getValue(i);
 			newL.add(v);
-			
 		}
 		return new Tuple(newL);
 	}
@@ -39,14 +36,14 @@ public class Tuple {
 		List<Double> newL = new ArrayList<>();
 		for(int i = 0; i < this.getSize(); i ++) {
 			Double v = this.getValue(i) * m;
-			newL.set(i, v);
+			newL.add(v);
 		}
 		return new Tuple(newL);
 	}
 	public Tuple clone() {
 		List<Double> newL = new ArrayList<>();
 		for (int i = 0; i < this.getSize(); i++) {
-			newL.set(i, this.getValue(i));
+			newL.add(this.getValue(i));
 		}
 		return new Tuple(newL);
 	}

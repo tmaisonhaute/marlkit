@@ -7,6 +7,7 @@ import java.util.random.RandomGenerator;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
+import agent.interaction.FictitiousPlay;
 import environment.EnvironmentStandard;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
@@ -22,7 +23,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	private static final double REWARDMOVE = -0.1;
 	
 	public EnvPushTheBlock() {
-		super(4, 4);
+		super(4, 4, new FictitiousPlay());
 	}
 
 	@Override

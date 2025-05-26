@@ -36,10 +36,10 @@ public class ObservationPositionsValues implements Observation {
 		if (other instanceof ObservationPositionsValues o ) {
 			ObservationPositionsValues newObs = new ObservationPositionsValues();
 			for (ObservationPositionValue e : this.obs) {
-				newObs.add(e);
+				newObs.addObservationPosition(e);
 			}
 			for (ObservationPositionValue e : o.obs) {
-				newObs.add(e);
+				newObs.addObservationPosition(e);
 			}
 			return newObs;
 		}else {
