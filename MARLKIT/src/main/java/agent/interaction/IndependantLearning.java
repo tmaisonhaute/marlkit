@@ -16,7 +16,7 @@ public class IndependantLearning implements MLKInteraction {
 	}
 
 	@Override
-	public Map<MLKAgent, Observation> getInterractionInformation(Map<MLKAgent, Observation> observationAgents) {
+	public Map<MLKAgent, Observation> getInteractionInformation(Map<MLKAgent, Observation> observationAgents) {
 		return Collections.emptyMap();
 	}
 
