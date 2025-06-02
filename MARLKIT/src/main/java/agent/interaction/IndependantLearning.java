@@ -11,7 +11,7 @@ import learning.Experience;
 public class IndependantLearning implements MLKInteraction {
 
 	@Override
-	public void getAgentsGroup(AgentsGroup agentsGroup) {
+	public void setAgentsGroup(AgentsGroup agentsGroup) {
 		// No specific group handling for independent learning
 	}
 

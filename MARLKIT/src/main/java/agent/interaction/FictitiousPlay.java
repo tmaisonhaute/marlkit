@@ -32,8 +32,9 @@ public class FictitiousPlay implements MLKInteraction {
     }
     
     @Override
-    public void getAgentsGroup(AgentsGroup agentsGroup) {
+    public void setAgentsGroup(AgentsGroup agentsGroup) {
         // Initialize predictions for each agent
+    	agentsPredictions.clear();
         for (MLKAgent agent : agentsGroup.getAgents()) {
             if (!agentsPredictions.containsKey(agent)) {
                 agentsPredictions.put(agent, new Predictions());
