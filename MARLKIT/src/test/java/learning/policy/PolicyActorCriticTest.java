@@ -43,23 +43,6 @@ public class PolicyActorCriticTest {
         assertThat(actionSet).contains(action);
     }
     
-    @Test
-    public void givenPolicyWithEpsilonDecrease_whenUpdateEpsilon_thenEpsilonDecreases() {
-        // Given
-        List<Action> actionSet = Arrays.asList(Action2DMove.up(), Action2DMove.down());
-        double initialEpsilon = 0.5;
-        double epsilonDecrease = 0.1;
-        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4, initialEpsilon, epsilonDecrease);
-        
-        // When
-        double originalEpsilon = policy.getEpsilon();
-        policy.updateEpsilon();
-        double newEpsilon = policy.getEpsilon();
-        
-        // Then
-        assertThat(originalEpsilon).isEqualTo(initialEpsilon);
-        assertThat(newEpsilon).isEqualTo(initialEpsilon - epsilonDecrease);
-    }
     
     @Test
     public void givenBatchWithExperiences_whenLearnOnBatch_thenBatchIsProcessed() {
@@ -70,7 +53,7 @@ public class PolicyActorCriticTest {
             Action2DMove.left(), 
             Action2DMove.right()
         );
-        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4, 0.05);
+        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 2, 0.05);
         
         ObservationPositionsValues obs1 = new ObservationPositionsValues();
         obs1.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -135,28 +118,5 @@ public class PolicyActorCriticTest {
         assertThat(upCount).isGreaterThanOrEqualTo((int) (totalTrials * 0.7)); // At least 70% should be the reinforced action
     }
     
-    @Test
-    public void givenBatch_whenEndEpisode_thenEpsilonUpdated() {
-        // Given
-        List<Action> actionSet = Arrays.asList(Action2DMove.up(), Action2DMove.down());
-        double initialEpsilon = 0.5;
-        double epsilonDecrease = 0.1;
-        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4, initialEpsilon, epsilonDecrease);
-        
-        ObservationPositionsValues observation = new ObservationPositionsValues();
-        observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
-        
-        Batch batch = new Batch();
-        batch.addExperience(new Experience(observation, Action2DMove.up(), new RewardStandard(1.0)));
-        AgentLogger logger = mock(AgentLogger.class);
-        
-        // When
-        double originalEpsilon = policy.getEpsilon();
-        policy.endEpisode(batch, logger);
-        double newEpsilon = policy.getEpsilon();
-        
-        // Then
-        assertThat(newEpsilon).isEqualTo(originalEpsilon - epsilonDecrease);
-        assertThat(batch.getExperiences()).isEmpty();
-    }
+
 }

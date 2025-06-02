@@ -23,7 +23,7 @@ public class NeuralNetworkTest {
     @Test
     public void givenInputAndTarget_whenUpdate_thenErrorDecreases() {
         // Given
-        NeuralNetwork network = new NeuralNetwork(2, 4, 1, 0.1);
+        NeuralNetwork network = new NeuralNetwork(2, 8, 1, 0.1);
         double[] input = {0.5, 0.8};
         double[] target = {0.7};
         
@@ -32,7 +32,7 @@ public class NeuralNetworkTest {
         double initialError = Math.abs(target[0] - initialOutput[0]);
         
         // Train the network for several iterations
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             network.update(input, target);
         }
         

@@ -64,13 +64,20 @@ public class ActorNetwork {
     public void update(Observation observation, Action action, double tdError) {
         double[] observationVector = observationWrapper.transform(observation);
         
-        // Create target output with advantage (TD error) for the selected action
+        // Forward pass to get current action preferences
+        double[] currentOutput = network.forward(observationVector);
+        
+        // Create target output based on current output
         double[] targetOutput = new double[actionSet.size()];
+        System.arraycopy(currentOutput, 0, targetOutput, 0, currentOutput.length);
+        
         int actionIndex = actionSet.indexOf(action);
         
-        // Policy gradient update: increase probability of actions that led to higher rewards
-        targetOutput[actionIndex] = tdError;
+        // Add the TD error to the selected action's preference
+        // This increases its probability when TD error is positive
+        targetOutput[actionIndex] += tdError;
         
+        // Update the network toward these new target values
         network.update(observationVector, targetOutput);
     }
     

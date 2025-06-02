@@ -78,7 +78,7 @@ public class NeuralNetwork {
     
     public double[] forward(double[] input) {
         if (input.length != inputSize) {
-            throw new IllegalArgumentException("Input size must be " + inputSize);
+            throw new IllegalArgumentException("Input size must be " + inputSize + " but got " + input.length);
         }
         
         // Calculate hidden layer activations (using ReLU)
