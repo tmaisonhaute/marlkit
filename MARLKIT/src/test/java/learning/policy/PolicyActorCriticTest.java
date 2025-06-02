@@ -95,7 +95,7 @@ public class PolicyActorCriticTest {
         Action actionToReinforce = Action2DMove.up();
         
         // Train the policy to prefer the 'up' action for this observation
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 500; i++) {
             Batch batch = new Batch();
             batch.addExperience(new Experience(observation, actionToReinforce, new RewardStandard(1.0)));
             batch.addExperience(new Experience(observation, actionToReinforce, new RewardStandard(1.0)));
