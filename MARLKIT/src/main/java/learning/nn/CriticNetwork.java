@@ -1,5 +1,7 @@
 package learning.nn;
 
+import java.util.random.RandomGenerator;
+
 import environment.observation.Observation;
 import environment.observation.wrapperobservationvector.WrapperObservationVector;
 
@@ -10,7 +12,7 @@ public class CriticNetwork {
     private NeuralNetwork network;
     private WrapperObservationVector observationWrapper;
     
-    public CriticNetwork(int inputSize, int hiddenSize, double learningRate, 
+    public CriticNetwork(int inputSize, int hiddenSize, RandomGenerator pnrg, double learningRate, 
                          WrapperObservationVector observationWrapper) {
         this.observationWrapper = observationWrapper;
         
@@ -18,7 +20,8 @@ public class CriticNetwork {
         this.network = new NeuralNetwork(
         	inputSize,
             hiddenSize,
-            1,  // Output size is 1 for the value function
+            1,
+            pnrg,
             learningRate
         );
     }
@@ -26,7 +29,6 @@ public class CriticNetwork {
     public double getValue(Observation observation) {
         double[] observationVector = observationWrapper.transform(observation);
         double[] output = network.forward(observationVector);
-//        System.out.println("CriticNetwork.getValue: " + output[0]);
         return output[0]; // Single output value
     }
     

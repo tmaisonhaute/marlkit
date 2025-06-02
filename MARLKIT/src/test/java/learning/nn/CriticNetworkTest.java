@@ -1,8 +1,10 @@
 package learning.nn;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.security.SecureRandom;
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import org.testng.annotations.Test;
 
 import environment.observation.ObservationPositionValue;
@@ -15,8 +17,10 @@ public class CriticNetworkTest {
     @Test
     public void givenObservation_whenGetValue_thenValueIsReturned() {
         // Given
+    	SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
         WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
-        CriticNetwork critic = new CriticNetwork(4, 10, 0.01, wrapper);
+        CriticNetwork critic = new CriticNetwork(4, 10, secureRandom, 0.01, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -32,8 +36,10 @@ public class CriticNetworkTest {
     @Test
     public void givenObservationAndTarget_whenUpdate_thenErrorIsReturned() {
         // Given
+    	SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
         WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
-        CriticNetwork critic = new CriticNetwork(4, 10, 0.01, wrapper);
+        CriticNetwork critic = new CriticNetwork(4, 10, secureRandom, 0.01, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -51,8 +57,10 @@ public class CriticNetworkTest {
     @Test
     public void givenMultipleUpdates_whenGetValue_thenValueConvergesToTarget() {
         // Given
+    	SecureRandom secureRandom = new SecureRandom();
+    	secureRandom.setSeed(12345);
         WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
-        CriticNetwork critic = new CriticNetwork(4, 10, 0.001, wrapper);
+        CriticNetwork critic = new CriticNetwork(4, 10, secureRandom, 0.001, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -76,8 +84,10 @@ public class CriticNetworkTest {
     @Test
     public void givenLearningRateChange_whenUpdate_thenLearningSpeedChanges() {
         // Given
+    	SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
         WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
-        CriticNetwork critic = new CriticNetwork(4, 10, 0.01, wrapper);
+        CriticNetwork critic = new CriticNetwork(4, 10, secureRandom, 0.01, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));

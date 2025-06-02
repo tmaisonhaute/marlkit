@@ -1,5 +1,7 @@
 package agent;
 
+import java.util.random.RandomGenerator;
+
 import agent.action.Action;
 import environment.observation.Observation;
 import environment.reward.Reward;
@@ -7,7 +9,10 @@ import learning.Experience;
 import learning.policy.Policy;
 
 public interface MLKAgent {
+	
 	public Policy getPolicy();
+	
+	public RandomGenerator pnrg();
 	
 	public void sendInfo();
 	

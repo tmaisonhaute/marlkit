@@ -2,6 +2,7 @@ package learning.nn;
 
 import java.util.List;
 import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import agent.action.Action;
 import agent.action.wrapperactionvector.WrapperActionVector;
@@ -18,7 +19,7 @@ public class ActorNetwork {
     private List<Action> actionSet;
     private Random random;
     
-    public ActorNetwork(int inputSize, int hiddenSize, double learningRate, 
+    public ActorNetwork(int inputSize, int hiddenSize, RandomGenerator pnrg, double learningRate, 
                         WrapperObservationVector observationWrapper,
                         WrapperActionVector actionWrapper,
                         List<Action> actionSet) {
@@ -32,6 +33,7 @@ public class ActorNetwork {
         	inputSize,
             hiddenSize,
             actionSet.size(),
+            pnrg,
             learningRate
         );
     }

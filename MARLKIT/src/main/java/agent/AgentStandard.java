@@ -1,5 +1,6 @@
 package agent;
 import java.util.List;
+import java.util.random.RandomGenerator;
 
 import agent.action.Action;
 import environment.MLKEnvironment;
@@ -19,7 +20,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	public Batch pastExperiences;
 	
 	public AgentStandard(Policy policy) {
-		this.policy = policy;
+		this.setPolicy(policy);
 		pastExperiences = new Batch();
 	}
 	
@@ -63,6 +64,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	@Override
 	public void setPolicy(Policy policy) {
 		this.policy = policy;
+		this.policy.init(this);
 	}
 	
 	public void setEpsilon(double epsilon) {
@@ -93,6 +95,11 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	@Override
 	public void endEpisode() {
 		policy.endEpisode(pastExperiences, getLogger());
+	}
+
+	@Override
+	public RandomGenerator pnrg() {
+		return pnrg();
 	}
 	
 }

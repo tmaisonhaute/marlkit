@@ -2,12 +2,15 @@ package learning.policy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 
 import org.testng.annotations.Test;
 
+import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
 import environment.observation.ObservationPositionValue;
@@ -29,7 +32,14 @@ public class PolicyActorCriticTest {
             Action2DMove.left(), 
             Action2DMove.right()
         );
+        
+        MLKAgent agent = mock(MLKAgent.class);
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        when(agent.pnrg()).thenReturn(secureRandom);
+        
         PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4, 0.05);
+        policy.init(agent);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -53,7 +63,13 @@ public class PolicyActorCriticTest {
             Action2DMove.left(), 
             Action2DMove.right()
         );
+        MLKAgent agent = mock(MLKAgent.class);
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        when(agent.pnrg()).thenReturn(secureRandom);
+
         PolicyActorCritic policy = new PolicyActorCritic(actionSet, 2, 0.05);
+        policy.init(agent);
         
         ObservationPositionsValues obs1 = new ObservationPositionsValues();
         obs1.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -84,7 +100,14 @@ public class PolicyActorCriticTest {
             Action2DMove.left(), 
             Action2DMove.right()
         );
+        MLKAgent agent = mock(MLKAgent.class);
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        when(agent.pnrg()).thenReturn(secureRandom);
+        
         PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4, 0.0); // epsilon = 0 for deterministic behavior
+        policy.init(agent);
+        
         AgentLogger logger = mock(AgentLogger.class);
         
         // Create a simple observation

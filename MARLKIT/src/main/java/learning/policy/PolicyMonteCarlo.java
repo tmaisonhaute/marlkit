@@ -3,8 +3,9 @@ package learning.policy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
+import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
@@ -14,22 +15,22 @@ import util.Pair;
 
 public class PolicyMonteCarlo extends PolicyEpsilon {
 	
+	private MLKAgent agent;
 	private Map<Pair<Observation, Action>, Double> q;
     private Map<Pair<Observation, Action>, Integer> nbSelected;
     private List<Action> actionsSet;
     private int numberOfActions;
     private double gamma;
-    private Random random;
 
     
 	public PolicyMonteCarlo(List<Action> actionsSet, double epsilon, double epsilonDecrease) {
 		super(epsilon, epsilonDecrease);
-		this.q = new HashMap<>();
-		this.nbSelected = new HashMap<>();
 		this.actionsSet = actionsSet;
 		this.numberOfActions = actionsSet.size();
 		this.gamma = 0.95;
-		this.random = new Random();
+		
+		this.q = new HashMap<>();
+		this.nbSelected = new HashMap<>();
 	}
     
     public PolicyMonteCarlo(List<Action> actionsSet, double epsilon) {
@@ -38,6 +39,15 @@ public class PolicyMonteCarlo extends PolicyEpsilon {
 
 	public PolicyMonteCarlo(List<Action> actionsSet) {
 		this(actionsSet, 0.05);
+	}
+	
+
+	@Override
+	public void init(MLKAgent agent) {
+		this.agent = agent;
+		this.q = new HashMap<>();
+		this.nbSelected = new HashMap<>();
+		
 	}
 
 
@@ -53,6 +63,7 @@ public class PolicyMonteCarlo extends PolicyEpsilon {
     
     @Override
     public Action takeAction(Observation observation) {
+    	RandomGenerator random = pnrg();
         if (random.nextDouble() < getEpsilon()) {
             return actionsSet.get(random.nextInt(numberOfActions));
         }
@@ -122,6 +133,12 @@ public class PolicyMonteCarlo extends PolicyEpsilon {
 		logger.info("size of batch : " + batch.getExperiences().size());
 	    logger.info("size Q: " + q.size());
 	    logger.info("Epsilon : " + getEpsilon());
+	}
+
+
+	@Override
+	public MLKAgent getAgent() {
+		return agent;
 	}
 
 

@@ -4,8 +4,9 @@ package learning.policy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
+import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
@@ -15,23 +16,23 @@ import util.Pair;
 
 public class PolicySarsa extends PolicyEpsilon {
 
+	private MLKAgent agent;
     private Map<Pair<Observation, Action>, Double> q;
     private List<Action> actionsSet;
     private int numberOfActions;
     private double gamma;
     private double alpha;
-    private Random random;
     private double totalRewards;
 
     public PolicySarsa(List<Action> actionsSet, double epsilon, double epsilonDecrease) {
         super(epsilon, epsilonDecrease);
-        this.q = new HashMap<>();
         this.actionsSet = actionsSet;
         this.numberOfActions = actionsSet.size();
         this.gamma = 0.95;
         this.alpha = 0.1;
-        this.random = new Random();
         this.totalRewards = 0.0;
+
+        this.q = new HashMap<>();
     }
 
     public PolicySarsa(List<Action> actionsSet, double epsilon) {
@@ -41,6 +42,13 @@ public class PolicySarsa extends PolicyEpsilon {
     public PolicySarsa(List<Action> actionsSet) {
         this(actionsSet, 0.05);
     }
+    
+
+	@Override
+	public void init(MLKAgent agent) {
+		this.agent = agent;
+        this.q = new HashMap<>();
+	}
 
     @Override
 	public int getLearningFrequency() {
@@ -53,6 +61,7 @@ public class PolicySarsa extends PolicyEpsilon {
 
     @Override
     public Action takeAction(Observation observation) {
+    	RandomGenerator random = pnrg();
         if (random.nextDouble() < getEpsilon()) {
             return actionsSet.get(random.nextInt(numberOfActions));
         }
@@ -126,6 +135,12 @@ public class PolicySarsa extends PolicyEpsilon {
 	    logger.info("size Q: " + q.size());
 	    logger.info("Epsilon : " + getEpsilon());
 	    totalRewards = 0.0;
+	}
+
+
+	@Override
+	public MLKAgent getAgent() {
+		return agent;
 	}
     
 }

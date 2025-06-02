@@ -3,6 +3,7 @@ package learning.nn;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,10 @@ public class ActorNetworkTest {
             Action2DMove.right()
         );
         
-        ActorNetwork actor = new ActorNetwork(4, 10, 0.01, observationWrapper, actionWrapper, actionSet);
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        
+        ActorNetwork actor = new ActorNetwork(4, 10, secureRandom, 0.01, observationWrapper, actionWrapper, actionSet);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -58,7 +62,10 @@ public class ActorNetworkTest {
             Action2DMove.right()
         );
         
-        ActorNetwork actor = new ActorNetwork(4, 10, 0.01, observationWrapper, actionWrapper, actionSet);
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        
+        ActorNetwork actor = new ActorNetwork(4, 10, secureRandom, 0.01, observationWrapper, actionWrapper, actionSet);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -93,7 +100,10 @@ public class ActorNetworkTest {
             Action2DMove.right()
         );
         
-        ActorNetwork actor = new ActorNetwork(4, 10, 0.1, observationWrapper, actionWrapper, actionSet);
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        
+        ActorNetwork actor = new ActorNetwork(4, 10, secureRandom, 0.1, observationWrapper, actionWrapper, actionSet);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -142,7 +152,10 @@ public class ActorNetworkTest {
             Action2DMove.right()
         );
         
-        ActorNetwork actor = new ActorNetwork(4, 10, 0.01, observationWrapper, actionWrapper, actionSet);
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        
+        ActorNetwork actor = new ActorNetwork(4, 10, secureRandom, 0.01, observationWrapper, actionWrapper, actionSet);
         actor.setLearningRate(0.01);  // Starting with a low learning rate
         
         ObservationPositionsValues observation = new ObservationPositionsValues();

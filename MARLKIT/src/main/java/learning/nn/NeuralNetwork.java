@@ -1,6 +1,6 @@
 package learning.nn;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 /**
  * Simple feedforward neural network with one hidden layer.
@@ -17,19 +17,19 @@ public class NeuralNetwork {
     
     private double learningRate;
     private boolean useBiases;
-    private Random random;
+    private RandomGenerator pnrg;
     
-	public NeuralNetwork(int inputSize, int hiddenSize, int outputSize, double learningRate) {
-		this(inputSize, hiddenSize, outputSize, learningRate, false);
+	public NeuralNetwork(int inputSize, int hiddenSize, int outputSize, RandomGenerator pnrg, double learningRate) {
+		this(inputSize, hiddenSize, outputSize, pnrg, learningRate, false);
 	}
     
-    public NeuralNetwork(int inputSize, int hiddenSize, int outputSize, double learningRate, boolean useBiases) {
+    public NeuralNetwork(int inputSize, int hiddenSize, int outputSize, RandomGenerator pnrg, double learningRate, boolean useBiases) {
         this.inputSize = inputSize;
         this.hiddenSize = hiddenSize;
         this.outputSize = outputSize;
         this.learningRate = learningRate;
         this.useBiases = useBiases;
-        this.random = new Random();
+        this.pnrg = pnrg;
         
         // Initialize weights with small random values
         weightsInputToHidden = new double[inputSize][hiddenSize];
@@ -55,22 +55,22 @@ public class NeuralNetwork {
         
         for (int i = 0; i < inputSize; i++) {
             for (int j = 0; j < hiddenSize; j++) {
-                weightsInputToHidden[i][j] = (random.nextDouble() * 2 - 1) * xavierInputToHidden;
+                weightsInputToHidden[i][j] = (pnrg.nextDouble() * 2 - 1) * xavierInputToHidden;
             }
         }
         
         for (int i = 0; i < hiddenSize; i++) {
             for (int j = 0; j < outputSize; j++) {
-                weightsHiddenToOutput[i][j] = (random.nextDouble() * 2 - 1) * xavierHiddenToOutput;
+                weightsHiddenToOutput[i][j] = (pnrg.nextDouble() * 2 - 1) * xavierHiddenToOutput;
             }
         }
         
 		if (useBiases) {
 			for (int i = 0; i < hiddenSize; i++) {
-                biasesHidden[i] = (random.nextDouble() * 2 - 1) * xavierInputToHidden;
+                biasesHidden[i] = (pnrg.nextDouble() * 2 - 1) * xavierInputToHidden;
 			}
 			for (int i = 0; i < outputSize; i++) {
-				biasesOutput[i] = (random.nextDouble() * 2 - 1) * xavierHiddenToOutput;
+				biasesOutput[i] = (pnrg.nextDouble() * 2 - 1) * xavierHiddenToOutput;
 			}	
 		}
         

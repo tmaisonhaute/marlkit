@@ -1,8 +1,8 @@
 package learning.policy;
 
 import java.util.List;
-import java.util.Random;
 
+import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.wrapperactionvector.WrapperAction2DMoveVector;
 import agent.action.wrapperactionvector.WrapperActionVector;
@@ -16,20 +16,23 @@ import learning.nn.CriticNetwork;
 import madkit.kernel.AgentLogger;
 
 public class PolicyActorCritic extends PolicyEpsilon {
+	private MLKAgent agent;
 
-    // Neural network based actor and critic
     private CriticNetwork critic;
     private ActorNetwork actor;
     
-    // Hyperparameters
+    
     private List<Action> actionsSet;
-    private double gamma;       // Discount factor
-    private Random random;
+    private double gamma;
     private double totalRewards;
     
     // Wrappers for converting observations and actions to vectors
     private WrapperObservationVector observationWrapper;
     private WrapperActionVector actionWrapper;
+
+	private int inputSize;
+
+	private int hiddenSize;
     
     /**
      * Constructor with wrappers for neural network based actor-critic.
@@ -43,14 +46,11 @@ public class PolicyActorCritic extends PolicyEpsilon {
         this.observationWrapper = new WrapperObservationVectorPositionsValues(false);
         this.actionWrapper = new WrapperAction2DMoveVector();
         this.gamma = 0.95;
-        this.random = new Random();
         this.totalRewards = 0.0;
         
-        // Initialize neural networks with default hidden size
-        int hiddenSize = 64; // Can be adjusted based on the problem complexity
-        this.critic = new CriticNetwork(inputSize, hiddenSize, 0.001, this.observationWrapper);
-        this.actor = new ActorNetwork(inputSize, hiddenSize, 0.001, observationWrapper, actionWrapper, actionsSet);
-    }
+        this.inputSize = inputSize;
+        this.hiddenSize = 64;
+        }
 
     public PolicyActorCritic(List<Action> actionsSet, int inputSize,
                            double epsilon) {
@@ -60,6 +60,17 @@ public class PolicyActorCritic extends PolicyEpsilon {
     public PolicyActorCritic(List<Action> actionsSet, int inputSize) {
         this(actionsSet, inputSize, 0.05);
     }
+    
+    @Override
+    public void init(MLKAgent agent) {
+    	this.agent = agent;
+    	
+    	this.critic = new CriticNetwork(inputSize, hiddenSize, pnrg(), 0.001, observationWrapper);
+        this.actor = new ActorNetwork(inputSize, hiddenSize, pnrg(), 0.001, observationWrapper, actionWrapper, actionsSet);
+    
+    }
+    
+    
 
     @Override
     public int getLearningFrequency() {
@@ -148,4 +159,11 @@ public class PolicyActorCritic extends PolicyEpsilon {
     public ActorNetwork getActor() {
         return actor;
     }
+    
+   
+    @Override
+    public MLKAgent getAgent() {
+    	return agent;
+    }
+
 }

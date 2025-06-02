@@ -1,7 +1,9 @@
 package learning.policy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.random.RandomGenerator;
 
+import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
@@ -11,6 +13,12 @@ import madkit.kernel.AgentLogger;
  * Represents a policy that an agent follows to take actions based on observations.
  */
 public interface Policy {
+	
+	public abstract void init(MLKAgent agent);
+	public abstract MLKAgent getAgent();
+	public default RandomGenerator pnrg() {
+		return getAgent().pnrg();
+	}
 	
 	/** 
 	 * Returns the frequency of learning.

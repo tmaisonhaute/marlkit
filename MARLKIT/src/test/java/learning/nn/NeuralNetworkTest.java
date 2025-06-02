@@ -2,6 +2,8 @@ package learning.nn;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.security.SecureRandom;
+
 import org.testng.annotations.Test;
 
 public class NeuralNetworkTest {
@@ -9,7 +11,9 @@ public class NeuralNetworkTest {
     @Test
     public void givenSimpleInput_whenForward_thenOutputIsComputed() {
         // Given
-        NeuralNetwork network = new NeuralNetwork(2, 4, 1, 0.1);
+    	SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        NeuralNetwork network = new NeuralNetwork(2, 4, 1, secureRandom, 0.1);
         double[] input = {0.5, 0.8};
         
         // When
@@ -23,7 +27,9 @@ public class NeuralNetworkTest {
     @Test
     public void givenInputAndTarget_whenUpdate_thenErrorDecreases() {
         // Given
-        NeuralNetwork network = new NeuralNetwork(2, 8, 1, 0.1);
+    	SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        NeuralNetwork network = new NeuralNetwork(2, 8, 1, secureRandom, 0.1);
         double[] input = {0.5, 0.8};
         double[] target = {0.7};
         
@@ -46,7 +52,9 @@ public class NeuralNetworkTest {
     @Test
     public void givenMultipleExamples_whenTrained_thenNetworkLearnsMapping() {
         // Given
-        NeuralNetwork network = new NeuralNetwork(2, 8, 1, 0.1);
+    	SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        NeuralNetwork network = new NeuralNetwork(2, 8, 1, secureRandom, 0.1);
         double[][] inputs = {
             {0.0, 0.0},
             {0.0, 1.0},
@@ -78,7 +86,9 @@ public class NeuralNetworkTest {
     @Test
     public void givenValue_whenReluApplied_thenCorrectOutputReturned() {
         // Given
-        NeuralNetwork network = new NeuralNetwork(1, 1, 1, 0.1);
+    	SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        NeuralNetwork network = new NeuralNetwork(1, 1, 1, secureRandom, 0.1);
         
         // Define a method to access the private relu method
         java.lang.reflect.Method reluMethod;
@@ -99,7 +109,9 @@ public class NeuralNetworkTest {
     @Test
     public void givenValue_whenReluDerivativeApplied_thenCorrectOutputReturned() {
         // Given
-        NeuralNetwork network = new NeuralNetwork(1, 1, 1, 0.1);
+    	SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        NeuralNetwork network = new NeuralNetwork(1, 1, 1, secureRandom, 0.1);
         
         // Define a method to access the private reluDerivative method
         java.lang.reflect.Method reluDerivativeMethod;
@@ -120,7 +132,9 @@ public class NeuralNetworkTest {
     @Test
     public void givenNetwork_whenLearningRateChanged_thenLearningRateIsUpdated() {
         // Given
-        NeuralNetwork network = new NeuralNetwork(2, 4, 1, 0.1);
+    	SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(12345);
+        NeuralNetwork network = new NeuralNetwork(2, 4, 1, secureRandom, 0.1);
         
         // When
         network.setLearningRate(0.05);
