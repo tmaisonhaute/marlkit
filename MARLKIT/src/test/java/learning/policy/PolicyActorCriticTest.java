@@ -72,7 +72,7 @@ public class PolicyActorCriticTest {
         
         // Then
         assertThat(initialExperiences).isEqualTo(2);
-        assertThat(finalExperiences).isEqualTo(0);
+        assertThat(finalExperiences).isEqualTo(1);
     }
     
     @Test

@@ -100,7 +100,7 @@ public class PolicyActorCritic extends PolicyEpsilon {
 
     @Override
     public void learnOnBatch(Batch batch, AgentLogger logger) {
-        while (batch.getExperiences().size() >= 1) {
+        while (batch.getExperiences().size() > 1) {
             totalRewards += learnOneStep(batch);
         }
     }
