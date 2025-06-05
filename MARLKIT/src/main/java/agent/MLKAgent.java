@@ -12,7 +12,7 @@ public interface MLKAgent {
 	
 	public Policy getPolicy();
 	
-	public RandomGenerator pnrg();
+	public RandomGenerator prng();
 	
 	public void sendInfo();
 	

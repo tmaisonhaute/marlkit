@@ -10,9 +10,9 @@ import learning.policy.PolicyMonteCarlo;
 import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
-import simulation.MLKSchedulerStandard;
 
-@EngineAgents(scheduler = MLKSchedulerStandard.class, environment = EnvPushTheBlock.class, model = MLKModel.class, viewers = {
+
+@EngineAgents(scheduler = SchedulerPTB.class, environment = EnvPushTheBlock.class, model = MLKModel.class, viewers = {
 		ViewerPTB.class })
 public class LauncherPTB extends MLKLauncher {
 
@@ -31,8 +31,6 @@ public class LauncherPTB extends MLKLauncher {
 			AgentStandard ag = new AgentStandard(policy);
 			launchAgent(ag);
 		}
-
-
 	}
 
 	public static void main(String[] args) {
@@ -44,3 +42,6 @@ public class LauncherPTB extends MLKLauncher {
 	}
 
 }
+
+
+

@@ -39,5 +39,6 @@ open module marlkit.base {
 	exports learning;
 	exports learning.policy;
 	exports util;
+	exports util.criteria;
 	exports simulation;
 }

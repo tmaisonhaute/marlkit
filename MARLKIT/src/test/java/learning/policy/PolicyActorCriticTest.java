@@ -36,7 +36,7 @@ public class PolicyActorCriticTest {
         MLKAgent agent = mock(MLKAgent.class);
         SecureRandom secureRandom = new SecureRandom();
         secureRandom.setSeed(12345);
-        when(agent.pnrg()).thenReturn(secureRandom);
+        when(agent.prng()).thenReturn(secureRandom);
         
         PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4, 0.05);
         policy.init(agent);
@@ -66,7 +66,7 @@ public class PolicyActorCriticTest {
         MLKAgent agent = mock(MLKAgent.class);
         SecureRandom secureRandom = new SecureRandom();
         secureRandom.setSeed(12345);
-        when(agent.pnrg()).thenReturn(secureRandom);
+        when(agent.prng()).thenReturn(secureRandom);
 
         PolicyActorCritic policy = new PolicyActorCritic(actionSet, 2, 0.05);
         policy.init(agent);
@@ -103,7 +103,7 @@ public class PolicyActorCriticTest {
         MLKAgent agent = mock(MLKAgent.class);
         SecureRandom secureRandom = new SecureRandom();
         secureRandom.setSeed(12345);
-        when(agent.pnrg()).thenReturn(secureRandom);
+        when(agent.prng()).thenReturn(secureRandom);
         
         PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4, 0.0); // epsilon = 0 for deterministic behavior
         policy.init(agent);

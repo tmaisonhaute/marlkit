@@ -17,7 +17,7 @@ public interface Policy {
 	public abstract void init(MLKAgent agent);
 	public abstract MLKAgent getAgent();
 	public default RandomGenerator pnrg() {
-		return getAgent().pnrg();
+		return getAgent().prng();
 	}
 	
 	/** 

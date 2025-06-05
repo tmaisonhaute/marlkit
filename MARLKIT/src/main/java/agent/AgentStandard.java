@@ -1,6 +1,5 @@
 package agent;
 import java.util.List;
-import java.util.random.RandomGenerator;
 
 import agent.action.Action;
 import environment.MLKEnvironment;
@@ -95,11 +94,6 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	@Override
 	public void endEpisode() {
 		policy.endEpisode(pastExperiences, getLogger());
-	}
-
-	@Override
-	public RandomGenerator pnrg() {
-		return pnrg();
 	}
 	
 }
