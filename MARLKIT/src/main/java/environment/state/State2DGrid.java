@@ -11,6 +11,7 @@ public abstract class State2DGrid<T> implements State{
 	protected int height;
 	protected int agentViewRange;
 	protected boolean neumannNeighbors;
+	protected boolean observeAgentsPositions = false;
 	protected Map<MLKAgent, Pair<Integer, Integer>> agentsPosition = new HashMap<>();
 	
 	public abstract void reset();

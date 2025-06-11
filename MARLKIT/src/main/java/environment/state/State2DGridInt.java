@@ -28,14 +28,22 @@ public class State2DGridInt extends State2DGrid<Integer> {
 	 * 
 	 */
 	public State2DGridInt(int nbLines, int nbCols, int agentViewRange, boolean neumannNeighbors) {
+		this(nbLines, nbCols, agentViewRange, neumannNeighbors, false);
+	}
+	public State2DGridInt(int nbLines, int nbCols, int agentViewRange, boolean neumannNeighbors, boolean observeAgentsPositions) {
 		this.grid = new int[nbLines][nbCols];
 		this.width = nbLines;
 		this.height = nbCols;
 		this.agentViewRange = agentViewRange;
 		this.neumannNeighbors = neumannNeighbors;
+		this.observeAgentsPositions = observeAgentsPositions;
 	}
 	public State2DGridInt(int nbLines, int nbCols) {
 		this(nbLines, nbCols, Integer.MAX_VALUE, true);
+	}
+
+	public State2DGridInt(int nbLines, int nbCols, boolean neumannNeighbors, boolean observeAgentsPositions) {
+		this(nbLines, nbCols, Integer.MAX_VALUE, neumannNeighbors, observeAgentsPositions);
 	}
 	
 	@Override
@@ -82,6 +90,13 @@ public class State2DGridInt extends State2DGrid<Integer> {
     public void setValue(Pair<Integer, Integer> position, Integer value) {
 		setValue(position.getFirst(), position.getSecond(), value);
 	}
+	
+	public void addValue(int row, int col, Integer addValue) {
+		setValue(row, col, getValue(row, col) + addValue);
+	}
+	public void addValue(Pair<Integer, Integer> position, Integer addValue) {
+		addValue(position.getFirst(), position.getSecond(), addValue);
+	}
 
 	@Override
 	public void print() {
@@ -118,19 +133,75 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		}
 	}
 	
+	/**
+	 * Identifies agents that are within the view range based on the already calculated visible cells
+	 * 
+	 * @param agent the agent observing
+	 * @param visibleCells the list of cells already determined to be visible
+	 * @return list of agents within those visible cells
+	 */
+	protected List<MLKAgent> getAgentsInViewRange(MLKAgent agent, List<Cell> visibleCells) {
+		List<MLKAgent> agentsInRange = new ArrayList<>();
+		
+		List<Pair<Integer, Integer>> visiblePositions = new ArrayList<>();
+		for (Cell cell : visibleCells) {
+			visiblePositions.add(new Pair<>(cell.x, cell.y));
+		}
+		
+		for (Map.Entry<MLKAgent, Pair<Integer, Integer>> entry : agentsPosition.entrySet()) {
+			MLKAgent otherAgent = entry.getKey();
+			if (otherAgent.equals(agent)) continue; 
+			
+			Pair<Integer, Integer> otherPos = entry.getValue();
+			int x = otherPos.getFirst();
+			int y = otherPos.getSecond();
+			
+			if (visiblePositions.contains(new Pair(x, y)) ) {
+				agentsInRange.add(otherAgent);
+			}
+		}
+		
+		return agentsInRange;
+	}
+	
 	protected ObservationPositionsValues observationAtCells(List<Cell> cells, MLKAgent agent) {
-	    ObservationPositionsValues observation = new ObservationPositionsValues();
-	    Pair<Integer, Integer> agentPos = agentsPosition.get(agent);
-	    int agentX = agentPos.getFirst();
-	    int agentY = agentPos.getSecond();
+		ObservationPositionsValues observation = new ObservationPositionsValues();
+		Pair<Integer, Integer> agentPos = agentsPosition.get(agent);
+		int agentX = agentPos.getFirst();
+		int agentY = agentPos.getSecond();
 
-	    for (Cell c : cells) {
-	        if (c.val != 0) {
-	        	Tuple relativePosition = new Tuple(Arrays.asList((double) (c.x - agentX), (double) (c.y - agentY)));
-	        	observation.addObservationPosition(new ObservationPositionValue(relativePosition, c.val));
-	        }
-	    }
-	    return observation;
+		// Add cell values to observation
+		for (Cell c : cells) {
+			if (c.val != 0) {
+				Tuple relativePosition = new Tuple(Arrays.asList(
+					(double) (c.x - agentX), 
+					(double) (c.y - agentY)
+				));
+				observation.addObservationPosition(new ObservationPositionValue(relativePosition, c.val));
+			}
+		}
+		
+		// If configured to observe agent positions
+		if (observeAgentsPositions) {
+			// Add current agent's absolute position
+			Tuple currentAgentPosition = new Tuple(Arrays.asList((double) agentX, (double) agentY));
+			observation.addObservationPosition(new ObservationPositionValue(currentAgentPosition, -1)); // -1 indicates current agent
+			
+			// Add other agents' relative positions - using our optimized method
+			for (MLKAgent otherAgent : getAgentsInViewRange(agent, cells)) {
+				Pair<Integer, Integer> otherAgentPos = agentsPosition.get(otherAgent);
+				int otherX = otherAgentPos.getFirst();
+				int otherY = otherAgentPos.getSecond();
+				
+				Tuple relativePosition = new Tuple(Arrays.asList(
+					(double) (otherX - agentX), 
+					(double) (otherY - agentY)
+				));
+				observation.addObservationPosition(new ObservationPositionValue(relativePosition, -2)); // -2 indicates another agent
+			}
+		}
+		
+		return observation;
 	}
 }
 

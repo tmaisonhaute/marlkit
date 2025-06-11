@@ -27,3 +27,4 @@ slf4j = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 testng = { module = "org.testng:testng", version.ref = "testng" }
 typetools = { module = "net.jodah:typetools", version.ref = "typetools" }
 
+

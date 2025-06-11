@@ -26,6 +26,7 @@
 open module marlkit.base {
 	requires transitive madkit.base;
 	requires java.logging;
+	
 	exports marlkit.test;
 	exports environment;
 	exports environment.observation;

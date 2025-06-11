@@ -50,7 +50,7 @@ public class ViewerPTB extends Viewer2D {
 
 			for (int i = 0; i < s.getWidth(); i++) {
 				for (int j = 0; j < s.getHeight(); j++) {
-					if (s.getValue(i, j) == 1) {
+					if (s.getValue(i, j) >= 1) {
 						getGraphics().setFill(YELLOW);
 						getGraphics().fillRect(i * CELLSIZE, j * CELLSIZE, CELLSIZE, CELLSIZE);
 					}
