@@ -38,7 +38,7 @@ public class PolicyActorCriticTest {
         secureRandom.setSeed(12345);
         when(agent.prng()).thenReturn(secureRandom);
         
-        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4, 0.05);
+        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4);
         policy.init(agent);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
@@ -68,7 +68,7 @@ public class PolicyActorCriticTest {
         secureRandom.setSeed(12345);
         when(agent.prng()).thenReturn(secureRandom);
 
-        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 2, 0.05);
+        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 2);
         policy.init(agent);
         
         ObservationPositionsValues obs1 = new ObservationPositionsValues();
@@ -105,7 +105,7 @@ public class PolicyActorCriticTest {
         secureRandom.setSeed(12345);
         when(agent.prng()).thenReturn(secureRandom);
         
-        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4, 0.0); // epsilon = 0 for deterministic behavior
+        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4); // epsilon = 0 for deterministic behavior
         policy.init(agent);
         
         AgentLogger logger = mock(AgentLogger.class);

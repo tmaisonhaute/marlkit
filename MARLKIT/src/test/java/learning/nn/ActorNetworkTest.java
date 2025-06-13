@@ -1,7 +1,6 @@
 package learning.nn;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.offset;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -43,50 +42,13 @@ public class ActorNetworkTest {
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(3.0, 4.0)), 1.0));
         
         // When: Select action with epsilon = 0 (always exploit)
-        Action action = actor.selectAction(observation, 0.0);
+        Action action = actor.selectAction(observation);
         
         // Then
         assertThat(action).isNotNull();
         assertThat(actionSet).contains(action);
     }
     
-    @Test
-    public void givenEpsilonOne_whenSelectAction_thenRandomActionsSelected() {
-        // Given
-        WrapperObservationVectorPositionsValues observationWrapper = new WrapperObservationVectorPositionsValues(false);
-        WrapperAction2DMoveVector actionWrapper = new WrapperAction2DMoveVector();
-        List<Action> actionSet = Arrays.asList(
-            Action2DMove.up(), 
-            Action2DMove.down(), 
-            Action2DMove.left(), 
-            Action2DMove.right()
-        );
-        
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.setSeed(12345);
-        
-        ActorNetwork actor = new ActorNetwork(4, 10, secureRandom, 0.01, observationWrapper, actionWrapper, actionSet);
-        
-        ObservationPositionsValues observation = new ObservationPositionsValues();
-        observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
-        observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(3.0, 4.0)), 1.0));
-        
-        // When: Select multiple actions with epsilon = 1.0 (always explore)
-        Map<Action, Integer> actionCounts = new HashMap<>();
-        int numSamples = 1000;
-        
-        for (int i = 0; i < numSamples; i++) {
-            Action action = actor.selectAction(observation, 1.0);
-            actionCounts.put(action, actionCounts.getOrDefault(action, 0) + 1);
-        }
-        
-        // Then: All actions should have been selected approximately equally
-        for (Action action : actionSet) {
-            double frequency = (double) actionCounts.getOrDefault(action, 0) / numSamples;
-            // With 4 actions, each should be selected ~25% of the time
-            assertThat(frequency).isCloseTo(0.25, offset(0.1));
-        }
-    }
     
     @Test
     public void givenObservationActionAndTDError_whenUpdate_thenPolicyLearns() {
@@ -117,7 +79,7 @@ public class ActorNetworkTest {
         int numSamples = 100;
         
         for (int i = 0; i < numSamples; i++) {
-            Action action = actor.selectAction(observation, 0.0);  // Exploitation only
+            Action action = actor.selectAction(observation);  // Exploitation only
             initialCounts.put(action, initialCounts.getOrDefault(action, 0) + 1);
         }
         
@@ -129,7 +91,7 @@ public class ActorNetworkTest {
         // Count action selection frequencies after learning
         Map<Action, Integer> finalCounts = new HashMap<>();
         for (int i = 0; i < numSamples; i++) {
-            Action action = actor.selectAction(observation, 0.0);  // Exploitation only
+            Action action = actor.selectAction(observation);  // Exploitation only
             finalCounts.put(action, finalCounts.getOrDefault(action, 0) + 1);
         }
         
@@ -175,7 +137,7 @@ public class ActorNetworkTest {
         int numSamples = 100;
         
         for (int i = 0; i < numSamples; i++) {
-            Action action = actor.selectAction(observation, 0.0);
+            Action action = actor.selectAction(observation);
             lowLRCounts.put(action, lowLRCounts.getOrDefault(action, 0) + 1);
         }
         
@@ -190,7 +152,7 @@ public class ActorNetworkTest {
         // Count action selection with high learning rate
         Map<Action, Integer> highLRCounts = new HashMap<>();
         for (int i = 0; i < numSamples; i++) {
-            Action action = actor.selectAction(observation, 0.0);
+            Action action = actor.selectAction(observation);
             highLRCounts.put(action, highLRCounts.getOrDefault(action, 0) + 1);
         }
         
