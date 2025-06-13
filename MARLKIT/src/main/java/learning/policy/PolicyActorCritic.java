@@ -15,7 +15,7 @@ import learning.nn.ActorNetwork;
 import learning.nn.CriticNetwork;
 import madkit.kernel.AgentLogger;
 
-public class PolicyActorCritic extends PolicyEpsilon {
+public class PolicyActorCritic implements Policy {
 	private MLKAgent agent;
 
     private CriticNetwork critic;
@@ -37,11 +37,8 @@ public class PolicyActorCritic extends PolicyEpsilon {
     /**
      * Constructor with wrappers for neural network based actor-critic.
      */
-    public PolicyActorCritic(List<Action> actionsSet, 
-                           int inputSize,
-                           double epsilon, 
-                           double epsilonDecrease) {
-        super(epsilon, epsilonDecrease);
+    public PolicyActorCritic(List<Action> actionsSet, int inputSize) {
+        
         this.actionsSet = actionsSet;
         this.observationWrapper = new WrapperObservationVectorPositionsValues(false);
         this.actionWrapper = new WrapperAction2DMoveVector();
@@ -51,15 +48,6 @@ public class PolicyActorCritic extends PolicyEpsilon {
         this.inputSize = inputSize;
         this.hiddenSize = 64;
         }
-
-    public PolicyActorCritic(List<Action> actionsSet, int inputSize,
-                           double epsilon) {
-        this(actionsSet, inputSize, epsilon, 0.0);
-    }
-
-    public PolicyActorCritic(List<Action> actionsSet, int inputSize) {
-        this(actionsSet, inputSize, 0.05);
-    }
     
     @Override
     public void init(MLKAgent agent) {
@@ -67,7 +55,6 @@ public class PolicyActorCritic extends PolicyEpsilon {
     	
     	this.critic = new CriticNetwork(inputSize, hiddenSize, pnrg(), 0.001, observationWrapper);
         this.actor = new ActorNetwork(inputSize, hiddenSize, pnrg(), 0.001, observationWrapper, actionWrapper, actionsSet);
-    
     }
     
     
@@ -79,7 +66,7 @@ public class PolicyActorCritic extends PolicyEpsilon {
 
     @Override
     public Action takeAction(Observation observation) {
-        return actor.selectAction(observation, getEpsilon());
+        return actor.selectAction(observation);
     }
 
     protected double updateCritic(Observation state, double reward, Observation nextState) {
@@ -145,9 +132,7 @@ public class PolicyActorCritic extends PolicyEpsilon {
             totalRewards += lastReward;
         }
         
-        updateEpsilon();
         logger.info("total rewards : " + totalRewards);
-        logger.info("Epsilon : " + getEpsilon());
         totalRewards = 0.0;
     }
     
