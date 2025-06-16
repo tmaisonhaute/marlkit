@@ -54,5 +54,8 @@ public class Action2DMove implements Action {
 	public static Action2DMove right() {
 		return new Action2DMove(new Pair<>(1, 0));
 	}
+	public static Action2DMove idle() {
+		return new Action2DMove(new Pair<>(0, 0));
+	}
 	
 }

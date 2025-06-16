@@ -61,6 +61,14 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		}
 		agentsPosition.put(agent, new Pair<>(x, y));
 	}
+
+	public void addAgentwithVal(MLKAgent agent, int x, int y, int id) {
+		if (x >= width || x < 0 || y >= height || y < 0) {
+			throw new ArrayIndexOutOfBoundsException("L'agent ne peut pas être placé en position (" + x + ";" + y + ")");
+		}
+		agentsPosition.put(agent, new Pair<>(x, y));
+		setValue(x,y,id);
+	}
 	
 	@Override
 	public Map<MLKAgent, Observation> getObservations() {
@@ -96,6 +104,21 @@ public class State2DGridInt extends State2DGrid<Integer> {
 	}
 	public void addValue(Pair<Integer, Integer> position, Integer addValue) {
 		addValue(position.getFirst(), position.getSecond(), addValue);
+	}
+
+	public void moveAgentwithVal(MLKAgent agent, Pair<Integer, Integer> move, Integer id) {
+		Pair<Integer, Integer> position = agentsPosition.get(agent).clone();
+		setValue(position,0);
+
+		int new_i = Math.max(0, Math.min(width - 1, position.getFirst() + move.getFirst()));
+		int new_j = Math.max(0, Math.min(height - 1, position.getSecond() + move.getSecond()));
+		if (grid[new_i][new_j] == 0) {
+			position.setFirst(new_i);
+			position.setSecond(new_j);
+		}
+		agentsPosition.put(agent, position);
+		position = agentsPosition.get(agent).clone();
+		setValue(position, id);
 	}
 
 	@Override
