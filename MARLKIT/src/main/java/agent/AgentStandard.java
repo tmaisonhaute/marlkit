@@ -27,6 +27,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	protected void onActivation() {
 		requestRole(getCommunity(), getModelGroup(), "mlkagent");
         sendInfo();
+		initializePolicy();
 	}
 	
 	
@@ -63,12 +64,11 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	@Override
 	public void setPolicy(Policy policy) {
 		this.policy = policy;
-		this.policy.init(this);
+
 	}
-	
-	public void setEpsilon(double epsilon) {
-		PolicyMonteCarlo pmc = (PolicyMonteCarlo) getPolicy();
-		pmc.setEpsilon(epsilon);
+
+	public void initializePolicy() {
+		this.policy.init(this);
 	}
 	
 	
