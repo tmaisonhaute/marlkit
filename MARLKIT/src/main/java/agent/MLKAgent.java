@@ -17,6 +17,7 @@ public interface MLKAgent {
 	public void sendInfo();
 	
 	public void setPolicy(Policy policy);
+	public void initializePolicy();
 	
 	public abstract void feedbackExperience(Observation obs, Action act, Reward rew);
 	public abstract void feedbackExperience(Experience experience);
