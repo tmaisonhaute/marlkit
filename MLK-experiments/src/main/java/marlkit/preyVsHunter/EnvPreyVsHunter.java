@@ -180,11 +180,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     }
 
     public int distance2D(Pair<Integer, Integer> p1 , Pair<Integer, Integer>p2){
-        int distance = Math.abs((p1.getFirst() - p2.getFirst())) + Math.abs(p1.getSecond() - p2.getSecond()) ;
-        if (distance >= 5){
-            getLogger().log(Level.FINEST,"distance2D: "+distance+ "ag1 :"+p1+", ag2 :"+p2);
-        }
-        return Math.abs((p1.getFirst() - p2.getFirst())) + Math.abs(p1.getSecond() - p2.getSecond()) ;
+        return Math.abs((p1.getFirst() - p2.getFirst())) + Math.abs(p1.getSecond() - p2.getSecond());
     }
     public int distance2D(MLKAgent ag1 , MLKAgent ag2){
         Pair<Integer,Integer> pos1 =state.getAgentPosition(ag1).clone();
