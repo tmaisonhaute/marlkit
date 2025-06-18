@@ -7,7 +7,7 @@ import java.util.random.RandomGenerator;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import agent.interaction.IndependantLearning;
+import agent.interaction.FictitiousPlay;
 import environment.EnvironmentStandard;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
@@ -18,14 +18,15 @@ import util.Pair;
 public class EnvPushTheBlock extends EnvironmentStandard {
 
 	protected State2DGridInt state;
-	private static final double REWARDBLOCKPUSHEDOUT = 10;
-	private static final double REWARDBLOCKPUSHED = 0.1;
-	private static final double REWARDMOVE = -0.1;
-	private static final int NUMBER_OF_BLOCKS = 2;
-	private static final boolean SHARED_REWARDS = false;
+	protected static final double REWARDBLOCKPUSHEDOUT = 10;
+	protected static final double REWARDBLOCKPUSHED = 0.1;
+	protected static final double REWARDMOVE = -0.1;
+	protected static final boolean SHARED_REWARDS = false;
+	protected int numberOfBlocks;
 	
 	public EnvPushTheBlock() {
-		super(5, 5, new IndependantLearning());
+		super(5, 5, new FictitiousPlay());
+		numberOfBlocks = 2;
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	}
 	
 	protected void placeBlocks() {
-		for (int k = 0; k < NUMBER_OF_BLOCKS; k++) {
+		for (int k = 0; k < getNumberOfBlocks(); k++) {
 			placeBlock();
 		}
 	}
@@ -86,15 +87,9 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 			Reward reward = new RewardStandard(0);
 			Action2DMove action = (Action2DMove) actions.get(ag);
 			
-			state.moveAgent(ag, action.getValue());
-			Pair<Integer, Integer> newPosition = state.getAgentPosition(ag).clone();
+			Pair<Integer, Integer> newPosition = stateMoveAgent(ag, action);
 			
-			if (state.getValue(newPosition) >= 1){
-				pushTheBlock(reward, action, newPosition);
-			}
-			else {
-				reward.setReward(REWARDMOVE);
-			}
+			checkIfPushBlock(reward, action, newPosition);
 			
 			if (! SHARED_REWARDS) {
 				results.put(ag, new Pair<>(action, reward));
@@ -110,26 +105,50 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		}
 		return results;
 	}
+	
+	protected Pair<Integer, Integer> stateMoveAgent(MLKAgent agent, Action2DMove action) {
+		state.moveAgent(agent, action.getValue());
+		return state.getAgentPosition(agent).clone();
+	}
+	
+	protected void checkIfPushBlock(Reward reward, Action2DMove action, Pair<Integer, Integer> position) {
+		if (state.getValue(position) >= 1){
+			int nbBlocks = state.getValue(position);
+			Pair<Integer, Integer> newBlockPosition = newBlockPosition(position, action);
+			boolean blockPushedOut = pushTheBlock(position, newBlockPosition, nbBlocks);
+			
+			if (blockPushedOut) {
+				reward.setReward(nbBlocks * REWARDBLOCKPUSHEDOUT);
+			} else {
+				reward.setReward(nbBlocks * REWARDBLOCKPUSHED);
+			}
+		}
+		else {
+			reward.setReward(REWARDMOVE);
+		}
+	}
+	
+	protected Pair<Integer, Integer> newBlockPosition(Pair<Integer, Integer> blockPosition, Action2DMove action) {
+		return new Pair<>(blockPosition.getFirst() + action.getValue().getFirst(),
+				blockPosition.getSecond() + action.getValue().getSecond());
+	}
 
-
-	protected void pushTheBlock(Reward reward, Action2DMove action, Pair<Integer, Integer> newPosition) {
-		int nbBlocks = state.getValue(newPosition);
-		state.setValue(newPosition, 0);
+	protected boolean pushTheBlock(Pair<Integer, Integer> oldBlockPosition, 
+			Pair<Integer, Integer> newBlockPosition, int nbBlocks) {
 		
-		Pair<Integer, Integer> newBlockPos = newPosition.clone();
-		newBlockPos.setFirst(newBlockPos.getFirst() + action.getValue().getFirst());
-		newBlockPos.setSecond(newBlockPos.getSecond() + action.getValue().getSecond());
+		state.setValue(oldBlockPosition, 0);
 		
-		
-		if (newBlockPos.getFirst() < 0 || newBlockPos.getFirst() >= getWidth() 
-				|| newBlockPos.getSecond() < 0|| newBlockPos.getSecond() >= getHeight()) {
-			reward.setReward(nbBlocks * REWARDBLOCKPUSHEDOUT);
+		if (newBlockPosition.getFirst() < 0 || newBlockPosition.getFirst() >= getWidth() 
+				|| newBlockPosition.getSecond() < 0|| newBlockPosition.getSecond() >= getHeight()) {
+			
 			for (int k = 0; k < nbBlocks; k++) {
 				placeBlock();
 			}
+			return true;
+			
 		} else {
-			state.addValue(newBlockPos, nbBlocks);
-			reward.setReward(nbBlocks * REWARDBLOCKPUSHED);
+			state.addValue(newBlockPosition, nbBlocks);
+			return false;
 		}
 	}
 
@@ -139,5 +158,9 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	
 	protected State getState() {
 		return state;
+	}
+	
+	protected int getNumberOfBlocks() {
+		return numberOfBlocks;
 	}
 }
