@@ -28,5 +28,6 @@ open module marlkit.xp {
 	requires madkit.base;
 	exports marlkit.hello;
 	exports marlkit.pushtheblock;
+	exports marlkit.pushtheblocktogether;
 	
 }

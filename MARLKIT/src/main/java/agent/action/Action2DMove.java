@@ -19,6 +19,14 @@ public class Action2DMove implements Action {
 		this.value = value;
 	}
 	
+	public int getFirst() {
+		return getValue().getFirst();
+	}
+
+	public int getSecond() {
+		return getValue().getSecond();
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(value);
@@ -29,17 +37,30 @@ public class Action2DMove implements Action {
 		if (this == obj)
 			return true;
 		if (obj instanceof Action2DMove a) {
-			return this.value.equals(a.value);
+			return this.getValue().equals(a.value);
 		}
 		return false;
 	}
 	
+	public void add(Action2DMove other) {
+		getValue().setFirst(getFirst() + other.getFirst());
+		getValue().setSecond(getSecond() + other.getSecond());
+	}
 	
+	public void add(Pair<Integer, Integer> vect) {
+		getValue().setFirst(getFirst() + vect.getFirst());
+		getValue().setSecond(getSecond() + vect.getSecond());
+	}
 	
 	
 	@Override
 	public String toString() {
 		return "Move [dx=" + value.getFirst() + "; dy=" + value.getSecond() + "]";
+	}
+	
+	public static Action2DMove add(Action2DMove a, Action2DMove b) {
+		return new Action2DMove(
+				new Pair<>(a.getFirst() + b.getFirst(), a.getSecond() + b.getSecond()));
 	}
 
 	public static Action2DMove up() {

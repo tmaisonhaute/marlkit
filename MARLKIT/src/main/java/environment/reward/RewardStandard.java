@@ -15,5 +15,21 @@ public class RewardStandard implements Reward {
 	public void setReward(double val) {
 		this.value = val;
 	}
+	
+	@Override
+	public RewardStandard clone() {
+        return new RewardStandard(value);
+	}
+
+	@Override
+	public void add(Reward other) {
+		if (other instanceof RewardStandard rewardstandard) {
+			this.value += rewardstandard.value;
+		} else {
+			throw new IllegalArgumentException("Cannot add different types of rewards");
+		}
+		
+	}
+
 
 }
