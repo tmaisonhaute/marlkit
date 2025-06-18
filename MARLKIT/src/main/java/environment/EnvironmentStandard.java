@@ -13,6 +13,7 @@ import environment.reward.Reward;
 import environment.state.State;
 import learning.Experience;
 import madkit.simulation.environment.Environment2D;
+import simulation.LearningData;
 import util.Pair;
 
 public abstract class EnvironmentStandard extends Environment2D implements MLKEnvironment {
@@ -66,7 +67,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 			agent.feedbackExperience(experience);
 		}
 	}
-	
+
 
 	protected Map<MLKAgent, Experience> combineObsActReward(Map<MLKAgent, Pair<Action, Reward>> actionRewardMap,
 	        Map<MLKAgent, Observation> observationMap) {
@@ -123,6 +124,4 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	}
 	
 	protected abstract State getState();
-
-	
 }
