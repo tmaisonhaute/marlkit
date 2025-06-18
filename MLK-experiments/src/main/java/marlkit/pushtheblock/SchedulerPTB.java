@@ -1,10 +1,7 @@
 package marlkit.pushtheblock;
 
 import simulation.MLKScheduler;
-import util.criteria.Criteria;
-import util.criteria.Criterion;
-import util.criteria.ModuloTimeCriterion;
-import util.criteria.ReachTimeCriterion;
+import util.criteria.*;
 
 public class SchedulerPTB extends MLKScheduler {
 	
@@ -12,10 +9,12 @@ public class SchedulerPTB extends MLKScheduler {
 	public static final int MINIMUM_STEP_BEFORE_VIEW = 1000000;
 	public static final int UPDATE_INTERVAL = 100000;
 	public static final int PAUSE_DISPLAY_VALUE = 50;
+	public static final int MAXIMUM_EPISODE_COUNT = 100;
 
 	private Criterion criteriaEndEpisode = new ReachTimeCriterion(EPISODE_DURATION);
 	private Criterion criteriaStartDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL), new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
 	private Criterion criteriaEndDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL, EPISODE_DURATION), new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
+	private Criterion criteriaEndSimulation = new EpisodeCounterCriterion(MAXIMUM_EPISODE_COUNT);
 
 	@Override
 	public Criterion getCriteriaEndEpisode() {
@@ -31,7 +30,12 @@ public class SchedulerPTB extends MLKScheduler {
 	public Criterion getCriteriaEndDisplay() {
 		return criteriaEndDisplay;
 	}
-	
+
+	@Override
+	public Criterion getCriteriaEndSimulation() {
+		return criteriaEndSimulation;
+	}
+
 	@Override
 	public int getPauseDisplayValue() {
 		return PAUSE_DISPLAY_VALUE; // Enable display by default

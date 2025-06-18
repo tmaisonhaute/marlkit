@@ -63,6 +63,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		step.execute();
 		agentUpdatePolicy.execute(counter);
 		if (getCriteriaEndEpisode().isMet()) {
+			getCriteriaEndSimulation().update(null);
 			agentEndEpisode.execute();
 			getCriteriaEndEpisode().reset();
 		}
@@ -75,6 +76,9 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		counter++;
 		updateCriteria();
 		viewers.execute();
+		if (getCriteriaEndSimulation().isMet()) {
+			onEnd();
+		}
 	}
 
 	/**
@@ -89,6 +93,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		getCriteriaEndEpisode().reset();
 		getCriteriaStartDisplay().reset();
 		getCriteriaEndDisplay().reset();
+		getCriteriaEndSimulation().reset();
 	}
 	/**
 	 * Returns the criterion for ending an episode.
@@ -110,7 +115,14 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 * @return The criterion for ending a display.
 	 */
 	public abstract Criterion getCriteriaEndDisplay();
-	
+
+	/**
+	 * Returns the criterion for ending the simulation.
+	 *
+	 * @return The criterion for ending the simulation.
+	 */
+	public abstract Criterion getCriteriaEndSimulation();
+
 	/**
 	 * Returns the pause in milliseconds for the display.
 	 * This value is used to control the speed of the display updates.
