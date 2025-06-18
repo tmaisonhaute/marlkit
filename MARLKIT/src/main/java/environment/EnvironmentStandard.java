@@ -41,18 +41,61 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	}
 	protected abstract void setupState();
 
+	/**
+	 * Executes one environment step where all agents: 1.observe, 2.act, and 3.learn from the resulting experience.
+	 *
+	 * @return map of each agent to their experience for this step.
+	 */
 	public Map<MLKAgent, Experience> step(){
+		Map<MLKAgent,Observation> AgentObservations = processSocialObservations();
+		Map<MLKAgent, Pair<Action, Reward>> stepResult = EnvironmentStep(AgentObservations);
+		Map<MLKAgent, Experience> experiences = feedExpToAgent(stepResult, AgentObservations);
+		return experiences;
+	}
+
+	/**
+	 * Process the social observations of each agent in 3 steps:
+	 * for each agent:
+	 * 1. observes environment state
+	 * 2. Compute interaction information (ex: predict other agent next action)
+	 * 3. Merges both into a final observation.
+	 *
+	 * @return a map of each agent to their complete observations.
+	 */
+	public Map<MLKAgent,Observation> processSocialObservations(){
 		Map<MLKAgent, Observation> observations = getObservation();
 		Map<MLKAgent, Observation> interactionInformations = interactionMethod.getInteractionInformation(observations);
 		Map<MLKAgent, Observation> mergedObservations = mergeObservations(observations, interactionInformations);
-		
-		Map<MLKAgent, Action> actions = agents.allAgentsTakeAction(mergedObservations);
+		return mergedObservations;
+	}
+
+	/**
+	 * Run one step in the environment based on agent observations:
+	 * Each agent picks an action, the environment applies them, and returns rewards.
+	 *
+	 * @param observations a map of each agent to their observations
+	 * @return a map of each agent to their action and reward
+	 */
+	public Map<MLKAgent, Pair<Action, Reward>> EnvironmentStep(Map<MLKAgent, Observation> observations){
+		Map<MLKAgent, Action> actions = agents.allAgentsTakeAction(observations);
 		Map<MLKAgent, Pair<Action, Reward>> result = dynamics(actions);
+		return result;
+	}
+
+	/**
+	 * Process and sends experience data to each agent.
+	 * For each agent, combine their observation, action, reward and send to him for learning.
+	 *
+	 * @param result map of agents to their Pair action/reward
+	 * @param observations map of agent to their observation
+	 * @return map of agents to their experience
+	 */
+	public Map<MLKAgent, Experience> feedExpToAgent(Map<MLKAgent, Pair<Action, Reward>> result, Map<MLKAgent,Observation> observations) {
 		Map<MLKAgent, Experience> experiences = combineObsActReward(result, observations);
 		sendFeedbackExperience(experiences);
 		return experiences;
-		
 	}
+
 	public Map<MLKAgent,Observation> getObservation(){
 		return getState().getObservations();
 	}

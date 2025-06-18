@@ -6,7 +6,10 @@ public class RewardStandard implements Reward {
 	public RewardStandard(double val) {
 		this.value = val;
 	}
-	
+	public RewardStandard() {
+		this.value = 0;
+	}
+
 	@Override
 	public double getValue() {
 		return value;
@@ -14,6 +17,10 @@ public class RewardStandard implements Reward {
 	@Override
 	public void setReward(double val) {
 		this.value = val;
+	}
+
+	public void add(double val){
+		value += val;
 	}
 
 }
