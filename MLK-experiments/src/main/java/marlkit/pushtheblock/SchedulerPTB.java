@@ -1,7 +1,10 @@
 package marlkit.pushtheblock;
 
 import simulation.MLKScheduler;
-import util.criteria.*;
+import util.criteria.Criteria;
+import util.criteria.Criterion;
+import util.criteria.ModuloTimeCriterion;
+import util.criteria.ReachTimeCriterion;
 
 public class SchedulerPTB extends MLKScheduler {
 	
@@ -9,12 +12,12 @@ public class SchedulerPTB extends MLKScheduler {
 	public static final int MINIMUM_STEP_BEFORE_VIEW = 1000000;
 	public static final int UPDATE_INTERVAL = 100000;
 	public static final int PAUSE_DISPLAY_VALUE = 50;
-	public static final int MAXIMUM_EPISODE_COUNT = 100;
+	public static final int MAXIMUM_EPISODE_COUNT = 1000000;
 
 	private Criterion criteriaEndEpisode = new ReachTimeCriterion(EPISODE_DURATION);
 	private Criterion criteriaStartDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL), new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
 	private Criterion criteriaEndDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL, EPISODE_DURATION), new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
-	private Criterion criteriaEndSimulation = new EpisodeCounterCriterion(MAXIMUM_EPISODE_COUNT);
+	private Criterion criteriaEndSimulation = new ReachTimeCriterion(MAXIMUM_EPISODE_COUNT);
 
 	@Override
 	public Criterion getCriteriaEndEpisode() {

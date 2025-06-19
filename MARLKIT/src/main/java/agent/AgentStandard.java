@@ -8,7 +8,6 @@ import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
 import learning.policy.Policy;
-import learning.policy.PolicyMonteCarlo;
 import madkit.simulation.SimuAgent;
 
 /**
