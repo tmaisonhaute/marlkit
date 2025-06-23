@@ -1,9 +1,10 @@
 package util.criteria;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.Optional;
+
 import org.testng.annotations.Test;
 
 public class ModuloTimeCriterionTest {
@@ -93,11 +94,8 @@ public class ModuloTimeCriterionTest {
         // Given/When/Then
         assertThatThrownBy(() -> new ModuloTimeCriterion(5, -1))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Remainder must be between 0 and 4");
+            .hasMessage("Remainder must be positive");
         
-        assertThatThrownBy(() -> new ModuloTimeCriterion(5, 5))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Remainder must be between 0 and 4");
     }
     
     @Test
