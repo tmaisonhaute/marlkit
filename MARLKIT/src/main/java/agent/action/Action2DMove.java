@@ -1,5 +1,6 @@
 package agent.action;
 
+import java.util.List;
 import java.util.Objects;
 
 import util.Pair;
@@ -78,5 +79,8 @@ public class Action2DMove implements Action {
 	public static Action2DMove idle() {
 		return new Action2DMove(new Pair<>(0, 0));
 	}
-	
+
+	public static List<Action> getVonNeumannmove(){
+		return List.of( up(), down(), left(), right() );
+	}
 }

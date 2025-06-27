@@ -26,8 +26,9 @@
 open module marlkit.base {
 	requires transitive madkit.base;
 	requires java.logging;
-	
-	exports marlkit.test;
+    requires org.apache.commons.lang3;
+
+    exports marlkit.test;
 	exports environment;
 	exports environment.observation;
 	exports environment.observation.wrapperobservationvector;
@@ -42,4 +43,5 @@ open module marlkit.base {
 	exports util;
 	exports util.criteria;
 	exports simulation;
+    exports environment.observation.Wrapperactionobservation;
 }

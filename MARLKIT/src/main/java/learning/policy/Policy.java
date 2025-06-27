@@ -1,6 +1,7 @@
 package learning.policy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
@@ -8,6 +9,7 @@ import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
 import madkit.kernel.AgentLogger;
+import util.Pair;
 
 /**
  * Represents a policy that an agent follows to take actions based on observations.
@@ -62,6 +64,8 @@ public interface Policy {
      * @param logger the logger of the agent
      */
 	public abstract void endEpisode(Batch batch, AgentLogger logger);
+
+	Map<Pair<Observation, Action>, Double> getQ();
 }
 
 

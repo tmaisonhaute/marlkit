@@ -11,6 +11,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
 import agent.interaction.FictitiousPlay;
+import agent.interaction.MeanField;
 import environment.EnvironmentStandard;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
