@@ -7,7 +7,7 @@ import environment.observation.ObservationOneHotEncoding;
 import java.util.*;
 
 public class WrapperActionObservationOneHotEncoding implements WrapperActionObservation {
-    private Map<Action, ObservationOneHotEncoding> actions2obs;
+    private Map<Action, ObservationOneHotEncoding> actions2obs = new HashMap<>();
 
     public WrapperActionObservationOneHotEncoding(List<Action> actions) {
         updateWrapper(actions);

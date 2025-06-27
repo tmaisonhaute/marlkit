@@ -24,10 +24,32 @@ import org.apache.commons.lang3.ObjectUtils;
 public class MeanField implements MLKInteraction {
     private Map<MLKAgent, Map<Observation,ObservationOneHotEncoding>> observationMeanField;
     private WrapperActionObservation wrapper;
+    private Map<MLKAgent, Observation> observationAgentsBuffer;
+
+    public MeanField() {
+        this.observationMeanField = new HashMap<>();
+        this.observationAgentsBuffer = new HashMap<>();
+        List<Action> possibleActions = getPossibleAction();
+
+        if (possibleActions == null || possibleActions.isEmpty()) {
+            throw new IllegalStateException("La liste d'actions possibles est vide ou nulle !");
+        }
+
+        setWrapper(new WrapperActionObservationOneHotEncoding(possibleActions));
+    }
+
 
     public MeanField(AgentsGroup agentsGroup) { // besoin de revoir structure
+        this.observationMeanField = new HashMap<>();
+        this.observationAgentsBuffer = new HashMap<>();
         setAgentsGroup(agentsGroup);
-        setWrapper(new WrapperActionObservationOneHotEncoding(getPossibleAction()));
+        List<Action> possibleActions = getPossibleAction();
+
+        if (possibleActions == null || possibleActions.isEmpty()) {
+            throw new IllegalStateException("La liste d'actions possibles est vide ou nulle !");
+        }
+
+        setWrapper(new WrapperActionObservationOneHotEncoding(possibleActions));
     }
     /**
      * get a list of possible agent action
@@ -44,7 +66,7 @@ public class MeanField implements MLKInteraction {
 
     @Override
     public void setAgentsGroup(AgentsGroup agentsGroup) {
-        ObservationMeanField.clear();
+        observationMeanField.clear();
         for (MLKAgent agent : agentsGroup.getAgents()) {
             observationMeanField.put(agent,new HashMap<>());
         }
@@ -53,86 +75,55 @@ public class MeanField implements MLKInteraction {
     @Override
     public Map<MLKAgent, Observation> getInteractionInformation(Map<MLKAgent, Observation> observationAgents) {
         Map<MLKAgent, Observation> interactionInfo = new HashMap<>();
-        if (wrapper == null) {
+        if (wrapper == null || observationAgents.isEmpty()) {
             return interactionInfo;
         }
+        observationAgentsBuffer = observationAgents;
 
         for (MLKAgent agent : observationAgents.keySet()) {
-            Observation obs = observationAgents.get(agent);
-            if (!(observationMeanField.get(agent).containsKey(obs))){
-                interactionInfo.put(agent, new ObservationOneHotEncoding());
+            if (!observationMeanField.containsKey(agent)) {
+                observationMeanField.put(agent, new HashMap<>());
             }
-            if (obs != null) {
-                interactionInfo.put(agent,observationMeanField.get(agent).get(obs));
+
+            Observation obs = observationAgents.get(agent);
+            if (!observationMeanField.get(agent).containsKey(obs)) {
+                interactionInfo.put(agent, new ObservationOneHotEncoding());
+            } else {
+                interactionInfo.put(agent, observationMeanField.get(agent).get(obs));
             }
         }
         return interactionInfo;
     }
 
-
     @Override
     public void update(Map<MLKAgent, Experience> experiences) {
-        // Pour chaque agent qui a une expérience
+        Map<MLKAgent, Action> actions= extractActions(experiences);
         for (MLKAgent ag : experiences.keySet()) {
-            Experience experience = experiences.get(ag);
-            Action actionPlayed = experience.getAction();
-
-            // Mettre à jour la distribution moyenne pour tous les autres agents
-            for (Map.Entry<MLKAgent, ActionDistribution> entryDist : ObservationBuffer.entrySet()) {
-                MLKAgent observingAgent = entryDist.getKey();
-
-                if (!observingAgent.equals(activeAgent)) {
-                    ActionDistribution dist = entryDist.getValue();
-                    dist.incrementActionCount(actionPlayed);
+            Observation obs = observationAgentsBuffer.get(ag);
+            Observation interactionObs = extractAgentMeanField(ag,actions);
+            observationMeanField.get(ag).put(obs, (ObservationOneHotEncoding) interactionObs) ;
                 }
             }
+    private Map<MLKAgent, Action> extractActions(Map<MLKAgent, Experience> experiences) {
+        Map<MLKAgent, Action> actions = new HashMap<>();
+        for (Map.Entry<MLKAgent, Experience> entry : experiences.entrySet()) {
+            MLKAgent agent = entry.getKey();
+            Experience experience = entry.getValue();
+            actions.put(agent, experience.getAction());
         }
+        return actions;
     }
 
-    public List<Action> getActions() {
-
-    }
-
-    /**
-     * Pour accéder à la distribution moyenne d'actions que voit un agent
-     * @param agent l'agent observant
-     * @return la distribution moyenne des actions des autres agents
-     */
-    public Map<Action, Double> getMeanActionDistribution(MLKAgent agent) {
-        ActionDistribution dist = ObservationBuffer.get(agent);
-        if (dist != null) {
-            return dist.toProbabilities();
-        }
-        return new HashMap<>();
-    }
-
-    /**
-     * Classe interne qui stocke les comptes d'actions et calcule la distribution.
-     */
-    private static class ActionDistribution {
-        private Map<Action, Integer> actionCounts;
-        private int totalCounts;
-
-        public ActionDistribution() {
-            actionCounts = new HashMap<>();
-            totalCounts = 0;
-        }
-
-        public void incrementActionCount(Action action) {
-            actionCounts.put(action, actionCounts.getOrDefault(action, 0) + 1);
-            totalCounts++;
-        }
-
-        public Map<Action, Double> toProbabilities() {
-            Map<Action, Double> probs = new HashMap<>();
-            if (totalCounts == 0) {
-                // distribution uniforme par défaut si aucune donnée
-                return probs;
+    private ObservationOneHotEncoding extractAgentMeanField(MLKAgent agent ,Map<MLKAgent, Action> actions) {
+        ObservationOneHotEncodings observationOneHotEncoding = new ObservationOneHotEncodings();
+        for(Map.Entry<MLKAgent, Action> entry : actions.entrySet()) {
+            MLKAgent ag = entry.getKey();
+            Action action = entry.getValue();
+            if (!(ag == agent)) {
+                observationOneHotEncoding.add(wrapper.transform(action));
             }
-            for (Map.Entry<Action, Integer> entry : actionCounts.entrySet()) {
-                probs.put(entry.getKey(), entry.getValue() / (double) totalCounts);
-            }
-            return probs;
         }
+        return (ObservationOneHotEncoding) observationOneHotEncoding.getAverage();
     }
 }
+

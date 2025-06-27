@@ -33,7 +33,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     private static final double REWARDTOONEAR = 0.5;
 
     public EnvPreyVsHunter() {
-        super(10, 10, new FictitiousPlay());
+        super(10, 10, new MeanField());
     }
 
     @Override

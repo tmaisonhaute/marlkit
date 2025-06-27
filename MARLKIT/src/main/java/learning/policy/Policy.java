@@ -1,5 +1,6 @@
 package learning.policy;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.random.RandomGenerator;
@@ -65,7 +66,10 @@ public interface Policy {
      */
 	public abstract void endEpisode(Batch batch, AgentLogger logger);
 
-	Map<Pair<Observation, Action>, Double> getQ();
+	default Map<Pair<Observation, Action>, Double> getQ(){
+		Map<Pair<Observation, Action>, Double> q = new HashMap<>();
+		return q;
+	};
 }
 
 
