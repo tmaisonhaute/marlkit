@@ -6,28 +6,56 @@ import environment.observation.ObservationOneHotEncoding;
 
 import java.util.*;
 
+/**
+ * A wrapper that converts discrete agent actions into one-hot encoded observations.
+ *
+ * This is useful in multi-agent learning environments where actions need to be
+ * transformed into a vector format for learning algorithms.
+ */
 public class WrapperActionObservationOneHotEncoding implements WrapperActionObservation {
+
     private Map<Action, ObservationOneHotEncoding> actions2obs = new HashMap<>();
 
+    /**
+     * Constructs a wrapper with a given list of possible actions.
+     *
+     * @param actions the list of all discrete actions the agent can take
+     */
     public WrapperActionObservationOneHotEncoding(List<Action> actions) {
         updateWrapper(actions);
     }
 
+    /**
+     * Updates the internal mapping from actions to one-hot encoded observations.
+     *
+     * Each action is mapped to a vector of size equal to the number of actions,
+     * where the index corresponding to the action is set to 1.0 and all others are 0.0.
+     *
+     * @param actions the list of actions to encode
+     */
     public void updateWrapper(List<Action> actions) {
-        assert this.actions2obs != null;
+        Objects.requireNonNull(this.actions2obs, "actions2obs map must not be null");
         this.actions2obs.clear();
+
         int size = actions.size();
         for (int i = 0; i < size; i++) {
-            List<Double> liste = new ArrayList<>(Collections.nCopies(size, 0.));
-            liste.set(i,1.);
+            List<Double> vector = new ArrayList<>(Collections.nCopies(size, 0.0));
+            vector.set(i, 1.0);
             Action action = actions.get(i);
-            ObservationOneHotEncoding OHE = new ObservationOneHotEncoding(liste);
-            this.actions2obs.put(action, OHE);
+            ObservationOneHotEncoding encoding = new ObservationOneHotEncoding(vector);
+            this.actions2obs.put(action, encoding);
         }
     }
 
+    /**
+     * Transforms an action into its one-hot encoded observation.
+     *
+     * @param action the action to be transformed
+     * @return a one-hot encoded observation representing the action
+     */
     @Override
     public Observation transform(Action action) {
-        return actions2obs.get(action).clone();
+        ObservationOneHotEncoding encoding = actions2obs.get(action);
+        return encoding != null ? encoding.clone() : null;
     }
 }
