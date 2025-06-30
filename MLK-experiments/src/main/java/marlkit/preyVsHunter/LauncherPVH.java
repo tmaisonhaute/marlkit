@@ -18,14 +18,9 @@ public class LauncherPVH extends MLKLauncher {
 
     @Override
     protected void onLaunchSimulatedAgents() {
-        Action goLeft = Action2DMove.left();
-        Action goRight = Action2DMove.right();
-        Action goUp = Action2DMove.up();
-        Action goDown = Action2DMove.down();
-        Action doNothing = Action2DMove.idle();
 
-        List<Action> possibleHunterActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
-        List<Action> possiblePreyActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
+        List<Action> possibleHunterActions = new ArrayList<>(Action2DMove.getVonNeumannmove());
+        List<Action> possiblePreyActions = new ArrayList<>(Action2DMove.getVonNeumannmove());
 
         int nbHunterAgents = 2;
         int nbPreyAgents = 1 ;
