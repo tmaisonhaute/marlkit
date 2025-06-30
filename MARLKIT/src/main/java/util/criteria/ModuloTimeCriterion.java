@@ -20,7 +20,7 @@ public class ModuloTimeCriterion extends TimeCounterCriterion {
             throw new IllegalArgumentException("Modulo must be positive");
         }
         if (remainder < 0) {
-            throw new IllegalArgumentException("Remainder must be positive ");
+            throw new IllegalArgumentException("Remainder must be positive");
         }
         this.modulo = modulo;
         this.remainder = remainder;

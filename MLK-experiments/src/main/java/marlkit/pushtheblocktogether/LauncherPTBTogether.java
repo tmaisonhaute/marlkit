@@ -6,7 +6,7 @@ import java.util.List;
 import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import learning.policy.PolicyMonteCarlo;
+import learning.policy.PolicySarsa;
 import madkit.simulation.EngineAgents;
 import marlkit.pushtheblock.SchedulerPTB;
 import marlkit.pushtheblock.ViewerPTB;
@@ -26,8 +26,8 @@ public class LauncherPTBTogether extends MLKLauncher {
 		List<Action> possibleActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
 		int nbAgents = 2;
 		for (int i = 0; i < nbAgents; i++) {
-			PolicyMonteCarlo policy = new PolicyMonteCarlo(possibleActions, 1.0, 0.001);
-//			PolicySarsa policy = new PolicySarsa(possibleActions, 1.0, 0.0003);
+//			PolicyMonteCarlo policy = new PolicyMonteCarlo(possibleActions, 1.0, 0.001);
+			PolicySarsa policy = new PolicySarsa(possibleActions, 1.0, 0.001);
 //			PolicyActorCritic policy = new PolicyActorCritic(possibleActions, 4);
 			AgentStandard ag = new AgentStandard(policy);
 			launchAgent(ag);

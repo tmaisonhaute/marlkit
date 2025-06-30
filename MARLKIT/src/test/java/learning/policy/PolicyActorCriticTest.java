@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.testng.annotations.Test;
 
@@ -34,9 +34,8 @@ public class PolicyActorCriticTest {
         );
         
         MLKAgent agent = mock(MLKAgent.class);
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.setSeed(12345);
-        when(agent.prng()).thenReturn(secureRandom);
+        Random random = new Random(12345);
+        when(agent.prng()).thenReturn(random);
         
         PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4);
         policy.init(agent);
@@ -64,9 +63,8 @@ public class PolicyActorCriticTest {
             Action2DMove.right()
         );
         MLKAgent agent = mock(MLKAgent.class);
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.setSeed(12345);
-        when(agent.prng()).thenReturn(secureRandom);
+        Random random = new Random(12345);
+        when(agent.prng()).thenReturn(random);
 
         PolicyActorCritic policy = new PolicyActorCritic(actionSet, 2);
         policy.init(agent);
@@ -101,11 +99,10 @@ public class PolicyActorCriticTest {
             Action2DMove.right()
         );
         MLKAgent agent = mock(MLKAgent.class);
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.setSeed(12345);
-        when(agent.prng()).thenReturn(secureRandom);
+        Random random = new Random(12345);
+        when(agent.prng()).thenReturn(random);
         
-        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4); // epsilon = 0 for deterministic behavior
+        PolicyActorCritic policy = new PolicyActorCritic(actionSet, 4); 
         policy.init(agent);
         
         AgentLogger logger = mock(AgentLogger.class);
@@ -118,7 +115,7 @@ public class PolicyActorCriticTest {
         Action actionToReinforce = Action2DMove.up();
         
         // Train the policy to prefer the 'up' action for this observation
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 200; i++) {
             Batch batch = new Batch();
             batch.addExperience(new Experience(observation, actionToReinforce, new RewardStandard(1.0)));
             batch.addExperience(new Experience(observation, actionToReinforce, new RewardStandard(1.0)));
@@ -127,7 +124,7 @@ public class PolicyActorCriticTest {
         
         // When
         int upCount = 0;
-        int totalTrials = 10;
+        int totalTrials = 100;
         
         for (int i = 0; i < totalTrials; i++) {
             Action selectedAction = policy.takeAction(observation);
@@ -137,7 +134,7 @@ public class PolicyActorCriticTest {
         }
         
         // Then
-        // With epsilon = 0, if the policy has learned successfully, it should consistently choose the reinforced action
+        // If the policy has learned successfully, it should consistently choose the reinforced action
         assertThat(upCount).isGreaterThanOrEqualTo((int) (totalTrials * 0.7)); // At least 70% should be the reinforced action
     }
     
