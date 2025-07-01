@@ -26,6 +26,7 @@ dependencies {
 	api libs.madkit
     testImplementation libs.testng
     testImplementation libs.assertJ
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.1'
 }
 
 tasks.named('test') {

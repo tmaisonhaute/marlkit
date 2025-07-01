@@ -1,19 +1,24 @@
 package environment;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import agent.MLKAgent;
-import environment.observation.Observation;
 import learning.Experience;
-import simulation.LearningData;
-import simulation.StepData;
+import util.grafana.LearningData;
+import util.grafana.StepData;
+import util.grafana.Extra;
 
 /**
  * Represents an environment in which agents operate.
  */
 public interface MLKEnvironment {
+	/**
+	 * The learning data that can be collected during the simulation.
+	 * It can be used to log agent rewards, and other statistics.
+	 */
 	public LearningData learningData = new LearningData();
 
 	public abstract void reset();
@@ -26,9 +31,42 @@ public interface MLKEnvironment {
 
 	/**
 	 * Collect progress made by agents to make statistics.
-	 * @return A map of merged observations.
+	 * You can Override this method to add extra data to the learning data, by calling {@link LearningData#addStep(StepData)},
+	 * and optionally adding extra data by using {@link StepData#StepData(Map, Optional)} and {@link Extra}
+	 *
+	 * @param experiences A map of agents and their corresponding experiences.
+	 *                    Each experience contains the agent's action, observation, and reward.
 	 */
-	default void queryLearningData(int numEpisode, StepData stepData) {
-		learningData.addStep(numEpisode, stepData);
+	default void collectLearningData(Map<MLKAgent, Experience> experiences) {
+		StepData stepData = new StepData(experiences);
+        learningData.addStep(stepData);
+    }
+
+	/**
+	 * Initializes the log file with the specified lines.
+	 * Must be called before using {@link #writeLog(String) writeLog} to write to the log.
+	 * It should be called only once, typically at the start of the simulation.
+	 *
+	 * @param rows the initial lines to write to the log file
+	 * @throws IOException if a write error occurs
+	 */
+	default void initLogFile(List<String> rows) throws IOException {
+		learningData.initLogfile(rows);
+	}
+
+	/**
+	 * Writes a log message into the learning data.
+	 * You must call {@link #initLogFile(List)} before using this method to initialize the log file.
+	 * It is recommended to call this method once per X episodes, where X is a large number to avoid excessive opening
+	 * and closing of the log file. You can use {@link LearningData#getAverageEpisodesCount()}
+	 * to determine the number of episodes currently logged.
+	 * After calling this method, you should call {@link LearningData#clearEpisodes()} to clear all currently
+	 * stored episodes in {@link LearningData} and prepare for the next set of episodes to collect.
+	 *
+	 * @param message the message to write in the log
+	 * @throws IOException if a write error occurs
+	 */
+	default void writeLog(String message) throws IOException {
+		learningData.writeLog(message);
 	}
 }

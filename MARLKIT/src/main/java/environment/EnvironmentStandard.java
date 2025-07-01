@@ -1,6 +1,11 @@
 package environment;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import agent.AgentsGroup;
@@ -13,14 +18,18 @@ import environment.reward.Reward;
 import environment.state.State;
 import learning.Experience;
 import madkit.simulation.environment.Environment2D;
-import simulation.LearningData;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import util.Pair;
 
 public abstract class EnvironmentStandard extends Environment2D implements MLKEnvironment {
 
+	private static final Log log = LogFactory.getLog(EnvironmentStandard.class);
 	protected AgentsGroup agents;
 	protected MLKInteraction interactionMethod;
-	
+	private boolean logSetup = false;
+	private final int EPISODES_BEFORE_LOG = 1_000;
+
 	public EnvironmentStandard(int width, int height) {
         this(width, height, new IndependantLearning());
 	}
@@ -32,7 +41,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	
 	@Override
 	protected void onActivation() {
-		super.onActivation();
+        super.onActivation();
 		requestRole(getCommunity(), getModelGroup(), "mlkenvironment");
 		agents = new AgentsGroup();
 	}
@@ -40,6 +49,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	public void receiveAgentInfo(MLKAgent agent) {
 		agents.addAgent(agent);
 	}
+
 	protected abstract void setupState();
 
 	/**
@@ -51,7 +61,108 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		Map<MLKAgent,Observation> AgentObservations = processSocialObservations();
 		Map<MLKAgent, Pair<Action, Reward>> stepResult = EnvironmentStep(AgentObservations);
 		Map<MLKAgent, Experience> experiences = feedExpToAgent(stepResult, AgentObservations);
+		collectAndLogLearningData(experiences);
 		return experiences;
+	}
+
+	/**
+	 * Collects, processes and logs learning data from agent experiences.
+	 *
+	 * This method ensures the log system is properly set up, then collects learning data
+	 * from the experiences of all agents. Every 1,000 episodes, it generates a CSV log
+	 * of the average rewards, saves it to the log file, and clears the episode data.
+	 *
+	 * @param experiences A map associating each agent with its experience for the current step
+	 */
+	private void collectAndLogLearningData(Map<MLKAgent, Experience> experiences) {
+		checkLogSetup();
+		collectLearningData(experiences);
+		int epCount = learningData.getAverageEpisodesCount();
+		if (epCount % EPISODES_BEFORE_LOG == 0) {
+			String logMessage = generateLogCSV(learningData.getAverageEpisodesReward());
+			saveLogCSV(logMessage);
+			learningData.clearEpisodes();
+		}
+	}
+
+	/**
+	 * Called when the environment ends, typically at the end of a simulation run.
+	 * It checks if the log is set up, generates a CSV log of the average rewards,
+	 * saves it, and generates a graph URL for visualization.
+	 */
+	public void onEnd() {
+		checkLogSetup();
+		if (learningData.getAverageEpisodesCount() > 0) {
+			String logMessage = generateLogCSV(learningData.getAverageEpisodesReward());
+			saveLogCSV(logMessage);
+			learningData.clearEpisodes();
+		}
+		getLogger().info("Environment ended.");
+        try {
+            String url = learningData.generateGraph("log_" + Instant.now().getEpochSecond(), true);
+			getLogger().info("Graph URL: " + url);
+        } catch (IOException | URISyntaxException e) {
+            getLogger().info("Error generating graph: " + e.getMessage());
+        }
+		getLogger().info("Log file: " + learningData.getLogFilePath());
+    }
+
+	/**
+	 * Initializes the log file with the names of all agents in the environment.
+	 * This method should be called only once, typically at the start of the simulation.
+	 */
+	private void checkLogSetup() {
+		if (!logSetup) {
+			try {
+				List<String> agentsNames = new ArrayList<>();
+				for (MLKAgent agent : agents.getAgents()) {
+					agentsNames.add(agent.toString());
+				}
+				initLogFile(agentsNames);
+				logSetup = true;
+			} catch (Exception e) {
+				getLogger().severe("Error setting up log file: " + e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Generates a CSV log message from the average rewards of all agents.
+	 * Each line corresponds to an episode, with rewards for each agent separated by commas.
+	 *
+	 * @param data List of pairs containing average rewards for agents and additional data
+	 * @return A string representing the CSV formatted log message
+	 */
+	private String generateLogCSV(List<Pair<Map<MLKAgent, Double>, Map<String, Double>>> data) {
+		StringBuilder logMessage = new StringBuilder();
+		for (Pair<Map<MLKAgent, Double>, Map<String, Double>> d : data) {
+			Map<MLKAgent, Double> avgReward = d.getFirst();
+			for (MLKAgent agent: agents.getAgents()) {
+				Double reward = avgReward.get(agent);
+				if (reward == null) {
+					reward = 0.0;
+				}
+				logMessage.append(reward)
+						.append(",");
+			}
+			logMessage.setLength(logMessage.length() - 1);
+			logMessage.append("\n");
+		}
+		return logMessage.toString();
+	}
+
+	/**
+	 * Saves the log message to the log file.
+	 * This method handles any exceptions that may occur during the writing process.
+	 *
+	 * @param logMessage The message to be logged
+	 */
+	private void saveLogCSV(String logMessage) {
+		try {
+			writeLog(logMessage);
+		} catch (Exception e) {
+			getLogger().severe("Error writing to log file: " + e.getMessage());
+		}
 	}
 
 	/**
@@ -97,7 +208,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		return experiences;
 	}
 
-	public Map<MLKAgent,Observation> getObservation(){
+	public Map<MLKAgent,Observation> getObservation() {
 		return getState().getObservations();
 	}
 	
