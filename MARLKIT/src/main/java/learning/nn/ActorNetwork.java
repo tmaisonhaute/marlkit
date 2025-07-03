@@ -1,7 +1,6 @@
 package learning.nn;
 
 import java.util.List;
-import java.util.Random;
 import java.util.random.RandomGenerator;
 
 import agent.action.Action;
@@ -17,7 +16,7 @@ public class ActorNetwork {
     private WrapperObservationVector observationWrapper;
     private WrapperActionVector actionWrapper;
     private List<Action> actionSet;
-    private Random random;
+    private RandomGenerator pnrg;
     
     public ActorNetwork(int inputSize, int hiddenSize, RandomGenerator pnrg, double learningRate, 
                         WrapperObservationVector observationWrapper,
@@ -26,7 +25,7 @@ public class ActorNetwork {
         this.observationWrapper = observationWrapper;
         this.actionWrapper = actionWrapper;
         this.actionSet = actionSet;
-        this.random = new Random();
+        this.pnrg = pnrg;
         
         // Create neural network with observation input size and action output size
         this.network = new NeuralNetwork(
@@ -45,7 +44,7 @@ public class ActorNetwork {
         double[] probs = softmax(actionPreferences);
         
         double cumulativeProbability = 0.0;
-        double randomValue = random.nextDouble();
+        double randomValue = pnrg.nextDouble();
 		for (int i = 0; i < probs.length; i++) {
 			cumulativeProbability += probs[i];
 			if (randomValue < cumulativeProbability) {

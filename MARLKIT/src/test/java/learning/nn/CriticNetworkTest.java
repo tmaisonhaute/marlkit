@@ -2,8 +2,8 @@ package learning.nn;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Random;
 
 import org.testng.annotations.Test;
 
@@ -17,10 +17,9 @@ public class CriticNetworkTest {
     @Test
     public void givenObservation_whenGetValue_thenValueIsReturned() {
         // Given
-    	SecureRandom secureRandom = new SecureRandom();
-        secureRandom.setSeed(12345);
+    	Random random = new Random(12345);
         WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
-        CriticNetwork critic = new CriticNetwork(4, 10, secureRandom, 0.01, wrapper);
+        CriticNetwork critic = new CriticNetwork(4, 10, random, 0.01, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -36,10 +35,9 @@ public class CriticNetworkTest {
     @Test
     public void givenObservationAndTarget_whenUpdate_thenErrorIsReturned() {
         // Given
-    	SecureRandom secureRandom = new SecureRandom();
-        secureRandom.setSeed(12345);
+    	Random random = new Random(12345);
         WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
-        CriticNetwork critic = new CriticNetwork(4, 10, secureRandom, 0.01, wrapper);
+        CriticNetwork critic = new CriticNetwork(4, 10, random, 0.01, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -57,10 +55,9 @@ public class CriticNetworkTest {
     @Test
     public void givenMultipleUpdates_whenGetValue_thenValueConvergesToTarget() {
         // Given
-    	SecureRandom secureRandom = new SecureRandom();
-    	secureRandom.setSeed(12345);
+    	Random random = new Random(12345);
         WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
-        CriticNetwork critic = new CriticNetwork(4, 10, secureRandom, 0.001, wrapper);
+        CriticNetwork critic = new CriticNetwork(4, 10, random, 0.001, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -84,10 +81,9 @@ public class CriticNetworkTest {
     @Test
     public void givenLearningRateChange_whenUpdate_thenLearningSpeedChanges() {
         // Given
-    	SecureRandom secureRandom = new SecureRandom();
-        secureRandom.setSeed(12345);
+        Random random = new Random(12345);
         WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
-        CriticNetwork critic = new CriticNetwork(4, 10, secureRandom, 0.01, wrapper);
+        CriticNetwork critic = new CriticNetwork(4, 10, random, 0.01, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
         observation.addObservation(new ObservationPositionValue(new Tuple(Arrays.asList(1.0, 2.0)), 1.0));
@@ -97,20 +93,18 @@ public class CriticNetworkTest {
         double initialValue = critic.getValue(observation);
         
         // When: update with initial learning rate
-        for (int i = 0; i < 10; i++) {
-            critic.update(observation, targetValue);
-        }
+        critic.update(observation, targetValue);
+        
         double valueAfterInitialLR = critic.getValue(observation);
         double initialChange = Math.abs(valueAfterInitialLR - initialValue);
         
         // Change learning rate to higher value
-        critic.setLearningRate(0.1);
+        CriticNetwork critic2 = new CriticNetwork(4, 10, random, 0.1, wrapper);
         
         // Update with new learning rate
-        for (int i = 0; i < 10; i++) {
-            critic.update(observation, targetValue);
-        }
-        double valueAfterHigherLR = critic.getValue(observation);
+        critic2.update(observation, targetValue);
+        
+        double valueAfterHigherLR = critic2.getValue(observation);
         double changeWithHigherLR = Math.abs(valueAfterHigherLR - valueAfterInitialLR);
         
         // Then

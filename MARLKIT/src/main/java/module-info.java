@@ -28,6 +28,7 @@ open module marlkit.base {
 	requires java.logging;
     requires org.apache.commons.logging;
     requires com.fasterxml.jackson.databind;
+    requires org.apache.commons.lang3;
 
     exports marlkit.test;
 	exports environment;
@@ -45,4 +46,5 @@ open module marlkit.base {
 	exports util.criteria;
 	exports simulation;
     exports util.grafana;
+    exports environment.observation.Wrapperactionobservation;
 }

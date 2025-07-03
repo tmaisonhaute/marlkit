@@ -11,6 +11,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
 import agent.interaction.FictitiousPlay;
+import agent.interaction.MeanField;
 import environment.EnvironmentStandard;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
@@ -32,7 +33,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     private static final double REWARDTOONEAR = 0.5;
 
     public EnvPreyVsHunter() {
-        super(10, 10, new FictitiousPlay());
+        super(10, 10, new MeanField());
     }
 
     @Override
@@ -179,9 +180,23 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         return reward;
     }
 
+    /**
+     * Computes the distance between two grid positions.
+     *
+     * @param p1 The first position as a pair of (x, y) coordinates.
+     * @param p2 The second position as a pair of (x, y) coordinates.
+     * @return The distance between the two positions.
+     */
     public int distance2D(Pair<Integer, Integer> p1 , Pair<Integer, Integer>p2){
         return Math.abs((p1.getFirst() - p2.getFirst())) + Math.abs(p1.getSecond() - p2.getSecond());
     }
+    /**
+     * Computes the distance between two agents based on their positions in the environment.
+     *
+     * @param ag1 The first agent.
+     * @param ag2 The second agent.
+     * @return The distance between the two agents' positions.
+     */
     public int distance2D(MLKAgent ag1 , MLKAgent ag2){
         Pair<Integer,Integer> pos1 =state.getAgentPosition(ag1).clone();
         Pair<Integer,Integer> pos2 =state.getAgentPosition(ag2).clone();
@@ -206,11 +221,24 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         }
     }
 
+    /**
+     * Returns a numeric class identifier for the given agent.
+     * (draft method, need to be changed for more effective)
+     *
+     * @param agent The agent to classify.
+     * @return {@code 1} if the agent is a {@link PreyAgent}, {@code 2} otherwise (e.g., for {@link HunterAgent}).
+     */
     public int getclassId(MLKAgent agent) { //fonction brouillon
         if (agent instanceof PreyAgent){return 1;}
         else {return 2;}
     }
 
+    /**
+     * Computes the 2D distances between all pairs of hunters and preys.
+     *
+     * @return A map where each key is a (HunterAgent, PreyAgent) pair,
+     *         and the value is the distance between them.
+     */
     private Map<Pair<HunterAgent,PreyAgent> , Integer> getHunterPreydistanceMap(){
         Map<Pair<HunterAgent,PreyAgent> , Integer> res = new HashMap<>();
         for (HunterAgent Hag : hunterAgents) {
@@ -221,10 +249,20 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         return res;
     }
 
+    /**
+     * Retrieves the current positions of all agents (prey and hunter) in the environment.
+     *
+     * @return A map associating each {@link MLKAgent} with its current (x, y) position on the grid.
+     */
     public Map<MLKAgent, Pair<Integer, Integer>> getAgentsPositions() {
         return state.getAgentsPositions();
     }
 
+    /**
+     * Retrieves the current positions of all prey agents in the environment.
+     *
+     * @return A map associating each {@link PreyAgent} with its (x, y) position on the grid.
+     */
     public Map<MLKAgent, Pair<Integer, Integer>> getPreysPositions(){
         Map<MLKAgent, Pair<Integer, Integer>> results = new HashMap<>();
         for (MLKAgent ag : preyAgents) {
@@ -233,6 +271,11 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         return results;
     }
 
+    /**
+     * Retrieves the current positions of all hunter agents in the environment.
+     *
+     * @return A map associating each {@link HunterAgent} with its (x, y) position on the grid.
+     */
     public Map<MLKAgent, Pair<Integer, Integer>> getHuntersPositions(){
         Map<MLKAgent, Pair<Integer, Integer>> results = new HashMap<>();
         for (MLKAgent ag : hunterAgents) {
@@ -241,6 +284,11 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         return results;
     }
 
+    /**
+     * Returns the current state object representing the 2D grid of the environment.
+     *
+     * @return The {@link State2DGridInt} representing agent positions and the environment state.
+     */
     protected State getState() {
         return state;
     }

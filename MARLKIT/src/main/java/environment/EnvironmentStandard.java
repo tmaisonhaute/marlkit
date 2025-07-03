@@ -59,6 +59,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 */
 	public Map<MLKAgent, Experience> step(){
 		Map<MLKAgent,Observation> AgentObservations = processSocialObservations();
+		getLogger().info("AgentObservations: " + AgentObservations);
 		Map<MLKAgent, Pair<Action, Reward>> stepResult = EnvironmentStep(AgentObservations);
 		Map<MLKAgent, Experience> experiences = feedExpToAgent(stepResult, AgentObservations);
 		collectAndLogLearningData(experiences);
@@ -177,6 +178,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	public Map<MLKAgent,Observation> processSocialObservations(){
 		Map<MLKAgent, Observation> observations = getObservation();
 		Map<MLKAgent, Observation> interactionInformations = interactionMethod.getInteractionInformation(observations);
+		getLogger().info("interactionInformations: " + interactionInformations);
 		Map<MLKAgent, Observation> mergedObservations = mergeObservations(observations, interactionInformations);
 		return mergedObservations;
 	}
