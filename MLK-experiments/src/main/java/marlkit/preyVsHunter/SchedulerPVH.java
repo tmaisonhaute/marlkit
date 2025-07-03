@@ -12,7 +12,7 @@ public class SchedulerPVH extends MLKScheduler {
     public static final int MINIMUM_STEP_BEFORE_VIEW = 100000000;
     public static final int VIEWER_UPDATE_INTERVAL = 1000000;
     public static final int PAUSE_DISPLAY_VALUE = 50;
-	public static final int MAXIMUM_EPISODE_COUNT = 1000000;
+	public static final int MAXIMUM_EPISODE_COUNT = 10_000;
 
     private Criterion criteriaEndEpisode = new ReachTimeCriterion(EPISODE_DURATION);
     private Criterion criteriaStartDisplay = Criteria.and(new ModuloTimeCriterion(VIEWER_UPDATE_INTERVAL), new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
