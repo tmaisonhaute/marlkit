@@ -1,4 +1,4 @@
-package marlkit.ExperimentPTC;
+package marlkit.uputuc;
 
 import javafx.scene.paint.Color;
 import madkit.messages.ObjectMessage;

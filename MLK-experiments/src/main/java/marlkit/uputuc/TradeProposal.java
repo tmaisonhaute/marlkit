@@ -1,4 +1,4 @@
-package marlkit.ExperimentPTC;
+package marlkit.uputuc;
 
 import madkit.kernel.Agent;
 import madkit.messages.ObjectMessage;

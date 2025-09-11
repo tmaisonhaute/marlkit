@@ -1,4 +1,4 @@
-package marlkit.ExperimentPTC;
+package marlkit.uputuc;
 
 public enum Ressource {
     AZENE,

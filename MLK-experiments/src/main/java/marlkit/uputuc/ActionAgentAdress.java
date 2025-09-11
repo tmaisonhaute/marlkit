@@ -1,4 +1,4 @@
-package marlkit.ExperimentPTC;
+package marlkit.uputuc;
 
 import agent.action.Action;
 import madkit.kernel.AgentAddress;
