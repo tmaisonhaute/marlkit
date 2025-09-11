@@ -18,13 +18,10 @@ import environment.reward.Reward;
 import environment.state.State;
 import learning.Experience;
 import madkit.simulation.environment.Environment2D;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import util.Pair;
 
 public abstract class EnvironmentStandard extends Environment2D implements MLKEnvironment {
 
-	private static final Log log = LogFactory.getLog(EnvironmentStandard.class);
 	protected AgentsGroup agents;
 	protected MLKInteraction interactionMethod;
 	private boolean logSetup = false;

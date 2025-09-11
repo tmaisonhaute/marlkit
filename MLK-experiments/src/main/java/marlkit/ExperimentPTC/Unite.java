@@ -1,16 +1,17 @@
 package marlkit.ExperimentPTC;
 
-import agent.MLKAgent;
-import javafx.scene.paint.Color;
-import madkit.messages.ObjectMessage;
-import madkit.simulation.SimuAgent;
-import madkit.simulation.environment.Environment2D;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public abstract class Unite extends SimuAgent { //extends Watcher {
+import agent.AgentStandard;
+import javafx.scene.paint.Color;
+import learning.policy.PolicyRandom;
+import madkit.messages.ObjectMessage;
+import madkit.simulation.environment.Environment2D;
+
+public abstract class Unite extends AgentStandard { //extends Watcher {
     protected Position position = new Position(0,0);
     private final Color color = Color.color(0.1, 0.1, 0.1);
     protected HashMap<String, Double> distancesID = new HashMap<>();
@@ -32,12 +33,12 @@ public abstract class Unite extends SimuAgent { //extends Watcher {
     }
 
     public Unite(){
-        super();
+        super(new PolicyRandom(new ArrayList<>()));
         randomTeleport();
     }
 
     public Unite(double x, double y){
-        super();
+        super(new PolicyRandom(new ArrayList<>()));
         position.x = x;
         position.y = y;
     }

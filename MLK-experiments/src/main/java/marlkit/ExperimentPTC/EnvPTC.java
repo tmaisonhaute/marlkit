@@ -1,20 +1,16 @@
 package marlkit.ExperimentPTC;
 
-import agent.AgentsGroup;
-import agent.MLKAgent;
-import environment.MLKEnvironment;
-import environment.observation.Observation;
-import environment.reward.Reward;
-import environment.reward.RewardStandard;
-import environment.state.State2DGridInt;
-import learning.Experience;
-import madkit.simulation.SimuAgent;
-import marlkit.ExperimentPTC.Unite;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import agent.MLKAgent;
+import environment.MLKEnvironment;
+import environment.reward.Reward;
+import environment.reward.RewardStandard;
+import environment.state.State2DGridInt;
+import learning.Experience;
 
 
 public class EnvPTC implements MLKEnvironment {
