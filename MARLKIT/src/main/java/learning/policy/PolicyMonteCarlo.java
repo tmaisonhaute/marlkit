@@ -3,33 +3,29 @@ package learning.policy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
 import learning.Experience;
+import learning.policy.valuebased.PolicyQValueBased;
 import madkit.kernel.AgentLogger;
 import util.Pair;
 
-public class PolicyMonteCarlo extends PolicyEpsilon {
+public class PolicyMonteCarlo extends PolicyQValueBased {
 	
 	private MLKAgent agent;
-	private Map<Pair<Observation, Action>, Double> q;
     private Map<Pair<Observation, Action>, Integer> nbSelected;
-    private List<Action> actionsSet;
     private int numberOfActions;
     private double gamma;
 
     
 	public PolicyMonteCarlo(List<Action> actionsSet, double epsilon, double epsilonDecrease) {
-		super(epsilon, epsilonDecrease);
-		this.actionsSet = actionsSet;
+		super(actionsSet, epsilon, epsilonDecrease);
 		this.numberOfActions = actionsSet.size();
 		this.gamma = 0.95;
 		
-		this.q = new HashMap<>();
 		this.nbSelected = new HashMap<>();
 	}
     
@@ -44,46 +40,17 @@ public class PolicyMonteCarlo extends PolicyEpsilon {
 
 	@Override
 	public void init(MLKAgent agent) {
+		super.init(agent);
 		this.agent = agent;
-		this.q = new HashMap<>();
 		this.nbSelected = new HashMap<>();
 		
 	}
-
 
 
 	@Override
 	public int getLearningFrequency() {
 		return 0;
 	}
-	
-	public Map<Pair<Observation, Action>, Double> getQ() {
-    	return q;
-    }
-    
-    @Override
-    public Action takeAction(Observation observation) {
-    	RandomGenerator random = pnrg();
-        if (random.nextDouble() < getEpsilon()) {
-            return actionsSet.get(random.nextInt(numberOfActions));
-        }
-
-        Action selectedAction = null;
-        double maxVal = Double.NEGATIVE_INFINITY;
-        for (Action act : actionsSet) {
-            Pair<Observation, Action> newStateAction = new Pair<>(observation, act);
-            if (!q.containsKey(newStateAction)) {
-                return act;
-            }
-            if (q.get(newStateAction) > maxVal) {
-                selectedAction = act;
-                maxVal = q.get(newStateAction);
-            }
-        }
-
-        return selectedAction;
-    }
-
     
     protected double[] computeCumulativeRewards(List<Experience> experiences, AgentLogger logger) {
     	int experiencesLength = experiences.size();
@@ -103,10 +70,10 @@ public class PolicyMonteCarlo extends PolicyEpsilon {
 	        Pair<Observation, Action> stateAction = createStateAction(experiences.get(k));
 	        double cumulativeReward = cumulRewards[k];
 	
-	        double averageReward = q.getOrDefault(stateAction, 0.0);
+	        double averageReward = getQ().getOrDefault(stateAction, 0.0);
 	        int nb = nbSelected.getOrDefault(stateAction, 0);
 	
-	        q.put(stateAction, averageReward * nb / (nb + 1) + cumulativeReward * 1 / (nb + 1));
+	        getQ().put(stateAction, averageReward * nb / (nb + 1) + cumulativeReward * 1 / (nb + 1));
 	        nbSelected.put(stateAction, nb + 1);
 	    }
 	}
@@ -131,7 +98,7 @@ public class PolicyMonteCarlo extends PolicyEpsilon {
 	public void endEpisode(Batch batch, AgentLogger logger) {
 		learnOnBatch(batch, logger);
 		logger.info("size of batch : " + batch.getExperiences().size());
-	    logger.info("size Q: " + q.size());
+	    logger.info("size Q: " + getQ().size());
 	    logger.info("Epsilon : " + getEpsilon());
 	}
 

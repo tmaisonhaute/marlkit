@@ -23,12 +23,13 @@ public class LauncherPTB extends MLKLauncher {
 		Action goUp = Action2DMove.up(); 
 		Action goDown = Action2DMove.down();
 		List<Action> possibleActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
-		int nbAgents = 2;
+		int nbAgents = 1;
+		
 		for (int i = 0; i < nbAgents; i++) {
 //			PolicyMonteCarlo policy = new PolicyMonteCarlo(possibleActions, 1.0, 0.001);
 //			PolicySarsa policy = new PolicySarsa(possibleActions, 1.0, 0.0003);
-//			PolicyActorCritic policy = new PolicyActorCritic(possibleActions, 4);
 			PolicyQLearning policy = new PolicyQLearning(possibleActions, 1.0, 0.001, 1.0, 0.2, 0.95);
+//			PolicyActorCritic policy = new PolicyActorCritic(possibleActions, 4);
 
 			AgentStandard ag = new AgentStandard(policy);
 			launchAgent(ag);

@@ -26,7 +26,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	
 	public EnvPushTheBlock() {
 		super(5, 5, new FictitiousPlay());
-		numberOfBlocks = 2;
+		numberOfBlocks = 1;
 	}
 
 	@Override

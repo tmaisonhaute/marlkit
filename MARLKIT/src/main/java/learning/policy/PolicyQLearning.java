@@ -1,35 +1,31 @@
 package learning.policy;
 
+import java.util.List;
+
 import agent.AgentStandard;
 import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
 import learning.Experience;
+import learning.policy.valuebased.PolicyQValueBased;
 import madkit.kernel.AgentLogger;
 import util.Pair;
-import java.util.Map;
-import java.util.List;
-import java.util.HashMap;
-import java.util.random.RandomGenerator;
 
 /**
  * Q-Learning policy implementation.
  * This policy uses Q-learning to select actions based on the learned Q-values.
  * It maintains a Q-table mapping state-action pairs to their expected rewards.
  */
-public class PolicyQLearning extends PolicyEpsilon {
+public class PolicyQLearning extends PolicyQValueBased {
 
-    private Map<Pair<Observation, Action>, Double> q;
-    private final List<Action> actionsSet;
     private final double gamma;
     private final double alpha;
     private AgentStandard agent;
     private final double defaultQValue;
 
     public PolicyQLearning(List<Action> actionsSet, double epsilon, double epsilonDecrease, double defaultQValue, double alpha, double gamma)  {
-        super(epsilon, epsilonDecrease);
-        this.actionsSet = actionsSet;
+        super(actionsSet, epsilon, epsilonDecrease);
         this.defaultQValue = defaultQValue;
         this.gamma = gamma;
         this.alpha = alpha;
@@ -52,7 +48,7 @@ public class PolicyQLearning extends PolicyEpsilon {
 
     @Override
     public void init(MLKAgent agent) {
-        this.q = new HashMap<>();
+        super.init(agent);
         this.agent = (AgentStandard) agent;
     }
 
@@ -66,28 +62,6 @@ public class PolicyQLearning extends PolicyEpsilon {
         return 1;
     }
 
-    @Override
-    public Action takeAction(Observation observation) {
-        RandomGenerator random = pnrg();
-        if (random.nextDouble() < getEpsilon()) {
-            return actionsSet.get(random.nextInt(actionsSet.size()));
-        }
-        Action bestAction = null;
-        double maxScore = Double.NEGATIVE_INFINITY;
-        for (Action act : actionsSet) {
-            Pair<Observation, Action> stateActionPair = new Pair<>(observation, act);
-            if (!q.containsKey(stateActionPair)) {
-                bestAction = act;
-                break;
-            }
-
-            if (q.get(stateActionPair) > maxScore) {
-                bestAction = act;
-                maxScore = q.get(stateActionPair);
-            }
-        }
-        return bestAction;
-    }
 
     @Override
     public void learnOnBatch(Batch batch, AgentLogger logger) {
@@ -111,8 +85,8 @@ public class PolicyQLearning extends PolicyEpsilon {
 
     private double getMaxNextQ(Observation nextObs) {
         double maxNextQ = Double.NEGATIVE_INFINITY;
-        for (Action act : actionsSet) {
-            double qVal = q.getOrDefault(new Pair<>(nextObs, act), defaultQValue);
+        for (Action act : getActionsSet()) {
+            double qVal = getQ().getOrDefault(new Pair<>(nextObs, act), defaultQValue);
             if (qVal > maxNextQ) {
                 maxNextQ = qVal;
             }
@@ -124,16 +98,16 @@ public class PolicyQLearning extends PolicyEpsilon {
     }
 
     private void updateQ(Pair<Observation, Action> stateAction, double reward, Observation nextObs) {
-        double prevQ = q.getOrDefault(stateAction, defaultQValue);
+        double prevQ = getQ().getOrDefault(stateAction, defaultQValue);
         double maxNextQ = getMaxNextQ(nextObs);
         double updatedQ = prevQ + alpha * (reward + gamma * maxNextQ - prevQ);
-        q.put(stateAction, updatedQ);
+        getQ().put(stateAction, updatedQ);
     }
 
     @Override
     public void endEpisode(Batch batch, AgentLogger logger) {
         updateEpsilon();
-        logger.info("size Q: " + q.size());
+        logger.info("size Q: " + getQ().size());
         logger.info("Epsilon : " + getEpsilon());
         batch.clear();
     }

@@ -1,38 +1,30 @@
 
 package learning.policy;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
 import learning.Experience;
+import learning.policy.valuebased.PolicyQValueBased;
 import madkit.kernel.AgentLogger;
 import util.Pair;
 
-public class PolicySarsa extends PolicyEpsilon {
+public class PolicySarsa extends PolicyQValueBased {
 
 	private MLKAgent agent;
-    private Map<Pair<Observation, Action>, Double> q;
-    private List<Action> actionsSet;
-    private int numberOfActions;
     private double gamma;
     private double alpha;
     private double totalRewards;
 
     public PolicySarsa(List<Action> actionsSet, double epsilon, double epsilonDecrease) {
-        super(epsilon, epsilonDecrease);
-        this.actionsSet = actionsSet;
-        this.numberOfActions = actionsSet.size();
+        super(actionsSet, epsilon, epsilonDecrease);
         this.gamma = 0.95;
         this.alpha = 0.1;
         this.totalRewards = 0.0;
-
-        this.q = new HashMap<>();
     }
 
     public PolicySarsa(List<Action> actionsSet, double epsilon) {
@@ -46,44 +38,17 @@ public class PolicySarsa extends PolicyEpsilon {
 
 	@Override
 	public void init(MLKAgent agent) {
+		super.init(agent);
 		this.agent = agent;
-        this.q = new HashMap<>();
 	}
 
     @Override
 	public int getLearningFrequency() {
         return 1;
     }
-      
-    public Map<Pair<Observation, Action>, Double> getQ() {
-        return q;
-    }
 
-    @Override
-    public Action takeAction(Observation observation) {
-    	RandomGenerator random = pnrg();
-        if (random.nextDouble() < getEpsilon()) {
-            return actionsSet.get(random.nextInt(numberOfActions));
-        }
-
-        Action selectedAction = null;
-        double maxVal = Double.NEGATIVE_INFINITY;
-        for (Action act : actionsSet) {
-            Pair<Observation, Action> newStateAction = new Pair<>(observation, act);
-            if (!q.containsKey(newStateAction)) {
-                return act;
-            }
-
-            if (q.get(newStateAction) > maxVal) {
-                selectedAction = act;
-                maxVal = q.get(newStateAction);
-            }
-        }
-
-        return selectedAction;
-    }
-
-    protected void update(Observation state, Action action, double reward, Observation nextState, Action nextAction) {
+    protected void updateQ(Observation state, Action action, double reward, Observation nextState, Action nextAction) {
+    	Map<Pair<Observation, Action>, Double> q = getQ();
         double qNext = 0;
         if (nextState != null && nextAction != null) {
             Pair<Observation, Action> nextStateAction = new Pair<>(nextState, nextAction);
@@ -112,7 +77,7 @@ public class PolicySarsa extends PolicyEpsilon {
 		Observation nextState = nextExperience.getObservation();
 		Action nextAction = nextExperience.getAction();
 
-		update(currentState, currentAction, reward, nextState, nextAction);
+		updateQ(currentState, currentAction, reward, nextState, nextAction);
 		batch.getExperiences().remove(0);
 		return reward;
 	}
@@ -126,13 +91,13 @@ public class PolicySarsa extends PolicyEpsilon {
             Action lastAction = lastExperience.getAction();
             double lastReward = lastExperience.getRewardValue();
 
-            update(lastState, lastAction, lastReward, null, null);
+            updateQ(lastState, lastAction, lastReward, null, null);
             batch.getExperiences().remove(0);
             totalRewards += lastReward;
         }
         updateEpsilon();
         logger.info("total rewards : " + totalRewards);
-	    logger.info("size Q: " + q.size());
+	    logger.info("size Q: " + getQ().size());
 	    logger.info("Epsilon : " + getEpsilon());
 	    totalRewards = 0.0;
 	}
