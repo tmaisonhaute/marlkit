@@ -6,14 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import agent.MLKAgent;
-import environment.MLKEnvironment;
+import agent.action.Action;
+import environment.EnvironmentStandard;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
+import environment.state.State;
 import environment.state.State2DGridInt;
 import learning.Experience;
+import util.Pair;
 
 
-public class EnvPTC implements MLKEnvironment {
+public class EnvPTC extends EnvironmentStandard {
 
     private final static double REWARDTRADECOMPLETED = 1;
     private List<UniteProduction> productionUnits;
@@ -23,6 +26,7 @@ public class EnvPTC implements MLKEnvironment {
     protected State2DGridInt state;
 
     public EnvPTC(){
+    	super(30, 30);
         state = new State2DGridInt(30,30);
     }
 
@@ -109,4 +113,28 @@ public class EnvPTC implements MLKEnvironment {
 
         return experiences;
     }
+
+
+
+	@Override
+	protected void setupState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	protected State getState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
