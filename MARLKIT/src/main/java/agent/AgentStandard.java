@@ -18,6 +18,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	public Batch pastExperiences;
 	
 	public AgentStandard(Policy policy) {
+		super();
 		this.setPolicy(policy);
 		pastExperiences = new Batch();
 	}
