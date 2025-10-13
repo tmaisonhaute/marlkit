@@ -1,7 +1,9 @@
-package marlkit.uputuc;
+package marlkit.uputuc.unite;
 
 import javafx.scene.paint.Color;
 import madkit.messages.ObjectMessage;
+import marlkit.uputuc.Ressource;
+import marlkit.uputuc.TradeProposal;
 
 import java.util.ArrayList;
 import java.util.Comparator;

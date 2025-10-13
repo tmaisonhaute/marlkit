@@ -1,4 +1,4 @@
-package marlkit.uputuc;
+package marlkit.uputuc.unite;
 
 import javafx.scene.paint.Color;
 import learning.policy.Policy;
@@ -6,6 +6,9 @@ import madkit.kernel.Agent;
 import madkit.kernel.AgentAddress;
 import madkit.messages.ObjectMessage;
 import madkit.simulation.SimuAgent;
+import marlkit.uputuc.Ressource;
+import marlkit.uputuc.Storage;
+import marlkit.uputuc.TradeProposal;
 
 import java.util.*;
 

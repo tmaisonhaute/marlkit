@@ -1,4 +1,4 @@
-package marlkit.uputuc;
+package marlkit.uputuc.unite;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 import learning.policy.PolicyRandom;
 import madkit.messages.ObjectMessage;
 import madkit.simulation.environment.Environment2D;
+import marlkit.uputuc.Position;
+import marlkit.uputuc.Ressource;
 
 public abstract class Unite extends AgentStandard { //extends Watcher {
     protected Position position = new Position(0,0);
