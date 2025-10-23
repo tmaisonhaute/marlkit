@@ -1,100 +1,119 @@
 package marlkit.uputuc.unite;
 
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.random.RandomGenerator;
+
 import javafx.scene.paint.Color;
 import learning.policy.Policy;
-import madkit.messages.ObjectMessage;
-import marlkit.uputuc.Ressource;
-import marlkit.uputuc.Storage;
+import marlkit.uputuc.Resource;
+import marlkit.uputuc.ResourceSlot;
 import marlkit.uputuc.TradeProposal;
-
-import java.util.*;
-import java.util.random.RandomGenerator;
 
 public class UniteProduction extends Unite {
 
     private final Color color = Color.color(0.2, 0.8, 0.2);
 
-    HashMap<Ressource, Double> probaProductionRessource = new HashMap<>();
+    EnumMap<Resource, Double> probaProductionResource;
 
     private double prodValue = 10.0;
     private double prodStd = 2.0;
 
-    HashMap<Ressource, Storage> stock;
-
-    public UniteProduction(){
-        super();
-        probaProductionRessource = new HashMap<>();
-        probaProductionRessource.put(Ressource.AZENE, 0.5);
-        probaProductionRessource.put(Ressource.BOGD, 0.4);
-        probaProductionRessource.put(Ressource.CARBOL, 0.1);
-        initFillStock();
-    }
-
-    protected UniteProduction(HashMap<Ressource, Double> probaProdRessource){
-        super();
-        probaProductionRessource = new HashMap<>(probaProdRessource);
-        initFillStock();
-    }
-
-    public UniteProduction(double x, double y, HashMap<Ressource, Double> probaProdRessource){
-        super(x,y);
-        probaProductionRessource = new HashMap<>(probaProdRessource);
-        initFillStock();
-    }
-
-    private void initFillStock(){
-        stock = new HashMap<>();
-        for (Map.Entry<Ressource, Double> entry : probaProductionRessource.entrySet()){
-            if (entry.getValue() > 0){
-                stock.put(entry.getKey(), new Storage(entry.getKey(), (int) Math.round(20*entry.getValue())));
-            }
-        }
-    }
+    HashMap<Resource, ResourceSlot> stock;
 
     @Override
     protected void onActivation() {
         super.onActivation();
         requestRole(getCommunity(), getModelGroup(), "production", null);
     }
-
-    public void productRessource(){
-        Random rand = new Random();
-        Ressource randomRessource = getRandomRessource(probaProductionRessource);
-        int production = (int) Math.max(0, Math.round(prodValue + prodStd * rand.nextGaussian()));
-        stock.get(randomRessource).add(production);
+    
+    public UniteProduction(){
+    	this(null);
+    }
+    
+    public UniteProduction(Policy policy){
+        super(policy);
+        probaProductionResource = new EnumMap<>(Resource.class);
+        probaProductionResource.put(Resource.AZENE, 0.5);
+        probaProductionResource.put(Resource.BOGD, 0.4);
+        probaProductionResource.put(Resource.CARBOL, 0.1);
+        initFillStock();
+    }
+    
+    public UniteProduction(Policy policy, double x, double y){
+        super(policy, x,y);
+        probaProductionResource = new EnumMap<>(Resource.class);
+        probaProductionResource.put(Resource.AZENE, 0.5);
+        probaProductionResource.put(Resource.BOGD, 0.4);
+        probaProductionResource.put(Resource.CARBOL, 0.1);
+        initFillStock();
     }
 
-    public void processRequests(){
-        List<ObjectMessage<TradeProposal>> messagesTradesRequest = orderRequests();
-        satisfyRequest(messagesTradesRequest);
+    public UniteProduction(Policy policy, Map<Resource, Double> probaProdResource){
+        super(policy);
+        probaProductionResource = new EnumMap<>(probaProdResource);
+        initFillStock();
     }
 
-    private List<ObjectMessage<TradeProposal>> orderRequests(){
-        List<ObjectMessage<TradeProposal>> messagesTradesRequest = new ArrayList<>();
-        messagesTradesRequest = getMailbox().nextMatches(null);
-
-        messagesTradesRequest.sort(Comparator.comparingDouble(mess ->
-                distancesID.get(mess.getSender().getAgentNetworkID())));
-        return messagesTradesRequest;
+    public UniteProduction(Policy policy, double x, double y, Map<Resource, Double> probaProdResource){
+        super(policy, x,y);
+        probaProductionResource = new EnumMap<>(probaProdResource);
+        initFillStock();
     }
 
-    private void satisfyRequest(List<ObjectMessage<TradeProposal>> messagesTradesRequest){
-        for (ObjectMessage<TradeProposal> messageTradeRequest : messagesTradesRequest){
-            TradeProposal tradeProposalRequest = messageTradeRequest.getContent();
-            Ressource requestType = tradeProposalRequest.getType();
-            int nbRequested = Math.max(0, -tradeProposalRequest.getValue());
-            int nbInStock = stock.containsKey(requestType) ? stock.get(requestType).getValue() : 0;
-            int nbVentes = Math.min(nbRequested, nbInStock);
-            if (stock.containsKey(requestType) && nbVentes > 0){
-                TradeProposal tradeProposalSend = new TradeProposal(requestType, nbVentes, 0, tradeProposalRequest.distance);
-                reply(tradeProposalSend.createMessage(), messageTradeRequest);
-                stock.get(requestType).add(-nbVentes);
+    private void initFillStock(){
+        stock = new HashMap<>();
+        for (Map.Entry<Resource, Double> entry : probaProductionResource.entrySet()){
+            if (entry.getValue() > 0){
+                stock.put(entry.getKey(), new ResourceSlot(entry.getKey(), (int) Math.round(20*entry.getValue())));
             }
         }
     }
 
+    public void productRessource(){
+        RandomGenerator rand = prng();
+        Resource randomRessource = getRandomRessource(probaProductionResource);
+        int production = (int) Math.max(0, Math.round(prodValue + prodStd * rand.nextGaussian()));
+        stock.get(randomRessource).add(production);
+    }
+
+    public void processRequests(List<TradeProposal> tradesRequests){
+        orderRequests(tradesRequests);
+        satisfyRequests(tradesRequests);
+    }
+
+    protected void orderRequests(List<TradeProposal> tradesRequests) {
+//      List<TradeProposal> sortedRequests = new ArrayList<>(tradesRequests);
+//      sortedRequests.sort(null);
+//    	return sortedRequests;
+    	tradesRequests.sort(null);
+    }
+
+    protected void satisfyRequests(List<TradeProposal> tradesRequests){
+    	
+    	Iterator<TradeProposal> iterator = tradesRequests.iterator();
+        while (iterator.hasNext()) {
+        	TradeProposal tradeRequest = iterator.next();
+        	
+        	Resource requestType = tradeRequest.getType();
+            int nbRequested = Math.max(0, -tradeRequest.getValue());
+            int nbInStock = stock.containsKey(requestType) ? stock.get(requestType).getValue() : 0;
+            int nbVentes = Math.min(nbRequested, nbInStock);
+            
+            if (stock.containsKey(requestType) && nbVentes > 0){
+            	stock.get(requestType).add(-nbVentes);
+            }else {
+            	iterator.remove();
+            }
+            
+        }
+    }
+
     public void resetStock() {
-        for(Ressource resource : stock.keySet()){
+        for(Resource resource : stock.keySet()){
             stock.get(resource).add(-stock.get(resource).getValue());
         }
     }

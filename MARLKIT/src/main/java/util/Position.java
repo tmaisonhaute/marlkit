@@ -1,4 +1,4 @@
-package marlkit.uputuc;
+package util;
 
 public class Position {
     public double x;

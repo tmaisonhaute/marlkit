@@ -1,34 +1,44 @@
 package marlkit.uputuc;
 
-import madkit.kernel.Agent;
-import madkit.messages.ObjectMessage;
-
 import static java.lang.Math.min;
 
+import agent.MLKAgent;
+import madkit.messages.ObjectMessage;
+
 public class TradeProposal implements Comparable<TradeProposal> {
-    public RessourceQuantify ressourceQuantify;
+	
+    protected ResourceQuantify resourceQuantify;
     protected float priceUnite;
-    public Double distance;
+    protected Double distance;
+    protected MLKAgent agentSource;
+    protected MLKAgent agentTarget;
+    
 
-    public TradeProposal(Ressource type, int value, float priceUnite, Double distance) {
-        this.ressourceQuantify = new RessourceQuantify(type, value);
-        this.priceUnite = priceUnite;
-        this.distance = distance;
+    public TradeProposal(Resource type, int value, float priceUnite, Double distance, MLKAgent agentSource, MLKAgent agentTarget){
+		this.resourceQuantify = new ResourceQuantify(type, value);
+		this.priceUnite = priceUnite;
+		this.distance = distance;
+		this.agentSource = agentSource;
+		this.agentTarget = agentTarget;
     }
-
-    public TradeProposal(Ressource type, int nb, float priceUnite) {
-        this(type, nb, priceUnite, 0.0);
+    
+    public TradeProposal(Resource type, int value, float priceUnite, MLKAgent agentSource) {
+        this(type, value, priceUnite, null, agentSource,  null);
+    }
+    
+	public void setPriceUnite(float priceUnite){
+        this.priceUnite = priceUnite;
     }
 
     public float getPriceTrade(){
 
-        return priceUnite * Math.abs(ressourceQuantify.value);
+        return priceUnite * Math.abs(resourceQuantify.value);
     }
 
 
     public float deal(int nbSold){
-        nbSold = min(nbSold, ressourceQuantify.value);
-        ressourceQuantify.value -= nbSold;
+        nbSold = min(nbSold, resourceQuantify.value);
+        resourceQuantify.value -= nbSold;
         return nbSold * priceUnite;
     }
 
@@ -39,24 +49,42 @@ public class TradeProposal implements Comparable<TradeProposal> {
     @Override
     public String toString() {
         return "Trade{" +
-                "stock=" + ressourceQuantify +
+                "stock=" + resourceQuantify +
                 ", priceUnite=" + priceUnite +
                 ", distance=" + distance +
                 '}';
     }
 
-    public RessourceQuantify getRessourceQuantify() {
-        return ressourceQuantify;
+    public ResourceQuantify getResourceQuantify() {
+        return resourceQuantify;
     }
-    public Ressource getType(){
-        return ressourceQuantify.getType();
+    public Resource getType(){
+        return resourceQuantify.getType();
     }
     public int getValue(){
-        return ressourceQuantify.getValue();
+        return resourceQuantify.getValue();
     }
 
     public float getPriceUnite(){return priceUnite;}
 
+	public Double getDistance() {
+		return distance;
+	}
+	
+	public void setAgentSource(MLKAgent agentSource) {
+		this.agentSource = agentSource;
+	}
+	public MLKAgent getAgentSource() {
+		return agentSource;
+	}
+	
+	public void setAgentTarget(MLKAgent agentTarget) {
+        this.agentTarget = agentTarget;
+    }
+	public MLKAgent getAgentTarget() {
+		return agentTarget;
+	}
+	
     @Override
     public int compareTo(TradeProposal o) {
         if (distance > o.distance){return 1;}

@@ -4,9 +4,9 @@ import environment.observation.Observation;
 
 public class ObservationRessource implements Observation {
 
-    private Ressource ressource;
+    private Resource ressource;
 
-    public ObservationRessource(Ressource ressource){
+    public ObservationRessource(Resource ressource){
         this.ressource = ressource;
     }
 
@@ -15,7 +15,7 @@ public class ObservationRessource implements Observation {
         return null;
     }
 
-    public Ressource getRessource(){
+    public Resource getRessource(){
         return this.ressource;
     }
 }

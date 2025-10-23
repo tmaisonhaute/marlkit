@@ -1,15 +1,15 @@
 package marlkit.uputuc;
 
-public class Storage extends RessourceQuantify {
+public class ResourceSlot extends ResourceQuantify {
 
     private int maxStorage;
 
-    public Storage(Ressource type, int quantity, int maxStorage){
+    public ResourceSlot(Resource type, int quantity, int maxStorage){
         super(type,quantity);
         this.maxStorage = maxStorage;
     }
 
-    public Storage(Ressource type, int quantity){
+    public ResourceSlot(Resource type, int quantity){
         this(type, quantity, 100);
     }
 

@@ -1,27 +1,43 @@
 package marlkit.uputuc.unite;
 
-import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
-import agent.AgentStandard;
+import agent.MultiDimensionalAgent;
 import javafx.scene.paint.Color;
-import learning.policy.PolicyRandom;
+import learning.policy.Policy;
 import madkit.messages.ObjectMessage;
 import madkit.simulation.environment.Environment2D;
-import marlkit.uputuc.Position;
-import marlkit.uputuc.Ressource;
+import marlkit.uputuc.Resource;
+import util.MapSelector;
+import util.Position;
 
-public abstract class Unite extends AgentStandard { //extends Watcher {
+
+public abstract class Unite extends MultiDimensionalAgent { //extends Watcher {
+	protected static final String UNITE = "unite";
     protected Position position = new Position(0,0);
     private final Color color = Color.color(0.1, 0.1, 0.1);
     protected HashMap<String, Double> distancesID = new HashMap<>();
+    
+    protected Unite(Policy policy){
+    	super(policy);
+    	randomTeleport();
+    }
+    
+    protected Unite(Policy policy, double x, double y){
+    	super(policy);
+    	position.x = x;
+    	position.y = y;
+    }
 
+    @Override
+    protected void onActivation() {
+    	requestRole(getCommunity(), getModelGroup(), UNITE);
+    }
 
     public void sendPosition(){
         ObjectMessage<Position> messagePosition = new ObjectMessage<>(position.copy());
-        broadcast(messagePosition, getAgentsWithRole(getCommunity(), getModelGroup(), "unite"));
+        broadcast(messagePosition, getAgentsWithRole(getCommunity(), getModelGroup(), UNITE));
     }
 
     public void receivePosition(){
@@ -34,25 +50,10 @@ public abstract class Unite extends AgentStandard { //extends Watcher {
         }
     }
 
-    public Unite(){
-        super(new PolicyRandom(new ArrayList<>()));
-        randomTeleport();
-    }
-
-    public Unite(double x, double y){
-        super(new PolicyRandom(new ArrayList<>()));
-        position.x = x;
-        position.y = y;
-    }
-
-    @Override
-    protected void onActivation() {
-        requestRole(getCommunity(), getModelGroup(), "unite");
-    }
 
     @Override
     public Environment2D getEnvironment() {
-        return super.getEnvironment();
+        return (Environment2D) super.getEnvironment();
     }
 
 
@@ -66,29 +67,14 @@ public abstract class Unite extends AgentStandard { //extends Watcher {
         return position.distancePoint(unite.position);
     }
 
-    protected void sendLocation(){
-        ObjectMessage<Position> messagePos = new ObjectMessage<Position>(position.copy());
-        sendWithRole(messagePos, getCommunity(), getModelGroup(), "unite", "unite");
-    }
-
-    protected void receiveLocation(){
-        ObjectMessage<Position> messagePos = new ObjectMessage<Position>(position.copy());
-        sendWithRole(messagePos, getCommunity(), getModelGroup(), "unite", "unite");
-    }
-
-    protected Ressource getRandomRessource(HashMap<Ressource, Double> probaRessource) {
-        Random rand = new Random();
-        double totalProba = probaRessource.values().stream().mapToDouble(Double::doubleValue).sum();
-        double randomValue = rand.nextDouble();
-        double cumulativeProba = 0.0;
-
-        for (Map.Entry<Ressource, Double> entry : probaRessource.entrySet()) {
-            cumulativeProba += entry.getValue() / totalProba;
-            if (randomValue <= cumulativeProba) {
-                return entry.getKey();
-            }
-        }
-        throw new IllegalStateException("Aucune ressource n'a été sélectionnée. Vérifiez vos probabilités.");
+    protected Resource getRandomRessource(EnumMap<Resource, Double> probaRessource) {
+    	
+    	try {
+    		return MapSelector.getRandomItem(probaRessource, prng());
+    	} catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Aucune ressource n'a été sélectionnée. Vérifiez vos probabilités.");
+    	}
+    	
     }
 
     public double getX() {

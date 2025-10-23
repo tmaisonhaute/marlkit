@@ -22,6 +22,7 @@ import util.Pair;
 public class EnvPTC extends EnvironmentStandard {
 
     private final static double REWARDTRADECOMPLETED = 1;
+    private final static double REWARDTRADENOTCOMPLETED = 0;
     private List<UniteProduction> productionUnits;
     private List<UniteTransformation> transformationUnits;
     private List<UniteConsumption> consumptionUnits;
@@ -34,7 +35,6 @@ public class EnvPTC extends EnvironmentStandard {
     }
 
 
-
     public void reset(){
         state.reset();
         for(UniteProduction unite : productionUnits){
@@ -45,6 +45,7 @@ public class EnvPTC extends EnvironmentStandard {
         }
     }
 
+    @Override
     public void receiveAgentInfo(MLKAgent agent) {
         if (agent instanceof UniteProduction) {
             productionUnits.add((UniteProduction) agent);
@@ -71,34 +72,50 @@ public class EnvPTC extends EnvironmentStandard {
         List<ObservationRessource> observations = new ArrayList<>();
         List<ActionAgentAdress> actions = new ArrayList<>();
         List<Reward> rewards = new ArrayList<>();
+        
+        List<TradeProposal> consumptionNeeds = new ArrayList<>();
+        for(UniteConsumption consumptionUnit : consumptionUnits) {
+        	TradeProposal newNeed = consumptionUnit.declareNeeds();
+        	consumptionNeeds.add(newNeed);
+        }
+        
         for(UniteProduction productionUnit : productionUnits) {
             productionUnit.productRessource();
         }
-        for(UniteConsumption consumptionUnit : consumptionUnits) {
-            observations.add(new ObservationRessource(consumptionUnit.declareBuy()));
-        }
+        
+//        for(UniteConsumption consumptionUnit : consumptionUnits) {
+//            observations.add(new ObservationRessource(consumptionUnit.declareBuy()));
+//        }
+        
+        List<TradeProposal> buyRequests = new ArrayList<>();
         for(UniteTransformation transformationUnit : transformationUnits) {
-            actions.add(new ActionAgentAdress(transformationUnit.requestBuy()));
+            //actions.add(new ActionAgentAdress(transformationUnit.requestBuy()));
+        	ObservationBuy obsAchat = null;//TODO
+        	buyRequests.add(transformationUnit.requestBuy(obsAchat));
         }
         for(UniteProduction productionUnit : productionUnits) {
-            productionUnit. processRequests();
+            productionUnit.processRequests(buyRequests);
         }
+        
         for(UniteTransformation transformationUnit : transformationUnits) {
-            transformationUnit.lookRequestSent();
+            transformationUnit.lookRequestSent(buyRequests);
         }
+        
+        List<TradeProposal> sellRequests = new ArrayList<>();
         for(UniteTransformation transformationUnit : transformationUnits) {
-            transformationUnit.requestSell();
+        	ObservationSell obsVente = null; //TODO
+        	sellRequests.add(transformationUnit.requestSell(obsVente));
         }
         for(UniteConsumption consumptionUnit : consumptionUnits) {
-            consumptionUnit.buy();
+            consumptionUnit.buy(sellRequests);
         }
         for(UniteTransformation transformationUnit : transformationUnits) {
-            boolean isRequestAccepted = transformationUnit.lookRequestSent();
+            boolean isRequestAccepted = transformationUnit.lookRequestSent(sellRequests);
             if(isRequestAccepted){
                 rewards.add(new RewardStandard(REWARDTRADECOMPLETED));
             }
             else{
-                rewards.add(new RewardStandard(-REWARDTRADECOMPLETED));
+                rewards.add(new RewardStandard(REWARDTRADENOTCOMPLETED));
             }
         }
         for(UniteProduction productionUnit : productionUnits) {
@@ -111,9 +128,6 @@ public class EnvPTC extends EnvironmentStandard {
         for(int i = 0;i<transformationUnits.size();i++ ) {
             experiences.put(transformationUnits.get(i), new Experience(observations.get(i),actions.get(i),rewards.get(i)));
         }
-
-
-
         return experiences;
     }
 

@@ -1,6 +1,6 @@
 package marlkit.uputuc;
 
-public enum Ressource {
+public enum Resource {
     AZENE,
     BOGD,
     CARBOL
