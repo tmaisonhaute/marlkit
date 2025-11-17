@@ -108,10 +108,6 @@ public class PolicyMonteCarlo extends PolicyQValueBased {
 		return agent;
 	}
 
-	@Override
-	public Map<Pair<Observation, Action>, Double> getQ() {
-		return getQ();
-	}
 
 
 

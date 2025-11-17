@@ -2,19 +2,19 @@ package marlkit.uputuc;
 
 import static java.lang.Math.min;
 
-import agent.MLKAgent;
 import madkit.messages.ObjectMessage;
+import marlkit.uputuc.unite.Unite;
 
 public class TradeProposal implements Comparable<TradeProposal> {
 	
     protected ResourceQuantify resourceQuantify;
     protected float priceUnite;
     protected Double distance;
-    protected MLKAgent agentSource;
-    protected MLKAgent agentTarget;
+    protected Unite agentSource;
+    protected Unite agentTarget;
     
 
-    public TradeProposal(Resource type, int value, float priceUnite, Double distance, MLKAgent agentSource, MLKAgent agentTarget){
+    public TradeProposal(Resource type, int value, float priceUnite, Double distance, Unite agentSource, Unite agentTarget){
 		this.resourceQuantify = new ResourceQuantify(type, value);
 		this.priceUnite = priceUnite;
 		this.distance = distance;
@@ -22,7 +22,7 @@ public class TradeProposal implements Comparable<TradeProposal> {
 		this.agentTarget = agentTarget;
     }
     
-    public TradeProposal(Resource type, int value, float priceUnite, MLKAgent agentSource) {
+    public TradeProposal(Resource type, int value, float priceUnite, Unite agentSource) {
         this(type, value, priceUnite, null, agentSource,  null);
     }
     
@@ -71,17 +71,17 @@ public class TradeProposal implements Comparable<TradeProposal> {
 		return distance;
 	}
 	
-	public void setAgentSource(MLKAgent agentSource) {
+	public void setAgentSource(Unite agentSource) {
 		this.agentSource = agentSource;
 	}
-	public MLKAgent getAgentSource() {
+	public Unite getAgentSource() {
 		return agentSource;
 	}
 	
-	public void setAgentTarget(MLKAgent agentTarget) {
+	public void setAgentTarget(Unite agentTarget) {
         this.agentTarget = agentTarget;
     }
-	public MLKAgent getAgentTarget() {
+	public Unite getAgentTarget() {
 		return agentTarget;
 	}
 	

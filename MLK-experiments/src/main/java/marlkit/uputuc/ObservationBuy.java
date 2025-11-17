@@ -5,6 +5,11 @@ import java.util.List;
 import environment.observation.Observation;
 import util.Pair;
 
+/**
+ * Observation used by a UniteTransformation to request buy offers from other
+ * unites. It contains a list of ResourcesStock and their respective distances
+ * to the UniteTransformation.
+ */
 public class ObservationBuy implements Observation {
 	private List<Pair<ResourcesStock, Double>> stocksAndDistances;
 	
@@ -12,7 +17,7 @@ public class ObservationBuy implements Observation {
 	@Override
 	public Observation add(Observation other) {
 		if (!(other instanceof ObservationBuy)) {
-	        throw new IllegalArgumentException("Impossible to add a ObservationAchat element with an element which isn't.");
+	        throw new IllegalArgumentException("Impossible to add a ObservationBuy element with an element which isn't.");
 	    }
 		ObservationBuy otherOA = (ObservationBuy) other;
 		ObservationBuy result = new ObservationBuy();

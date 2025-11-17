@@ -2,7 +2,6 @@ package marlkit.uputuc.unite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.List;
 
 import javafx.scene.paint.Color;
@@ -12,21 +11,16 @@ import marlkit.uputuc.ActionSell;
 import marlkit.uputuc.ObservationBuy;
 import marlkit.uputuc.ObservationSell;
 import marlkit.uputuc.Resource;
-import marlkit.uputuc.ResourceSlot;
+import marlkit.uputuc.ResourcesStock;
 import marlkit.uputuc.TradeProposal;
 
 public class UniteTransformation extends Unite {
 	static float PRICE_PER_UNIT_BUY = 0.0f;
 
     private final Color color = Color.color(0.2, 0.2, 0.8);
-//    private int buyValue = 10;
 
     List<Resource> resourcesEntry;
-    EnumMap<Resource, ResourceSlot> stock;
-
-//    private double money = 0.0;
-
-//    List<ObjectMessage<TradeProposal>> messagesRequestSent = new ArrayList<>();
+    private ResourcesStock stock;
 
     @Override
     protected void onActivation() {
@@ -40,13 +34,13 @@ public class UniteTransformation extends Unite {
 
     public UniteTransformation(Policy policy, List<Resource> ressourcesEntry) {
         super(policy);
-        stock = new EnumMap<>(Resource.class);
+        stock = new ResourcesStock();
         this.resourcesEntry = new ArrayList<>(ressourcesEntry);
     }
 
     public UniteTransformation(Policy policy, double x, double y, List<Resource> ressourcesEntry) {
         super(policy, x, y);
-        stock = new EnumMap<>(Resource.class);
+        stock = new ResourcesStock();
         this.resourcesEntry = new ArrayList<>(ressourcesEntry);
     }
     
@@ -56,9 +50,8 @@ public class UniteTransformation extends Unite {
     }
     
     protected TradeProposal actionBuyToTradeProposal(ActionBuy action) {
-    	TradeProposal trade = action.getTradeProposal();
-    	trade.setPriceUnite(PRICE_PER_UNIT_BUY);
-    	trade.setAgentSource(this);
+    	Double distance = distanceTo(action.getUniteProd());
+    	TradeProposal trade = action.getTradeProposal(PRICE_PER_UNIT_BUY, distance, this);
     	return trade;
     }
 
@@ -78,10 +71,7 @@ public class UniteTransformation extends Unite {
 		}
     	for (TradeProposal trade : trades) {
     		Resource type = trade.getType();
-    		if (!stock.containsKey(type)) {
-    			stock.put(type, new ResourceSlot(type, 0));
-    		}
-    		stock.get(type).add(trade.getValue());
+    		stock.add(type, trade.getValue());
 //    		money += trade.getPriceTrade();
 //    		money -= Math.round(trade.getDistance()) / 500.0f;
     	}
@@ -93,15 +83,12 @@ public class UniteTransformation extends Unite {
 //        getLogger().info("[transfo] mon argent : " + String.valueOf(money));
     }
 
-//    public void setBuyValue(int buyValue) {
-//        this.buyValue = buyValue;
-//    }
-
     public void resetStock() {
-        for(Resource resource : stock.keySet()){
-            stock.get(resource).add(-stock.get(resource).getValue());
-        }
-
+    	stock.reset();
     }
+    
+	public ResourcesStock getResourcesStock() {
+		return stock;
+	}
 
 }

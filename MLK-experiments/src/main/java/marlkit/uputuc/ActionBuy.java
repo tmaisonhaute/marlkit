@@ -1,6 +1,7 @@
 package marlkit.uputuc;
 
 import agent.action.Action;
+import marlkit.uputuc.unite.Unite;
 import marlkit.uputuc.unite.UniteProduction;
 
 public class ActionBuy implements Action {
@@ -13,8 +14,8 @@ public class ActionBuy implements Action {
 		this.uniteProd = uniteProd;
 	}
 	
-	public TradeProposal getTradeProposal() {
-		return new TradeProposal(getResourceType(),getResourceQuantity(), 0f, null, null, uniteProd);
+	public TradeProposal getTradeProposal(float pricePerUnit, Double distance,  Unite uniteSource) {
+		return new TradeProposal(getResourceType(), getResourceQuantity(), pricePerUnit, distance, uniteSource, uniteProd);
 	}
 	
 	public ResourceQuantify getResourceQuantified() {

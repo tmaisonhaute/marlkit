@@ -36,5 +36,11 @@ public class ResourceQuantify {
     public ResourceQuantify copy() {
         return new ResourceQuantify(type, value);
     }
+    
+    public int[] toOneHotEncoding() {
+        int[] encoding = new int[Resource.values().length];
+        encoding[type.ordinal()] = value;
+        return encoding;
+    }
 }
 

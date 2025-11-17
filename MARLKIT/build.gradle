@@ -10,9 +10,11 @@ application {
     mainModule = 'marlkit.base'
 }
 
+
 tasks.withType(JavaExec) {
     jvmArgs '--add-modules', 'ALL-MODULE-PATH'
 }
+
 
 javaModuleTesting.whitebox(testing.suites.getByName("test")){
 	requires.add("org.testng")
@@ -27,6 +29,7 @@ dependencies {
     testImplementation libs.testng
     testImplementation libs.assertJ
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.1'
+    //implementation 'org.encog:encog-core:3.3.0'
 }
 
 tasks.named('test') {

@@ -2,6 +2,9 @@ package marlkit.uputuc;
 
 import environment.observation.Observation;
 
+/**
+ * Observation wrapping a Resource.
+ */
 public class ObservationRessource implements Observation {
 
     private Resource ressource;

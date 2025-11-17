@@ -6,6 +6,10 @@ import java.util.Map;
 public class ResourcesStock {
 	private EnumMap<Resource, ResourceSlot> resources;
 
+	public ResourcesStock() {
+	    this.resources = new EnumMap<>(Resource.class);
+	}
+
 	public ResourcesStock(EnumMap<Resource, ResourceSlot> resources) {
 		super();
 		this.resources = resources;
@@ -28,5 +32,29 @@ public class ResourcesStock {
 		return 0;
 	}
 	
+	public int[] getVectorizedStock() {
+		int[] vectorizedStock = new int[Resource.values().length];
+		for (Resource res : resources.keySet()) {
+			vectorizedStock[res.ordinal()] = getQuantity(res);
+		}
+		
+		return vectorizedStock;
+	}
+	
+	public void add(Resource resource, int quantity) {
+        if (resources.containsKey(resource)) {
+            resources.get(resource).add(quantity);
+        } else {
+            resources.put(resource, new ResourceSlot(resource, quantity));
+        }
+    }
+	
+	public void reset() {
+        resources.clear(); // vide complètement la map
+    }
+	
+	public boolean containsKey(Resource resource) {
+        return resources.containsKey(resource);
+    }
 	
 }

@@ -10,7 +10,6 @@ import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import agent.MLKAgent;
 import marlkit.uputuc.Resource;
 import marlkit.uputuc.ResourceSlot;
 import marlkit.uputuc.TradeProposal;
@@ -18,13 +17,13 @@ import marlkit.uputuc.TradeProposal;
 public class UniteProductionTest {
     
     private UniteProduction uniteProduction;
-    private MLKAgent mockAgent;
+    private Unite mockAgent;
     
     @BeforeMethod
     public void setUp() {
     	MockitoAnnotations.openMocks(this);
 
-        mockAgent = Mockito.mock(MLKAgent.class);
+        mockAgent = Mockito.mock(Unite.class);
 
         uniteProduction = new UniteProduction(null, 0, 0);
 
