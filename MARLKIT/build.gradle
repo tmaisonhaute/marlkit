@@ -29,7 +29,7 @@ dependencies {
     testImplementation libs.testng
     testImplementation libs.assertJ
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.1'
-    //implementation 'org.encog:encog-core:3.3.0'
+    implementation 'org.encog:encog-core:3.4'
 }
 
 tasks.named('test') {

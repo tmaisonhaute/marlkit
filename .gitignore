@@ -36,6 +36,8 @@ Trash
 
 #MaDKit build dirs
 Logs
+**/logs/*
+MLK-experiments/logs/*
 
 # Grafana authentication token
 grafana_token.txt

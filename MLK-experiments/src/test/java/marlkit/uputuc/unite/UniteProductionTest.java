@@ -25,9 +25,10 @@ public class UniteProductionTest {
 
         mockAgent = Mockito.mock(Unite.class);
 
-        uniteProduction = new UniteProduction(null, 0, 0);
+         uniteProduction = new UniteProduction();
 
         uniteProduction.stock.clear();
+        
         uniteProduction.stock.put(Resource.AZENE, new ResourceSlot(Resource.AZENE, 10));
         uniteProduction.stock.put(Resource.BOGD, new ResourceSlot(Resource.BOGD, 15));
         uniteProduction.stock.put(Resource.CARBOL, new ResourceSlot(Resource.CARBOL, 0));
