@@ -13,6 +13,5 @@ plugins {
 
 
 rootProject.name = 'MARLKIT'
-include('MARLKIT','MLK-experiments')
+include('MARLKIT','MLK-experiments', 'MARL-Methods')
 
-include 'MARL-Methods'
