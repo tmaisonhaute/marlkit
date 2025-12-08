@@ -14,10 +14,10 @@ public class SchedulerPTB extends MLKScheduler {
 	public static final int PAUSE_DISPLAY_VALUE = 50;
 	public static final int MAXIMUM_EPISODE_COUNT = 100_000;
 
-	private Criterion criteriaEndEpisode = new ReachTimeCriterion(EPISODE_DURATION);
-	private Criterion criteriaStartDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL), new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
-	private Criterion criteriaEndDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL, EPISODE_DURATION), new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
-	private Criterion criteriaEndSimulation = new ReachTimeCriterion(MAXIMUM_EPISODE_COUNT);
+	private final Criterion criteriaEndEpisode = new ReachTimeCriterion(EPISODE_DURATION);
+	private final Criterion criteriaStartDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL), new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
+	private final Criterion criteriaEndDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL, EPISODE_DURATION), new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
+	private final Criterion criteriaEndSimulation = new ReachTimeCriterion(MAXIMUM_EPISODE_COUNT);
 
 	@Override
 	public Criterion getCriteriaEndEpisode() {

@@ -43,10 +43,18 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		agents = new AgentsGroup();
 	}
 
-	public void receiveAgentInfo(MLKAgent agent) {
+	/**
+	 * Sets up an agent in the environment by adding it to the agents group.
+	 */
+	@Override
+	public void setupAgent(MLKAgent agent) {
 		agents.addAgent(agent);
 	}
 
+	/**
+	 * Sets up the initial state of the environment. This method should be
+	 * implemented by subclasses to define specific state configurations.
+	 */
 	protected abstract void setupState();
 
 	/**
@@ -88,6 +96,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 * It checks if the log is set up, generates a CSV log of the average rewards,
 	 * saves it, and generates a graph URL for visualization.
 	 */
+	@Override
 	public void onEnd() {
 		checkLogSetup();
 		if (learningData.getAverageEpisodesCount() > 0) {
@@ -207,10 +216,19 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		return experiences;
 	}
 
+	/**
+	 * Get the current observations of all agents in the environment.
+	 * @return A map of each agent to their observation.
+	 */
 	public Map<MLKAgent,Observation> getObservation() {
 		return getState().getObservations();
 	}
 	
+	/**
+	 * Defines the environment dynamics based on agent actions.
+	 * @param actions A map of each agent to their action.
+	 * @return A map of each agent to their action and reward.
+	 */
 	public abstract Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions);
 	
 	protected void sendFeedbackExperience(Map<MLKAgent,Experience> experiences){
@@ -222,6 +240,12 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	}
 
 
+	/**
+	 * Combines observations, actions, and rewards into experiences for each agent.
+	 * @param actionRewardMap
+	 * @param observationMap
+	 * @return
+	 */
 	protected Map<MLKAgent, Experience> combineObsActReward(Map<MLKAgent, Pair<Action, Reward>> actionRewardMap,
 	        Map<MLKAgent, Observation> observationMap) {
 	    Map<MLKAgent, Experience> combinedMap = new HashMap<>();
@@ -243,6 +267,12 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	    return combinedMap;
 	}
 
+	/**
+	 * Merges two sets of observations for each agent.
+	 * @param observations1
+	 * @param observations2
+	 * @return
+	 */
 	protected Map<MLKAgent, Observation> mergeObservations(Map<MLKAgent, Observation> observations1,
 			Map<MLKAgent, Observation> observations2) {
 		if (observations1 == null) {

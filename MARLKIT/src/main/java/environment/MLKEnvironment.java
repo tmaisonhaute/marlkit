@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import agent.MLKAgent;
 import learning.Experience;
+import util.grafana.Extra;
 import util.grafana.LearningData;
 import util.grafana.StepData;
-import util.grafana.Extra;
 
 /**
  * Represents an environment in which agents operate.
@@ -21,9 +21,12 @@ public interface MLKEnvironment {
 	 */
 	public LearningData learningData = new LearningData();
 
+	/**
+	 * Resets the environment to its initial state.
+	 */
 	public abstract void reset();
 	
-	public abstract void receiveAgentInfo(MLKAgent agent);
+	
 	
 	public abstract Map<MLKAgent, Experience> step();
 

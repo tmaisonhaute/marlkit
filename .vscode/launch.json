@@ -1,0 +1,76 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "GUITestAgent",
+            "request": "launch",
+            "mainClass": "marlkit.base/marlkit.test.GUITestAgent",
+            "projectName": "MARLKIT-MARLKIT"
+        },
+        {
+            "type": "java",
+            "name": "Grafana",
+            "request": "launch",
+            "mainClass": "marlkit.base/util.grafana.Grafana",
+            "projectName": "MARLKIT-MARLKIT"
+        },
+        {
+            "type": "java",
+            "name": "HelloXPAgent",
+            "request": "launch",
+            "mainClass": "marlkit.xp/marlkit.hello.HelloXPAgent",
+            "projectName": "MLK-experiments",
+            "vmArgs": "--add-modules ALL-MODULE-PATH"
+        },
+        {
+            "type": "java",
+            "name": "LauncherTest",
+            "request": "launch",
+            "mainClass": "marlkit.xp/marlkit.hello.LauncherTest",
+            "projectName": "MLK-experiments",
+            "vmArgs": "--add-modules ALL-MODULE-PATH"
+        },
+        {
+            "type": "java",
+            "name": "LauncherListenOrGo",
+            "request": "launch",
+            "mainClass": "marlkit.xp/marlkit.listenorgo.LauncherListenOrGo",
+            "projectName": "MLK-experiments",
+            "vmArgs": "--add-modules ALL-MODULE-PATH"
+        },
+        {
+            "type": "java",
+            "name": "LauncherPVH",
+            "request": "launch",
+            "mainClass": "marlkit.xp/marlkit.preyVsHunter.LauncherPVH",
+            "projectName": "MLK-experiments",
+            "vmArgs": "--add-modules ALL-MODULE-PATH"
+        },
+        {
+            "type": "java",
+            "name": "LauncherPTB",
+            "request": "launch",
+            "mainClass": "marlkit.xp/marlkit.pushtheblock.LauncherPTB",
+            "projectName": "MLK-experiments",
+            "vmArgs": "--add-modules ALL-MODULE-PATH"
+        },
+        {
+            "type": "java",
+            "name": "LauncherPTBTogether",
+            "request": "launch",
+            "mainClass": "marlkit.xp/marlkit.pushtheblocktogether.LauncherPTBTogether",
+            "projectName": "MLK-experiments",
+            "vmArgs": "--add-modules ALL-MODULE-PATH"
+        }
+    ]
+}

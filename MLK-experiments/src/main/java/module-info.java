@@ -30,5 +30,7 @@ open module marlkit.xp {
 	exports marlkit.hello;
 	exports marlkit.pushtheblock;
 	exports marlkit.pushtheblocktogether;
+	exports marlkit.listenorgo;
+	exports marlkit.uputuc;
 	
 }

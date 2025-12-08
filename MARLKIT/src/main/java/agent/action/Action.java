@@ -5,4 +5,9 @@ package agent.action;
  */
 public interface Action {
 
+    /**
+     * Implementations should override equals to ensure correct comparison of actions.
+     */
+    @Override
+    boolean equals(Object obj);
 }

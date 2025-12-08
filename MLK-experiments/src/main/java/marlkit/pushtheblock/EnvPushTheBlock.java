@@ -77,7 +77,6 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	}
 	
 
-	@SuppressWarnings("exports")
 	@Override
 	public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {
 		Map<MLKAgent, Pair<Action, Reward>> results = new HashMap<>();
@@ -156,6 +155,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		return state.getAgentsPositions();
 	}
 	
+    @Override
 	protected State getState() {
 		return state;
 	}

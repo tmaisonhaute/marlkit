@@ -26,7 +26,6 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 		numberOfBlocks = 1; 
 	}
 	
-	@SuppressWarnings("exports")
 	@Override
 	public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {
 		Map<MLKAgent, Pair<Action, Reward>> results = new HashMap<>();

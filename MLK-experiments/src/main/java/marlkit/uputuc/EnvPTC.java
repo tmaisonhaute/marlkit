@@ -46,16 +46,6 @@ public class EnvPTC extends EnvironmentStandard {
     }
 
     @Override
-    public void receiveAgentInfo(MLKAgent agent) {
-        if (agent instanceof UniteProduction) {
-            productionUnits.add((UniteProduction) agent);
-        } else if (agent instanceof UniteTransformation) {
-            transformationUnits.add((UniteTransformation) agent);
-        } else if (agent instanceof UniteConsumption) {
-            consumptionUnits.add((UniteConsumption) agent);
-        }
-    }
-
     public void setupAgent(MLKAgent agent) {
         if (agent instanceof UniteProduction) {
             productionUnits.add((UniteProduction) agent);
