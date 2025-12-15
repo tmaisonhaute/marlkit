@@ -1,17 +1,18 @@
 package marlkit.listenorgo;
 
+import static javafx.scene.paint.Color.BLACK;
+import static javafx.scene.paint.Color.LIGHTBLUE;
+import static javafx.scene.paint.Color.LIGHTGRAY;
+import static javafx.scene.paint.Color.RED;
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import agent.MLKAgent;
-import static javafx.scene.paint.Color.BLACK;
-import static javafx.scene.paint.Color.LIGHTBLUE;
-import static javafx.scene.paint.Color.LIGHTGRAY;
-import static javafx.scene.paint.Color.RED;
 import madkit.kernel.Agent;
 import madkit.simulation.PropertyProbe;
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import simulation.MLKViewer;
 
 public class ViewerListenOrGo extends MLKViewer {
@@ -63,14 +64,12 @@ public class ViewerListenOrGo extends MLKViewer {
             return;
         }
         
-        // Réinitialiser les IDs si nécessaire (détection du reset)
         for (MLKAgent agent : agentsChoice.keySet()) {
             if (!agentIds.containsKey(agent)) {
                 agentIds.put(agent, nextAgentId++);
             }
         }
         
-        // Compter les agents dans chaque case
         int leftCount = 0;
         int rightCount = 0;
         for (Map.Entry<MLKAgent, Choice> entry : agentsChoice.entrySet()) {
@@ -82,18 +81,14 @@ public class ViewerListenOrGo extends MLKViewer {
             }
         }
         
-        // Dessiner les cases
         drawBoxes(correctChoice == Choice.RIGHT);
         
-        // Dessiner les agents non-assignés
         drawUnassignedAgents(agentsChoice);
         
-        // Dessiner les compteurs
         drawCounters(leftCount, rightCount);
     }
     
     private void drawBoxes(boolean isRight) {
-        // Case gauche
         if (!isRight) {
             getGraphics().setFill(LIGHTBLUE);
         } else {
@@ -103,7 +98,6 @@ public class ViewerListenOrGo extends MLKViewer {
         getGraphics().setStroke(BLACK);
         getGraphics().strokeRect(LEFT_BOX_X, BOX_Y, BOX_WIDTH, BOX_HEIGHT);
         
-        // Case droite
         if (isRight) {
             getGraphics().setFill(LIGHTBLUE);
         } else {
@@ -131,7 +125,6 @@ public class ViewerListenOrGo extends MLKViewer {
         for (MLKAgent agent : unassigned) {
             int agentId = agentIds.get(agent);
             
-            // Alterner les agents entre gauche et droite pour la disposition
             double x, y;
             if (agentId % 2 == 0) {
                 x = LEFT_BOX_X + BOX_WIDTH/2 - AGENT_SIZE/2 + (leftUnassigned * 25) - 25;
@@ -152,11 +145,9 @@ public class ViewerListenOrGo extends MLKViewer {
         getGraphics().setFill(BLACK);
         getGraphics().setFont(javafx.scene.text.Font.font(30));
         
-        // Compteur gauche
         String leftText = String.valueOf(leftCount);
         getGraphics().fillText(leftText, LEFT_BOX_X + BOX_WIDTH/2 - 10, BOX_Y + BOX_HEIGHT/2 + 10);
         
-        // Compteur droite
         String rightText = String.valueOf(rightCount);
         getGraphics().fillText(rightText, RIGHT_BOX_X + BOX_WIDTH/2 - 10, BOX_Y + BOX_HEIGHT/2 + 10);
         

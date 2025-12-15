@@ -2,10 +2,7 @@ package simulation;
 
 import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.logging.*;
+import java.util.logging.Level;
 
 import madkit.kernel.Activator;
 import madkit.simulation.SimuOrganization;
@@ -20,6 +17,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private Activator agentEndEpisode;
 
 	private Activator step;
+	private Activator reset;
 	private Activator atexit;
 
 	private MethodActivator viewers;
@@ -45,6 +43,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		step = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
 		addActivator(step);
+		reset = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "reset");
+		addActivator(reset);
 		atexit = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
 		addActivator(atexit);
 		viewers = new MethodActivator(getEngineGroup(), SimuOrganization.VIEWER_ROLE, "display");
@@ -72,6 +72,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		if (getCriteriaEndEpisode().isMet()) {
 			getCriteriaEndSimulation().update(null);
 			agentEndEpisode.execute();
+			reset.execute();
 			getCriteriaEndEpisode().reset();
 		}
 		if (getCriteriaStartDisplay().isMet()) {

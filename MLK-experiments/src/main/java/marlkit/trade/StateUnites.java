@@ -40,6 +40,10 @@ public class StateUnites implements State {
 		return observations;
 	}
 
+	public List<MLKAgent> getAgents() {
+		return agents;
+	}
+
 	@Override
 	public void print() {
 		System.out.println("StateUnites:");

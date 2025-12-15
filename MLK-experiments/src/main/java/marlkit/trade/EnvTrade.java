@@ -18,9 +18,14 @@ public class EnvTrade extends EnvironmentStandard {
 	private final int quantityPerRequest = 1;
 	private Map<ResourceType, Float> basePrices;
 	private RewardConfiguration rewardConfig;
-	// protected List<UniteProduction> unitesProductions;
+	private ScenarioUP scenario;
 	private StateUnites state;
+	protected Map<MLKAgent, Action> lastActions;
 
+	public EnvTrade() {
+		this(800, 600);
+	}
+	
 	public EnvTrade(int width, int height) {
 		this(width, height, new RewardConfigurationMixed());
 	}
@@ -37,10 +42,17 @@ public class EnvTrade extends EnvironmentStandard {
 		super(width, height);
 		this.rewardConfig = rewardConfig;
 		this.interactionMethod = interactionMethod;
-		this.state = new StateUnites(agents.getAgents(), scenario.createUnites());
-		basePrices = scenario.getBasePrices();
+		this.scenario = scenario;
+		this.basePrices = scenario.getBasePrices();
 	}
 
+	@Override
+	protected void onActivation() {
+		super.onActivation();
+		this.state = new StateUnites(agents.getAgents(), scenario.createUnites());
+		setupState();
+	}
+	
 	@Override
 	public void reset() {
 		setupState();
@@ -53,6 +65,7 @@ public class EnvTrade extends EnvironmentStandard {
 
 	@Override
 	protected void setupState() {
+		getLogger().info("RestingState.");
 		for (UniteProduction up : state.getUnitesProductions()) {
 			up.reset();
 		}
@@ -60,6 +73,7 @@ public class EnvTrade extends EnvironmentStandard {
 
 	@Override
 	public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {
+		this.lastActions = new HashMap<>(actions);
 		Map<MLKAgent, Pair<Action, Reward>> results = new HashMap<>();
 		state.updateState();
 		Map<UniteProduction, List<MLKAgent>> requestingAgents = new HashMap<>();
@@ -86,6 +100,10 @@ public class EnvTrade extends EnvironmentStandard {
 	@Override
 	protected State getState() {
 		return state;
+	}
+
+	public Map<MLKAgent, Action> getLastActions() {
+		return lastActions;
 	}
 
 }
