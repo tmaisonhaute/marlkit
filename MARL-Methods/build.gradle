@@ -1,0 +1,14 @@
+plugins {
+    id 'buildlogic.marlkit-common-conventions'
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs '--add-modules', 'ALL-MODULE-PATH'
+}
+
+dependencies {
+    api project(':MARLKIT')
+    
+    testImplementation libs.testng
+    testImplementation libs.assertJ
+}
