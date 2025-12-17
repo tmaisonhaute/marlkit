@@ -13,3 +13,7 @@ dependencies {
     testImplementation libs.assertJ
 }
 
+tasks.named('test') {
+    useTestNG()
+}
+
