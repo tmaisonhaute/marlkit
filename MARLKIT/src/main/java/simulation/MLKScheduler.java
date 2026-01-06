@@ -1,15 +1,18 @@
 package simulation;
 
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
-
 import java.util.logging.Level;
 
 import madkit.kernel.Activator;
 import madkit.simulation.SimuOrganization;
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 import util.criteria.Criterion;
 
+/**
+ * Scheduler for MARLKIT simulations that coordinates agent-environment interactions.
+ * Manages the execution cycle of observations, actions, learning, and episode boundaries.
+ */
 public abstract class MLKScheduler extends TickBasedScheduler {
 	
 	private Activator agentSendInfo;
@@ -25,8 +28,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private int counter = 0;
 
 	/**
-	 * Creates a new MLK Scheduler with the specified name.
-	 * 
+	 * Initializes the scheduler and sets up activators for agent and environment actions.
 	 */
 	@Override
 	protected void onActivation() {
@@ -98,6 +100,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		getCriteriaStartDisplay().update(null);
 		getCriteriaEndDisplay().update(null);
 	}
+	
+	/**
+	 * Resets all scheduling criteria to their initial states.
+	 */
 	protected void resetCriteria() {
 		getCriteriaEndEpisode().reset();
 		getCriteriaStartDisplay().reset();

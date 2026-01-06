@@ -9,15 +9,24 @@ import agent.action.Action;
 import environment.observation.Observation;
 
 /**
- * Represents a group of agents in the multi-agent system.
+ * Represents a collection of agents in the multi-agent system.
+ * Provides methods for managing and coordinating multiple agents.
  */
 public class AgentsGroup {
 	private List<MLKAgent> agents;
 	
+	/**
+	 * Creates a new agents group with the specified list of agents.
+	 *
+	 * @param agents the list of agents to include in the group
+	 */
 	public AgentsGroup(List<MLKAgent> agents) {
 		this.agents = agents;
 	}
 
+	/**
+	 * Creates an empty agents group.
+	 */
 	public AgentsGroup() {
 		this.agents = new ArrayList<>();
 	}
@@ -47,6 +56,11 @@ public class AgentsGroup {
 		return agents;
 	}
 
+	/**
+	 * Adds an agent to the group.
+	 *
+	 * @param agent the agent to add
+	 */
 	public void addAgent(MLKAgent agent) {
 		agents.add(agent);
 	}

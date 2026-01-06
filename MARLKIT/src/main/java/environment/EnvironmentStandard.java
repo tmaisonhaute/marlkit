@@ -20,6 +20,10 @@ import learning.Experience;
 import madkit.simulation.environment.Environment2D;
 import util.Pair;
 
+/**
+ * Standard implementation of a 2D multi-agent reinforcement learning environment.
+ * Manages agent interactions, observations, rewards, and learning data collection.
+ */
 public abstract class EnvironmentStandard extends Environment2D implements MLKEnvironment {
 
 	protected AgentsGroup agents;
@@ -27,15 +31,32 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	private boolean logSetup = false;
 	private final int EPISODES_BEFORE_LOG = 1_000;
 
+	/**
+	 * Creates a new environment with the specified dimensions and independent learning.
+	 *
+	 * @param width the width of the environment
+	 * @param height the height of the environment
+	 */
 	public EnvironmentStandard(int width, int height) {
         this(width, height, new IndependantLearning());
 	}
 	
+	/**
+	 * Creates a new environment with the specified dimensions and interaction method.
+	 *
+	 * @param width the width of the environment
+	 * @param height the height of the environment
+	 * @param interactionMethod the agent interaction strategy
+	 */
 	public EnvironmentStandard(int width, int height, MLKInteraction interactionMethod) {
 		super(width, height);
 		this.interactionMethod = interactionMethod;
     }
 	
+	/**
+	 * Called when the environment is activated in the simulation.
+	 * Initializes the environment role and agent group.
+	 */
 	@Override
 	protected void onActivation() {
         super.onActivation();
@@ -306,5 +327,10 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		getState().print();
 	}
 	
+	/**
+	 * Returns the current state of the environment.
+	 *
+	 * @return the environment state
+	 */
 	protected abstract State getState();
 }

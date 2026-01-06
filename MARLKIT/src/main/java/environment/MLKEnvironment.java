@@ -26,10 +26,18 @@ public interface MLKEnvironment {
 	 */
 	public abstract void reset();
 	
-	
-	
+	/**
+	 * Executes one step in the environment, where agents observe, act, and receive rewards.
+	 *
+	 * @return a map of agents to their experiences from this step
+	 */
 	public abstract Map<MLKAgent, Experience> step();
 
+	/**
+	 * Sets up an agent in the environment.
+	 *
+	 * @param agent the agent to set up
+	 */
 	void setupAgent(MLKAgent agent);
 
 	/**

@@ -19,10 +19,29 @@ public class NeuralNetwork {
     private boolean useBiases;
     private RandomGenerator pnrg;
     
+	/**
+	 * Creates a neural network without biases.
+	 *
+	 * @param inputSize the number of input neurons
+	 * @param hiddenSize the number of hidden layer neurons
+	 * @param outputSize the number of output neurons
+	 * @param pnrg the random number generator for weight initialization
+	 * @param learningRate the learning rate for gradient descent
+	 */
 	public NeuralNetwork(int inputSize, int hiddenSize, int outputSize, RandomGenerator pnrg, double learningRate) {
 		this(inputSize, hiddenSize, outputSize, pnrg, learningRate, false);
 	}
     
+    /**
+	 * Creates a neural network with optional biases.
+	 *
+	 * @param inputSize the number of input neurons
+	 * @param hiddenSize the number of hidden layer neurons
+	 * @param outputSize the number of output neurons
+	 * @param pnrg the random number generator for weight initialization
+	 * @param learningRate the learning rate for gradient descent
+	 * @param useBiases whether to use bias terms
+	 */
     public NeuralNetwork(int inputSize, int hiddenSize, int outputSize, RandomGenerator pnrg, double learningRate, boolean useBiases) {
         this.inputSize = inputSize;
         this.hiddenSize = hiddenSize;

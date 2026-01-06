@@ -18,6 +18,17 @@ public class ActorNetwork {
     private List<Action> actionSet;
     private RandomGenerator pnrg;
     
+    /**
+	 * Creates an actor network for policy learning.
+	 *
+	 * @param inputSize the observation vector size
+	 * @param hiddenSize the number of hidden neurons
+	 * @param pnrg the random number generator
+	 * @param learningRate the learning rate
+	 * @param observationWrapper converts observations to vectors
+	 * @param actionWrapper converts actions to/from vectors
+	 * @param actionSet the set of possible actions
+	 */
     public ActorNetwork(int inputSize, int hiddenSize, RandomGenerator pnrg, double learningRate, 
                         WrapperObservationVector observationWrapper,
                         WrapperActionVector actionWrapper,
@@ -37,6 +48,12 @@ public class ActorNetwork {
         );
     }
     
+    /**
+	 * Selects an action based on the policy distribution for the given observation.
+	 *
+	 * @param observation the current observation
+	 * @return the selected action
+	 */
     public Action selectAction(Observation observation) {
         double[] observationVector = observationWrapper.transform(observation);
         double[] actionPreferences = network.forward(observationVector);
@@ -55,6 +72,13 @@ public class ActorNetwork {
         return actionSet.get(probs.length - 1); 
     }
     
+    /**
+	 * Updates the actor network using the TD error.
+	 *
+	 * @param observation the observation where action was taken
+	 * @param action the action that was taken
+	 * @param tdError the temporal difference error from the critic
+	 */
     public void update(Observation observation, Action action, double tdError) {
         double[] observationVector = observationWrapper.transform(observation);
         

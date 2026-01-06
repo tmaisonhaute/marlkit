@@ -12,6 +12,15 @@ public class CriticNetwork {
     private NeuralNetwork network;
     private WrapperObservationVector observationWrapper;
     
+    /**
+	 * Creates a critic network for value function approximation.
+	 *
+	 * @param inputSize the observation vector size
+	 * @param hiddenSize the number of hidden neurons
+	 * @param pnrg the random number generator
+	 * @param learningRate the learning rate
+	 * @param observationWrapper converts observations to vectors
+	 */
     public CriticNetwork(int inputSize, int hiddenSize, RandomGenerator pnrg, double learningRate, 
                          WrapperObservationVector observationWrapper) {
         this.observationWrapper = observationWrapper;
@@ -26,12 +35,25 @@ public class CriticNetwork {
         );
     }
     
+    /**
+	 * Estimates the value of the given observation.
+	 *
+	 * @param observation the observation to evaluate
+	 * @return the estimated value
+	 */
     public double getValue(Observation observation) {
         double[] observationVector = observationWrapper.transform(observation);
         double[] output = network.forward(observationVector);
         return output[0]; // Single output value
     }
     
+    /**
+	 * Updates the critic network towards the target value.
+	 *
+	 * @param observation the observation to update
+	 * @param targetValue the target value
+	 * @return the temporal difference error
+	 */
     public double update(Observation observation, double targetValue) {
         double[] observationVector = observationWrapper.transform(observation);
         double currentValue = getValue(observation);

@@ -10,19 +10,38 @@ import learning.Batch;
 import madkit.kernel.AgentLogger;
 
 /**
- * Represents a policy that an agent follows to take actions based on observations.
+ * Represents a policy that defines how an agent selects actions based on observations.
  */
 public interface Policy {
 	
+	/**
+	 * Initializes the policy with the agent that will use it.
+	 *
+	 * @param agent the agent using this policy
+	 */
 	public abstract void init(MLKAgent agent);
+	
+	/**
+	 * Returns the agent using this policy.
+	 *
+	 * @return the agent
+	 */
 	public abstract MLKAgent getAgent();
+	
+	/**
+	 * Returns the pseudo-random number generator from the agent.
+	 *
+	 * @return the random number generator
+	 */
 	public default RandomGenerator pnrg() {
 		return getAgent().prng();
 	}
 	
-	/** 
-	 * Returns the frequency of learning.
-	 * 0 means no call for learnOnBatch
+	/**
+	 * Returns the frequency (in timesteps) at which learning should occur.
+	 * A value of 0 means no periodic learning.
+	 *
+	 * @return the learning frequency
 	 */
 	public abstract int getLearningFrequency();
 	
@@ -49,18 +68,19 @@ public interface Policy {
 	}
 
 	/**
-     * Learns from a batch of data.
-     * 
-     * @param batch the batch of data to learn from
-     */
+	 * Performs learning using a batch of experiences.
+	 *
+	 * @param batch the batch of experiences to learn from
+	 * @param logger the agent's logger for debug information
+	 */
 	public abstract void learnOnBatch(Batch batch, AgentLogger logger);
 	
 	/**
-     * Ends an episode.
-     * 
-     * @param batch the batch of data to learn from
-     * @param logger the logger of the agent
-     */
+	 * Called at the end of an episode to perform episode-level learning or cleanup.
+	 *
+	 * @param batch the batch of experiences from the episode
+	 * @param logger the agent's logger for debug information
+	 */
 	public abstract void endEpisode(Batch batch, AgentLogger logger);
 
 //	default Map<Pair<Observation, Action>, Double> getQ(){

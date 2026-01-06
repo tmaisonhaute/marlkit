@@ -4,9 +4,16 @@ import java.util.Optional;
 
 import environment.state.State;
 
+/**
+ * Abstract base class for criteria that track time through updates.
+ * Maintains an internal counter that increments on each update.
+ */
 public abstract class TimeCounterCriterion implements Criterion {
     private int currentTime;
     
+	/**
+	 * Creates a new time counter criterion with time initialized to 0.
+	 */
 	protected TimeCounterCriterion() {
 		this.currentTime = 0;
 	}

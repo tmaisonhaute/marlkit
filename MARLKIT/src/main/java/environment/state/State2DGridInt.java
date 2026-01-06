@@ -13,23 +13,34 @@ import environment.observation.ObservationPositionsValues;
 import util.Pair;
 import util.Tuple;
 
+/**
+ * A 2D grid state where each cell contains an integer value.
+ * Provides observation generation based on agent positions and view ranges.
+ */
 public class State2DGridInt extends State2DGrid<Integer> {
 	protected int[][] grid;
 	
 	/**
-	 * Constructor of the class State2DGridInt
+	 * Creates a 2D integer grid state.
 	 * 
-	 * @param nbLines          the number of lines of the grid
-	 * @param nbCols           the number of columns of the grid
-	 * @param defaultValue     the default value of the grid
-	 * @param agentViewRange   the range of the agent's view
-	 * @param neumannNeighbors whether the neighbors are the neumann neighbors or
-	 *                         the moore neighbors
-	 * 
+	 * @param nbLines the number of rows in the grid
+	 * @param nbCols the number of columns in the grid
+	 * @param agentViewRange the range of cells an agent can observe
+	 * @param neumannNeighbors true for Von Neumann neighborhood, false for Moore
 	 */
 	public State2DGridInt(int nbLines, int nbCols, int agentViewRange, boolean neumannNeighbors) {
 		this(nbLines, nbCols, agentViewRange, neumannNeighbors, false);
 	}
+	
+	/**
+	 * Creates a 2D integer grid state with optional agent position observation.
+	 * 
+	 * @param nbLines the number of rows in the grid
+	 * @param nbCols the number of columns in the grid
+	 * @param agentViewRange the range of cells an agent can observe
+	 * @param neumannNeighbors true for Von Neumann neighborhood, false for Moore
+	 * @param observeAgentsPositions whether to include other agents' positions in observations
+	 */
 	public State2DGridInt(int nbLines, int nbCols, int agentViewRange, boolean neumannNeighbors, boolean observeAgentsPositions) {
 		this.grid = new int[nbLines][nbCols];
 		this.width = nbLines;
@@ -38,10 +49,25 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		this.neumannNeighbors = neumannNeighbors;
 		this.observeAgentsPositions = observeAgentsPositions;
 	}
+	
+	/**
+	 * Creates a 2D integer grid state with full observation range.
+	 * 
+	 * @param nbLines the number of rows in the grid
+	 * @param nbCols the number of columns in the grid
+	 */
 	public State2DGridInt(int nbLines, int nbCols) {
 		this(nbLines, nbCols, Integer.MAX_VALUE, true);
 	}
 
+	/**
+	 * Creates a 2D integer grid state with full observation range and specified neighborhood type.
+	 * 
+	 * @param nbLines the number of rows in the grid
+	 * @param nbCols the number of columns in the grid
+	 * @param neumannNeighbors true for Von Neumann neighborhood, false for Moore
+	 * @param observeAgentsPositions whether to include other agents' positions in observations
+	 */
 	public State2DGridInt(int nbLines, int nbCols, boolean neumannNeighbors, boolean observeAgentsPositions) {
 		this(nbLines, nbCols, Integer.MAX_VALUE, neumannNeighbors, observeAgentsPositions);
 	}
@@ -55,6 +81,14 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		}
 	}
 	
+	/**
+	 * Adds an agent at the specified position.
+	 *
+	 * @param agent the agent to add
+	 * @param x the x-coordinate
+	 * @param y the y-coordinate
+	 * @throws ArrayIndexOutOfBoundsException if position is outside grid bounds
+	 */
 	public void addAgent(MLKAgent agent, int x, int y) {
 		if (x >= width || x < 0 || y >= height || y < 0) {
 			throw new ArrayIndexOutOfBoundsException("L'agent ne peut pas être placé en position (" + x + ";" + y + ")");
@@ -62,6 +96,15 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		agentsPosition.put(agent, new Pair<>(x, y));
 	}
 
+	/**
+	 * Adds an agent at the specified position and sets a grid value at that position.
+	 *
+	 * @param agent the agent to add
+	 * @param x the x-coordinate
+	 * @param y the y-coordinate
+	 * @param id the value to set in the grid cell
+	 * @throws ArrayIndexOutOfBoundsException if position is outside grid bounds
+	 */
 	public void addAgentwithVal(MLKAgent agent, int x, int y, int id) {
 		if (x >= width || x < 0 || y >= height || y < 0) {
 			throw new ArrayIndexOutOfBoundsException("L'agent ne peut pas être placé en position (" + x + ";" + y + ")");

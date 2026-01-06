@@ -1,9 +1,15 @@
 package environment.observation;
 
 /**
- * Represents an observation in the environment.
+ * Represents an observation of the state environment.
  */
 public interface Observation {
+	/**
+	 * Combines this observation with another observation.
+	 *
+	 * @param other the observation to add
+	 * @return the combined observation
+	 */
 	Observation add(Observation other);
 	
 	/**

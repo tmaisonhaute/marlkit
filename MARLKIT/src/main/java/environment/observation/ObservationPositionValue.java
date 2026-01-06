@@ -3,27 +3,68 @@ import java.util.Objects;
 
 import util.Tuple;
 
+/**
+ * An observation representing a single position-value pair.
+ * Used to observe specific locations in the environment with associated values.
+ */
 public class ObservationPositionValue implements Observation {
 	protected Tuple position;
 	protected double value;
 	
+	/**
+	 * Creates a position-value observation.
+	 *
+	 * @param position the position tuple
+	 * @param value the value at that position
+	 */
 	public ObservationPositionValue(Tuple position, double value) {
 		this.position = position;
 		this.value = value;
 	}
+	
+	/**
+	 * Returns the position of this observation.
+	 *
+	 * @return the position tuple
+	 */
 	public Tuple getPosition() {
 		return position;
 	}
+	
+	/**
+	 * Sets the position of this observation.
+	 *
+	 * @param position the new position
+	 */
 	public void setPosition(Tuple position) {
 		this.position = position;
 	}
+	
+	/**
+	 * Returns the value of this observation.
+	 *
+	 * @return the observation value
+	 */
 	public double getValue() {
 		return value;
 	}
+	
+	/**
+	 * Sets the value of this observation.
+	 *
+	 * @param value the new value
+	 */
 	public void setValue(double value) {
 		this.value = value;
 	}
 	
+	/**
+	 * Averages this observation with another position-value observation.
+	 *
+	 * @param other the observation to average with
+	 * @return a new observation with averaged position and value
+	 * @throws IllegalArgumentException if other is not an ObservationPositionValue
+	 */
 	@Override
 	public Observation add(Observation other) {
 	    if (!(other instanceof ObservationPositionValue)) {
