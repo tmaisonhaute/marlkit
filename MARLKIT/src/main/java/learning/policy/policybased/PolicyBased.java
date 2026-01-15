@@ -7,6 +7,19 @@ import learning.Batch;
 import learning.policy.Policy;
 import madkit.kernel.AgentLogger;
 
+/**
+ * Abstract base class for policy-based reinforcement learning methods.
+ * <p>
+ * Policy-based methods directly parameterize and optimize the policy,
+ * as opposed to value-based methods that derive policies from value functions.
+ * </p>
+ * <p>
+ * This class provides a skeleton implementation with stub methods to be
+ * overridden by concrete policy-based algorithms.
+ * </p>
+ *
+ * @see Policy
+ */
 public abstract class PolicyBased implements Policy {
 
 	@Override

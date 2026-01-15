@@ -1,12 +1,26 @@
 package util.grafana;
 
+/**
+ * Interface for custom metrics to be tracked during learning.
+ * <p>
+ * Extras allow users to log additional data beyond standard rewards.
+ * </p>
+ *
+ * @see StepData
+ * @see LearningData
+ */
 public interface Extra {
     /**
-     * @return A String representing the name of the extra.
+     * Returns the name of this extra metric.
+     *
+     * @return a string identifier for this metric
      */
     public String toString();
+
     /**
-     * @return A double representing the value of the extra.
+     * Returns the numeric value of this extra metric.
+     *
+     * @return the metric value as a double
      */
     public double toDouble();
 }

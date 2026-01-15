@@ -13,6 +13,20 @@ import learning.policy.valuebased.PolicyQValueBased;
 import madkit.kernel.AgentLogger;
 import util.Pair;
 
+/**
+ * SARSA (State-Action-Reward-State-Action) reinforcement learning policy.
+ * <p>
+ * This on-policy temporal difference method updates Q-values based on the action
+ * actually taken in the next state, unlike Q-learning which uses the max Q-value.
+ * This makes SARSA more conservative as it accounts for exploration.
+ * </p>
+ * <p>
+ * Update rule: Q(s,a) = Q(s,a) + alpha * (r + gamma * Q(s',a') - Q(s,a))
+ * </p>
+ *
+ * @see PolicyQValueBased
+ * @see PolicyQLearning
+ */
 public class PolicySarsa extends PolicyQValueBased {
 
 	private MLKAgent agent;
@@ -20,6 +34,13 @@ public class PolicySarsa extends PolicyQValueBased {
     private double alpha;
     private double totalRewards;
 
+    /**
+     * Creates a SARSA policy with epsilon-greedy exploration and decay.
+     *
+     * @param actionsSet      the list of possible actions
+     * @param epsilon         the initial exploration rate
+     * @param epsilonDecrease the rate at which epsilon decreases per episode
+     */
     public PolicySarsa(List<Action> actionsSet, double epsilon, double epsilonDecrease) {
         super(actionsSet, epsilon, epsilonDecrease);
         this.gamma = 0.95;
@@ -27,10 +48,21 @@ public class PolicySarsa extends PolicyQValueBased {
         this.totalRewards = 0.0;
     }
 
+    /**
+     * Creates a SARSA policy with epsilon-greedy exploration (no decay).
+     *
+     * @param actionsSet the list of possible actions
+     * @param epsilon    the exploration rate
+     */
     public PolicySarsa(List<Action> actionsSet, double epsilon) {
         this(actionsSet, epsilon, 0.0);
     }
 
+    /**
+     * Creates a SARSA policy with default epsilon of 0.05.
+     *
+     * @param actionsSet the list of possible actions
+     */
     public PolicySarsa(List<Action> actionsSet) {
         this(actionsSet, 0.05);
     }
@@ -42,11 +74,27 @@ public class PolicySarsa extends PolicyQValueBased {
 		this.agent = agent;
 	}
 
+    /**
+     * {@inheritDoc}
+     * Returns 1 since SARSA learns after each step.
+     */
     @Override
 	public int getLearningFrequency() {
         return 1;
     }
 
+    /**
+     * Updates the Q-value for a state-action pair using the SARSA update rule.
+     * <p>
+     * Q(s,a) = Q(s,a) + alpha * (reward + gamma * Q(s',a') - Q(s,a))
+     * </p>
+     *
+     * @param state      the current state observation
+     * @param action     the action taken in the current state
+     * @param reward     the reward received
+     * @param nextState  the resulting state observation, or null if terminal
+     * @param nextAction the action taken in the next state, or null if terminal
+     */
     protected void updateQ(Observation state, Action action, double reward, Observation nextState, Action nextAction) {
     	Map<Pair<Observation, Action>, Double> q = getQ();
         double qNext = 0;
@@ -67,6 +115,16 @@ public class PolicySarsa extends PolicyQValueBased {
         }
     }
 
+    /**
+     * Learns from a single transition using the SARSA update.
+     * <p>
+     * Extracts current and next state-action pairs, performs the update,
+     * and removes the processed experience from the batch.
+     * </p>
+     *
+     * @param batch the batch containing at least two experiences
+     * @return the reward from the current experience
+     */
 	protected double learnOneStep(Batch batch) {
 		Experience currentExperience = batch.getExperiences().get(0);
 		Experience nextExperience = batch.getExperiences().get(1);

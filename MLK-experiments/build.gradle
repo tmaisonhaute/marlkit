@@ -17,3 +17,7 @@ tasks.named('test') {
     useTestNG()
 }
 
+application {
+	mainClass = 'marlkit.pushtheblock.LauncherPTB'
+	mainModule = 'marlkit.xp'
+}

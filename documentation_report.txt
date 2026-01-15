@@ -1,0 +1,440 @@
+================================================================================
+MARLKIT DOCUMENTATION ANALYSIS REPORT
+================================================================================
+
+Total files analyzed: 118
+Files with NO documentation: 53
+Files with PARTIAL documentation: 32
+Files with GOOD documentation: 33
+
+================================================================================
+FILES WITH NO DOCUMENTATION
+================================================================================
+
+📄 MARLKIT/src/main/java/environment/observation/Wrapperactionobservation/WrapperActionObservation.java
+   Class: WrapperActionObservation
+
+📄 MARLKIT/src/main/java/environment/observation/wrapperobservationvector/WrapperObservationVector.java
+   Class: WrapperObservationVector
+
+📄 MARLKIT/src/main/java/environment/observation/wrapperobservationvector/WrapperObservationVectorPositionsValues.java
+   Class: WrapperObservationVectorPositionsValues
+   Public methods (2): transform, transform
+
+📄 MARLKIT/src/main/java/learning/policy/PolicyActorCritic.java
+   Class: PolicyActorCritic
+   Public methods (8): init, getLearningFrequency, takeAction, learnOnBatch, endEpisode
+      ... and 3 more
+
+📄 MARLKIT/src/main/java/learning/policy/PolicyGradient.java
+   Class: PolicyGradient
+   Public methods (6): getLearningFrequency, init, takeAction, getAgent, learnOnBatch
+      ... and 1 more
+
+📄 MARLKIT/src/main/java/learning/policy/PolicyMonteCarlo.java
+   Class: PolicyMonteCarlo
+   Public methods (5): init, getLearningFrequency, learnOnBatch, endEpisode, getAgent
+
+📄 MARLKIT/src/main/java/learning/policy/PolicySarsa.java
+   Class: PolicySarsa
+   Public methods (5): init, getLearningFrequency, learnOnBatch, endEpisode, getAgent
+
+📄 MARLKIT/src/main/java/learning/policy/policybased/PolicyBased.java
+   Class: PolicyBased
+   Public methods (6): init, getAgent, getLearningFrequency, takeAction, learnOnBatch
+      ... and 1 more
+
+📄 MARLKIT/src/main/java/learning/policy/valuebased/PolicyQValueBased.java
+   Class: PolicyQValueBased
+   Public methods (7): init, getAgent, getLearningFrequency, takeAction, learnOnBatch
+      ... and 2 more
+
+📄 MARLKIT/src/main/java/simulation/MLKLauncher.java
+   Class: MLKLauncher
+
+📄 MARLKIT/src/main/java/util/grafana/StepData.java
+   Class: StepData
+   Public methods (5): getData, getExperiences, getExperience, getExtra, setData
+
+📄 MLK-experiments/src/main/java/marlkit/hello/HelloXPAgent.java
+   Class: HelloXPAgent
+   Public methods (3): main, getTest, setTest
+
+📄 MLK-experiments/src/main/java/marlkit/listenorgo/ActionGoLeft.java
+   Class: ActionGoLeft
+   Public methods (3): equals, hashCode, toString
+
+📄 MLK-experiments/src/main/java/marlkit/listenorgo/ActionGoRight.java
+   Class: ActionGoRight
+   Public methods (3): equals, hashCode, toString
+
+📄 MLK-experiments/src/main/java/marlkit/listenorgo/ActionListen.java
+   Class: ActionListen
+   Public methods (3): equals, hashCode, toString
+
+📄 MLK-experiments/src/main/java/marlkit/listenorgo/EnvListenOrGo.java
+   Class: EnvListenOrGo
+   Public methods (8): reset, setupAgent, getObservation, dynamics, getObservations
+      ... and 3 more
+
+📄 MLK-experiments/src/main/java/marlkit/listenorgo/LauncherListenOrGo.java
+   Class: LauncherListenOrGo
+   Public methods (1): main
+
+📄 MLK-experiments/src/main/java/marlkit/listenorgo/ObservationListenOrGo.java
+   Class: ObservationListenOrGo
+   Public methods (8): addListenResult, addOtherDirection, getListenResults, getOthersDirections, add
+      ... and 3 more
+
+📄 MLK-experiments/src/main/java/marlkit/listenorgo/SchedulerListenOrGo.java
+   Class: SchedulerListenOrGo
+   Public methods (4): getCriteriaEndEpisode, getCriteriaStartDisplay, getCriteriaEndDisplay, getCriteriaEndSimulation
+
+📄 MLK-experiments/src/main/java/marlkit/listenorgo/ViewerListenOrGo.java
+   Class: ViewerListenOrGo
+   Public methods (2): render, getEnvironment
+
+📄 MLK-experiments/src/main/java/marlkit/preyVsHunter/LauncherPVH.java
+   Class: LauncherPVH
+   Public methods (1): main
+
+📄 MLK-experiments/src/main/java/marlkit/preyVsHunter/SchedulerPVH.java
+   Class: SchedulerPVH
+   Public methods (5): getCriteriaEndEpisode, getCriteriaStartDisplay, getCriteriaEndDisplay, getPauseDisplayValue, getCriteriaEndSimulation
+
+📄 MLK-experiments/src/main/java/marlkit/preyVsHunter/ViewerPVH.java
+   Class: ViewerPVH
+   Public methods (2): getEnvironment, render
+
+📄 MLK-experiments/src/main/java/marlkit/pushtheblock/EnvPushTheBlock.java
+   Class: EnvPushTheBlock
+   Public methods (5): setupState, setupAgent, reset, dynamics, getAgentsPositions
+
+📄 MLK-experiments/src/main/java/marlkit/pushtheblock/LauncherPTB.java
+   Class: LauncherPTB
+   Public methods (1): main
+
+📄 MLK-experiments/src/main/java/marlkit/pushtheblock/SchedulerPTB.java
+   Class: SchedulerPTB
+   Public methods (5): getCriteriaEndEpisode, getCriteriaStartDisplay, getCriteriaEndDisplay, getCriteriaEndSimulation, getPauseDisplayValue
+
+📄 MLK-experiments/src/main/java/marlkit/pushtheblocktogether/EnvPushTheBlockTogether.java
+   Class: EnvPushTheBlockTogether
+   Public methods (1): dynamics
+
+📄 MLK-experiments/src/main/java/marlkit/pushtheblocktogether/LauncherPTBTogether.java
+   Class: LauncherPTBTogether
+   Public methods (1): main
+
+📄 MLK-experiments/src/main/java/marlkit/trade/ActionRequestResource.java
+   Class: ActionRequestResource
+   Public methods (4): getUniteProduction, setUniteProduction, hashCode, equals
+
+📄 MLK-experiments/src/main/java/marlkit/trade/EnvTrade.java
+   Class: EnvTrade
+   Public methods (4): reset, setupAgent, dynamics, getLastActions
+
+📄 MLK-experiments/src/main/java/marlkit/trade/LauncherTrade.java
+   Class: LauncherTrade
+   Public methods (1): main
+
+📄 MLK-experiments/src/main/java/marlkit/trade/ObservationUnites.java
+   Class: ObservationUnites
+   Public methods (4): add, getResourceType, hashCode, equals
+
+📄 MLK-experiments/src/main/java/marlkit/trade/ResourceQuantify.java
+   Class: ResourceQuantify
+   Public methods (9): toString, getType, getValue, addValue, setValue
+      ... and 4 more
+
+📄 MLK-experiments/src/main/java/marlkit/trade/RewardConfigurationFullyCoop.java
+   Class: RewardConfigurationFullyCoop
+   Public methods (1): computeRewards
+
+📄 MLK-experiments/src/main/java/marlkit/trade/RewardConfigurationMixed.java
+   Class: RewardConfigurationMixed
+   Public methods (1): computeRewards
+
+📄 MLK-experiments/src/main/java/marlkit/trade/SchedulerTrade.java
+   Class: SchedulerTrade
+   Public methods (5): getCriteriaEndEpisode, getCriteriaStartDisplay, getCriteriaEndDisplay, getCriteriaEndSimulation, getPauseDisplayValue
+
+📄 MLK-experiments/src/main/java/marlkit/trade/ViewerTrade.java
+   Class: ViewerTrade
+   Public methods (2): getEnvironment, render
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/ActionAgentAdress.java
+   Class: ActionAgentAdress
+   Public methods (1): getAction
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/ActionBuy.java
+   Class: ActionBuy
+   Public methods (8): getTradeProposal, getResourceQuantified, setResourceQuantified, getResourceType, getResourceQuantity
+      ... and 3 more
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/ActionSell.java
+   Class: ActionSell
+   Public methods (8): getTradeProposal, getResourceQuantified, setResourceQuantified, getResourceType, getResourceQuantity
+      ... and 3 more
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/EnvPTC.java
+   Class: EnvPTC
+   Public methods (4): reset, setupAgent, step, dynamics
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/LauncherProdTransfConso.java
+   Class: LauncherProdTransfConso
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/ObservationSell.java
+   Class: Need
+   Public methods (7): add, getResourceOneHot, setResourceOneHot, getPrice, setPrice
+      ... and 2 more
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/ResourceQuantify.java
+   Class: ResourceQuantify
+   Public methods (7): toString, getType, getValue, addValue, setValue
+      ... and 2 more
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/ResourceSlot.java
+   Class: ResourceSlot
+   Public methods (2): getMaxStorage, add
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/ResourcesStock.java
+   Class: ResourcesStock
+   Public methods (7): getResources, setResources, getQuantity, getVectorizedStock, add
+      ... and 2 more
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/SchedulerProdTransfConso.java
+   Class: SchedulerProdTransfConso
+   Public methods (4): getCriteriaEndEpisode, getCriteriaStartDisplay, getCriteriaEndDisplay, getCriteriaEndSimulation
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/TradeProposal.java
+   Class: TradeProposal
+   Public methods (15): setPriceUnite, getPriceTrade, deal, createMessage, toString
+      ... and 10 more
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/WrapperObservationBuyVector.java
+   Class: WrapperObservationBuyVector
+   Public methods (2): transform, transform
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/unite/Unite.java
+   Class: Unite
+   Public methods (9): sendPosition, receivePosition, getEnvironment, distanceTo, getX
+      ... and 4 more
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/unite/UniteConsumption.java
+   Class: UniteConsumption
+   Public methods (3): declareNeeds, buy, setNeedValue
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/unite/UniteProduction.java
+   Class: UniteProduction
+   Public methods (6): productRessource, processRequests, resetStock, printInfos, setProdValue
+      ... and 1 more
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/unite/UniteTransformation.java
+   Class: UniteTransformation
+   Public methods (6): requestBuy, requestSell, lookRequestSent, printInfos, resetStock
+      ... and 1 more
+
+================================================================================
+FILES WITH PARTIAL DOCUMENTATION
+================================================================================
+
+📄 MARLKIT/src/main/java/agent/AgentsGroup.java
+   Class: AgentsGroup
+   ✅ Has class-level Javadoc
+   ❌ 2 undocumented methods: hashCode, equals
+   ✅ 3 documented methods
+
+📄 MARLKIT/src/main/java/agent/action/Action2DMove.java
+   Class: Action2DMove
+   ✅ Has class-level Javadoc
+   ❌ 3 undocumented methods: hashCode, equals, toString
+   ✅ 13 documented methods
+
+📄 MARLKIT/src/main/java/agent/action/ActionInt.java
+   Class: ActionInt
+   ✅ Has class-level Javadoc
+   ❌ 2 undocumented methods: hashCode, equals
+   ✅ 2 documented methods
+
+📄 MARLKIT/src/main/java/agent/interaction/FictitiousPlay.java
+   Class: FictitiousPlay
+   ✅ Has class-level Javadoc
+   ❌ 3 undocumented methods: setAgentsGroup, getInteractionInformation, update
+   ✅ 3 documented methods
+
+📄 MARLKIT/src/main/java/environment/observation/DefaultObservation.java
+   Class: DefaultObservation
+   ✅ Has class-level Javadoc
+   ❌ 1 undocumented methods: equals
+   ✅ 1 documented methods
+
+📄 MARLKIT/src/main/java/environment/observation/ObservationPositionValue.java
+   Class: ObservationPositionValue
+   ✅ Has class-level Javadoc
+   ❌ 3 undocumented methods: equals, hashCode, toString
+   ✅ 5 documented methods
+
+📄 MARLKIT/src/main/java/environment/observation/ObservationPositionsValues.java
+   Class: ObservationPositionsValues
+   ✅ Has class-level Javadoc
+   ❌ 3 undocumented methods: toString, hashCode, equals
+   ✅ 7 documented methods
+
+📄 MARLKIT/src/main/java/environment/reward/RewardStandard.java
+   Class: RewardStandard
+   ✅ Has class-level Javadoc
+   ❌ 5 undocumented methods: getValue, setReward, clone
+         ... and 2 more
+
+📄 MARLKIT/src/main/java/environment/state/State2DGrid.java
+   Class: State2DGrid
+   ✅ Has class-level Javadoc
+   ❌ 1 undocumented methods: print
+   ✅ 10 documented methods
+
+📄 MARLKIT/src/main/java/environment/state/State2DGridInt.java
+   Class: Cell
+   ❌ Missing class-level Javadoc
+   ❌ 10 undocumented methods: reset, getObservations, getValue
+         ... and 7 more
+   ✅ 2 documented methods
+
+📄 MARLKIT/src/main/java/learning/nn/ActorNetwork.java
+   Class: ActorNetwork
+   ✅ Has class-level Javadoc
+   ❌ 1 undocumented methods: setLearningRate
+   ✅ 2 documented methods
+
+📄 MARLKIT/src/main/java/learning/nn/CriticNetwork.java
+   Class: CriticNetwork
+   ✅ Has class-level Javadoc
+   ❌ 1 undocumented methods: setLearningRate
+   ✅ 2 documented methods
+
+📄 MARLKIT/src/main/java/learning/nn/NeuralNetwork.java
+   Class: NeuralNetwork
+   ✅ Has class-level Javadoc
+   ❌ 6 undocumented methods: forward, backward, update
+         ... and 3 more
+
+📄 MARLKIT/src/main/java/learning/policy/PolicyQLearning.java
+   Class: PolicyQLearning
+   ✅ Has class-level Javadoc
+   ❌ 5 undocumented methods: init, getAgent, getLearningFrequency
+         ... and 2 more
+
+📄 MARLKIT/src/main/java/learning/policy/PolicyRandom.java
+   Class: PolicyRandom
+   ✅ Has class-level Javadoc
+   ❌ 5 undocumented methods: init, learnOnBatch, endEpisode
+         ... and 2 more
+   ✅ 1 documented methods
+
+📄 MARLKIT/src/main/java/util/Pair.java
+   Class: Pair
+   ✅ Has class-level Javadoc
+   ❌ 3 undocumented methods: toString, hashCode, equals
+   ✅ 5 documented methods
+
+📄 MARLKIT/src/main/java/util/Triple.java
+   Class: Triple
+   ✅ Has class-level Javadoc
+   ❌ 2 undocumented methods: hashCode, equals
+   ✅ 7 documented methods
+
+📄 MARLKIT/src/main/java/util/Tuple.java
+   Class: Tuple
+   ✅ Has class-level Javadoc
+   ❌ 3 undocumented methods: toString, equals, hashCode
+   ✅ 6 documented methods
+
+📄 MARLKIT/src/main/java/util/criteria/AlwaysMet.java
+   Class: AlwaysMet
+   ✅ Has class-level Javadoc
+   ❌ 2 undocumented methods: update, reset
+   ✅ 1 documented methods
+
+📄 MARLKIT/src/main/java/util/criteria/Criteria.java
+   Class: Criteria
+   ✅ Has class-level Javadoc
+   ❌ 3 undocumented methods: update, reset, isMet
+   ✅ 3 documented methods
+
+📄 MARLKIT/src/main/java/util/grafana/Extra.java
+   Class: Extra
+   ❌ Missing class-level Javadoc
+   ✅ 2 documented methods
+
+📄 MARLKIT/src/main/java/util/grafana/Grafana.java
+   Class: Grafana
+   ❌ Missing class-level Javadoc
+   ❌ 2 undocumented methods: getUrl, renderPNG
+   ✅ 7 documented methods
+
+📄 MARLKIT/src/main/java/util/grafana/LearningData.java
+   Class: LearningData
+   ❌ Missing class-level Javadoc
+   ❌ 4 undocumented methods: generateGraph, getStepCount, getAgents
+         ... and 1 more
+   ✅ 8 documented methods
+
+📄 MLK-experiments/src/main/java/marlkit/preyVsHunter/EnvPreyVsHunter.java
+   Class: EnvPreyVsHunter
+   ❌ Missing class-level Javadoc
+   ❌ 4 undocumented methods: setupState, setupAgent, reset
+         ... and 1 more
+   ✅ 6 documented methods
+
+📄 MLK-experiments/src/main/java/marlkit/pushtheblock/ViewerPTB.java
+   Class: ViewerPTB
+   ✅ Has class-level Javadoc
+   ❌ 2 undocumented methods: getEnvironment, render
+
+📄 MLK-experiments/src/main/java/marlkit/trade/Scenario1.java
+   Class: Scenario1
+   ✅ Has class-level Javadoc
+   ❌ 1 undocumented methods: getBasePrices
+
+📄 MLK-experiments/src/main/java/marlkit/trade/Scenario2.java
+   Class: Scenario2
+   ✅ Has class-level Javadoc
+   ❌ 1 undocumented methods: getBasePrices
+
+📄 MLK-experiments/src/main/java/marlkit/trade/ScenarioUP.java
+   Class: ScenarioUP
+   ❌ Missing class-level Javadoc
+   ❌ 1 undocumented methods: getBasePrices
+   ✅ 2 documented methods
+
+📄 MLK-experiments/src/main/java/marlkit/trade/StateUnites.java
+   Class: StateUnites
+   ✅ Has class-level Javadoc
+   ❌ 5 undocumented methods: getUnitesProductions, updateState, getObservations
+         ... and 2 more
+
+📄 MLK-experiments/src/main/java/marlkit/trade/UniteProduction.java
+   Class: UniteProduction
+   ❌ Missing class-level Javadoc
+   ❌ 2 undocumented methods: hashCode, equals
+   ✅ 7 documented methods
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/ObservationBuy.java
+   Class: ObservationBuy
+   ✅ Has class-level Javadoc
+   ❌ 3 undocumented methods: add, getStocksAndDistances, setStocksAndDistances
+
+📄 MLK-experiments/src/main/java/marlkit/uputuc/ObservationRessource.java
+   Class: ObservationRessource
+   ✅ Has class-level Javadoc
+   ❌ 2 undocumented methods: add, getRessource
+
+================================================================================
+SUMMARY BY MODULE
+================================================================================
+
+📦 MARLKIT
+   Total: 67 | Good: 33 | Partial: 23 | None: 11
+
+📦 MLK-experiments
+   Total: 51 | Good: 0 | Partial: 9 | None: 42

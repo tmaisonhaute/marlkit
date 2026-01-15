@@ -25,8 +25,7 @@
  */
 open module marlkit.xp {
 	requires transitive marlkit.base;
-	requires madkit.base;
-//	requires madkit.simu.slamb;
+	requires transitive madkit.base;
 	exports marlkit.hello;
 	exports marlkit.pushtheblock;
 	exports marlkit.pushtheblocktogether;
