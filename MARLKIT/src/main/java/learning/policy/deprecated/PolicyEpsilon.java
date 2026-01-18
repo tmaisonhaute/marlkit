@@ -1,4 +1,4 @@
-package learning.policy;
+package learning.policy.deprecated;
 
 /**
  * Abstract base class for policies that use epsilon-greedy exploration.

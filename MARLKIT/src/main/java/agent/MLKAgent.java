@@ -6,7 +6,7 @@ import agent.action.Action;
 import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Experience;
-import learning.policy.Policy;
+import learning.policy.deprecated.Policy;
 
 /**
  * Core interface for agents in the MARLKIT framework.

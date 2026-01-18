@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javafx.scene.paint.Color;
-import learning.policy.Policy;
+import learning.policy.deprecated.Policy;
 import marlkit.uputuc.ActionBuy;
 import marlkit.uputuc.ActionSell;
 import marlkit.uputuc.ObservationBuy;

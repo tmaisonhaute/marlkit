@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import agent.MultiDimensionalAgent;
 import javafx.scene.paint.Color;
-import learning.policy.Policy;
+import learning.policy.deprecated.Policy;
 import madkit.messages.ObjectMessage;
 import madkit.simulation.environment.Environment2D;
 import marlkit.uputuc.Resource;

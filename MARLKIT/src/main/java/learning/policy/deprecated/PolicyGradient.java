@@ -1,5 +1,5 @@
 
-package learning.policy;
+package learning.policy.deprecated;
 
 
 import java.util.List;

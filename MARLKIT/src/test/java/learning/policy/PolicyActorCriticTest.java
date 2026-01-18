@@ -18,6 +18,7 @@ import environment.observation.ObservationPositionsValues;
 import environment.reward.RewardStandard;
 import learning.Batch;
 import learning.Experience;
+import learning.policy.deprecated.PolicyActorCritic;
 import madkit.kernel.AgentLogger;
 import util.Tuple;
 

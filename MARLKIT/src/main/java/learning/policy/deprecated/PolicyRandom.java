@@ -1,4 +1,4 @@
-package learning.policy;
+package learning.policy.deprecated;
 
 import java.util.List;
 import java.util.random.RandomGenerator;

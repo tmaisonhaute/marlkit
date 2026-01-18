@@ -6,7 +6,7 @@ import java.util.List;
 import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import learning.policy.PolicySarsa;
+import learning.policy.deprecated.PolicySarsa;
 import madkit.simulation.EngineAgents;
 import marlkit.pushtheblock.SchedulerPTB;
 import marlkit.pushtheblock.ViewerPTB;

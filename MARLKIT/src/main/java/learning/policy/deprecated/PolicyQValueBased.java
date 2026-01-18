@@ -1,4 +1,4 @@
-package learning.policy.valuebased;
+package learning.policy.deprecated;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +9,6 @@ import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
-import learning.policy.PolicyEpsilon;
 import madkit.kernel.AgentLogger;
 import util.Pair;
 

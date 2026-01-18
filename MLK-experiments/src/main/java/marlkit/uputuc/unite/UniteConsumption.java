@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.scene.paint.Color;
-import learning.policy.Policy;
+import learning.policy.deprecated.Policy;
 import marlkit.uputuc.Resource;
 import marlkit.uputuc.TradeProposal;
 

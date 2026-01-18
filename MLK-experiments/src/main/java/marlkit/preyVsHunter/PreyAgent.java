@@ -1,7 +1,7 @@
 package marlkit.preyVsHunter;
 
 import agent.AgentStandard;
-import learning.policy.Policy;
+import learning.policy.deprecated.Policy;
 
 public class PreyAgent extends AgentStandard{
 

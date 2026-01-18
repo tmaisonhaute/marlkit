@@ -42,7 +42,8 @@ open module marlkit.base {
 	exports agent.action.wrapperactionvector;
 	exports agent.interaction;
 	exports learning;
-	exports learning.policy;
+//	exports learning.policy;
+	exports learning.policy.deprecated;
 	exports util;
 	exports util.criteria;
 	exports simulation;

@@ -6,7 +6,7 @@ import java.util.List;
 import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import learning.policy.PolicyQLearning;
+import learning.policy.deprecated.PolicyQLearning;
 import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;

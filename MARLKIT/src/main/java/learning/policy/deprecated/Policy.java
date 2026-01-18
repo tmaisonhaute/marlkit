@@ -1,5 +1,4 @@
-package learning.policy;
-
+package learning.policy.deprecated;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.random.RandomGenerator;
@@ -7,26 +6,28 @@ import java.util.random.RandomGenerator;
 import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
-import learning.policy.explorationsettings.ExplorationStrategy;
+import learning.Batch;
+import madkit.kernel.AgentLogger;
 
 /**
- * Policy interface for reinforcement learning agents. A policy is a function that maps observations to actions.
+ * Represents a policy that defines how an agent selects actions based on observations.
  */
 public interface Policy {
+	
 	/**
 	 * Initializes the policy with the agent that will use it.
 	 *
 	 * @param agent the agent using this policy
 	 */
 	public abstract void init(MLKAgent agent);
-
+	
 	/**
 	 * Returns the agent using this policy.
 	 *
 	 * @return the agent
 	 */
 	public abstract MLKAgent getAgent();
-
+	
 	/**
 	 * Returns the pseudo-random number generator from the agent.
 	 *
@@ -35,7 +36,15 @@ public interface Policy {
 	public default RandomGenerator pnrg() {
 		return getAgent().prng();
 	}
-
+	
+	/**
+	 * Returns the frequency (in timesteps) at which learning should occur.
+	 * A value of 0 means no periodic learning.
+	 *
+	 * @return the learning frequency
+	 */
+	public abstract int getLearningFrequency();
+	
 	/**
      * Takes an action based on a single observation.
      * 
@@ -58,6 +67,26 @@ public interface Policy {
 		return actions;
 	}
 
-	public ExplorationStrategy getExplorationStrategy() ;
+	/**
+	 * Performs learning using a batch of experiences.
+	 *
+	 * @param batch the batch of experiences to learn from
+	 * @param logger the agent's logger for debug information
+	 */
+	public abstract void learnOnBatch(Batch batch, AgentLogger logger);
+	
+	/**
+	 * Called at the end of an episode to perform episode-level learning or cleanup.
+	 *
+	 * @param batch the batch of experiences from the episode
+	 * @param logger the agent's logger for debug information
+	 */
+	public abstract void endEpisode(Batch batch, AgentLogger logger);
 
+//	default Map<Pair<Observation, Action>, Double> getQ(){
+//		Map<Pair<Observation, Action>, Double> q = new HashMap<>();
+//		return q;
+//	};
 }
+
+

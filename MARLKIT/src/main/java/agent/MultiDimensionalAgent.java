@@ -10,7 +10,7 @@ import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
-import learning.policy.Policy;
+import learning.policy.deprecated.Policy;
 import madkit.simulation.SimuAgent;
 
 /**

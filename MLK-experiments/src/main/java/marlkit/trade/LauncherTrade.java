@@ -5,7 +5,7 @@ import java.util.List;
 
 import agent.AgentStandard;
 import agent.action.Action;
-import learning.policy.PolicyQLearning;
+import learning.policy.deprecated.PolicyQLearning;
 import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;

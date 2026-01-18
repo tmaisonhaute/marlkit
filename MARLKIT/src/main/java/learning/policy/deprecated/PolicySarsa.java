@@ -1,5 +1,5 @@
 
-package learning.policy;
+package learning.policy.deprecated;
 
 import java.util.List;
 import java.util.Map;
@@ -9,7 +9,6 @@ import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
 import learning.Experience;
-import learning.policy.valuebased.PolicyQValueBased;
 import madkit.kernel.AgentLogger;
 import util.Pair;
 

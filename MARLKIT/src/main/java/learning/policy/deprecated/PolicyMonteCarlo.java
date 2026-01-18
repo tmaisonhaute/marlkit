@@ -1,4 +1,4 @@
-package learning.policy;
+package learning.policy.deprecated;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +9,6 @@ import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
 import learning.Experience;
-import learning.policy.valuebased.PolicyQValueBased;
 import madkit.kernel.AgentLogger;
 import util.Pair;
 
@@ -141,7 +140,7 @@ public class PolicyMonteCarlo extends PolicyQValueBased {
 	 * @param experience
 	 * @return the state-action pair
 	 */
-	protected Pair<Observation, Action> createStateAction(Experience experience) {
+	public Pair<Observation, Action> createStateAction(Experience experience) {
 		Observation state = experience.getObservation();
 		Action action = experience.getAction();
 		return new Pair<>(state, action);

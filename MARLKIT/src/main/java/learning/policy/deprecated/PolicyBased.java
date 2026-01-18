@@ -1,10 +1,9 @@
-package learning.policy.policybased;
+package learning.policy.deprecated;
 
 import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
-import learning.policy.Policy;
 import madkit.kernel.AgentLogger;
 
 /**
