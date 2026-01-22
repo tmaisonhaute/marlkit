@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.scene.paint.Color;
-import learning.policy.deprecated.Policy;
+import learning.algorithm.Algorithm;
+import learning.policy.Policy;
 import marlkit.uputuc.Resource;
 import marlkit.uputuc.TradeProposal;
 
@@ -25,21 +26,21 @@ public class UniteConsumption extends Unite {
         requestRole(getCommunity(), getModelGroup(), "consommation", null);
     }
 
-    public UniteConsumption(Policy policy) {
-        super(policy);
+    public UniteConsumption(Policy policy, Algorithm algorithm) {
+        super(policy, algorithm);
         probaConsumptionResource = new EnumMap<>(Resource.class);
         probaConsumptionResource.put(Resource.AZENE, 0.5);
         probaConsumptionResource.put(Resource.CARBOL, 0.4);
         probaConsumptionResource.put(Resource.BOGD, 0.1);
     }
 
-    public UniteConsumption(Policy policy, Map<Resource, Double> probaConsoResource) {
-        super(policy);
+    public UniteConsumption(Policy policy, Algorithm algorithm, Map<Resource, Double> probaConsoResource) {
+        super(policy, algorithm);
         probaConsumptionResource = new EnumMap<>(probaConsoResource);
     }
 
-    public UniteConsumption(Policy policy, double x, double y, Map<Resource, Double> probaConsoResource) {
-        super(policy, x, y);
+    public UniteConsumption(Policy policy, Algorithm algorithm, double x, double y, Map<Resource, Double> probaConsoResource) {
+        super(policy, algorithm, x, y);
         probaConsumptionResource = new EnumMap<>(probaConsoResource);
     }
 

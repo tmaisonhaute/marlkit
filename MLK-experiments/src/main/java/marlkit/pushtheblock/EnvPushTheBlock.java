@@ -7,7 +7,6 @@ import java.util.random.RandomGenerator;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import agent.interaction.FictitiousPlay;
 import environment.EnvironmentStandard;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
@@ -25,7 +24,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	protected int numberOfBlocks;
 	
 	public EnvPushTheBlock() {
-		super(5, 5, new FictitiousPlay());
+		super(5, 5);
 		numberOfBlocks = 1;
 	}
 

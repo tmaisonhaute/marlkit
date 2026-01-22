@@ -15,7 +15,7 @@ import environment.state.State;
 import util.Pair;
 
 public class EnvTrade extends EnvironmentStandard {
-	private final int quantityPerRequest = 1;
+	private static final int QUANTITY_PER_REQUEST = 1;
 	private Map<ResourceType, Float> basePrices;
 	private RewardConfiguration rewardConfig;
 	private ScenarioUP scenario;
@@ -27,29 +27,32 @@ public class EnvTrade extends EnvironmentStandard {
 	}
 	
 	public EnvTrade(int width, int height) {
-		this(width, height, new RewardConfigurationMixed());
+//		this(width, height, new RewardConfigurationMixed());
+		this(width, height, new RewardConfigurationFullyCoop());
 	}
 
 	public EnvTrade(int width, int height, RewardConfiguration rewardConfig) {
-		this(width, height, rewardConfig, new IndependantLearning());
+		this(width, height, rewardConfig, new Scenario4());
 	}
 
-	public EnvTrade(int width, int height, RewardConfiguration rewardConfig, MLKInteraction interactionMethod) {
-		this(width, height, rewardConfig, interactionMethod, new Scenario1());
+	public EnvTrade(int width, int height, RewardConfiguration rewardConfig, ScenarioUP scenario) {
+		this(width, height, rewardConfig, scenario, new IndependantLearning());
 	}
 	
-	public EnvTrade(int width, int height, RewardConfiguration rewardConfig, MLKInteraction interactionMethod, ScenarioUP scenario) {
+	public EnvTrade(int width, int height, RewardConfiguration rewardConfig, ScenarioUP scenario, MLKInteraction interactionMethod) {
 		super(width, height);
 		this.rewardConfig = rewardConfig;
 		this.interactionMethod = interactionMethod;
 		this.scenario = scenario;
 		this.basePrices = scenario.getBasePrices();
+		
 	}
 
 	@Override
 	protected void onActivation() {
 		super.onActivation();
-		this.state = new StateUnites(agents.getAgents(), scenario.createUnites());
+		this.scenario.setup(prng());
+		this.state = new StateUnites(agents.getAgents(), scenario.createUnites(prng()));
 		setupState();
 	}
 	
@@ -88,7 +91,7 @@ public class EnvTrade extends EnvironmentStandard {
 
 		Map<MLKAgent, ResourceQuantify> receivedResource = new HashMap<>();
 		for (UniteProduction up : state.getUnitesProductions()){
-			receivedResource.putAll(up.processRequests(requestingAgents.get(up), quantityPerRequest));
+			receivedResource.putAll(up.processRequests(requestingAgents.get(up), QUANTITY_PER_REQUEST));
 		}
 		Map<MLKAgent, Reward> rewards = rewardConfig.computeRewards(receivedResource, basePrices);
 		for (MLKAgent agent : actions.keySet()) {

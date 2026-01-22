@@ -5,7 +5,9 @@ import java.util.List;
 
 import agent.AgentStandard;
 import agent.action.Action;
-import learning.policy.deprecated.PolicyQLearning;
+import learning.algorithm.QLearning;
+import learning.policy.QValueBasedPolicy;
+import learning.policy.explorationsettings.EpsilonGreedy;
 import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
@@ -28,8 +30,9 @@ public class LauncherListenOrGo extends MLKLauncher {
         
         int nbAgents = 3;
         for (int i = 0; i < nbAgents; i++) {
-            PolicyQLearning policy = new PolicyQLearning(possibleActions, 1.0, 0.001, 1.0, 0.2, 0.95);
-            AgentStandard agent = new AgentStandard(policy);
+        	QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedy(1.0, 0.001));
+        	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.95);
+            AgentStandard agent = new AgentStandard(policy, algorithm);
             launchAgent(agent);
         }
     }

@@ -1,9 +1,5 @@
 package util.grafana;
 
-import agent.MLKAgent;
-import learning.Experience;
-import util.Pair;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,7 +7,16 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import agent.MLKAgent;
+import learning.Experience;
+import util.Pair;
 
 public class LearningData {
     private int stepCount;
@@ -71,7 +76,7 @@ public class LearningData {
             agents.add(agent.toString());
             double reward = experience.getReward().getValue();
             rewardsSum.putIfAbsent(agent, new Pair<>(0.0, 0));
-            rewardsSum.computeIfPresent(agent, (k, currentSum) -> new Pair<>(currentSum.getFirst() + reward, currentSum.getSecond() + 1));
+            rewardsSum.computeIfPresent(agent, (_, currentSum) -> new Pair<>(currentSum.getFirst() + reward, currentSum.getSecond() + 1));
         }
     }
 
@@ -88,7 +93,7 @@ public class LearningData {
             double value = extra.toDouble();
             extraKeys.add(key);
             extraSum.putIfAbsent(key, new Pair<>(key, 0.0));
-            extraSum.computeIfPresent(key, (k, currentSum) -> new Pair<>(currentSum.getFirst(), currentSum.getSecond() + value));
+            extraSum.computeIfPresent(key, (_, currentSum) -> new Pair<>(currentSum.getFirst(), currentSum.getSecond() + value));
         }
     }
 

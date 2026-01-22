@@ -9,9 +9,9 @@ import util.MapProba;
 /**
  * Scenario 1: Two production units with balanced production probabilities.
  */
-public class Scenario1 extends ScenarioUP {
-	
-    public Scenario1() {
+public class Scenario3 extends ScenarioUP {
+
+    protected Scenario3() {
 		super();
 	}
 
@@ -19,24 +19,29 @@ public class Scenario1 extends ScenarioUP {
     public void setup(RandomGenerator prng) {
         // Unit A: balanced production
         MapProba<Integer> probaA = new MapProba<>(prng);
-        probaA.put(0, 0.2);
-        probaA.put(1, 0.5);
-        probaA.put(2, 0.3);
-        addUnit(ResourceType.A, probaA, 2, 12);
+        probaA.put(0, 0.0);
+        probaA.put(1, 1.0);
+        addUnit(ResourceType.A, probaA, 1);
         
         // Unit B: balanced production
         MapProba<Integer> probaB = new MapProba<>(prng);
-        probaB.put(0, 0.2);
-        probaB.put(1, 0.5);
-        probaB.put(2, 0.3);
-        addUnit(ResourceType.B, probaB, 2);
+        probaB.put(0, 0.0);
+        probaB.put(2, 1.0);
+        addUnit(ResourceType.B, probaB, 3);
+        
+
+        // Unit C: balanced production
+        MapProba<Integer> probaC = new MapProba<>(prng);
+        probaC.put(0, 1.0);
+        addUnit(ResourceType.C, probaC, 0);
     }
 
     @Override
     public Map<ResourceType, Float> getBasePrices() {
         Map<ResourceType, Float> basePrices = new HashMap<>();
-        basePrices.put(ResourceType.A, 6f);
-        basePrices.put(ResourceType.B, 10f);
+        basePrices.put(ResourceType.A, 30f);
+        basePrices.put(ResourceType.B, 6f);
+        basePrices.put(ResourceType.C, 0f);
         return basePrices;
     }   
 }

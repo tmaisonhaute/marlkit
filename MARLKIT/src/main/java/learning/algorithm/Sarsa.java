@@ -5,6 +5,7 @@ import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
 import learning.Experience;
+import learning.policy.Policy;
 import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedy;
 import madkit.kernel.AgentLogger;
@@ -31,8 +32,7 @@ public class Sarsa implements Algorithm {
     private final double gamma;
     private final double alpha;
     private MLKAgent agent;
-    private final QValueBasedPolicy policy;
-    private double totalRewards;
+    private QValueBasedPolicy policy;
 
     /**
      * Creates a SARSA algorithm with specified parameters.
@@ -45,7 +45,6 @@ public class Sarsa implements Algorithm {
         this.policy = policy;
         this.gamma = gamma;
         this.alpha = alpha;
-        this.totalRewards = 0.0;
     }
 
     /**
@@ -63,6 +62,18 @@ public class Sarsa implements Algorithm {
     @Override
     public void init(MLKAgent agent) {
         this.agent = agent;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPolicy(Policy policy) {
+        if (policy instanceof QValueBasedPolicy qPolicy) {
+            this.policy = qPolicy;
+        } else {
+            throw new IllegalArgumentException("SARSA requires a QValueBasedPolicy");
+        }
     }
 
     /**
@@ -102,7 +113,7 @@ public class Sarsa implements Algorithm {
     @Override
     public void learnOnBatch(Batch batch, AgentLogger logger) {
         while (batch.getExperiences().size() > 1) {
-            totalRewards += learnOneStep(batch);
+            learnOneStep(batch);
         }
     }
 
@@ -114,9 +125,8 @@ public class Sarsa implements Algorithm {
      * </p>
      *
      * @param batch the batch containing at least two experiences
-     * @return the reward from the current experience
      */
-    private double learnOneStep(Batch batch) {
+    private void learnOneStep(Batch batch) {
         Experience currentExperience = batch.getExperiences().get(0);
         Experience nextExperience = batch.getExperiences().get(1);
 
@@ -128,7 +138,6 @@ public class Sarsa implements Algorithm {
 
         updateQ(currentState, currentAction, reward, nextState, nextAction);
         batch.getExperiences().removeFirst();
-        return reward;
     }
 
     /**
@@ -180,7 +189,6 @@ public class Sarsa implements Algorithm {
 
             updateQ(lastState, lastAction, lastReward, null, null);
             batch.getExperiences().removeFirst();
-            totalRewards += lastReward;
         }
 
         // Update epsilon if using epsilon-greedy exploration
@@ -189,10 +197,8 @@ public class Sarsa implements Algorithm {
             logger.info("Epsilon : " + epsilonGreedy.getEpsilon());
         }
         
-        logger.info("total rewards : " + totalRewards);
         logger.info("size Q: " + policy.getTable().size());
         
-        totalRewards = 0.0;
         batch.clear();
     }
 }

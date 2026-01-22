@@ -6,7 +6,9 @@ import java.util.List;
 import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import learning.policy.deprecated.PolicyQLearning;
+import learning.algorithm.QLearning;
+import learning.policy.QValueBasedPolicy;
+import learning.policy.explorationsettings.EpsilonGreedy;
 import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
@@ -26,12 +28,10 @@ public class LauncherPTB extends MLKLauncher {
 		int nbAgents = 1;
 		
 		for (int i = 0; i < nbAgents; i++) {
-//			PolicyMonteCarlo policy = new PolicyMonteCarlo(possibleActions, 1.0, 0.001);
-//			PolicySarsa policy = new PolicySarsa(possibleActions, 1.0, 0.0003);
-			PolicyQLearning policy = new PolicyQLearning(possibleActions, 1.0, 0.001, 1.0, 0.2, 0.95);
-//			PolicyActorCritic policy = new PolicyActorCritic(possibleActions, 4);
+			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedy(1.0, 0.001));
+        	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.95);
 
-			AgentStandard ag = new AgentStandard(policy);
+			AgentStandard ag = new AgentStandard(policy, algorithm);
 			launchAgent(ag);
 		}
 	}

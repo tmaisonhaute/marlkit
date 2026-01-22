@@ -222,7 +222,7 @@ public class State2DGridInt extends State2DGrid<Integer> {
 			int x = otherPos.getFirst();
 			int y = otherPos.getSecond();
 			
-			if (visiblePositions.contains(new Pair(x, y)) ) {
+			if (visiblePositions.contains(new Pair<Integer, Integer>(x, y)) ) {
 				agentsInRange.add(otherAgent);
 			}
 		}

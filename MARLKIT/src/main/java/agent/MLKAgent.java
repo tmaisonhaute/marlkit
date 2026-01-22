@@ -6,7 +6,8 @@ import agent.action.Action;
 import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Experience;
-import learning.policy.deprecated.Policy;
+import learning.algorithm.Algorithm;
+import learning.policy.Policy;
 
 /**
  * Core interface for agents in the MARLKIT framework.
@@ -20,6 +21,12 @@ public interface MLKAgent {
 	 * @return the agent's policy
 	 */
 	public Policy getPolicy();
+
+	/**
+	 * Returns the algorithm used by this agent for learning.
+	 * @return the agent's learning algorithm
+	 */
+	public Algorithm getAlgorithm();
 	
 	/**
 	 * Returns the pseudo-random number generator used by this agent.
@@ -39,11 +46,17 @@ public interface MLKAgent {
 	 * @param policy the policy to use
 	 */
 	public void setPolicy(Policy policy);
+
+	/**
+	 * Sets the learning algorithm for this agent.
+	 * @param algorithm the algorithm to use
+	 */
+	public void setAlgorithm(Algorithm algorithm);
 	
 	/**
 	 * Initializes the agent's policy with necessary parameters.
 	 */
-	public void initializePolicy();
+	public void initializeAll();
 	
 	/**
 	 * Records an experience composed of observation, action, and reward.

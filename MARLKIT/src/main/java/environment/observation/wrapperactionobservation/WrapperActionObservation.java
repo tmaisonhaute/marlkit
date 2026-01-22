@@ -1,4 +1,4 @@
-package environment.observation.Wrapperactionobservation;
+package environment.observation.wrapperactionobservation;
 
 import agent.action.Action;
 import environment.observation.Observation;

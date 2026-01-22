@@ -7,6 +7,7 @@ import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
 import learning.Experience;
+import learning.policy.Policy;
 import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedy;
 import madkit.kernel.AgentLogger;
@@ -28,7 +29,7 @@ public class QLearning implements Algorithm {
     private final double gamma;
     private final double alpha;
     private MLKAgent agent;
-    private final QValueBasedPolicy policy;
+    private QValueBasedPolicy policy;
     private final List<Action> actionsSet;
 
     /**
@@ -62,6 +63,19 @@ public class QLearning implements Algorithm {
     @Override
     public void init(MLKAgent agent) {
         this.agent = agent;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPolicy(Policy policy) {
+        if (policy instanceof QValueBasedPolicy qPolicy) {
+            this.policy = qPolicy;
+        } else {
+            throw new IllegalArgumentException("QLearning requires a QValueBasedPolicy");
+        }
     }
 
     /**

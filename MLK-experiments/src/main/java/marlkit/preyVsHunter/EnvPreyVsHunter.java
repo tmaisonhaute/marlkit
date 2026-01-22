@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import agent.interaction.FictitiousPlay;
 import agent.interaction.MeanField;
 import environment.EnvironmentStandard;
 import environment.reward.Reward;

@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.random.RandomGenerator;
 
 import javafx.scene.paint.Color;
-import learning.policy.deprecated.Policy;
+import learning.algorithm.Algorithm;
+import learning.policy.Policy;
 import marlkit.uputuc.Resource;
 import marlkit.uputuc.ResourceSlot;
 import marlkit.uputuc.TradeProposal;
@@ -31,11 +32,11 @@ public class UniteProduction extends Unite {
     }
     
     public UniteProduction(){
-    	this(null);
+    	this(null, null);
     }
     
-    public UniteProduction(Policy policy){
-        super(policy);
+    public UniteProduction(Policy policy, Algorithm algorithm){
+        super(policy, algorithm);
         probaProductionResource = new EnumMap<>(Resource.class);
         probaProductionResource.put(Resource.AZENE, 0.5);
         probaProductionResource.put(Resource.BOGD, 0.4);
@@ -43,8 +44,8 @@ public class UniteProduction extends Unite {
         initFillStock();
     }
     
-    public UniteProduction(Policy policy, double x, double y){
-        super(policy, x,y);
+    public UniteProduction(Policy policy, Algorithm algorithm, double x, double y){
+        super(policy, algorithm, x,y);
         probaProductionResource = new EnumMap<>(Resource.class);
         probaProductionResource.put(Resource.AZENE, 0.5);
         probaProductionResource.put(Resource.BOGD, 0.4);
@@ -52,14 +53,14 @@ public class UniteProduction extends Unite {
         initFillStock();
     }
 
-    public UniteProduction(Policy policy, Map<Resource, Double> probaProdResource){
-        super(policy);
+    public UniteProduction(Policy policy, Algorithm algorithm, Map<Resource, Double> probaProdResource){
+        super(policy, algorithm);
         probaProductionResource = new EnumMap<>(probaProdResource);
         initFillStock();
     }
 
-    public UniteProduction(Policy policy, double x, double y, Map<Resource, Double> probaProdResource){
-        super(policy, x,y);
+    public UniteProduction(Policy policy, Algorithm algorithm, double x, double y, Map<Resource, Double> probaProdResource){
+        super(policy, algorithm, x,y);
         probaProductionResource = new EnumMap<>(probaProdResource);
         initFillStock();
     }

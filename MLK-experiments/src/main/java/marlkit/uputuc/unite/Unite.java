@@ -5,7 +5,8 @@ import java.util.HashMap;
 
 import agent.MultiDimensionalAgent;
 import javafx.scene.paint.Color;
-import learning.policy.deprecated.Policy;
+import learning.algorithm.Algorithm;
+import learning.policy.Policy;
 import madkit.messages.ObjectMessage;
 import madkit.simulation.environment.Environment2D;
 import marlkit.uputuc.Resource;
@@ -19,13 +20,13 @@ public abstract class Unite extends MultiDimensionalAgent { //extends Watcher {
     private final Color color = Color.color(0.1, 0.1, 0.1);
     protected HashMap<String, Double> distancesID = new HashMap<>();
     
-    protected Unite(Policy policy){
-    	super(policy);
+    protected Unite(Policy policy, Algorithm algorithm){
+    	super(policy, algorithm);
     	randomTeleport();
     }
     
-    protected Unite(Policy policy, double x, double y){
-    	super(policy);
+    protected Unite(Policy policy, Algorithm algorithm, double x, double y){
+    	super(policy, algorithm);
     	position.x = x;
     	position.y = y;
     }

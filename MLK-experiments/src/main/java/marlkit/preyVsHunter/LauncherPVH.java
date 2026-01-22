@@ -1,16 +1,17 @@
 package marlkit.preyVsHunter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import learning.policy.deprecated.PolicyMonteCarlo;
-import learning.policy.deprecated.PolicySarsa;
+import learning.algorithm.Sarsa;
+import learning.policy.QValueBasedPolicy;
+import learning.policy.explorationsettings.EpsilonGreedy;
 import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @EngineAgents(scheduler = SchedulerPVH.class, environment = EnvPreyVsHunter.class, model = MLKModel.class, viewers = {
         ViewerPVH.class })
@@ -26,13 +27,15 @@ public class LauncherPVH extends MLKLauncher {
         int nbPreyAgents = 1 ;
 
         for (int i = 0; i < nbHunterAgents; i++) {
-            PolicySarsa hunterPolicy = new PolicySarsa(possibleHunterActions, 1.0, 0.0002);
-            AgentStandard ag = new HunterAgent(hunterPolicy);
+            QValueBasedPolicy policy = new QValueBasedPolicy(possibleHunterActions, 1.0, new EpsilonGreedy(1.0, 0.001));
+        	Sarsa algorithm = new Sarsa(policy, 0.2, 0.95);
+            AgentStandard ag = new HunterAgent(policy, algorithm);
             launchAgent(ag);
         }
         for (int i = 0; i < nbPreyAgents; i++) {
-            PolicySarsa PreyPolicy = new PolicySarsa(possiblePreyActions, 1.0, 0.0002);
-            AgentStandard ag = new PreyAgent(PreyPolicy);
+        	QValueBasedPolicy policy = new QValueBasedPolicy(possiblePreyActions, 1.0, new EpsilonGreedy(1.0, 0.001));
+        	Sarsa algorithm = new Sarsa(policy, 0.2, 0.95);
+            AgentStandard ag = new PreyAgent(policy, algorithm);
             launchAgent(ag);
         }
     }

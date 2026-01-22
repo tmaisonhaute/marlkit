@@ -7,7 +7,8 @@ import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
-import learning.policy.deprecated.Policy;
+import learning.algorithm.Algorithm;
+import learning.policy.Policy;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -16,6 +17,7 @@ import madkit.simulation.SimuAgent;
  */
 public class AgentStandard extends SimuAgent implements MLKAgent{
 	public Policy policy;
+	public Algorithm algorithm;
 	public Batch pastExperiences;
 	
 	/**
@@ -23,9 +25,10 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 *
 	 * @param policy the learning policy for this agent
 	 */
-	public AgentStandard(Policy policy) {
+	public AgentStandard(Policy policy, Algorithm algorithm) {
 		super();
 		this.setPolicy(policy);
+		this.setAlgorithm(algorithm);
 		pastExperiences = new Batch();
 	}
 	
@@ -37,7 +40,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	protected void onActivation() {
 		requestRole(getCommunity(), getModelGroup(), "mlkagent");
         sendInfo();
-		initializePolicy();
+		initializeAll();
 	}
 	
 	/**
@@ -54,6 +57,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
      * @param obs the observation based on which the action is taken
      * @return the action taken
      */
+	@Override
 	public Action takeAction(Observation obs) {
 		return policy.takeAction(obs);
 	}
@@ -92,8 +96,9 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	/**
 	 * Initializes the agent's policy with necessary parameters.
 	 */
-	public void initializePolicy() {
+	public void initializeAll() {
 		this.policy.init(this);
+		this.algorithm.init(this);
 	}
 	
 	/**
@@ -123,7 +128,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void updatePolicy(int timestep) {
-		if (policy.getLearningFrequency() > 0 && timestep % policy.getLearningFrequency() == 0) {
+		if(getAlgorithm().getLearningFrequency() > 0 && timestep % getAlgorithm().getLearningFrequency() == 0) {
 			learnOnBatch();
 		}
 	}
@@ -133,7 +138,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void learnOnBatch() {
-		policy.learnOnBatch(pastExperiences, getLogger());
+		algorithm.learnOnBatch(pastExperiences, getLogger());
 	}
 	
 	/**
@@ -141,7 +146,17 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void endEpisode() {
-		policy.endEpisode(pastExperiences, getLogger());
+		algorithm.endEpisode(pastExperiences, getLogger());
+	}
+
+	@Override
+	public Algorithm getAlgorithm() {
+		return algorithm;
+	}
+
+	@Override
+	public void setAlgorithm(Algorithm algorithm) {
+		this.algorithm = algorithm;
 	}
 	
 }

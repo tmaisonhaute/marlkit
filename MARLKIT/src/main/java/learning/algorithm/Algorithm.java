@@ -15,6 +15,12 @@ public interface Algorithm {
 	 * @param agent the agent using this algorithm
 	 */
 	public abstract void init(MLKAgent agent);
+
+	/**
+	 * Sets the policy used by this Algorithm.
+	 * @param policy the policy to set
+	 */
+	public abstract void setPolicy(Policy policy);
 	
 	/**
 	 * Returns the policy used by this Algorithm.

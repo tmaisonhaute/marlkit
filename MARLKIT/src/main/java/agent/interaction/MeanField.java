@@ -11,8 +11,8 @@ import agent.action.Action2DMove;
 import environment.observation.Observation;
 import environment.observation.ObservationOneHotEncoding;
 import environment.observation.ObservationOneHotEncodings;
-import environment.observation.Wrapperactionobservation.WrapperActionObservation;
-import environment.observation.Wrapperactionobservation.WrapperActionObservationOneHotEncoding;
+import environment.observation.wrapperactionobservation.WrapperActionObservation;
+import environment.observation.wrapperactionobservation.WrapperActionObservationOneHotEncoding;
 import learning.Experience;
 
 /**

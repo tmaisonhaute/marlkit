@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javafx.scene.paint.Color;
-import learning.policy.deprecated.Policy;
+import learning.algorithm.Algorithm;
+import learning.policy.Policy;
 import marlkit.uputuc.ActionBuy;
 import marlkit.uputuc.ActionSell;
 import marlkit.uputuc.ObservationBuy;
@@ -28,18 +29,18 @@ public class UniteTransformation extends Unite {
         requestRole(getCommunity(), getModelGroup(), "transformation", null);   
     }
 
-    public UniteTransformation(Policy policy) {
-        this(policy, new ArrayList<>(Arrays.asList(Resource.AZENE, Resource.BOGD)));
+    public UniteTransformation(Policy policy, Algorithm algorithm) {
+        this(policy, algorithm, new ArrayList<>(Arrays.asList(Resource.AZENE, Resource.BOGD)));
     }
 
-    public UniteTransformation(Policy policy, List<Resource> ressourcesEntry) {
-        super(policy);
+    public UniteTransformation(Policy policy, Algorithm algorithm, List<Resource> ressourcesEntry) {
+        super(policy, algorithm);
         stock = new ResourcesStock();
         this.resourcesEntry = new ArrayList<>(ressourcesEntry);
     }
 
-    public UniteTransformation(Policy policy, double x, double y, List<Resource> ressourcesEntry) {
-        super(policy, x, y);
+    public UniteTransformation(Policy policy, Algorithm algorithm, double x, double y, List<Resource> ressourcesEntry) {
+        super(policy, algorithm, x, y);
         stock = new ResourcesStock();
         this.resourcesEntry = new ArrayList<>(ressourcesEntry);
     }

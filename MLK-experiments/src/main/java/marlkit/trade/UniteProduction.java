@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import util.MapProba;
@@ -12,7 +12,9 @@ import util.MapProba;
 public class UniteProduction {
 	private final int initialStock;
 	private final ResourceQuantify resourceStock;
+	private final int maxStock;
 	private final MapProba<Integer> probabilityProduction;
+	private RandomGenerator prng;
 
 	/**
      * Constructor for UniteProduction.
@@ -21,10 +23,12 @@ public class UniteProduction {
      * @param probabilityProduction The probability distribution for production quantities.
 	 * @param initialStock The initial stock of the resource.
 	*/
-	public UniteProduction(ResourceType type, MapProba<Integer> probabilityProduction, int initialStock) {
+	public UniteProduction(ResourceType type, MapProba<Integer> probabilityProduction, int initialStock, int maxStock, RandomGenerator prng) {
 		this.resourceStock = new ResourceQuantify(type, initialStock);
+		this.maxStock = maxStock;
 		this.probabilityProduction = probabilityProduction;
 		this.initialStock = initialStock;
+		this.prng = prng;
 	}
 	
 	/**
@@ -39,6 +43,10 @@ public class UniteProduction {
 	 */
 	public void productResource() {
 		int producedQuantity = probabilityProduction.randomlySelectKey();
+		if (resourceStock.getValue() + producedQuantity > maxStock) {
+			resourceStock.setValue(maxStock);
+			return;
+		}
 		resourceStock.addValue(producedQuantity);
 	}
 	
@@ -89,7 +97,7 @@ public class UniteProduction {
 	public Map<MLKAgent, ResourceQuantify> processRequests(List<MLKAgent> requestingAgents, int quantityPerRequest) {
 		Map<MLKAgent, ResourceQuantify> allocations = new HashMap<>();
 		
-		Collections.shuffle(requestingAgents);
+		Collections.shuffle(requestingAgents, prng);
 		
 		for (MLKAgent agent : requestingAgents) {
 			if (getStockValue() >= quantityPerRequest) {
@@ -104,19 +112,6 @@ public class UniteProduction {
 		return allocations;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(resourceStock);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj instanceof UniteProduction up) {
-			return this.resourceStock.equals(up.resourceStock);
-		}
-		return false;
-	}
 		
 
 }

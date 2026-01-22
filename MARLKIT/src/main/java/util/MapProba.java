@@ -1,7 +1,7 @@
 package util;
 
 import java.util.HashMap;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 /**
  * HashMap allowing random key selection based on probabilities (weights).
@@ -9,14 +9,26 @@ import java.util.Random;
  */
 public class MapProba<K> extends HashMap<K, Double> {
     
-    private final Random random = new Random();
+    private final RandomGenerator prng;
+    
+    public MapProba(RandomGenerator prng) {
+    	super();
+    	this.prng = prng;
+    	
+    }
     
     /**
      * Calculates the total sum of weights in the map.
      * @return the sum of all values (weights)
      */
     private double getTotalWeight() {
-        return values().stream().mapToDouble(Double::doubleValue).sum();
+        double sum = 0.0;
+        for (Double v : values()) {
+            if (v != null) {
+                sum += v;
+            }
+        }
+        return sum;
     }
     
     /**
@@ -25,7 +37,7 @@ public class MapProba<K> extends HashMap<K, Double> {
     public void normalize() {
         double total = getTotalWeight();
         if (total > 0) {
-            replaceAll((k, v) -> v / total);
+            replaceAll((_, v) -> v / total);
         }
     }
     
@@ -41,7 +53,7 @@ public class MapProba<K> extends HashMap<K, Double> {
             return null;
         }
         
-        double randomValue = random.nextDouble() * total;
+        double randomValue = prng.nextDouble() * total;
         double cumulative = 0.0;
         
         for (Entry<K, Double> entry : entrySet()) {

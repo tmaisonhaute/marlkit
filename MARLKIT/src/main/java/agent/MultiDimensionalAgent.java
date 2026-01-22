@@ -10,7 +10,8 @@ import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
-import learning.policy.deprecated.Policy;
+import learning.algorithm.Algorithm;
+import learning.policy.Policy;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -20,6 +21,7 @@ import madkit.simulation.SimuAgent;
 public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 
 	private Map<String, Policy> policies;
+	private Map<String, Algorithm> algorithms;
 	private Map<String, Batch> dimensionalBatches;
 	static final String DEFAULT_TAG = "default";
 	
@@ -28,11 +30,13 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 *
 	 * @param policy the default policy for this agent
 	 */
-	public MultiDimensionalAgent(Policy policy) {
+	public MultiDimensionalAgent(Policy policy, Algorithm algorithm) {
 		super();
 		policies = new HashMap<>();
+		algorithms = new HashMap<>();
 		dimensionalBatches = new HashMap<>();
 		this.setPolicy(policy);
+		this.setAlgorithm(algorithm);
 	}
 	
 	/**
@@ -43,7 +47,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	protected void onActivation() {
 		requestRole(getCommunity(), getModelGroup(), "mlkagent");
         sendInfo();
-		initializePolicy();
+		initializeAll();
 	}
 
 
@@ -56,23 +60,35 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
     }
 
 	/**
-	 * Sets the default policy for this agent.
+	 * Sets the default policy for this agent. Uses default algorithm.
 	 *
 	 * @param policy the policy to use as default
 	 */
 	@Override
 	public void setPolicy(Policy policy) {
-        addPolicy(DEFAULT_TAG, policy);
+        addPolicyAlgo(DEFAULT_TAG, policy, getAlgorithm());
     }
 	
+	/**
+	 * Sets the algorithm for the default policy.
+	 * @param algorithm the algorithm to use
+	 */
+	@Override
+	public void setAlgorithm(Algorithm algorithm) {
+		addPolicyAlgo(DEFAULT_TAG, getPolicy(), algorithm);
+	}
+
 	/**
 	 * Adds a policy with a specific tag identifier.
 	 *
 	 * @param tag the identifier for this policy
 	 * @param policy the policy to add
+	 * @param algorithm the algorithm to add
 	 */
-	public void addPolicy(String tag, Policy policy) {
+	public void addPolicyAlgo(String tag, Policy policy, Algorithm algorithm) {
         policies.put(tag, policy);
+        algorithms.put(tag, algorithm);
+		algorithm.setPolicy(policy);
         dimensionalBatches.put(tag, new Batch());
     }
 	
@@ -96,11 +112,19 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
         return policies.get(tag);
 	}
 
+	public Algorithm getAlgorithm() {
+		return getAlgorithm(DEFAULT_TAG);
+	}
+
+	public Algorithm getAlgorithm(String tag) {
+		return algorithms.get(tag);
+	}
+
 	/**
 	 * Initializes all policies with necessary parameters.
 	 */
 	@Override
-	public void initializePolicy() {
+	public void initializeAll() {
 		for (Policy policy : policies.values()) {
 			policy.init(this);
 		}
@@ -201,8 +225,8 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	@Override
 	public void updatePolicy(int timestep) {
 		for (String key : policies.keySet()) {
-            Policy policy = policies.get(key);
-            if (policy.getLearningFrequency() > 0 && timestep % policy.getLearningFrequency() == 0) {
+			Algorithm algorithm = algorithms.get(key);
+            if (algorithm.getLearningFrequency() > 0 && timestep % algorithm.getLearningFrequency() == 0) {
                 learnOnBatch(key);
             }
         }
@@ -223,10 +247,10 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * @throws IllegalArgumentException if no policy or batch exists for the tag
 	 */
 	public void learnOnBatch(String tag) {
-		Policy policy = getPolicy(tag);
+		Algorithm algorithm = getAlgorithm(tag);
 		Batch batch = dimensionalBatches.get(tag);
-		if (policy != null && batch != null) {
-			policy.learnOnBatch(batch, getLogger());
+		if (algorithm != null && batch != null) {
+			algorithm.learnOnBatch(batch, getLogger());
 		} else {
 			throw new IllegalArgumentException("No policy or batch found for tag: " + tag);
 		}
@@ -248,11 +272,13 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * @param tag the policy identifier
 	 */
 	public void endEpisode(String tag) {
-        Policy policy = policies.get(tag);
+        Algorithm algorithm = getAlgorithm(tag);
         Batch batch = dimensionalBatches.get(tag);
-        if (policy != null && batch != null) {
-            policy.endEpisode(batch, getLogger());
+        if (algorithm != null && batch != null) {
+            algorithm.endEpisode(batch, getLogger());
         }
     }
+
+	
 
 }
