@@ -11,13 +11,12 @@ import java.util.Map;
 import agent.AgentsGroup;
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.interaction.IndependantLearning;
-import agent.interaction.MLKInteraction;
 import environment.observation.Observation;
 import environment.reward.Reward;
 import environment.state.State;
 import learning.Experience;
 import madkit.simulation.environment.Environment2D;
+import rewardmodeling.RewardModeling;
 import util.Pair;
 
 /**
@@ -27,18 +26,12 @@ import util.Pair;
 public abstract class EnvironmentStandard extends Environment2D implements MLKEnvironment {
 
 	protected AgentsGroup agents;
-	protected MLKInteraction interactionMethod;
+	protected RewardModeling rewardStructure;
 	private boolean logSetup = false;
 	private final int EPISODES_BEFORE_LOG = 1_000;
-
-	/**
-	 * Creates a new environment with the specified dimensions and independent learning.
-	 *
-	 * @param width the width of the environment
-	 * @param height the height of the environment
-	 */
+	
 	public EnvironmentStandard(int width, int height) {
-        this(width, height, new IndependantLearning());
+		this(width, height, null);
 	}
 	
 	/**
@@ -46,11 +39,11 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 *
 	 * @param width the width of the environment
 	 * @param height the height of the environment
-	 * @param interactionMethod the agent interaction strategy
+	 * @param rewardStructure the agent rewardStructure
 	 */
-	public EnvironmentStandard(int width, int height, MLKInteraction interactionMethod) {
+	public EnvironmentStandard(int width, int height, RewardModeling rewardStructure) {
 		super(width, height);
-		this.interactionMethod = interactionMethod;
+		this.rewardStructure = rewardStructure;
     }
 	
 	/**
@@ -204,7 +197,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 */
 	public Map<MLKAgent,Observation> processSocialObservations(){
 		Map<MLKAgent, Observation> observations = getObservation();
-		Map<MLKAgent, Observation> interactionInformations = interactionMethod.getInteractionInformation(observations);
+		Map<MLKAgent, Observation> interactionInformations =  observations; //interactionMethod.getInteractionInformation(observations);
 		getLogger().info("interactionInformations: " + interactionInformations);
 		Map<MLKAgent, Observation> mergedObservations = mergeObservations(observations, interactionInformations);
 		return mergedObservations;

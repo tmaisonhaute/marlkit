@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "LauncherTrade",
+            "request": "launch",
+            "mainClass": "marlkit.xp/marlkit.trade.LauncherTrade",
+            "projectName": "MLK-experiments"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

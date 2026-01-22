@@ -7,4 +7,5 @@ open module marlkit.methods {
     exports learningstructure;
     exports modelofotheragents;
     exports modelofotheragents.learning;
+    exports rewardmodelingimplementation;
 }

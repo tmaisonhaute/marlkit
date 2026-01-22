@@ -9,12 +9,12 @@ import java.util.random.RandomGenerator;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import agent.interaction.MeanField;
 import environment.EnvironmentStandard;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
 import environment.state.State;
 import environment.state.State2DGridInt;
+import rewardmodelingimplementation.MixedReward;
 import util.Pair;
 
 
@@ -31,7 +31,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     private static final double REWARDTOONEAR = 0.5;
 
     public EnvPreyVsHunter() {
-        super(10, 10, new MeanField());
+        super(10, 10, new MixedReward());
     }
 
     @Override

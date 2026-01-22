@@ -50,5 +50,5 @@ open module marlkit.base {
 	exports simulation;
     exports util.grafana;
     exports environment.observation.wrapperactionobservation;
-    exports rewardstructure;
+    exports rewardmodeling;
 }

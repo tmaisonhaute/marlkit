@@ -7,8 +7,6 @@ import java.util.Map;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.interaction.IndependantLearning;
-import agent.interaction.MLKInteraction;
 import environment.EnvironmentStandard;
 import environment.reward.Reward;
 import environment.state.State;
@@ -35,14 +33,10 @@ public class EnvTrade extends EnvironmentStandard {
 		this(width, height, rewardConfig, new Scenario4());
 	}
 
-	public EnvTrade(int width, int height, RewardConfiguration rewardConfig, ScenarioUP scenario) {
-		this(width, height, rewardConfig, scenario, new IndependantLearning());
-	}
 	
-	public EnvTrade(int width, int height, RewardConfiguration rewardConfig, ScenarioUP scenario, MLKInteraction interactionMethod) {
+	public EnvTrade(int width, int height, RewardConfiguration rewardConfig, ScenarioUP scenario) {
 		super(width, height);
 		this.rewardConfig = rewardConfig;
-		this.interactionMethod = interactionMethod;
 		this.scenario = scenario;
 		this.basePrices = scenario.getBasePrices();
 		
