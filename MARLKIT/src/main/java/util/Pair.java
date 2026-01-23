@@ -1,5 +1,7 @@
 package util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -88,9 +90,28 @@ public class Pair<T, U > {
 		return false;
 	}
 	
+	/**
+	 * Extract the first element of a list of PAir and return a list of the first elements.
+	 */
+	public static <T, U> List<T> extractFirstsFromList(List<Pair<T, U>> pairs){
+		List<T> firsts = new ArrayList<>();
+		for (Pair<T, U> p : pairs) {
+			firsts.add(p.getFirst());
+		}
+		return firsts;
+	}
 	
-	
-	
+	/**
+	 * Extract the second element of a list of PAir and return a list of the second
+	 * elements.
+	 */
+	public static <T, U> List<U> extractSecondsFromList(List<Pair<T, U>> pairs){
+		List<U> seconds = new ArrayList<>();
+		for (Pair<T, U> p : pairs) {
+			seconds.add(p.getSecond());
+		}
+		return seconds;
+	}
 
 	
 }

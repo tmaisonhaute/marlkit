@@ -46,7 +46,7 @@ public class RewardStandard implements Reward {
 		
 	}
 
-
+	@Override
 	public void add(double val){
 		value += val;
 	}

@@ -8,16 +8,16 @@ import java.util.Map;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
-import environment.reward.Reward;
-import environment.reward.RewardStandard;
 import marlkit.pushtheblock.EnvPushTheBlock;
+import marlkit.pushtheblock.events.BlockPushedEvent;
+import marlkit.pushtheblock.events.BlockPushedOutEvent;
+import marlkit.pushtheblock.events.MoveEvent;
+import rewardmodeling.Event;
 import util.Pair;
 
 public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 	
-
-	protected static final double REWARDTRYPUSH = 0;
-	protected Map<Pair<Integer, Integer>, List<Action2DMove>> agentsForcePush;
+	protected Map<Pair<Integer, Integer>, List<Pair<MLKAgent, Action2DMove>>> agentsForcePush;
 	protected Map<Pair<Integer, Integer>, Integer> numberOfBlocksPushed;
 	protected static final int FORCEPUSHEDTRESHOLD = 2;
 	
@@ -27,66 +27,81 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 	}
 	
 	@Override
-	public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {
-		Map<MLKAgent, Pair<Action, Reward>> results = new HashMap<>();
+	public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
+		Map<MLKAgent, Pair<Action, List<Event>>> results = new HashMap<>();
+		Map<MLKAgent, List<Event>> agentsEvents = new HashMap<>();
 		agentsForcePush = new HashMap<>();
 		numberOfBlocksPushed = new HashMap<>();
 		
-		Reward rewardOfAgents = new RewardStandard(0);
+		List<Event> events = new ArrayList<>();
 		
 		for (MLKAgent ag : agents.getAgents()) {
+			agentsEvents.put(ag, new ArrayList<>());
+			
 			Action2DMove action = (Action2DMove) actions.get(ag);
 			
 			Pair<Integer, Integer> newPosition = stateMoveAgent(ag, action);
 			
-			checkIfPushBlock(rewardOfAgents, action, newPosition);
+			checkIfPushBlockTogether(events, action, newPosition, ag);
 			
 		}
 		
-		rewardOfAgents.add(pushBlockForce());
+		pushBlockForce(agentsEvents);
+		
 		for (MLKAgent ag : agents.getAgents()) {
-			results.put(ag, new Pair<>(actions.get(ag), rewardOfAgents.clone()));
+			List<Event> agentEvents = new ArrayList<>(agentsEvents.get(ag));
+			results.put(ag, new Pair<>(actions.get(ag), agentEvents));
 		}
+		
 		return results;
 	}
 	
-	@Override
-	protected void checkIfPushBlock(Reward reward, Action2DMove action, Pair<Integer, Integer> position) {
+	protected void checkIfPushBlockTogether(List<Event> events, Action2DMove action, Pair<Integer, Integer> position, MLKAgent agent) {
 		if (state.getValue(position) >= 1){
 			agentsForcePush.putIfAbsent(position, new ArrayList<>());
-			agentsForcePush.get(position).add(action);
+			agentsForcePush.get(position).add(new Pair<>(agent, action));
 			numberOfBlocksPushed.putIfAbsent(position, state.getValue(position));
 		}
 		else {
-			reward.add(REWARDMOVE);
+			events.add(new MoveEvent());
 		}
 	}
 	
-	protected Reward pushBlockForce() {
-		double rewardValue = 0;
+	protected void pushBlockForce(Map<MLKAgent, List<Event>> agentsEvents) {
 		for (Pair<Integer, Integer> oldPosition : agentsForcePush.keySet()) {
 			int nbBlocks = numberOfBlocksPushed.get(oldPosition);
-			List<Action2DMove> actions = agentsForcePush.get(oldPosition);
+			List<Pair<MLKAgent, Action2DMove>> actionsAgents = agentsForcePush.get(oldPosition);
+			List<MLKAgent> agents = Pair.extractFirstsFromList(actionsAgents);
+			List<Action2DMove> actions = Pair.extractSecondsFromList(actionsAgents);
 			
 			Action2DMove globalAction = gatherActionsPush(actions);
-			if (!globalAction.equals(new Action2DMove(new Pair<>(0, 0)))) {
+			if (!globalAction.equals(Action2DMove.idle())) {
 				Pair<Integer, Integer> newBlockPosition = newBlockPosition(oldPosition, globalAction);
 				boolean blockPushedOut = pushTheBlock(oldPosition, newBlockPosition, nbBlocks);
 				if (blockPushedOut) {
-					rewardValue += nbBlocks * REWARDBLOCKPUSHEDOUT;
+					for (MLKAgent ag : agents) {
+						for (int k = 0; k < nbBlocks; k++) {
+							agentsEvents.get(ag).add(new BlockPushedOutEvent());
+						}
+					}
 				} else {
-					rewardValue += nbBlocks * REWARDBLOCKPUSHED;
+					for (MLKAgent ag : agents) {
+						for (int k = 0; k < nbBlocks; k++) {
+							agentsEvents.get(ag).add(new BlockPushedEvent());
+						}
+					}
 				}
 			}
 			else {
-				rewardValue += actions.size() * REWARDTRYPUSH;
+				for (MLKAgent ag : agents) {
+					agentsEvents.get(ag).add(new TryPushEvent());
+				}
 			}
 		}
-		return new RewardStandard(rewardValue);
 	}
 	
 	protected Action2DMove gatherActionsPush(List<Action2DMove> actions) {
-		Action2DMove globalAction = new Action2DMove(new Pair<>(0, 0));
+		Action2DMove globalAction = Action2DMove.idle();
 		for (Action2DMove action : actions) {
 			globalAction.add(action);
 		}

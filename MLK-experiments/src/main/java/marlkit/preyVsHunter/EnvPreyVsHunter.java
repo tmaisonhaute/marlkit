@@ -14,7 +14,10 @@ import environment.reward.Reward;
 import environment.reward.RewardStandard;
 import environment.state.State;
 import environment.state.State2DGridInt;
-import rewardmodelingimplementation.MixedReward;
+import marlkit.preyVsHunter.events.HunterDistancePenalty;
+import marlkit.preyVsHunter.events.PreyCatchEvent;
+import rewardmodeling.Event;
+import rewardmodels.FullyCooperativeReward;
 import util.Pair;
 
 
@@ -25,13 +28,13 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     private final List<PreyAgent> preyAgents = new ArrayList<>();
     private final List<HunterAgent> hunterAgents= new ArrayList<>();
 
-    private static final double REWARDPREYCATCH = 100;
+//    private static final double REWARDPREYCATCH = 100;
     private static final double REWARDDISTANCEPENALTYPxH = 2;
     private static final double REWARDDISTANCEPENALTYHxH = 0.1;
     private static final double REWARDTOONEAR = 0.5;
 
     public EnvPreyVsHunter() {
-        super(10, 10, new MixedReward());
+        super(10, 10, new FullyCooperativeReward());
     }
 
     @Override
@@ -79,13 +82,15 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     }
 
     @Override
-    public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {
-        Map<MLKAgent, Pair<Action, Reward>> results = new HashMap<>();
+    public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
+        Map<MLKAgent, Pair<Action, List<Event>>> results = new HashMap<>();
         moveAllAgents(actions);
-        double hunterReward = CalculateHunterReward();
-        double preyReward = 1;
-        addCollectifReward(hunterAgents,hunterReward,actions,results);
-        addCollectifReward(preyAgents,preyReward,actions,results);
+        double hunterDistancePenaltyReward = AllHxHDistancePenalityRewardValue();
+		for (MLKAgent ag : hunterAgents) {
+			HunterDistancePenalty distanceEvent = new HunterDistancePenalty(hunterDistancePenaltyReward);
+			results.put(ag, new Pair<>(actions.get(ag), distanceEvent.toList()));
+        }
+		computeEventCatch(results);
         return results;
     }
 
@@ -98,24 +103,44 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         for (MLKAgent ag : agents.getAgents()) {
             Action2DMove action = (Action2DMove) actions.get(ag);
             state.moveAgentwithVal(ag, action.getValue(), getclassId(ag));
+            
         }
     }
-
-    /**
-     * Calculate the total shared reward for all hunter agents.
-     *
-     * This reward is based on two main components:
-     * - A penalty based on the distances between hunters ({@code AllHxHDistancePenalityRewardValue})
-     * - A reward or penalty based on the distances between hunters and prey ({@code AllPxHRewardValueFromDistance})
-     *
-     * @return The total calculated reward as a double
-     */
-    private double CalculateHunterReward(){
-        double reward = 0;
-        reward += AllHxHDistancePenalityRewardValue();
-        reward += AllPxHRewardValueFromDistance();
-        return reward;
+    
+    private void computeEventCatch(Map<MLKAgent, Pair<Action, List<Event>>> results){
+    	boolean caught = false;
+    	
+    	for (MLKAgent Hag : hunterAgents) {
+            for (MLKAgent Pag : preyAgents) {
+                int distance = distance2D(Hag,Pag);
+                HunterDistancePenalty penalty = new HunterDistancePenalty(- distance * REWARDDISTANCEPENALTYPxH);
+                results.get(Hag).getSecond().add(penalty);
+                if (distance == 1){
+                	caught = true;
+                	results.get(Hag).getSecond().add(new PreyCatchEvent());
+                }
+            }
+        }
+		if (caught) {
+        	reset();
+		}
     }
+
+//    /**
+//     * Calculate the total shared reward for all hunter agents.
+//     *
+//     * This reward is based on two main components:
+//     * - A penalty based on the distances between hunters ({@code AllHxHDistancePenalityRewardValue})
+//     * - A reward or penalty based on the distances between hunters and prey ({@code AllPxHRewardValueFromDistance})
+//     *
+//     * @return The total calculated reward as a double
+//     */
+//    private double CalculateHunterReward(){
+//        double reward = 0;
+//        reward += AllHxHDistancePenalityRewardValue();
+//        reward += AllPxHRewardValueFromDistance();
+//        return reward;
+//    }
 
     /**
      * Computes the total penalty based on distances between all pairs of hunter agents.
@@ -155,28 +180,28 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         }
     }
 
-    /**
-     * Calculates the total reward based on distances between hunters and prey.
-     *
-     * if Prey is captured, {@code reset} all and return a specific reward {@code REWARDPREYCATCH}
-     * , otherwise applies a distance penalty.
-     *
-     * @return the total hunter-prey reward value
-     */
-    private double AllPxHRewardValueFromDistance(){
-        double reward = 0;
-        for (MLKAgent Hag : hunterAgents) {
-            for (MLKAgent Pag : preyAgents) {
-                int distance = distance2D(Hag,Pag);
-                if (distance == 1){
-                    reset();
-                    return REWARDPREYCATCH;
-                }
-                reward +=  - distance * REWARDDISTANCEPENALTYPxH;
-            }
-        }
-        return reward;
-    }
+//    /**
+//     * Calculates the total reward based on distances between hunters and prey.
+//     *
+//     * if Prey is captured, {@code reset} all and return a specific reward {@code REWARDPREYCATCH}
+//     * , otherwise applies a distance penalty.
+//     *
+//     * @return the total hunter-prey reward value
+//     */
+//    private Event AllPxHRewardValueFromDistance(){
+//        double reward = 0;
+//        for (MLKAgent Hag : hunterAgents) {
+//            for (MLKAgent Pag : preyAgents) {
+//                int distance = distance2D(Hag,Pag);
+//                if (distance == 1){
+//                    reset();
+//                    return REWARDPREYCATCH;
+//                }
+//                reward +=  - distance * REWARDDISTANCEPENALTYPxH;
+//            }
+//        }
+//        return reward;
+//    }
 
     /**
      * Computes the distance between two grid positions.

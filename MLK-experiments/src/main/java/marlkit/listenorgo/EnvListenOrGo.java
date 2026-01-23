@@ -1,6 +1,7 @@
 package marlkit.listenorgo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.random.RandomGenerator;
 
@@ -8,17 +9,15 @@ import agent.MLKAgent;
 import agent.action.Action;
 import environment.EnvironmentStandard;
 import environment.observation.Observation;
-import environment.reward.Reward;
-import environment.reward.RewardStandard;
 import environment.state.State;
-import rewardmodelingimplementation.MixedReward;
+import marlkit.listenorgo.events.DoNothingEvent;
+import marlkit.listenorgo.events.ListenEvent;
+import marlkit.listenorgo.events.MoveEvent;
+import rewardmodeling.Event;
+import rewardmodels.MixedReward;
 import util.Pair;
 
 public class EnvListenOrGo extends EnvironmentStandard {
-    
-    private static final double REWARD_CORRECT_DIRECTION = 10.0;
-    private static final double REWARD_WRONG_DIRECTION = -10.0;
-    private static final double REWARD_LISTEN = -0.1;
     private static final double LISTEN_ACCURACY = 0.7; 
     
     private Choice correctChoice;
@@ -70,49 +69,30 @@ public class EnvListenOrGo extends EnvironmentStandard {
     }
     
     @Override
-    public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {
-        Map<MLKAgent, Pair<Action, Reward>> results = new HashMap<>();
+    public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
+        Map<MLKAgent, Pair<Action, List<Event>>> results = new HashMap<>();
         Map<MLKAgent, Choice> directionsChosen = new HashMap<>();
 
         for (MLKAgent agent : agents.getAgents()) {
             Action action = actions.get(agent);
-            Reward reward = new RewardStandard(0);
+            Event event = null;
             
             if (agentsChoice.get(agent) != Choice.NONE) {
-                results.put(agent, new Pair<>(action, reward));
+                results.put(agent, new Pair<>(action, new DoNothingEvent().toList()));
                 continue;
             }
             
             if (action instanceof ActionListen) {
-                RandomGenerator rg = prng();
-                Choice listenResult = rg.nextDouble() < LISTEN_ACCURACY ?
-                    correctChoice : reverseChoice(correctChoice);
+            	agentListen(agent);
+            	event = new ListenEvent();
                 
-                agentObservations.get(agent).addListenResult(listenResult);
-                reward.setReward(REWARD_LISTEN);
-                
-            } else if (action instanceof ActionGoLeft) {
-                agentsChoice.put(agent, Choice.LEFT);
-                directionsChosen.put(agent, Choice.LEFT);
-                
-                if (correctChoice == Choice.LEFT) {
-                    reward.setReward(REWARD_CORRECT_DIRECTION);
-                } else {
-                    reward.setReward(REWARD_WRONG_DIRECTION);
-                }
-                
-            } else if (action instanceof ActionGoRight) {
-                agentsChoice.put(agent, Choice.RIGHT);
-                directionsChosen.put(agent, Choice.RIGHT);
-                
-                if (correctChoice == Choice.RIGHT) {
-                    reward.setReward(REWARD_CORRECT_DIRECTION);
-                } else {
-                    reward.setReward(REWARD_WRONG_DIRECTION);
-                }
-            }
-            
-            results.put(agent, new Pair<>(action, reward));
+            } else if (action instanceof ActionGoLeft || action instanceof ActionGoRight) {
+            	Choice selectedChoice =  action instanceof ActionGoLeft ? Choice.LEFT : Choice.RIGHT;
+                agentsChoice.put(agent, selectedChoice);
+                directionsChosen.put(agent, selectedChoice);
+                event = new MoveEvent(correctChoice == selectedChoice); 
+            } 
+            results.put(agent, new Pair<>(action, event.toList()));
         }
         
         for (MLKAgent observer : agents.getAgents()) {
@@ -133,6 +113,13 @@ public class EnvListenOrGo extends EnvironmentStandard {
         
         return results;
     }
+    
+	private void agentListen(MLKAgent agent) {
+		RandomGenerator rg = prng();
+        Choice listenResult = rg.nextDouble() < LISTEN_ACCURACY ?
+            correctChoice : reverseChoice(correctChoice);
+        agentObservations.get(agent).addListenResult(listenResult);
+	}
     
     @Override
     protected State getState() {

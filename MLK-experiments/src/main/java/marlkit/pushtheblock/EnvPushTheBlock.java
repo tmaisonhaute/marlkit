@@ -1,6 +1,8 @@
 package marlkit.pushtheblock;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.random.RandomGenerator;
 
@@ -8,23 +10,23 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
 import environment.EnvironmentStandard;
-import environment.reward.Reward;
-import environment.reward.RewardStandard;
 import environment.state.State;
 import environment.state.State2DGridInt;
+import marlkit.pushtheblock.events.BlockPushedEvent;
+import marlkit.pushtheblock.events.BlockPushedOutEvent;
+import marlkit.pushtheblock.events.MoveEvent;
+import rewardmodeling.Event;
+import rewardmodels.MixedReward;
 import util.Pair;
 
 public class EnvPushTheBlock extends EnvironmentStandard {
 
 	protected State2DGridInt state;
-	protected static final double REWARDBLOCKPUSHEDOUT = 10;
-	protected static final double REWARDBLOCKPUSHED = 0.1;
-	protected static final double REWARDMOVE = -0.1;
-	protected static final boolean SHARED_REWARDS = false;
+	
 	protected int numberOfBlocks;
 	
 	public EnvPushTheBlock() {
-		super(5, 5);
+		super(5, 5, new MixedReward());
 		numberOfBlocks = 1;
 	}
 
@@ -77,29 +79,18 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	
 
 	@Override
-	public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {
-		Map<MLKAgent, Pair<Action, Reward>> results = new HashMap<>();
+	public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
+		Map<MLKAgent, Pair<Action, List<Event>>> results = new HashMap<>();
 		
-		double rewardTotal = 0;
 		for (MLKAgent ag : agents.getAgents()) {
-			Reward reward = new RewardStandard(0);
+			List<Event> events = new ArrayList<>();
 			Action2DMove action = (Action2DMove) actions.get(ag);
 			
 			Pair<Integer, Integer> newPosition = stateMoveAgent(ag, action);
 			
-			checkIfPushBlock(reward, action, newPosition);
+			checkIfPushBlock(events, action, newPosition);
 			
-			if (! SHARED_REWARDS) {
-				results.put(ag, new Pair<>(action, reward));
-			} 
-			else {
-				rewardTotal += reward.getValue();
-			}
-		}
-		if (SHARED_REWARDS) {
-			for (MLKAgent ag : agents.getAgents()) {
-				results.put(ag, new Pair<>(actions.get(ag), new RewardStandard(rewardTotal)));
-			}
+			results.put(ag, new Pair<>(action, events));
 		}
 		return results;
 	}
@@ -109,20 +100,23 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		return state.getAgentPosition(agent).clone();
 	}
 	
-	protected void checkIfPushBlock(Reward reward, Action2DMove action, Pair<Integer, Integer> position) {
+	protected void checkIfPushBlock(List<Event> events, Action2DMove action, Pair<Integer, Integer> position) {
 		if (state.getValue(position) >= 1){
 			int nbBlocks = state.getValue(position);
 			Pair<Integer, Integer> newBlockPosition = newBlockPosition(position, action);
 			boolean blockPushedOut = pushTheBlock(position, newBlockPosition, nbBlocks);
 			
 			if (blockPushedOut) {
-				reward.setReward(nbBlocks * REWARDBLOCKPUSHEDOUT);
+				for (int k = 0; k < nbBlocks; k++) {
+					events.add(new BlockPushedOutEvent());
+				}
 			} else {
-				reward.setReward(nbBlocks * REWARDBLOCKPUSHED);
+				for (int k = 0; k < nbBlocks; k++) {
+					events.add(new BlockPushedEvent());
+				}
 			}
-		}
-		else {
-			reward.setReward(REWARDMOVE);
+		} else {
+			events.add(new MoveEvent());
 		}
 	}
 	

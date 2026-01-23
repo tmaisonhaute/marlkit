@@ -16,13 +16,14 @@ import learning.Experience;
 import marlkit.uputuc.unite.UniteConsumption;
 import marlkit.uputuc.unite.UniteProduction;
 import marlkit.uputuc.unite.UniteTransformation;
+import rewardmodels.MixedReward;
 import util.Pair;
 
 
 public class EnvPTC extends EnvironmentStandard {
 
-    private final static double REWARDTRADECOMPLETED = 1;
-    private final static double REWARDTRADENOTCOMPLETED = 0;
+//    private final static double REWARDTRADECOMPLETED = 1;
+//    private final static double REWARDTRADENOTCOMPLETED = 0;
     private List<UniteProduction> productionUnits;
     private List<UniteTransformation> transformationUnits;
     private List<UniteConsumption> consumptionUnits;
@@ -30,7 +31,7 @@ public class EnvPTC extends EnvironmentStandard {
     protected State2DGridInt state;
 
     public EnvPTC(){
-    	super(30, 30);
+    	super(30, 30, new MixedReward());
         state = new State2DGridInt(30,30);
     }
 

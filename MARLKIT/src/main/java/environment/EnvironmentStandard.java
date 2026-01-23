@@ -16,7 +16,8 @@ import environment.reward.Reward;
 import environment.state.State;
 import learning.Experience;
 import madkit.simulation.environment.Environment2D;
-import rewardmodeling.RewardModeling;
+import rewardmodeling.Event;
+import rewardmodeling.RewardModel;
 import util.Pair;
 
 /**
@@ -26,24 +27,24 @@ import util.Pair;
 public abstract class EnvironmentStandard extends Environment2D implements MLKEnvironment {
 
 	protected AgentsGroup agents;
-	protected RewardModeling rewardStructure;
+	protected RewardModel rewardModel;
 	private boolean logSetup = false;
 	private final int EPISODES_BEFORE_LOG = 1_000;
 	
-	public EnvironmentStandard(int width, int height) {
-		this(width, height, null);
-	}
+//	public EnvironmentStandard(int width, int height) {
+//		this(width, height, null);
+//	}
 	
 	/**
 	 * Creates a new environment with the specified dimensions and interaction method.
 	 *
 	 * @param width the width of the environment
 	 * @param height the height of the environment
-	 * @param rewardStructure the agent rewardStructure
+	 * @param rewardModel the agent rewardStructure
 	 */
-	public EnvironmentStandard(int width, int height, RewardModeling rewardStructure) {
+	public EnvironmentStandard(int width, int height, RewardModel rewardModel) {
 		super(width, height);
-		this.rewardStructure = rewardStructure;
+		this.rewardModel = rewardModel;
     }
 	
 	/**
@@ -72,19 +73,62 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	protected abstract void setupState();
 
 	/**
-	 * Executes one environment step where all agents: 1.observe, 2.act, and 3.learn from the resulting experience.
+	 * Executes one environment step where all agents: 1.observe, 2.act and 3.learn from the resulting experience.
 	 *
 	 * @return map of each agent to their experience for this step.
 	 */
 	public Map<MLKAgent, Experience> step(){
-		Map<MLKAgent,Observation> AgentObservations = processSocialObservations();
-		getLogger().info("AgentObservations: " + AgentObservations);
-		Map<MLKAgent, Pair<Action, Reward>> stepResult = environmentStep(AgentObservations);
-		Map<MLKAgent, Experience> experiences = feedExpToAgent(stepResult, AgentObservations);
+		// Observations
+		Map<MLKAgent,Observation> observations = getObservation();
+		
+		//Influence
+		Map<MLKAgent, Action> actions = agents.allAgentsTakeAction(observations);
+		
+		//Reaction
+		Map<MLKAgent, Pair<Action, List<Event>>> result = dynamics(actions);
+		
+		//Reward computation
+		Map<MLKAgent, Pair<Action, Reward>> rewards = rewardComputation(result);
+		
+		//Update
+		Map<MLKAgent, Experience> experiences = feedExpToAgent(rewards, observations);
 		collectAndLogLearningData(experiences);
+		
 		return experiences;
+	       
 	}
-
+	
+	protected Map<MLKAgent, Pair<Action, Reward>> rewardComputation(Map<MLKAgent, Pair<Action, List<Event>>> result) {
+		Pair<Map<MLKAgent, Action>, Map<MLKAgent, List<Event>>> splitResult = splitAgentsActionsEvents(result);
+		Map<MLKAgent, Action> agentsActions = splitResult.getFirst();
+		Map<MLKAgent, List<Event>> agentsEvents = splitResult.getSecond();
+		Map<MLKAgent, Reward> rewards = rewardModel.computeRewards(agentsEvents);
+		
+		return combineActionReward(agentsActions, rewards);
+	}
+	
+	private Pair<Map<MLKAgent, Action>, Map<MLKAgent, List<Event>>> splitAgentsActionsEvents(Map<MLKAgent, Pair<Action, List<Event>>> result) {
+		Map<MLKAgent, Action> agentsActions = new HashMap<>();
+        Map<MLKAgent, List<Event>> agentsEvents = new HashMap<>();
+        for (Map.Entry<MLKAgent, Pair<Action, List<Event>>> entry : result.entrySet()) {
+        	agentsActions.put(entry.getKey(), entry.getValue().getFirst());
+            agentsEvents.put(entry.getKey(), entry.getValue().getSecond());
+        }
+        return new Pair<>(agentsActions, agentsEvents);
+    }
+	
+	private Map<MLKAgent, Pair<Action, Reward>> combineActionReward(Map<MLKAgent, Action> actions, 
+																	Map<MLKAgent, Reward> rewards) {
+		Map<MLKAgent, Pair<Action, Reward>> actionRewardMap = new HashMap<>();
+		for (Map.Entry<MLKAgent, Action> entry : actions.entrySet()) {
+			MLKAgent agent = entry.getKey();
+			Action action = entry.getValue();
+			Reward reward = rewards.get(agent);
+			actionRewardMap.put(agent, new Pair<>(action, reward));
+		}
+		return actionRewardMap;
+	}
+	
 	/**
 	 * Collects, processes and logs learning data from agent experiences.
 	 *
@@ -204,19 +248,6 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	}
 
 	/**
-	 * Run one step in the environment based on agent observations:
-	 * Each agent picks an action, the environment applies them, and returns rewards.
-	 *
-	 * @param observations a map of each agent to their observations
-	 * @return a map of each agent to their action and reward
-	 */
-	public Map<MLKAgent, Pair<Action, Reward>> environmentStep(Map<MLKAgent, Observation> observations){
-		Map<MLKAgent, Action> actions = agents.allAgentsTakeAction(observations);
-		Map<MLKAgent, Pair<Action, Reward>> result = dynamics(actions);
-		return result;
-	}
-
-	/**
 	 * Process and sends experience data to each agent.
 	 * For each agent, combine their observation, action, reward and send to him for learning.
 	 *
@@ -241,9 +272,9 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	/**
 	 * Defines the environment dynamics based on agent actions.
 	 * @param actions A map of each agent to their action.
-	 * @return A map of each agent to their action and reward.
+	 * @return A map of each agent to their action and events.
 	 */
-	public abstract Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions);
+	public abstract Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions);
 	
 	protected void sendFeedbackExperience(Map<MLKAgent,Experience> experiences){
 		for (Map.Entry<MLKAgent, Experience> entry : experiences.entrySet()) {
