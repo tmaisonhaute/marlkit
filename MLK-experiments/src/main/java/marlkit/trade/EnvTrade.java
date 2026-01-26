@@ -8,14 +8,15 @@ import java.util.Map;
 import agent.MLKAgent;
 import agent.action.Action;
 import environment.EnvironmentStandard;
-import environment.reward.Reward;
 import environment.state.State;
+import rewardmodeling.Event;
+import rewardmodeling.RewardModel;
+import rewardmodels.FullyCooperativeReward;
 import util.Pair;
 
 public class EnvTrade extends EnvironmentStandard {
 	private static final int QUANTITY_PER_REQUEST = 1;
 	private Map<ResourceType, Float> basePrices;
-	private RewardConfiguration rewardConfig;
 	private ScenarioUP scenario;
 	private StateUnites state;
 	protected Map<MLKAgent, Action> lastActions;
@@ -26,17 +27,17 @@ public class EnvTrade extends EnvironmentStandard {
 	
 	public EnvTrade(int width, int height) {
 //		this(width, height, new RewardConfigurationMixed());
-		this(width, height, new RewardConfigurationFullyCoop());
+//		this(width, height, new MixedReward());
+		this(width, height, new FullyCooperativeReward());
 	}
 
-	public EnvTrade(int width, int height, RewardConfiguration rewardConfig) {
-		this(width, height, rewardConfig, new Scenario4());
+	public EnvTrade(int width, int height, RewardModel rewardModel) {
+		this(width, height, rewardModel, new Scenario4());
 	}
 
 	
-	public EnvTrade(int width, int height, RewardConfiguration rewardConfig, ScenarioUP scenario) {
-		super(width, height);
-		this.rewardConfig = rewardConfig;
+	public EnvTrade(int width, int height, RewardModel rewardModel, ScenarioUP scenario) {
+		super(width, height, rewardModel);
 		this.scenario = scenario;
 		this.basePrices = scenario.getBasePrices();
 		
@@ -69,27 +70,47 @@ public class EnvTrade extends EnvironmentStandard {
 	}
 
 	@Override
-	public Map<MLKAgent, Pair<Action, Reward>> dynamics(Map<MLKAgent, Action> actions) {
+	public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
 		this.lastActions = new HashMap<>(actions);
-		Map<MLKAgent, Pair<Action, Reward>> results = new HashMap<>();
+		
 		state.updateState();
 		Map<UniteProduction, List<MLKAgent>> requestingAgents = new HashMap<>();
 
+		initUPRequestingAgents(requestingAgents);
+		setupAgentsRequests(requestingAgents, actions);
+
+		Map<MLKAgent, ResourceQuantify> receivedResource = new HashMap<>();
+		upProcessRequests(receivedResource, requestingAgents);
+		
+		return computeEvents(receivedResource, actions);
+	}
+	
+	private void initUPRequestingAgents(Map<UniteProduction, List<MLKAgent>> requestingAgents ) {
 		for(UniteProduction up : state.getUnitesProductions()) {
 			requestingAgents.put(up,  new ArrayList<>());
 		}
+	}
+	
+	private void setupAgentsRequests(Map<UniteProduction, List<MLKAgent>> requestingAgents, Map<MLKAgent, Action> actions) {
 		for (MLKAgent agent : actions.keySet()) {
 			ActionRequestResource action = (ActionRequestResource)actions.get(agent);
 			requestingAgents.get(action.getUniteProduction()).add(agent);
 		}
-
-		Map<MLKAgent, ResourceQuantify> receivedResource = new HashMap<>();
+	}
+	
+	private void upProcessRequests(Map<MLKAgent, ResourceQuantify> receivedResource, Map<UniteProduction, List<MLKAgent>> requestingAgents) {
 		for (UniteProduction up : state.getUnitesProductions()){
 			receivedResource.putAll(up.processRequests(requestingAgents.get(up), QUANTITY_PER_REQUEST));
 		}
-		Map<MLKAgent, Reward> rewards = rewardConfig.computeRewards(receivedResource, basePrices);
-		for (MLKAgent agent : actions.keySet()) {
-			results.put(agent, new Pair<>(actions.get(agent), rewards.get(agent)));
+	}
+	
+	private Map<MLKAgent, Pair<Action, List<Event>>> computeEvents(Map<MLKAgent, ResourceQuantify> receivedResource, Map<MLKAgent, Action> actions) {
+		Map<MLKAgent, Pair<Action, List<Event>>> results = new HashMap<>();
+		for(MLKAgent agent : receivedResource.keySet()){
+			Pair<Action, List<Event>> p = new Pair<>(actions.get(agent), new ArrayList<>());
+			Event e = new CollectResourceEvent(basePrices, receivedResource.get(agent));
+			p.getSecond().add(e);
+			results.put(agent, p);
 		}
 		return results;
 	}

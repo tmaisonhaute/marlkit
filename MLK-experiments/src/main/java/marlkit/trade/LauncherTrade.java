@@ -10,6 +10,7 @@ import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedy;
 import madkit.simulation.EngineAgents;
 import madkit.simulation.SimuEnvironment;
+import rewardmodels.FullyCooperativeReward;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
@@ -19,7 +20,8 @@ public class LauncherTrade extends MLKLauncher {
 
 	@Override
 	protected <E extends SimuEnvironment> E onLaunchEnvironment() {
-		EnvTrade env = new EnvTrade(800, 600, new RewardConfigurationMixed(),new Scenario7());
+//		EnvTrade env = new EnvTrade(800, 600, new MixedReward(),new Scenario4());
+		EnvTrade env = new EnvTrade(800, 600, new FullyCooperativeReward(),new Scenario4());
 		launchAgent(env, Integer.MAX_VALUE);
 		return (E) env;
 	}
@@ -36,7 +38,7 @@ public class LauncherTrade extends MLKLauncher {
 			possibleActions.add(new ActionRequestResource(unite));
 		}
 		
-		int nbAgents = 9;
+		int nbAgents = 3;
 		
 		for (int i = 0; i < nbAgents; i++) {
 			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedy(1.0, 0.005));
