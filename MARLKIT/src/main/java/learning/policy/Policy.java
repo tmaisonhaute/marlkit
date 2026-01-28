@@ -6,7 +6,6 @@ import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import environment.observation.Observation;
 import learning.policy.explorationsettings.ExplorationStrategy;
 
 /**
@@ -37,23 +36,23 @@ public interface Policy {
 	}
 
 	/**
-     * Takes an action based on a single observation.
+     * Takes an action based on a single input (usually Observation).
      * 
-     * @param observation the observation based on which the action is taken
+     * @param input based on which the action is taken
      * @return the action taken
      */
-	public abstract Action takeAction(Observation observation);
+	public abstract Action takeAction(PolicyInput input);
 
 	/**
-     * Takes a list of actions based on a list of observations.
+     * Takes a list of actions based on a list of PolicyInput (usually Observation).
      * 
-     * @param observations the list of observations based on which the actions are taken
+     * @param inputs the list of PolicyInputs based on which the actions are taken
      * @return the list of actions taken
      */
-	public default List<Action> takeActionsList(List<Observation> observations){
+	public default List<Action> takeActionsList(List<PolicyInput> inputs){
 		List<Action> actions = new ArrayList<>();
-		for(Observation o : observations) {
-			actions.add(takeAction(o));
+		for(PolicyInput i : inputs) {
+			actions.add(takeAction(i));
 		}
 		return actions;
 	}

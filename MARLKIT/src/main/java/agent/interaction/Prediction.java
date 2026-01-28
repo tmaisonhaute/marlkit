@@ -7,12 +7,13 @@ import java.util.Set;
 
 import agent.action.Action;
 import environment.observation.Observation;
+import learning.policy.PolicyInput;
 
 /**
  * Stores predictions about an MLKAgent's future actions based on observations.
  */
 public class Prediction {
-    private Map<Observation, Map<Action, Integer>> observationActionCounts;
+    private Map<PolicyInput, Map<Action, Integer>> inputActionCounts;
     private Set<Action> observedActions;
     
     /**
@@ -21,24 +22,24 @@ public class Prediction {
      * @param agent the agent for which to make predictions
      */
     public Prediction() {
-        this.observationActionCounts = new HashMap<>();
+        this.inputActionCounts = new HashMap<>();
         this.observedActions = new HashSet<>();
     }
     
     /**
      * Records an observation-action pair for future predictions.
      * 
-     * @param observation the observation the agent received
+     * @param PolicyInput the input the agent received
      * @param action the action the agent took in response
      */
-    public void recordObservationAction(Observation observation, Action action) {
+    public void recordObservationAction(PolicyInput input, Action action) {
     	if (!observedActions.contains(action)) {
     		observedActions.add(action);	
     	}
         
-        Map<Action, Integer> actionCounts = observationActionCounts.getOrDefault(observation, new HashMap<>());
+        Map<Action, Integer> actionCounts = inputActionCounts.getOrDefault(input, new HashMap<>());
         actionCounts.put(action, actionCounts.getOrDefault(action, 0) + 1);
-        observationActionCounts.put(observation, actionCounts);
+        inputActionCounts.put(input, actionCounts);
     }
     
     /**
@@ -49,7 +50,7 @@ public class Prediction {
      */
     public Map<Action, Double> predictActionProbabilities(Observation observation) {
         Map<Action, Double> probabilities = new HashMap<>();
-        Map<Action, Integer> actionCounts = observationActionCounts.getOrDefault(observation, new HashMap<>());
+        Map<Action, Integer> actionCounts = inputActionCounts.getOrDefault(observation, new HashMap<>());
         
         int totalCount = actionCounts.values().stream().mapToInt(Integer::intValue).sum();
         if (totalCount == 0) {

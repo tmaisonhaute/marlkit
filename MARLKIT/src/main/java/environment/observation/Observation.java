@@ -1,9 +1,11 @@
 package environment.observation;
 
+import learning.policy.PolicyInput;
+
 /**
  * Represents an observation of the state environment.
  */
-public interface Observation {
+public interface Observation extends PolicyInput{
 	/**
 	 * Combines this observation with another observation.
 	 *

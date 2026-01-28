@@ -1,37 +1,37 @@
 package learning;
 
 import agent.action.Action;
-import environment.observation.Observation;
 import environment.reward.Reward;
+import learning.policy.PolicyInput;
 
 /**
  * Represents a single experience tuple (observation, action, reward) in reinforcement learning.
  */
 public class Experience {
-    private Observation observation;
+    private PolicyInput input;
     private Action action;
     private Reward reward;
 
 	/**
 	 * Creates a new experience.
 	 *
-	 * @param observation the observation received
+	 * @param PolicyInput the input received
 	 * @param action the action taken
 	 * @param reward the reward received
 	 */
-    public Experience(Observation observation, Action action, Reward reward) {
-        this.observation = observation;
+    public Experience(PolicyInput input, Action action, Reward reward) {
+        this.input = input;
         this.action = action;
         this.reward = reward;
     }
 
 	/**
-	 * Returns the observation from this experience.
+	 * Returns the input receive during this experience.
 	 *
-	 * @return the observation
+	 * @return the input
 	 */
-    public Observation getObservation() {
-        return observation;
+    public PolicyInput getObservation() {
+        return input;
     }
 
 	/**

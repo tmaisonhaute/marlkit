@@ -6,12 +6,12 @@ import java.util.Map;
 
 import agent.action.Action;
 import environment.MLKEnvironment;
-import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
+import learning.policy.PolicyInput;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -142,26 +142,26 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	/**
 	 * Takes an action using the default policy based on the given observation.
 	 *
-	 * @param obs the observation to act upon
+	 * @param input the PolicyInput to act upon
 	 * @return the selected action
 	 */
 	@Override
-	public Action takeAction(Observation obs) {
-		return takeAction(DEFAULT_TAG, obs);
+	public Action takeAction(PolicyInput input) {
+		return takeAction(DEFAULT_TAG, input);
 	}
 	
 	/**
 	 * Takes an action using the policy associated with the given tag.
 	 *
 	 * @param tag the policy identifier
-	 * @param obs the observation to act upon
+	 * @param input the PolicyInput to act upon
 	 * @return the selected action
 	 * @throws IllegalArgumentException if no policy exists for the tag
 	 */
-	public Action takeAction(String tag, Observation obs) {
+	public Action takeAction(String tag, PolicyInput input) {
         Policy policy = getPolicy(tag);
 		if (policy != null) {
-			return policy.takeAction(obs);
+			return policy.takeAction(input);
 		} else {
 			throw new IllegalArgumentException("No policy found for tag: " + tag);
 		}
@@ -175,8 +175,8 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * @param rew the reward received
 	 */
 	@Override
-	public void feedbackExperience(Observation obs, Action act, Reward rew) {
-		feedbackExperience(DEFAULT_TAG, obs, act, rew);
+	public void feedbackExperience(PolicyInput input, Action act, Reward rew) {
+		feedbackExperience(DEFAULT_TAG, input, act, rew);
 	}
 
 	/**
@@ -209,12 +209,12 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * Records an experience for the policy associated with the given tag.
 	 *
 	 * @param tag the policy identifier
-	 * @param obs the observation received
+	 * @param input the PolicyInput received
 	 * @param act the action taken
 	 * @param rew the reward received
 	 */
-	public void feedbackExperience(String tag, Observation obs, Action act, Reward rew) {
-		feedbackExperience(tag, new Experience(obs, act, rew));
+	public void feedbackExperience(String tag, PolicyInput input, Action act, Reward rew) {
+		feedbackExperience(tag, new Experience(input, act, rew));
 	}
 
 	/**

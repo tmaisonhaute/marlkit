@@ -2,10 +2,10 @@ package learning.algorithm;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import environment.observation.Observation;
 import learning.Batch;
 import learning.Experience;
 import learning.policy.Policy;
+import learning.policy.PolicyInput;
 import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedy;
 import madkit.kernel.AgentLogger;
@@ -130,10 +130,10 @@ public class Sarsa implements Algorithm {
         Experience currentExperience = batch.getExperiences().get(0);
         Experience nextExperience = batch.getExperiences().get(1);
 
-        Observation currentState = currentExperience.getObservation();
+        PolicyInput currentState = currentExperience.getObservation();
         Action currentAction = currentExperience.getAction();
         double reward = currentExperience.getRewardValue();
-        Observation nextState = nextExperience.getObservation();
+        PolicyInput nextState = nextExperience.getObservation();
         Action nextAction = nextExperience.getAction();
 
         updateQ(currentState, currentAction, reward, nextState, nextAction);
@@ -150,19 +150,19 @@ public class Sarsa implements Algorithm {
      * not the action with maximum Q-value.
      * </p>
      *
-     * @param state      the current state observation
+     * @param state      the current state PolicyInput
      * @param action     the action taken in the current state
      * @param reward     the received reward
-     * @param nextState  the next state observation, or null if terminal
+     * @param nextState  the next state PolicyInput, or null if terminal
      * @param nextAction the action taken in the next state, or null if terminal
      */
-    private void updateQ(Observation state, Action action, double reward, Observation nextState, Action nextAction) {
+    private void updateQ(PolicyInput state, Action action, double reward, PolicyInput nextState, Action nextAction) {
         double qNext = 0.0;
         if (nextState != null && nextAction != null) {
             qNext = policy.getTable().getValue(nextState, nextAction);
         }
 
-        Pair<Observation, Action> stateAction = new Pair<>(state, action);
+        Pair<PolicyInput, Action> stateAction = new Pair<>(state, action);
         double qValue = policy.getTable().getValue(stateAction);
         double updatedQ = qValue + alpha * (reward + gamma * qNext - qValue);
         policy.getTable().setValue(stateAction, updatedQ);
@@ -183,7 +183,7 @@ public class Sarsa implements Algorithm {
         // Handle the last experience (terminal state)
         if (batch.getExperiences().size() == 1) {
             Experience lastExperience = batch.getExperiences().get(0);
-            Observation lastState = lastExperience.getObservation();
+            PolicyInput lastState = lastExperience.getObservation();
             Action lastAction = lastExperience.getAction();
             double lastReward = lastExperience.getRewardValue();
 

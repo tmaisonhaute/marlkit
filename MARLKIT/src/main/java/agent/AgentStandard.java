@@ -3,12 +3,12 @@ import java.util.List;
 
 import agent.action.Action;
 import environment.MLKEnvironment;
-import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
+import learning.policy.PolicyInput;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -58,8 +58,8 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
      * @return the action taken
      */
 	@Override
-	public Action takeAction(Observation obs) {
-		return policy.takeAction(obs);
+	public Action takeAction(PolicyInput input) {
+		return policy.takeAction(input);
 	}
 
 	/**
@@ -68,8 +68,8 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
      * @param observations the list of observations based on which the actions are taken
      * @return the list of actions taken
      */
-	public List<Action> takeActionList(List<Observation> observations){
-		return policy.takeActionsList(observations);
+	public List<Action> takeActionList(List<PolicyInput> inputs){
+		return policy.takeActionsList(inputs);
 	}
 
 	/**
@@ -104,12 +104,12 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	/**
 	 * Records an experience composed of observation, action, and reward.
 	 *
-	 * @param obs the observation received
+	 * @param input the PolicyInput received
 	 * @param act the action taken
 	 * @param rew the reward received
 	 */
-	public void feedbackExperience(Observation obs, Action act, Reward rew) {
-		pastExperiences.addExperience(obs, act, rew);
+	public void feedbackExperience(PolicyInput input, Action act, Reward rew) {
+		pastExperiences.addExperience(input, act, rew);
 	}
 	
 	/**

@@ -3,11 +3,11 @@ package agent;
 import java.util.random.RandomGenerator;
 
 import agent.action.Action;
-import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
+import learning.policy.PolicyInput;
 
 /**
  * Core interface for agents in the MARLKIT framework.
@@ -61,11 +61,11 @@ public interface MLKAgent {
 	/**
 	 * Records an experience composed of observation, action, and reward.
 	 *
-	 * @param obs the observation received
+	 * @param input the PolicyInput received
 	 * @param act the action taken
 	 * @param rew the reward received
 	 */
-	public abstract void feedbackExperience(Observation obs, Action act, Reward rew);
+	public abstract void feedbackExperience(PolicyInput input, Action act, Reward rew);
 	
 	/**
 	 * Records a complete experience object.
@@ -77,10 +77,10 @@ public interface MLKAgent {
 	/**
 	 * Selects and returns an action based on the given observation.
 	 *
-	 * @param obs the observation to act upon
+	 * @param input the observation to act upon
 	 * @return the selected action
 	 */
-	public Action takeAction(Observation obs);
+	public Action takeAction(PolicyInput input);
 	
 	/**
 	 * Updates the policy based on accumulated experience at the given timestep.

@@ -1,7 +1,7 @@
 package learning.valuefunction;
 
 import agent.action.Action;
-import environment.observation.Observation;
+import learning.policy.PolicyInput;
 import util.Pair;
 
 /**
@@ -13,7 +13,7 @@ import util.Pair;
  *
  * @see ValueFunction
  */
-public class QTable extends ValueFunction<Pair<Observation, Action>> {
+public class QTable extends ValueFunction<Pair<PolicyInput, Action>> {
 
 	/**
 	 * Creates a Q-table with the specified default value for unseen state-action pairs.
@@ -25,14 +25,14 @@ public class QTable extends ValueFunction<Pair<Observation, Action>> {
 	}
 
 	/**
-	 * Returns Q(s, a) for the given observation and action.
+	 * Returns Q(s, a) for the given input and action.
 	 *
-	 * @param observation the observation (state)
+	 * @param PolicyInput the input (state/observation)
 	 * @param action      the action
 	 * @return the Q-value, or the default value if this pair has not been visited
 	 */
-	public Double getValue(Observation observation, Action action) {
-        return tableValue.getOrDefault(new Pair<>(observation, action), getDefaultValue());
+	public Double getValue(PolicyInput input, Action action) {
+        return tableValue.getOrDefault(new Pair<>(input, action), getDefaultValue());
     }
 
 }
