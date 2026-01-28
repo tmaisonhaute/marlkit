@@ -96,7 +96,8 @@ public class EpsilonGreedy implements ExplorationStrategy {
 	/**
 	 * Increments the iteration counter, reducing future epsilon values if decay is enabled.
 	 */
-	public void updateEpsilon() {
+	@Override
+	public void update() {
 		nbIterations++;
 	}
 
@@ -107,5 +108,13 @@ public class EpsilonGreedy implements ExplorationStrategy {
 	 */
 	public int getNbIterations() {
 		return nbIterations;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getLoggerInfo() {
+		return "EpsilonGreedy-epsilon=" + getEpsilon();
 	}
 }

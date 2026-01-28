@@ -7,7 +7,6 @@ import learning.Experience;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
 import learning.policy.QValueBasedPolicy;
-import learning.policy.explorationsettings.EpsilonGreedy;
 import madkit.kernel.AgentLogger;
 import util.Pair;
 
@@ -130,10 +129,10 @@ public class Sarsa implements Algorithm {
         Experience currentExperience = batch.getExperiences().get(0);
         Experience nextExperience = batch.getExperiences().get(1);
 
-        PolicyInput currentState = currentExperience.getObservation();
+        PolicyInput currentState = currentExperience.getInput();
         Action currentAction = currentExperience.getAction();
         double reward = currentExperience.getRewardValue();
-        PolicyInput nextState = nextExperience.getObservation();
+        PolicyInput nextState = nextExperience.getInput();
         Action nextAction = nextExperience.getAction();
 
         updateQ(currentState, currentAction, reward, nextState, nextAction);
@@ -180,10 +179,9 @@ public class Sarsa implements Algorithm {
     public void endEpisode(Batch batch, AgentLogger logger) {
         learnOnBatch(batch, logger);
         
-        // Handle the last experience (terminal state)
         if (batch.getExperiences().size() == 1) {
             Experience lastExperience = batch.getExperiences().get(0);
-            PolicyInput lastState = lastExperience.getObservation();
+            PolicyInput lastState = lastExperience.getInput();
             Action lastAction = lastExperience.getAction();
             double lastReward = lastExperience.getRewardValue();
 
@@ -191,11 +189,8 @@ public class Sarsa implements Algorithm {
             batch.getExperiences().removeFirst();
         }
 
-        // Update epsilon if using epsilon-greedy exploration
-        if (policy.getExplorationStrategy() instanceof EpsilonGreedy epsilonGreedy) {
-            epsilonGreedy.updateEpsilon();
-            logger.info("Epsilon : " + epsilonGreedy.getEpsilon());
-        }
+        policy.getExplorationStrategy().update();
+        logger.info(policy.getExplorationStrategy().toString());
         
         logger.info("size Q: " + policy.getTable().size());
         

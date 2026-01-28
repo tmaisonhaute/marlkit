@@ -9,7 +9,6 @@ import learning.Experience;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
 import learning.policy.QValueBasedPolicy;
-import learning.policy.explorationsettings.EpsilonGreedy;
 import madkit.kernel.AgentLogger;
 import util.Pair;
 
@@ -132,8 +131,8 @@ public class QLearning implements Algorithm {
         Experience current = batch.getExperiences().get(0);
         Experience next = batch.getExperiences().get(1);
 
-        Pair<PolicyInput, Action> stateAction = new Pair<>(current.getObservation(), current.getAction());
-        PolicyInput nextInput = next.getObservation();
+        Pair<PolicyInput, Action> stateAction = new Pair<>(current.getInput(), current.getAction());
+        PolicyInput nextInput = next.getInput();
         double reward = current.getRewardValue();
 
         updateQ(stateAction, reward, nextInput);
@@ -191,10 +190,8 @@ public class QLearning implements Algorithm {
      */
     @Override
     public void endEpisode(Batch batch, AgentLogger logger) {
-        if (policy.getExplorationStrategy() instanceof EpsilonGreedy epsilonGreedy) {
-            epsilonGreedy.updateEpsilon();
-            logger.info("Epsilon : " + epsilonGreedy.getEpsilon());
-        }
+        policy.getExplorationStrategy().update();
+        logger.info(policy.getExplorationStrategy().toString());
         logger.info("size Q: " + policy.getTable().size());
         batch.clear();
     }

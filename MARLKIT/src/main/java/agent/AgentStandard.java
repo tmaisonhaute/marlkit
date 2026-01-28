@@ -54,7 +54,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	/**
      * Takes an action based on a single observation.
      * 
-     * @param obs the observation based on which the action is taken
+     * @param input the PolicyInput based on which the action is taken
      * @return the action taken
      */
 	@Override
@@ -65,7 +65,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	/**
      * Takes a list of actions based on a list of observations.
      * 
-     * @param observations the list of observations based on which the actions are taken
+     * @param inputs the list of PolicyInput based on which the actions are taken
      * @return the list of actions taken
      */
 	public List<Action> takeActionList(List<PolicyInput> inputs){

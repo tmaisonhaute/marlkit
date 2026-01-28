@@ -30,4 +30,12 @@ public interface ExplorationStrategy {
 	 * @return empty if no exploration (exploit), or the exploratory action to take
 	 */
 	public Optional<Action> getExploratoryAction(List<Action> possibleActions, RandomGenerator pnrg);
+	
+	public void update();
+	
+	/**
+	 * Provides information about the exploration strategy for logging purposes.
+	 * @return a string describing the current exploration strategy
+	 */
+	public String getLoggerInfo();
 }

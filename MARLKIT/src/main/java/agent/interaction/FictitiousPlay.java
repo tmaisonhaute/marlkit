@@ -87,7 +87,7 @@ public class FictitiousPlay implements MLKInteraction {
             for (MLKAgent observingAgent : agentsPredictions.keySet()) {
                 if (!observingAgent.equals(activeAgent)) {
                     Predictions predictions = agentsPredictions.get(observingAgent);
-                    predictions.recordObservationAction(activeAgent, experience.getObservation(), experience.getAction());
+                    predictions.recordObservationAction(activeAgent, experience.getInput(), experience.getAction());
                 }
             }
         }

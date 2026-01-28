@@ -15,7 +15,7 @@ public class Experience {
 	/**
 	 * Creates a new experience.
 	 *
-	 * @param PolicyInput the input received
+	 * @param input the PolicyInput received
 	 * @param action the action taken
 	 * @param reward the reward received
 	 */
@@ -30,7 +30,7 @@ public class Experience {
 	 *
 	 * @return the input
 	 */
-    public PolicyInput getObservation() {
+    public PolicyInput getInput() {
         return input;
     }
 
