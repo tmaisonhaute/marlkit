@@ -45,6 +45,7 @@ open module marlkit.base {
 	exports learning.policy;
 	exports learning.algorithm;
 	exports learning.policy.explorationsettings;
+	exports learning.nn;
 	exports util;
 	exports util.criteria;
 	exports simulation;

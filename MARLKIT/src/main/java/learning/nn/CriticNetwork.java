@@ -3,14 +3,14 @@ package learning.nn;
 import java.util.random.RandomGenerator;
 
 import environment.observation.Observation;
-import environment.observation.wrapperobservationvector.WrapperObservationVector;
+import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
 
 /**
  * Critic neural network for value function approximation.
  */
 public class CriticNetwork {
-    private NeuralNetwork network;
-    private WrapperObservationVector observationWrapper;
+    private NeuralNetwork1 network;
+    private WrapperPolicyInputVector observationWrapper;
     
     /**
 	 * Creates a critic network for value function approximation.
@@ -22,11 +22,11 @@ public class CriticNetwork {
 	 * @param observationWrapper converts observations to vectors
 	 */
     public CriticNetwork(int inputSize, int hiddenSize, RandomGenerator pnrg, double learningRate, 
-                         WrapperObservationVector observationWrapper) {
+                         WrapperPolicyInputVector observationWrapper) {
         this.observationWrapper = observationWrapper;
         
         // Create neural network with observation input size and single output for value
-        this.network = new NeuralNetwork(
+        this.network = new NeuralNetwork1(
         	inputSize,
             hiddenSize,
             1,

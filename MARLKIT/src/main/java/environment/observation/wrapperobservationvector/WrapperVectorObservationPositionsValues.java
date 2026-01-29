@@ -5,22 +5,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import environment.observation.Observation;
 import environment.observation.ObservationPositionValue;
 import environment.observation.ObservationPositionsValues;
+import learning.policy.PolicyInput;
 import util.Tuple;
 
-public class WrapperObservationVectorPositionsValues implements WrapperObservationVector{
+public class WrapperVectorObservationPositionsValues implements WrapperPolicyInputVector{
 
 	private boolean mustTranslateValue;
 	
-	public WrapperObservationVectorPositionsValues(boolean mustTranslateValue) {
+	public WrapperVectorObservationPositionsValues(boolean mustTranslateValue) {
 		this.mustTranslateValue = mustTranslateValue;
 	}
 	
 	@Override
-	public double[] transform(Observation observation) {
-		ObservationPositionsValues obs = (ObservationPositionsValues) observation;
+	public double[] transform(PolicyInput input) {
+		ObservationPositionsValues obs = (ObservationPositionsValues) input;
 		
 		//TODO not really satisfying yet. It prevent wrapping for position that is not with 2 values for the position (2D)
 		if (obs.getPosition(0).getSize() != 2) {
@@ -43,7 +43,7 @@ public class WrapperObservationVectorPositionsValues implements WrapperObservati
 	}
 
 	@Override
-	public Observation transform(double[] vector) {
+	public ObservationPositionsValues transform(double[] vector) {
 		ObservationPositionsValues obs = new ObservationPositionsValues();
 		int numberValuesForObservation = mustTranslateValue ? 3 : 2;
 		for(int i = 0; i < vector.length; i += numberValuesForObservation) {

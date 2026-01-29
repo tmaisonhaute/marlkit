@@ -12,7 +12,7 @@ public class NeuralNetworkTest {
     public void givenSimpleInput_whenForward_thenOutputIsComputed() {
         // Given
     	Random random = new Random(12345);
-        NeuralNetwork network = new NeuralNetwork(2, 4, 1, random, 0.1);
+        NeuralNetwork1 network = new NeuralNetwork1(2, 4, 1, random, 0.1);
         double[] input = {0.5, 0.8};
         
         // When
@@ -27,7 +27,7 @@ public class NeuralNetworkTest {
     public void givenInputAndTarget_whenUpdate_thenErrorDecreases() {
         // Given
     	Random random = new Random(12345);
-        NeuralNetwork network = new NeuralNetwork(2, 8, 1, random, 0.1);
+        NeuralNetwork1 network = new NeuralNetwork1(2, 8, 1, random, 0.1);
         double[] input = {0.5, 0.8};
         double[] target = {0.7};
         
@@ -84,12 +84,12 @@ public class NeuralNetworkTest {
     public void givenValue_whenReluApplied_thenCorrectOutputReturned() {
         // Given
     	Random random = new Random(12345);
-        NeuralNetwork network = new NeuralNetwork(1, 1, 1, random, 0.1);
+        NeuralNetwork1 network = new NeuralNetwork1(1, 1, 1, random, 0.1);
         
         // Define a method to access the private relu method
         java.lang.reflect.Method reluMethod;
         try {
-            reluMethod = NeuralNetwork.class.getDeclaredMethod("relu", double.class);
+            reluMethod = NeuralNetwork1.class.getDeclaredMethod("relu", double.class);
             reluMethod.setAccessible(true);
             
             // When/Then
@@ -106,12 +106,12 @@ public class NeuralNetworkTest {
     public void givenValue_whenReluDerivativeApplied_thenCorrectOutputReturned() {
         // Given
     	Random random = new Random(12345);
-        NeuralNetwork network = new NeuralNetwork(1, 1, 1, random, 0.1);
+        NeuralNetwork1 network = new NeuralNetwork1(1, 1, 1, random, 0.1);
         
         // Define a method to access the private reluDerivative method
         java.lang.reflect.Method reluDerivativeMethod;
         try {
-            reluDerivativeMethod = NeuralNetwork.class.getDeclaredMethod("reluDerivative", double.class);
+            reluDerivativeMethod = NeuralNetwork1.class.getDeclaredMethod("reluDerivative", double.class);
             reluDerivativeMethod.setAccessible(true);
             
             // When/Then
@@ -128,7 +128,7 @@ public class NeuralNetworkTest {
     public void givenNetwork_whenLearningRateChanged_thenLearningRateIsUpdated() {
         // Given
     	Random random = new Random(12345);
-        NeuralNetwork network = new NeuralNetwork(2, 4, 1, random, 0.1);
+        NeuralNetwork1 network = new NeuralNetwork1(2, 4, 1, random, 0.1);
         
         // When
         network.setLearningRate(0.05);

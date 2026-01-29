@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 import environment.observation.ObservationPositionValue;
 import environment.observation.ObservationPositionsValues;
-import environment.observation.wrapperobservationvector.WrapperObservationVectorPositionsValues;
+import environment.observation.wrapperobservationvector.WrapperVectorObservationPositionsValues;
 import util.Tuple;
 
 public class CriticNetworkTest {
@@ -18,7 +18,7 @@ public class CriticNetworkTest {
     public void givenObservation_whenGetValue_thenValueIsReturned() {
         // Given
     	Random random = new Random(12345);
-        WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
+        WrapperVectorObservationPositionsValues wrapper = new WrapperVectorObservationPositionsValues(false);
         CriticNetwork critic = new CriticNetwork(4, 10, random, 0.01, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
@@ -36,7 +36,7 @@ public class CriticNetworkTest {
     public void givenObservationAndTarget_whenUpdate_thenErrorIsReturned() {
         // Given
     	Random random = new Random(12345);
-        WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
+        WrapperVectorObservationPositionsValues wrapper = new WrapperVectorObservationPositionsValues(false);
         CriticNetwork critic = new CriticNetwork(4, 10, random, 0.01, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
@@ -56,7 +56,7 @@ public class CriticNetworkTest {
     public void givenMultipleUpdates_whenGetValue_thenValueConvergesToTarget() {
         // Given
     	Random random = new Random(12345);
-        WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
+        WrapperVectorObservationPositionsValues wrapper = new WrapperVectorObservationPositionsValues(false);
         CriticNetwork critic = new CriticNetwork(4, 10, random, 0.001, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();
@@ -82,7 +82,7 @@ public class CriticNetworkTest {
     public void givenLearningRateChange_whenUpdate_thenLearningSpeedChanges() {
         // Given
         Random random = new Random(12345);
-        WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
+        WrapperVectorObservationPositionsValues wrapper = new WrapperVectorObservationPositionsValues(false);
         CriticNetwork critic = new CriticNetwork(4, 10, random, 0.01, wrapper);
         
         ObservationPositionsValues observation = new ObservationPositionsValues();

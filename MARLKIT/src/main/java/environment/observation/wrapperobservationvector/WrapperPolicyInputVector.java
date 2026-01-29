@@ -1,21 +1,21 @@
 package environment.observation.wrapperobservationvector;
 
-import environment.observation.Observation;
+import learning.policy.PolicyInput;
 
-public interface WrapperObservationVector {
+public interface WrapperPolicyInputVector {
 	/**
      * Transforms the given Observation into a vector.
      *
      * @param observation the Observation to transform
      * @return the vector representation of the Observation
      */
-    double[] transform(Observation observation);
+    double[] transform(PolicyInput observation);
     
     /**
      * Transforms the given vector into an Observation.
      * @param vector the vector to transform
      * @return the Observation representation of the vector
      */
-    Observation transform(double[] vector);
+    PolicyInput transform(double[] vector);
     
 }

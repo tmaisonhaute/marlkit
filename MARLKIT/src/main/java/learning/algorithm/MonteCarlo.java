@@ -79,24 +79,6 @@ public class MonteCarlo implements Algorithm {
         return 0;
     }
     
-    /**
-     * Compute cumulative rewards for a list of experiences.
-     * @param experiences
-     * @param logger
-     * @return
-     */
-    protected double[] computeCumulativeRewards(List<Experience> experiences, AgentLogger logger) {
-    	int experiencesLength = experiences.size();
-    	double[] cumulativeRewards = new double[experiencesLength];
-    	double totalRewards = 0;
-    	for (int j = experiencesLength - 1; j >= 0; j--) {
-    		cumulativeRewards[j] = experiences.get(j).getRewardValue() + (j + 1 < experiencesLength ? cumulativeRewards[j + 1] * gamma : 0);
-    		totalRewards += experiences.get(j).getRewardValue();
-    	}
-    	logger.info("Total rewards: " + totalRewards);
-    	return cumulativeRewards;
-    }
-
 
 	/**
 	 * Update Q-values based on experiences and their cumulative rewards.
@@ -137,11 +119,11 @@ public class MonteCarlo implements Algorithm {
 	@Override
 	public void learnOnBatch(Batch batch, AgentLogger logger) {
 		List<Experience> experiences = batch.getExperiences();
-		double[] cumulativeRewards = computeCumulativeRewards(experiences, logger);
+		double[] cumulativeRewards = batch.computeCumulativeRewards(gamma);
+		logger.info("Total rewards: " + batch.totalRewards());
 		updateQ(experiences, cumulativeRewards);
 		
 		policy.getExplorationStrategy().update();
-		batch.clear();
 		
 	}
 
@@ -151,8 +133,7 @@ public class MonteCarlo implements Algorithm {
 		logger.info("size of batch : " + batch.getExperiences().size());
         logger.info(policy.getExplorationStrategy().toString());
         logger.info("size Q: " + getPolicy().getTable().size());
-
-		
+		batch.clear();
 	}
 
 }

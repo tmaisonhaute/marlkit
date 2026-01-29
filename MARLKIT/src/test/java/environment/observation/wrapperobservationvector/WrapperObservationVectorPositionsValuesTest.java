@@ -21,7 +21,7 @@ public class WrapperObservationVectorPositionsValuesTest {
         obs.addObservation(new ObservationPositionValue(new Tuple(List.of(1.0, 2.0)), 5.0));
         obs.addObservation(new ObservationPositionValue(new Tuple(List.of(3.0, 4.0)), 6.0));
         
-        WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
+        WrapperVectorObservationPositionsValues wrapper = new WrapperVectorObservationPositionsValues(false);
         
         // When
         double[] vector = wrapper.transform(obs);
@@ -41,7 +41,7 @@ public class WrapperObservationVectorPositionsValuesTest {
         obs.addObservation(new ObservationPositionValue(new Tuple(List.of(1.0, 2.0)), 5.0));
         obs.addObservation(new ObservationPositionValue(new Tuple(List.of(3.0, 4.0)), 6.0));
         
-        WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(true);
+        WrapperVectorObservationPositionsValues wrapper = new WrapperVectorObservationPositionsValues(true);
         
         // When
         double[] vector = wrapper.transform(obs);
@@ -60,7 +60,7 @@ public class WrapperObservationVectorPositionsValuesTest {
     public void givenVectorWithoutValue_whenTransformToObservation_thenCorrectObservationReturned() {
         // Given
         double[] vector = {1.0, 2.0, 3.0, 4.0};
-        WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
+        WrapperVectorObservationPositionsValues wrapper = new WrapperVectorObservationPositionsValues(false);
         
         // When
         Observation observation = wrapper.transform(vector);
@@ -87,7 +87,7 @@ public class WrapperObservationVectorPositionsValuesTest {
     public void givenVectorWithValue_whenTransformToObservation_thenCorrectObservationReturned() {
         // Given
         double[] vector = {1.0, 2.0, 5.0, 3.0, 4.0, 6.0};
-        WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(true);
+        WrapperVectorObservationPositionsValues wrapper = new WrapperVectorObservationPositionsValues(true);
         
         // When
         Observation observation = wrapper.transform(vector);
@@ -116,7 +116,7 @@ public class WrapperObservationVectorPositionsValuesTest {
         ObservationPositionsValues obs = new ObservationPositionsValues();
         obs.addObservation(new ObservationPositionValue(new Tuple(List.of(1.0, 2.0, 3.0)), 5.0)); // Position with 3 values
         
-        WrapperObservationVectorPositionsValues wrapper = new WrapperObservationVectorPositionsValues(false);
+        WrapperVectorObservationPositionsValues wrapper = new WrapperVectorObservationPositionsValues(false);
         
         // When/Then
         assertThatThrownBy(() -> wrapper.transform(obs))
