@@ -1,7 +1,5 @@
 package simulation;
 
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
-
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -9,6 +7,7 @@ import environment.MLKEnvironment;
 import environment.state.State;
 import madkit.kernel.Activator;
 import madkit.simulation.SimuOrganization;
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 import util.criteria.Criterion;
@@ -76,7 +75,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		step.execute();
 		agentUpdatePolicy.execute(counter);
 		if (getCriteriaEndEpisode().isMet()) {
-			getCriteriaEndSimulation().update(Optional.of(env.getState()));
+			updateOnEndEpisode(Optional.of(env.getState()));
 			agentEndEpisode.execute();
 			reset.execute();
 			getCriteriaEndEpisode().reset();
@@ -88,21 +87,12 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 			setPause(0);
 		}
 		counter++;
-		updateCriteria(Optional.of(env.getState()));
+		getCriteriaEndEpisode().update(Optional.of(env.getState()));
 		viewers.execute();
 		if (getCriteriaEndSimulation().isMet()) {
 			atexit.execute();
 			onEnd();
 		}
-	}
-
-	/**
-	 * This method updates the criteria for starting and ending episodes and displays.
-	 */
-	protected void updateCriteria(Optional<State> state) {
-		getCriteriaEndEpisode().update(state);
-		getCriteriaStartDisplay().update(state);
-		getCriteriaEndDisplay().update(state);
 	}
 	
 	/**

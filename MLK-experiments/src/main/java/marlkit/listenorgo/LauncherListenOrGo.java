@@ -28,7 +28,7 @@ public class LauncherListenOrGo extends MLKLauncher {
         
         List<Action> possibleActions = new ArrayList<>(List.of(listen, goLeft, goRight));
         
-        int nbAgents = 3;
+        int nbAgents = 5;
         for (int i = 0; i < nbAgents; i++) {
         	QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedy(1.0, 0.001));
         	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.95);
