@@ -3,10 +3,10 @@ package rewardmodeling;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
 
-public class EventDefault extends Event {
+public class ReactionEventDefault extends ReactionEvent {
 	private final double rewardValue;
 	
-	public EventDefault(double rewardValue) {
+	public ReactionEventDefault(double rewardValue) {
 		super();
 		this.rewardValue = rewardValue;
 	}

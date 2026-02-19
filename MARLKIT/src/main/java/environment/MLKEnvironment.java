@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import agent.MLKAgent;
+import environment.state.State;
 import learning.Experience;
 import util.grafana.Extra;
 import util.grafana.LearningData;
@@ -20,6 +21,12 @@ public interface MLKEnvironment {
 	 * It can be used to log agent rewards, and other statistics.
 	 */
 	public LearningData learningData = new LearningData();
+	
+	/**
+	 * Initializes the environment, setting up the initial state and any necessary configurations. 
+	 * This method is called once after every onActivation(). 
+	 */
+	public abstract void init();
 
 	/**
 	 * Resets the environment to its initial state.
@@ -38,7 +45,14 @@ public interface MLKEnvironment {
 	 *
 	 * @param agent the agent to set up
 	 */
-	void setupAgent(MLKAgent agent);
+	void addAgent(MLKAgent agent);
+	
+	/**
+	 * Returns the current state of the environment.
+	 *
+	 * @return the environment state
+	 */
+	public State getState();
 
 	/**
 	 * Collect progress made by agents to make statistics.

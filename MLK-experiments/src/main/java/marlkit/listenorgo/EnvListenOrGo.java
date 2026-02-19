@@ -13,7 +13,7 @@ import environment.state.State;
 import marlkit.listenorgo.events.DoNothingEvent;
 import marlkit.listenorgo.events.ListenEvent;
 import marlkit.listenorgo.events.MoveEvent;
-import rewardmodeling.Event;
+import rewardmodeling.ReactionEvent;
 import rewardmodels.MixedReward;
 import util.Pair;
 
@@ -47,16 +47,23 @@ public class EnvListenOrGo extends EnvironmentStandard {
     }
     
     @Override
+    protected void setupAgents() {
+    	for (MLKAgent agent : agents.getAgents()) {
+    		agentObservations.put(agent, new ObservationListenOrGo());
+            agentsChoice.put(agent, Choice.NONE);
+    	}
+    }
+    
+    @Override
     public void reset() {
         setupState();
     }
 
     
     @Override
-    public void setupAgent(MLKAgent agent) {
+    public void addAgent(MLKAgent agent) {
         agents.addAgent(agent);
-        agentObservations.put(agent, new ObservationListenOrGo());
-        agentsChoice.put(agent, Choice.NONE);
+        
     }
     
     @Override
@@ -69,13 +76,13 @@ public class EnvListenOrGo extends EnvironmentStandard {
     }
     
     @Override
-    public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
-        Map<MLKAgent, Pair<Action, List<Event>>> results = new HashMap<>();
+    public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
+        Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results = new HashMap<>();
         Map<MLKAgent, Choice> directionsChosen = new HashMap<>();
 
         for (MLKAgent agent : agents.getAgents()) {
             Action action = actions.get(agent);
-            Event event = null;
+            ReactionEvent event = null;
             
             if (agentsChoice.get(agent) != Choice.NONE) {
                 results.put(agent, new Pair<>(action, new DoNothingEvent().toList()));
@@ -122,7 +129,7 @@ public class EnvListenOrGo extends EnvironmentStandard {
 	}
     
     @Override
-    protected State getState() {
+    public State getState() {
         return new State() {
             @Override
             public Map<MLKAgent, Observation> getObservations() {

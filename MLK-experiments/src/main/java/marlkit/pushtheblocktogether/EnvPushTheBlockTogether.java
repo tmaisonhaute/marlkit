@@ -12,7 +12,7 @@ import marlkit.pushtheblock.EnvPushTheBlock;
 import marlkit.pushtheblock.events.BlockPushedEvent;
 import marlkit.pushtheblock.events.BlockPushedOutEvent;
 import marlkit.pushtheblock.events.MoveEvent;
-import rewardmodeling.Event;
+import rewardmodeling.ReactionEvent;
 import util.Pair;
 
 public class EnvPushTheBlockTogether extends EnvPushTheBlock {
@@ -27,13 +27,13 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 	}
 	
 	@Override
-	public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
-		Map<MLKAgent, Pair<Action, List<Event>>> results = new HashMap<>();
-		Map<MLKAgent, List<Event>> agentsEvents = new HashMap<>();
+	public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
+		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results = new HashMap<>();
+		Map<MLKAgent, List<ReactionEvent>> agentsEvents = new HashMap<>();
 		agentsForcePush = new HashMap<>();
 		numberOfBlocksPushed = new HashMap<>();
 		
-		List<Event> events = new ArrayList<>();
+		List<ReactionEvent> events = new ArrayList<>();
 		
 		for (MLKAgent ag : agents.getAgents()) {
 			agentsEvents.put(ag, new ArrayList<>());
@@ -49,14 +49,14 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 		pushBlockForce(agentsEvents);
 		
 		for (MLKAgent ag : agents.getAgents()) {
-			List<Event> agentEvents = new ArrayList<>(agentsEvents.get(ag));
+			List<ReactionEvent> agentEvents = new ArrayList<>(agentsEvents.get(ag));
 			results.put(ag, new Pair<>(actions.get(ag), agentEvents));
 		}
 		
 		return results;
 	}
 	
-	protected void checkIfPushBlockTogether(List<Event> events, Action2DMove action, Pair<Integer, Integer> position, MLKAgent agent) {
+	protected void checkIfPushBlockTogether(List<ReactionEvent> events, Action2DMove action, Pair<Integer, Integer> position, MLKAgent agent) {
 		if (state.getValue(position) >= 1){
 			agentsForcePush.putIfAbsent(position, new ArrayList<>());
 			agentsForcePush.get(position).add(new Pair<>(agent, action));
@@ -67,7 +67,7 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 		}
 	}
 	
-	protected void pushBlockForce(Map<MLKAgent, List<Event>> agentsEvents) {
+	protected void pushBlockForce(Map<MLKAgent, List<ReactionEvent>> agentsEvents) {
 		for (Pair<Integer, Integer> oldPosition : agentsForcePush.keySet()) {
 			int nbBlocks = numberOfBlocksPushed.get(oldPosition);
 			List<Pair<MLKAgent, Action2DMove>> actionsAgents = agentsForcePush.get(oldPosition);

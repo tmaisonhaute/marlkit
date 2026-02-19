@@ -6,7 +6,7 @@ import java.util.Map;
 
 import agent.MLKAgent;
 import environment.reward.Reward;
-import rewardmodeling.Event;
+import rewardmodeling.ReactionEvent;
 import rewardmodeling.RewardModel;
 
 public class MixedReward implements RewardModel {
@@ -18,11 +18,11 @@ public class MixedReward implements RewardModel {
      * @return map of agent to their computed reward
      */
     @Override
-    public Map<MLKAgent, Reward> computeRewards(Map<MLKAgent, List<Event>> agentEvents) {
+    public Map<MLKAgent, Reward> rewardFunctions(Map<MLKAgent, List<ReactionEvent>> agentEvents) {
         Map<MLKAgent, Reward> rewards = new HashMap<>();
-        for (Map.Entry<MLKAgent, List<Event>> entry : agentEvents.entrySet()) {
+        for (Map.Entry<MLKAgent, List<ReactionEvent>> entry : agentEvents.entrySet()) {
             MLKAgent agent = entry.getKey();
-            List<Event> events = entry.getValue();
+            List<ReactionEvent> events = entry.getValue();
             Reward reward = computeAgentReward(events);
             rewards.put(agent, reward);
         }

@@ -1,8 +1,8 @@
 package marlkit.listenorgo.events;
 
-import rewardmodeling.EventDefault;
+import rewardmodeling.ReactionEventDefault;
 
-public class DoNothingEvent extends EventDefault {
+public class DoNothingEvent extends ReactionEventDefault {
 	private static final double REWARD_VALUE = 0.0;
 
 	public DoNothingEvent() {

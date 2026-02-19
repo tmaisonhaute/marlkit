@@ -15,7 +15,7 @@ import environment.state.State2DGridInt;
 import marlkit.pushtheblock.events.BlockPushedEvent;
 import marlkit.pushtheblock.events.BlockPushedOutEvent;
 import marlkit.pushtheblock.events.MoveEvent;
-import rewardmodeling.Event;
+import rewardmodeling.ReactionEvent;
 import rewardmodels.MixedReward;
 import util.Pair;
 
@@ -43,12 +43,17 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	}
 	
 	@Override
-	public void setupAgent(MLKAgent agent) {
+	public void setupAgents() {
+		for(MLKAgent ag : agents.getAgents()) {
+			int i = prng().nextInt(getWidth());
+			int j = prng().nextInt(getHeight());
+	        state.addAgent(ag, i, j);
+		}
+	}
+	
+	@Override
+	public void addAgent(MLKAgent agent) {
 		agents.addAgent(agent);
-		RandomGenerator rg = prng();
-		int i = rg.nextInt(getWidth());
-		int j = rg.nextInt(getHeight());
-        state.addAgent(agent, i, j);
 	}
 	
 	protected void placeBlocks() {
@@ -67,23 +72,17 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	@Override
 	public void reset() {
 		state.reset();
-		RandomGenerator rg = prng();
-		for(MLKAgent ag : agents.getAgents()) {
-			int i = rg.nextInt(getWidth());
-			int j = rg.nextInt(getHeight());
-            state.addAgent(ag, i, j);
-		}
-		
+		setupAgents();
 		setupState();
 	}
 	
 
 	@Override
-	public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
-		Map<MLKAgent, Pair<Action, List<Event>>> results = new HashMap<>();
+	public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
+		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results = new HashMap<>();
 		
 		for (MLKAgent ag : agents.getAgents()) {
-			List<Event> events = new ArrayList<>();
+			List<ReactionEvent> events = new ArrayList<>();
 			Action2DMove action = (Action2DMove) actions.get(ag);
 			
 			Pair<Integer, Integer> newPosition = stateMoveAgent(ag, action);
@@ -100,7 +99,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		return state.getAgentPosition(agent).clone();
 	}
 	
-	protected void checkIfPushBlock(List<Event> events, Action2DMove action, Pair<Integer, Integer> position) {
+	protected void checkIfPushBlock(List<ReactionEvent> events, Action2DMove action, Pair<Integer, Integer> position) {
 		if (state.getValue(position) >= 1){
 			int nbBlocks = state.getValue(position);
 			Pair<Integer, Integer> newBlockPosition = newBlockPosition(position, action);
@@ -149,7 +148,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	}
 	
     @Override
-	protected State getState() {
+	public State getState() {
 		return state;
 	}
 	

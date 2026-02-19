@@ -32,5 +32,7 @@ open module marlkit.xp {
 	exports marlkit.pushtheblocktogether;
 	exports marlkit.listenorgo;
 	exports marlkit.uputuc;
+	exports marlkit.foraging;
+	exports marlkit.trade;
 	
 }

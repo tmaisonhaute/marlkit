@@ -16,7 +16,7 @@ import environment.state.State;
 import environment.state.State2DGridInt;
 import marlkit.preyVsHunter.events.HunterDistancePenalty;
 import marlkit.preyVsHunter.events.PreyCatchEvent;
-import rewardmodeling.Event;
+import rewardmodeling.ReactionEvent;
 import rewardmodels.FullyCooperativeReward;
 import util.Pair;
 
@@ -47,23 +47,29 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     @Override
     public void setupState() {
     }
+    
+    @Override
+    public void setupAgents() {
+    	for(MLKAgent ag : agents.getAgents()) {
+    		RandomGenerator rg = prng();
+            int i = rg.nextInt(getWidth());
+            int j = rg.nextInt(getHeight()/2);
+
+            if (ag instanceof PreyAgent) {
+                preyAgents.add((PreyAgent) ag);
+            }
+            if (ag instanceof HunterAgent) {
+                hunterAgents.add((HunterAgent) ag);
+                j += getHeight()/2;
+            }
+
+            state.addAgentwithVal(ag, i, j,getclassId(ag));
+    	}
+    }
 
     @Override
-    public void setupAgent(MLKAgent agent) {
+    public void addAgent(MLKAgent agent) {
         agents.addAgent(agent);
-        RandomGenerator rg = prng();
-        int i = rg.nextInt(getWidth());
-        int j = rg.nextInt(getHeight()/2);
-
-        if (agent instanceof PreyAgent) {
-            preyAgents.add((PreyAgent) agent);
-        }
-        if (agent instanceof HunterAgent) {
-            hunterAgents.add((HunterAgent) agent);
-            j += getHeight()/2;
-        }
-
-        state.addAgentwithVal(agent, i, j,getclassId(agent));
     }
 
     @Override
@@ -82,8 +88,8 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     }
 
     @Override
-    public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
-        Map<MLKAgent, Pair<Action, List<Event>>> results = new HashMap<>();
+    public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
+        Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results = new HashMap<>();
         moveAllAgents(actions);
         double hunterDistancePenaltyReward = AllHxHDistancePenalityRewardValue();
 		for (MLKAgent ag : hunterAgents) {
@@ -107,7 +113,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         }
     }
     
-    private void computeEventCatch(Map<MLKAgent, Pair<Action, List<Event>>> results){
+    private void computeEventCatch(Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results){
     	boolean caught = false;
     	
     	for (MLKAgent Hag : hunterAgents) {
@@ -312,7 +318,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
      *
      * @return The {@link State2DGridInt} representing agent positions and the environment state.
      */
-    protected State getState() {
+    public State getState() {
         return state;
     }
 }

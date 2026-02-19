@@ -1,10 +1,14 @@
 package simulation;
 
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
+
+import java.util.Optional;
 import java.util.logging.Level;
 
+import environment.MLKEnvironment;
+import environment.state.State;
 import madkit.kernel.Activator;
 import madkit.simulation.SimuOrganization;
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 import util.criteria.Criterion;
@@ -14,11 +18,12 @@ import util.criteria.Criterion;
  * Manages the execution cycle of observations, actions, learning, and episode boundaries.
  */
 public abstract class MLKScheduler extends TickBasedScheduler {
+	private MLKEnvironment env;
 	
-	private Activator agentSendInfo;
 	private Activator agentUpdatePolicy;
 	private Activator agentEndEpisode;
 
+	private Activator initEnvironment;
 	private Activator step;
 	private Activator reset;
 	private Activator atexit;
@@ -35,14 +40,13 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		getLogger().setLevel(Level.INFO);
 		super.onActivation();
 		final String roleAgent = "mlkagent";
-		agentSendInfo = new MethodActivator(getModelGroup(), roleAgent, "sendInfo");
-		addActivator(agentSendInfo);
 		agentEndEpisode = new MethodActivator(getModelGroup(), roleAgent, "endEpisode");
 		addActivator(agentEndEpisode);
 		agentUpdatePolicy = new MethodActivator(getModelGroup(), roleAgent, "updatePolicy");
 		addActivator(agentUpdatePolicy);
 		
-		
+		initEnvironment = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "init");
+		addActivator(initEnvironment);
 		step = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
 		addActivator(step);
 		reset = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "reset");
@@ -54,12 +58,12 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 
 	}
 
-	/**
-	 * This method is called by the agents to share information with the environment.
-	 * It triggers the agentSendInfo activator to execute.
-	 */
-	public void agentShareInformation() {
-		agentSendInfo.execute();
+	
+	@Override
+	public void onSimulationStart() {
+		super.onSimulationStart();
+		initEnvironment.execute();
+		env = (MLKEnvironment) getEnvironment();
 	}
 
 	/**
@@ -72,7 +76,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		step.execute();
 		agentUpdatePolicy.execute(counter);
 		if (getCriteriaEndEpisode().isMet()) {
-			getCriteriaEndSimulation().update(null);
+			getCriteriaEndSimulation().update(Optional.of(env.getState()));
 			agentEndEpisode.execute();
 			reset.execute();
 			getCriteriaEndEpisode().reset();
@@ -84,7 +88,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 			setPause(0);
 		}
 		counter++;
-		updateCriteria();
+		updateCriteria(Optional.of(env.getState()));
 		viewers.execute();
 		if (getCriteriaEndSimulation().isMet()) {
 			atexit.execute();
@@ -95,10 +99,21 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	/**
 	 * This method updates the criteria for starting and ending episodes and displays.
 	 */
-	protected void updateCriteria() {
-		getCriteriaEndEpisode().update(null);
-		getCriteriaStartDisplay().update(null);
-		getCriteriaEndDisplay().update(null);
+	protected void updateCriteria(Optional<State> state) {
+		getCriteriaEndEpisode().update(state);
+		getCriteriaStartDisplay().update(state);
+		getCriteriaEndDisplay().update(state);
+	}
+	
+	/**
+	 * This method updates the criteria when an episode ends.
+	 * This includes updating the criteria for ending the simulation and starting or ending the display.
+	 * @param state
+	 */
+	protected void updateOnEndEpisode(Optional<State> state) {
+		getCriteriaEndSimulation().update(state);
+		getCriteriaStartDisplay().update(state);
+		getCriteriaEndDisplay().update(state);
 	}
 	
 	/**

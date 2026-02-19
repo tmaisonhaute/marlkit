@@ -1,8 +1,8 @@
 package marlkit.pushtheblocktogether;
 
-import rewardmodeling.EventDefault;
+import rewardmodeling.ReactionEventDefault;
 
-public class TryPushEvent extends EventDefault {
+public class TryPushEvent extends ReactionEventDefault {
 	private static final double REWARDTRYPUSH = 0.0;
 
 	public TryPushEvent() {

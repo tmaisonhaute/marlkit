@@ -48,7 +48,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void sendInfo() {
-		((MLKEnvironment) getEnvironment()).setupAgent(this);
+		((MLKEnvironment) getEnvironment()).addAgent(this);
 	}
 
 	/**

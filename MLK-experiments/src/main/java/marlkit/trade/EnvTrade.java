@@ -9,7 +9,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import environment.EnvironmentStandard;
 import environment.state.State;
-import rewardmodeling.Event;
+import rewardmodeling.ReactionEvent;
 import rewardmodeling.RewardModel;
 import rewardmodels.FullyCooperativeReward;
 import util.Pair;
@@ -26,7 +26,6 @@ public class EnvTrade extends EnvironmentStandard {
 	}
 	
 	public EnvTrade(int width, int height) {
-//		this(width, height, new RewardConfigurationMixed());
 //		this(width, height, new MixedReward());
 		this(width, height, new FullyCooperativeReward());
 	}
@@ -57,7 +56,7 @@ public class EnvTrade extends EnvironmentStandard {
 	}
 
 	@Override
-	public void setupAgent(MLKAgent agent) {
+	public void addAgent(MLKAgent agent) {
 		agents.addAgent(agent);
 	}
 
@@ -68,9 +67,14 @@ public class EnvTrade extends EnvironmentStandard {
 			up.reset();
 		}
 	}
+	
+	@Override 
+	protected void setupAgents() {
+		//Nothing to do
+	}
 
 	@Override
-	public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
+	public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
 		this.lastActions = new HashMap<>(actions);
 		
 		state.updateState();
@@ -104,11 +108,11 @@ public class EnvTrade extends EnvironmentStandard {
 		}
 	}
 	
-	private Map<MLKAgent, Pair<Action, List<Event>>> computeEvents(Map<MLKAgent, ResourceQuantify> receivedResource, Map<MLKAgent, Action> actions) {
-		Map<MLKAgent, Pair<Action, List<Event>>> results = new HashMap<>();
+	private Map<MLKAgent, Pair<Action, List<ReactionEvent>>> computeEvents(Map<MLKAgent, ResourceQuantify> receivedResource, Map<MLKAgent, Action> actions) {
+		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results = new HashMap<>();
 		for(MLKAgent agent : receivedResource.keySet()){
-			Pair<Action, List<Event>> p = new Pair<>(actions.get(agent), new ArrayList<>());
-			Event e = new CollectResourceEvent(basePrices, receivedResource.get(agent));
+			Pair<Action, List<ReactionEvent>> p = new Pair<>(actions.get(agent), new ArrayList<>());
+			ReactionEvent e = new CollectResourceEvent(basePrices, receivedResource.get(agent));
 			p.getSecond().add(e);
 			results.put(agent, p);
 		}
@@ -116,7 +120,7 @@ public class EnvTrade extends EnvironmentStandard {
 	}
 
 	@Override
-	protected State getState() {
+	public State getState() {
 		return state;
 	}
 

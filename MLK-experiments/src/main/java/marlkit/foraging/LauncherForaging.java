@@ -1,4 +1,4 @@
-package marlkit.pushtheblock;
+package marlkit.foraging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +10,24 @@ import learning.algorithm.QLearning;
 import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedy;
 import madkit.simulation.EngineAgents;
+import madkit.simulation.SimuEnvironment;
+import rewardmodels.MixedReward;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
 
-@EngineAgents(scheduler = SchedulerPTB.class, environment = EnvPushTheBlock.class, model = MLKModel.class, viewers = {
-		ViewerPTB.class })
-public class LauncherPTB extends MLKLauncher {
+@EngineAgents(scheduler = SchedulerForaging.class, model = MLKModel.class, viewers = {
+		ViewerForaging.class })
+public class LauncherForaging extends MLKLauncher {
 
+	@Override
+	protected <E extends SimuEnvironment> E onLaunchEnvironment() {
+//		EnvForaging env = new EnvForaging(5, 5, new ScenarioUniform(3), new MixedReward());
+		EnvForaging env = new EnvForaging(5, 5, new ScenarioDeterministic1(), new MixedReward());
+		launchAgent(env, Integer.MAX_VALUE);
+		return (E) env;
+	}
+	
 	@Override
 	protected void onLaunchSimulatedAgents() {
 		Action goLeft = Action2DMove.left(); 
@@ -25,14 +35,11 @@ public class LauncherPTB extends MLKLauncher {
 		Action goUp = Action2DMove.up(); 
 		Action goDown = Action2DMove.down();
 		List<Action> possibleActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
-		int nbAgents = 1;
+		int nbAgents = 2;
 		
 		for (int i = 0; i < nbAgents; i++) {
 			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedy(1.0, 0.001));
-        	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.95);
-//        	ActorNetwork policy = new ActorNetwork(4, 20, 
-//        			new WrapperVectorObservationPositionsValues(false), possibleActions);
-//        	Reinforce algorithm = new Reinforce(policy, 0.01, 0.95);
+        	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.99);
 
 			AgentStandard ag = new AgentStandard(policy, algorithm);
 			launchAgent(ag);
@@ -48,6 +55,3 @@ public class LauncherPTB extends MLKLauncher {
 	}
 
 }
-
-
-

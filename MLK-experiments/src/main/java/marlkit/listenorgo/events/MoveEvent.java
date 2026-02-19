@@ -2,9 +2,9 @@ package marlkit.listenorgo.events;
 
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
-import rewardmodeling.Event;
+import rewardmodeling.ReactionEvent;
 
-public class MoveEvent extends Event {
+public class MoveEvent extends ReactionEvent {
 	private static final double REWARD_CORRECT = 10.0;
 	private static final double REWARD_INCORRECT = -10.0;
 	

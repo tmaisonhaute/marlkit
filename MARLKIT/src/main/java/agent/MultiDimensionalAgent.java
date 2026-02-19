@@ -56,7 +56,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 */
 	@Override
 	public void sendInfo() {
-        ((MLKEnvironment) getEnvironment()).setupAgent(this);
+        ((MLKEnvironment) getEnvironment()).addAgent(this);
     }
 
 	/**

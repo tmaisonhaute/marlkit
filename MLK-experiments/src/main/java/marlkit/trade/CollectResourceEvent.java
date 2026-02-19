@@ -4,9 +4,9 @@ import java.util.Map;
 
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
-import rewardmodeling.Event;
+import rewardmodeling.ReactionEvent;
 
-public class CollectResourceEvent extends Event{
+public class CollectResourceEvent extends ReactionEvent{
 	private double rewardValue;
 	
 

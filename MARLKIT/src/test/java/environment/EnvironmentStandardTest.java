@@ -263,10 +263,6 @@ public class EnvironmentStandardTest {
 //			
 //		}
 //
-//		@Override
-//		public void setupAgent(MLKAgent agent) {
-//			// TODO Auto-generated method stub
-//			
-//		}
+//		
 //    }
 }

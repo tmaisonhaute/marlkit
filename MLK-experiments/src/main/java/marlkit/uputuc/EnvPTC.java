@@ -15,7 +15,7 @@ import learning.Experience;
 import marlkit.uputuc.unite.UniteConsumption;
 import marlkit.uputuc.unite.UniteProduction;
 import marlkit.uputuc.unite.UniteTransformation;
-import rewardmodeling.Event;
+import rewardmodeling.ReactionEvent;
 import rewardmodels.MixedReward;
 import util.Pair;
 
@@ -47,7 +47,7 @@ public class EnvPTC extends EnvironmentStandard {
     }
 
     @Override
-    public void setupAgent(MLKAgent agent) {
+    public void addAgent(MLKAgent agent) {
         if (agent instanceof UniteProduction) {
             productionUnits.add((UniteProduction) agent);
         } else if (agent instanceof UniteTransformation) {
@@ -126,14 +126,18 @@ public class EnvPTC extends EnvironmentStandard {
 
 	@Override
 	protected void setupState() {
+		// TODO Auto-generated method stub	
+	}
+	
+	@Override 
+	protected void setupAgents() { 
 		// TODO Auto-generated method stub
-		
 	}
 
 
 
 	@Override
-	public Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions) {
+	public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -141,7 +145,7 @@ public class EnvPTC extends EnvironmentStandard {
 
 
 	@Override
-	protected State getState() {
+	public State getState() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -13,10 +13,9 @@ import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import environment.reward.Reward;
-import environment.state.State;
 import learning.Experience;
 import madkit.simulation.environment.Environment2D;
-import rewardmodeling.Event;
+import rewardmodeling.ReactionEvent;
 import rewardmodeling.RewardModel;
 import util.Pair;
 
@@ -31,9 +30,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	private boolean logSetup = false;
 	private final int EPISODES_BEFORE_LOG = 1_000;
 	
-//	public EnvironmentStandard(int width, int height) {
-//		this(width, height, null);
-//	}
+
 	
 	/**
 	 * Creates a new environment with the specified dimensions and interaction method.
@@ -42,7 +39,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 * @param height the height of the environment
 	 * @param rewardModel the agent rewardStructure
 	 */
-	public EnvironmentStandard(int width, int height, RewardModel rewardModel) {
+	protected EnvironmentStandard(int width, int height, RewardModel rewardModel) {
 		super(width, height);
 		this.rewardModel = rewardModel;
     }
@@ -62,7 +59,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 * Sets up an agent in the environment by adding it to the agents group.
 	 */
 	@Override
-	public void setupAgent(MLKAgent agent) {
+	public void addAgent(MLKAgent agent) {
 		agents.addAgent(agent);
 	}
 
@@ -72,6 +69,17 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 */
 	protected abstract void setupState();
 
+	/**
+	 * Sets up the agents in the environment.
+	 */
+	protected abstract void setupAgents();
+	
+	@Override
+	public void init() {
+		setupState(); 
+		setupAgents();
+	}
+	
 	/**
 	 * Executes one environment step where all agents: 1.observe, 2.act and 3.learn from the resulting experience.
 	 *
@@ -85,7 +93,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		Map<MLKAgent, Action> actions = agents.allAgentsTakeAction(observations);
 		
 		//Reaction
-		Map<MLKAgent, Pair<Action, List<Event>>> result = dynamics(actions);
+		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> result = dynamics(actions);
 		
 		//Reward computation
 		Map<MLKAgent, Pair<Action, Reward>> rewards = rewardComputation(result);
@@ -98,19 +106,19 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	       
 	}
 	
-	protected Map<MLKAgent, Pair<Action, Reward>> rewardComputation(Map<MLKAgent, Pair<Action, List<Event>>> result) {
-		Pair<Map<MLKAgent, Action>, Map<MLKAgent, List<Event>>> splitResult = splitAgentsActionsEvents(result);
+	protected Map<MLKAgent, Pair<Action, Reward>> rewardComputation(Map<MLKAgent, Pair<Action, List<ReactionEvent>>> result) {
+		Pair<Map<MLKAgent, Action>, Map<MLKAgent, List<ReactionEvent>>> splitResult = splitAgentsActionsEvents(result);
 		Map<MLKAgent, Action> agentsActions = splitResult.getFirst();
-		Map<MLKAgent, List<Event>> agentsEvents = splitResult.getSecond();
-		Map<MLKAgent, Reward> rewards = rewardModel.computeRewards(agentsEvents);
+		Map<MLKAgent, List<ReactionEvent>> agentsEvents = splitResult.getSecond();
+		Map<MLKAgent, Reward> rewards = rewardModel.rewardFunctions(agentsEvents);
 		
 		return combineActionReward(agentsActions, rewards);
 	}
 	
-	private Pair<Map<MLKAgent, Action>, Map<MLKAgent, List<Event>>> splitAgentsActionsEvents(Map<MLKAgent, Pair<Action, List<Event>>> result) {
+	private Pair<Map<MLKAgent, Action>, Map<MLKAgent, List<ReactionEvent>>> splitAgentsActionsEvents(Map<MLKAgent, Pair<Action, List<ReactionEvent>>> result) {
 		Map<MLKAgent, Action> agentsActions = new HashMap<>();
-        Map<MLKAgent, List<Event>> agentsEvents = new HashMap<>();
-        for (Map.Entry<MLKAgent, Pair<Action, List<Event>>> entry : result.entrySet()) {
+        Map<MLKAgent, List<ReactionEvent>> agentsEvents = new HashMap<>();
+        for (Map.Entry<MLKAgent, Pair<Action, List<ReactionEvent>>> entry : result.entrySet()) {
         	agentsActions.put(entry.getKey(), entry.getValue().getFirst());
             agentsEvents.put(entry.getKey(), entry.getValue().getSecond());
         }
@@ -274,7 +282,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 * @param actions A map of each agent to their action.
 	 * @return A map of each agent to their action and events.
 	 */
-	public abstract Map<MLKAgent, Pair<Action, List<Event>>> dynamics(Map<MLKAgent, Action> actions);
+	public abstract Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions);
 	
 	protected void sendFeedbackExperience(Map<MLKAgent,Experience> experiences){
 		for (Map.Entry<MLKAgent, Experience> entry : experiences.entrySet()) {
@@ -301,11 +309,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	        Pair<Action, Reward> actionRewardPair = actionRewardMap.get(agent);
 	
 	        if (actionRewardPair != null) {
-	            Experience experience = new Experience(
-	                    observation,
-	                    actionRewardPair.getFirst(),
-	                    actionRewardPair.getSecond()
-	            );
+	            Experience experience = new Experience(observation, actionRewardPair.getFirst(), actionRewardPair.getSecond());
 	            combinedMap.put(agent, experience);
 	        }
 	    }
@@ -351,10 +355,5 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		getState().print();
 	}
 	
-	/**
-	 * Returns the current state of the environment.
-	 *
-	 * @return the environment state
-	 */
-	protected abstract State getState();
+	
 }

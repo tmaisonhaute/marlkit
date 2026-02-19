@@ -1,8 +1,8 @@
 package marlkit.listenorgo.events;
 
-import rewardmodeling.EventDefault;
+import rewardmodeling.ReactionEventDefault;
 
-public class ListenEvent extends EventDefault {
+public class ListenEvent extends ReactionEventDefault {
     private static final double REWARD_VALUE = -0.1;
 
 	public ListenEvent() {
