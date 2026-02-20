@@ -131,7 +131,7 @@ public class MonteCarlo implements Algorithm {
 	public void endEpisode(Batch batch, AgentLogger logger) {
 		learnOnBatch(batch, logger);
 		logger.info("size of batch : " + batch.getExperiences().size());
-        logger.info(policy.getExplorationStrategy().toString());
+        logger.info(policy.getExplorationStrategy().getLoggerInfo());
         logger.info("size Q: " + getPolicy().getTable().size());
 		batch.clear();
 	}

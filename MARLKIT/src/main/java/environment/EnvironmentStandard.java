@@ -156,6 +156,9 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 			learningData.clearEpisodes();
 		}
 	}
+	
+	@Override
+	public void onEpisodeEnd() {}
 
 	/**
 	 * Called when the environment ends, typically at the end of a simulation run.

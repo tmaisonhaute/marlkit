@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import learning.policy.explorationsettings.EpsilonGreedy;
+import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 import learning.policy.explorationsettings.ExplorationStrategy;
 import learning.valuefunction.QTable;
 import util.Pair;
@@ -22,7 +22,7 @@ public class QValueBasedPolicy implements Policy{
 	}
 	
 	public QValueBasedPolicy(List<Action> actionsSet, double defaultValue) {
-		this(actionsSet, defaultValue, new EpsilonGreedy());
+		this(actionsSet, defaultValue, new EpsilonGreedyExponentialDecay());
 	}
 	
 	public QValueBasedPolicy(List<Action> actionsSet, double defaultValue, ExplorationStrategy explorationStrategy) {

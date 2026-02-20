@@ -191,7 +191,7 @@ public class QLearning implements Algorithm {
     @Override
     public void endEpisode(Batch batch, AgentLogger logger) {
         policy.getExplorationStrategy().update();
-        logger.info(policy.getExplorationStrategy().toString());
+        logger.info(policy.getExplorationStrategy().getLoggerInfo());
         logger.info("size Q: " + policy.getTable().size());
         batch.clear();
     }

@@ -1,5 +1,7 @@
 package simulation;
 
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
+
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -7,7 +9,6 @@ import environment.MLKEnvironment;
 import environment.state.State;
 import madkit.kernel.Activator;
 import madkit.simulation.SimuOrganization;
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 import util.criteria.Criterion;
@@ -25,7 +26,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private Activator initEnvironment;
 	private Activator step;
 	private Activator reset;
-	private Activator atexit;
+	private Activator endEpisode;
+	private Activator envEnd;
 
 	private MethodActivator viewers;
 	
@@ -50,8 +52,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		addActivator(step);
 		reset = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "reset");
 		addActivator(reset);
-		atexit = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
-		addActivator(atexit);
+		endEpisode = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEpisodeEnd");
+		addActivator(endEpisode);
+		envEnd = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
+		addActivator(envEnd);
 		viewers = new MethodActivator(getEngineGroup(), SimuOrganization.VIEWER_ROLE, "display");
 		addActivator(viewers);
 
@@ -61,6 +65,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	@Override
 	public void onSimulationStart() {
 		super.onSimulationStart();
+		getLogger().info("Simulation has Started");
 		initEnvironment.execute();
 		env = (MLKEnvironment) getEnvironment();
 	}
@@ -74,25 +79,62 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		super.doSimulationStep();
 		step.execute();
 		agentUpdatePolicy.execute(counter);
-		if (getCriteriaEndEpisode().isMet()) {
-			updateOnEndEpisode(Optional.of(env.getState()));
-			agentEndEpisode.execute();
-			reset.execute();
-			getCriteriaEndEpisode().reset();
-		}
+		
+		handleEndEpisode();
+		handleDisplay();
+		
+		counter++;
+		getCriteriaEndEpisode().update(Optional.of(env.getState()));
+		viewers.execute();
+		handleEndSimulation();
+	}
+	
+	/**
+	 * Handles the logic for displaying the simulation based on the criteria for starting and ending the display.
+	 */
+	protected void handleDisplay() {
 		if (getCriteriaStartDisplay().isMet()) {
 			setPause(getPauseDisplayValue());
 		}
 		else if(getCriteriaEndDisplay().isMet()) {
 			setPause(0);
 		}
-		counter++;
-		getCriteriaEndEpisode().update(Optional.of(env.getState()));
-		viewers.execute();
+	}
+	
+	/**
+	 * Handles the logic for ending an episode based on the criterion for ending an episode.
+	 * If the criterion is met, it calls the episodeEnded method to update the criteria and reset the environment.
+	 */
+	protected void handleEndEpisode() {
+		if (getCriteriaEndEpisode().isMet()) {
+			episodeEnded();	
+		}
+	}
+	
+	/**
+	 * Handles the logic for ending the simulation based on the criterion for ending the simulation.
+	 */
+	protected void handleEndSimulation() {
 		if (getCriteriaEndSimulation().isMet()) {
-			atexit.execute();
+			envEnd.execute();
 			onEnd();
 		}
+	}
+	
+	/**
+	 * This method is called when an episode ends. 
+	 * <p>
+	 * It updates the criteria for ending the simulation and start/stop display, 
+	 * executes the agent's endEpisode method, resets the environment, and logs the end of the episode.
+	 * </p>
+	 */
+	protected void episodeEnded() {
+		updateOnEndEpisode(Optional.of(env.getState()));
+		endEpisode.execute();
+		agentEndEpisode.execute();
+		reset.execute();
+		getCriteriaEndEpisode().reset();
+		getLogger().info("Episode ended");
 	}
 	
 	/**

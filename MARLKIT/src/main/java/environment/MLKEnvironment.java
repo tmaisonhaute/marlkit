@@ -54,6 +54,8 @@ public interface MLKEnvironment {
 	 */
 	public State getState();
 
+	public void onEpisodeEnd();
+	
 	/**
 	 * Collect progress made by agents to make statistics.
 	 * You can Override this method to add extra data to the learning data, by calling {@link LearningData#addStep(StepData)},

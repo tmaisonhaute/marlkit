@@ -7,7 +7,7 @@ import agent.AgentStandard;
 import agent.action.Action;
 import learning.algorithm.QLearning;
 import learning.policy.QValueBasedPolicy;
-import learning.policy.explorationsettings.EpsilonGreedy;
+import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 import madkit.simulation.EngineAgents;
 import madkit.simulation.SimuEnvironment;
 import rewardmodels.FullyCooperativeReward;
@@ -41,7 +41,7 @@ public class LauncherTrade extends MLKLauncher {
 		int nbAgents = 3;
 		
 		for (int i = 0; i < nbAgents; i++) {
-			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedy(1.0, 0.005));
+			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedyExponentialDecay(1.0, 0.005));
         	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.95);
 			AgentStandard ag = new AgentStandard(policy, algorithm);
 			launchAgent(ag);

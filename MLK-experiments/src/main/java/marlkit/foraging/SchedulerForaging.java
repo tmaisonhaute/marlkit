@@ -8,12 +8,12 @@ import util.criteria.ReachTimeCriterion;
 
 public class SchedulerForaging extends MLKScheduler {
 	
-	public static final int EPISODE_DURATION = 10;
-	public static final int MINIMUM_STEP_BEFORE_VIEW = 0;//1000;
-	public static final int UPDATE_INTERVAL = 1000;
-	public static final int DISPLAYED_EPISODES = 1;
-	public static final int PAUSE_DISPLAY_VALUE = 100;
-	public static final int MAXIMUM_EPISODE_COUNT = 100_000;
+	public static final int EPISODE_DURATION = 100;
+	public static final int MINIMUM_STEP_BEFORE_VIEW = 100_000;
+	public static final int UPDATE_INTERVAL = 50_000;
+	public static final int DISPLAYED_EPISODES = 2;
+	public static final int PAUSE_DISPLAY_VALUE = 300;
+	public static final int MAXIMUM_EPISODE_COUNT = 2000_000;
 
 	private final Criterion criteriaEndEpisode = Criteria.or(new ReachTimeCriterion(EPISODE_DURATION), 
 			new AllCollectedCriterion());

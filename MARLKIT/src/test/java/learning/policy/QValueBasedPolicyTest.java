@@ -13,7 +13,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Action2DMove;
 import environment.observation.ObservationPositionValue;
-import learning.policy.explorationsettings.EpsilonGreedy;
+import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 import util.Pair;
 import util.Tuple;
 
@@ -63,7 +63,7 @@ public class QValueBasedPolicyTest {
         when(agent.prng()).thenReturn(random);
         
         // Use epsilon = 0 to always exploit
-        EpsilonGreedy noExploration = new EpsilonGreedy(0.0);
+        EpsilonGreedyExponentialDecay noExploration = new EpsilonGreedyExponentialDecay(0.0);
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, noExploration);
         policy.init(agent);
         
@@ -142,7 +142,7 @@ public class QValueBasedPolicyTest {
     public void givenExplorationStrategy_whenGetExplorationStrategy_thenCorrectStrategyReturned() {
         // Given
         List<Action> actionSet = Arrays.asList(Action2DMove.up());
-        EpsilonGreedy strategy = new EpsilonGreedy(0.1);
+        EpsilonGreedyExponentialDecay strategy = new EpsilonGreedyExponentialDecay(0.1);
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, strategy);
         
         // When & Then
@@ -164,7 +164,7 @@ public class QValueBasedPolicyTest {
         when(agent.prng()).thenReturn(random);
         
         // High epsilon for lots of exploration
-        EpsilonGreedy highExploration = new EpsilonGreedy(1.0);
+        EpsilonGreedyExponentialDecay highExploration = new EpsilonGreedyExponentialDecay(1.0);
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, highExploration);
         policy.init(agent);
         

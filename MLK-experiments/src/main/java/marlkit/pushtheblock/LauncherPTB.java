@@ -8,7 +8,7 @@ import agent.action.Action;
 import agent.action.Action2DMove;
 import learning.algorithm.QLearning;
 import learning.policy.QValueBasedPolicy;
-import learning.policy.explorationsettings.EpsilonGreedy;
+import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
@@ -28,7 +28,7 @@ public class LauncherPTB extends MLKLauncher {
 		int nbAgents = 1;
 		
 		for (int i = 0; i < nbAgents; i++) {
-			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedy(1.0, 0.001));
+			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedyExponentialDecay(1.0, 0.001));
         	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.95);
 //        	ActorNetwork policy = new ActorNetwork(4, 20, 
 //        			new WrapperVectorObservationPositionsValues(false), possibleActions);

@@ -8,7 +8,7 @@ import agent.action.Action;
 import agent.action.Action2DMove;
 import learning.algorithm.Sarsa;
 import learning.policy.QValueBasedPolicy;
-import learning.policy.explorationsettings.EpsilonGreedy;
+import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
@@ -27,13 +27,13 @@ public class LauncherPVH extends MLKLauncher {
         int nbPreyAgents = 1 ;
 
         for (int i = 0; i < nbHunterAgents; i++) {
-            QValueBasedPolicy policy = new QValueBasedPolicy(possibleHunterActions, 1.0, new EpsilonGreedy(1.0, 0.001));
+            QValueBasedPolicy policy = new QValueBasedPolicy(possibleHunterActions, 1.0, new EpsilonGreedyExponentialDecay(1.0, 0.001));
         	Sarsa algorithm = new Sarsa(policy, 0.2, 0.95);
             AgentStandard ag = new HunterAgent(policy, algorithm);
             launchAgent(ag);
         }
         for (int i = 0; i < nbPreyAgents; i++) {
-        	QValueBasedPolicy policy = new QValueBasedPolicy(possiblePreyActions, 1.0, new EpsilonGreedy(1.0, 0.001));
+        	QValueBasedPolicy policy = new QValueBasedPolicy(possiblePreyActions, 1.0, new EpsilonGreedyExponentialDecay(1.0, 0.001));
         	Sarsa algorithm = new Sarsa(policy, 0.2, 0.95);
             AgentStandard ag = new PreyAgent(policy, algorithm);
             launchAgent(ag);

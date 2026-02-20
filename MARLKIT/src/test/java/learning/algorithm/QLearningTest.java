@@ -18,7 +18,7 @@ import environment.reward.RewardStandard;
 import learning.Batch;
 import learning.Experience;
 import learning.policy.QValueBasedPolicy;
-import learning.policy.explorationsettings.EpsilonGreedy;
+import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 import madkit.kernel.AgentLogger;
 import util.Pair;
 import util.Tuple;
@@ -70,7 +70,7 @@ public class QLearningTest {
             Action2DMove.down()
         );
         
-        QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedy(0.0));
+        QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.0));
         QLearning qLearning = new QLearning(policy, actionSet, 0.1, 0.95);
         
         MLKAgent agent = mock(MLKAgent.class);
@@ -138,7 +138,7 @@ public class QLearningTest {
     public void givenQLearning_whenEndEpisode_thenBatchCleared() {
         // Given
         List<Action> actionSet = Arrays.asList(Action2DMove.up());
-        QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedy(0.1));
+        QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.1));
         QLearning qLearning = new QLearning(policy, actionSet);
         
         MLKAgent agent = mock(MLKAgent.class);
@@ -167,7 +167,7 @@ public class QLearningTest {
     public void givenQLearning_whenEndEpisode_thenEpsilonUpdated() {
         // Given
         List<Action> actionSet = Arrays.asList(Action2DMove.up());
-        EpsilonGreedy epsilonGreedy = new EpsilonGreedy(1.0, 0.1); // 10% decay
+        EpsilonGreedyExponentialDecay epsilonGreedy = new EpsilonGreedyExponentialDecay(1.0, 0.1); // 10% decay
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, epsilonGreedy);
         QLearning qLearning = new QLearning(policy, actionSet);
         
@@ -194,7 +194,7 @@ public class QLearningTest {
     public void givenMultipleUpdates_whenLearnOnBatch_thenQValuesConverge() {
         // Given
         List<Action> actionSet = Arrays.asList(Action2DMove.up(), Action2DMove.down());
-        QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedy(0.0));
+        QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.0));
         QLearning qLearning = new QLearning(policy, actionSet, 0.5, 0.9); // Higher learning rate
         
         MLKAgent agent = mock(MLKAgent.class);
@@ -228,7 +228,7 @@ public class QLearningTest {
     public void givenQLearningWithMaxNextQ_whenLearnOnBatch_thenUsesMaxQValue() {
         // Given
         List<Action> actionSet = Arrays.asList(Action2DMove.up(), Action2DMove.down());
-        QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedy(0.0));
+        QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.0));
         QLearning qLearning = new QLearning(policy, actionSet, 1.0, 0.9); // alpha=1 for easier calculation
         
         MLKAgent agent = mock(MLKAgent.class);

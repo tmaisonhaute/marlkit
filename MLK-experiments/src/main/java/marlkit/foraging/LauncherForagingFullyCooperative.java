@@ -8,22 +8,21 @@ import agent.action.Action;
 import agent.action.Action2DMove;
 import learning.algorithm.QLearning;
 import learning.policy.QValueBasedPolicy;
-import learning.policy.explorationsettings.EpsilonGreedy;
+import learning.policy.explorationsettings.EpsilonGreedyPowerDecay;
 import madkit.simulation.EngineAgents;
 import madkit.simulation.SimuEnvironment;
-import rewardmodels.MixedReward;
+import rewardmodels.FullyCooperativeReward;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
 
 @EngineAgents(scheduler = SchedulerForaging.class, model = MLKModel.class, viewers = {
 		ViewerForaging.class })
-public class LauncherForaging extends MLKLauncher {
+public class LauncherForagingFullyCooperative extends MLKLauncher {
 
 	@Override
 	protected <E extends SimuEnvironment> E onLaunchEnvironment() {
-//		EnvForaging env = new EnvForaging(5, 5, new ScenarioUniform(3), new MixedReward());
-		EnvForaging env = new EnvForaging(5, 5, new ScenarioDeterministic1(), new MixedReward());
+		EnvForaging env = new EnvForaging(5, 6, new ScenarioDeterministic1(), new FullyCooperativeReward());
 		launchAgent(env, Integer.MAX_VALUE);
 		return (E) env;
 	}
@@ -38,8 +37,8 @@ public class LauncherForaging extends MLKLauncher {
 		int nbAgents = 2;
 		
 		for (int i = 0; i < nbAgents; i++) {
-			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedy(1.0, 0.001));
-        	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.99);
+			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedyPowerDecay(0.5));
+        	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.995);
 
 			AgentStandard ag = new AgentStandard(policy, algorithm);
 			launchAgent(ag);
@@ -47,7 +46,8 @@ public class LauncherForaging extends MLKLauncher {
 	}
 
 	public static void main(String[] args) {
-		executeThisAgent("--agentLogLevel", "INFO"
+		executeThisAgent("--agentLogLevel"
+				, "INFO"
 //				,"--noLog"
 				, "--start"
 //				,"--viewers",MyViewer.class.getName()
