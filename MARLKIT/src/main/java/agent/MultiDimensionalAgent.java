@@ -27,9 +27,10 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	static final String DEFAULT_TAG = "default";
 	
 	/**
-	 * Creates a new multi-dimensional agent with a default policy.
+	 * Creates a new multi-dimensional agent with a default policy and algorithm.
 	 *
 	 * @param policy the default policy for this agent
+	 * @param algorithm the default algorithm for this agent
 	 */
 	public MultiDimensionalAgent(Policy policy, Algorithm algorithm) {
 		super();
@@ -53,7 +54,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 
 
 	/**
-	 * Sends agent information to the environment for setup.
+	 * Registers this agent with its environment so the environment can track it.
 	 */
 	@Override
 	public void notifySelfToEnvironment() {
@@ -113,17 +114,28 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
         return policies.get(tag);
 	}
 
+	/**
+	 * Returns the default algorithm.
+	 *
+	 * @return the default algorithm
+	 */
 	@Override
 	public Algorithm getAlgorithm() {
 		return getAlgorithm(DEFAULT_TAG);
 	}
 
+	/**
+	 * Returns the algorithm associated with the given tag.
+	 *
+	 * @param tag the algorithm identifier
+	 * @return the algorithm, or null if not found
+	 */
 	public Algorithm getAlgorithm(String tag) {
 		return algorithms.get(tag);
 	}
 
 	/**
-	 * Initializes all policies with necessary parameters.
+	 * Initializes all policies and algorithms with necessary parameters.
 	 */
 	@Override
 	public void initializeAll() {
@@ -182,6 +194,11 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 		getMLKEnvironment().influence(this, action);
 	}
 
+	/**
+	 * Executes the action selection and influence process using the policy associated with the given tag.
+	 *
+	 * @param tag the policy identifier to use for action selection
+	 */
 	public void takeAction(String tag) {
 		Observation obs = getMLKEnvironment().getObservation(this);
 		Action action = selectAction(tag, obs);
@@ -211,7 +228,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	/**
 	 * Records an experience using the default policy.
 	 *
-	 * @param obs the observation received
+	 * @param input the PolicyInput received
 	 * @param act the action taken
 	 * @param rew the reward received
 	 */

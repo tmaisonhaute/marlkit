@@ -1,7 +1,5 @@
 package simulation;
 
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
-
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -9,6 +7,7 @@ import environment.MLKEnvironment;
 import environment.state.State;
 import madkit.kernel.Activator;
 import madkit.simulation.SimuOrganization;
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 import util.criteria.Criterion;
@@ -22,7 +21,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	
 	private Activator initEnvironment;
 	private Activator computeObservations;
-	private Activator step;
+	private Activator envReaction;
 	private Activator reset;
 	private Activator clearPreviousStepVariables;
 	private Activator envEndEpisode;
@@ -50,8 +49,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		addActivator(initEnvironment);
 		computeObservations = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "computeObservations");
 		addActivator(computeObservations);
-		step = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
-		addActivator(step);
+		envReaction = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
+		addActivator(envReaction);
 		clearPreviousStepVariables = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "clearStepVariables");
 		addActivator(clearPreviousStepVariables);
 		reset = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "reset");
@@ -75,6 +74,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	}
 
 	
+	/**
+	 * Called when the simulation starts.
+	 * Initializes the environment and stores a reference to it.
+	 */
 	@Override
 	public void onSimulationStart() {
 		super.onSimulationStart();
@@ -84,8 +87,16 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	}
 
 	/**
-	 * This methods called the step method of the environment and updates the agents' policies.
-	 * It also checks the criteria for ending an episode and starting or ending display.
+	 * Executes one full simulation step with the following cycle:
+	 * <ol>
+	 *   <li>Clear previous step variables in the environment</li>
+	 *   <li>Environment computes observations for all agents</li>
+	 *   <li>Agents observe, select, and send their actions (influences) to the environment</li>
+	 *   <li>Environment processes dynamics, computes rewards, and stores experiences</li>
+	 *   <li>Agents collect their experiences from the environment</li>
+	 *   <li>Agents update their policies based on accumulated experiences</li>
+	 *   <li>Handle episode end, display, criteria updates, and simulation end</li>
+	 * </ol>
 	 */
 	@Override
 	public void doSimulationStep() {
@@ -97,7 +108,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		agentAct.execute();
 		
-		step.execute();
+		envReaction.execute();
 		
 		agentCollectExperience.execute();
 		
@@ -163,9 +174,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	}
 	
 	/**
-	 * This method updates the criteria when an episode ends.
+	 * Updates the criteria when an episode ends.
 	 * This includes updating the criteria for ending the simulation and starting or ending the display.
-	 * @param state
+	 *
+	 * @param state the current environment state, wrapped in an Optional
 	 */
 	protected void updateOnEndEpisode(Optional<State> state) {
 		getCriteriaEndSimulation().update(state);

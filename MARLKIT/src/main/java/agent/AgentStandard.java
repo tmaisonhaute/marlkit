@@ -20,9 +20,10 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	protected Batch pastExperiences;
 	
 	/**
-	 * Creates a new standard agent with the specified policy.
+	 * Creates a new standard agent with the specified policy and algorithm.
 	 *
 	 * @param policy the learning policy for this agent
+	 * @param algorithm the learning algorithm for this agent
 	 */
 	public AgentStandard(Policy policy, Algorithm algorithm) {
 		super();
@@ -33,7 +34,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	
 	/**
 	 * Called when the agent is activated in the simulation.
-	 * Requests the agent role and initializes the policy.
+	 * Requests the agent role, registers itself with the environment, and initializes its policy and algorithm.
 	 */
 	@Override
 	protected void onActivation() {
@@ -43,7 +44,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	}
 	
 	/**
-	 * Sends agent information to the environment for setup.
+	 * Registers this agent with its environment so the environment can track it.
 	 */
 	@Override
 	public void notifySelfToEnvironment() {
@@ -103,7 +104,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	}
 
 	/**
-	 * Initializes the agent's policy with necessary parameters.
+	 * Initializes the agent's policy and algorithm with necessary parameters.
 	 */
 	public void initializeAll() {
 		this.policy.init(this);

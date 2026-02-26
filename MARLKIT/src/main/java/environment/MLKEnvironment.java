@@ -36,16 +36,34 @@ public interface MLKEnvironment {
 	public abstract void reset();
 	
 	/**
-	 * Sets up an agent in the environment.
+	 * Registers an agent with the environment.
+	 * Called by agents during their activation to make themselves known to the environment.
 	 *
-	 * @param agent the agent to set up
+	 * @param agent the agent to register
 	 */
 	void addAgent(MLKAgent agent);
 	
 	
+	/**
+	 * Computes observations for all agents based on the current state.
+	 * Must be called before agents call {@link #getObservation(MLKAgent)}.
+	 */
 	public abstract void computeObservations();
+	
+	/**
+	 * Returns the precomputed observation for the given agent.
+	 *
+	 * @param agent the agent to get the observation for
+	 * @return the agent's observation
+	 */
 	public abstract Observation getObservation(MLKAgent agent);
 	
+	/**
+	 * Records an action chosen by an agent as its influence on the environment.
+	 *
+	 * @param agent the agent performing the action
+	 * @param action the action chosen by the agent
+	 */
 	public abstract void influence(MLKAgent agent, Action action);
 	
 	/**
@@ -58,9 +76,7 @@ public interface MLKEnvironment {
 	
 	
 	/**
-	 * Executes one step in the environment, where agents observe, act, and receive rewards.
-	 *
-	 * @return a map of agents to their experiences from this step
+	 * Executes one step in the environment, performs reaction to the influence of agents and computes their rewards.
 	 */
 	public abstract void step();
 	
@@ -71,8 +87,15 @@ public interface MLKEnvironment {
 	 */
 	public State getState();
 
+	/**
+	 * Clears all temporary data (observations, actions, experiences) from the previous step.
+	 * Called at the beginning of each simulation step.
+	 */
 	public void clearStepVariables();
 	
+	/**
+	 * Called when an episode ends. Subclasses can override this to perform episode-end cleanup.
+	 */
 	public void onEpisodeEnd();
 	
 	/**

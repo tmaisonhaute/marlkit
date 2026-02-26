@@ -55,7 +55,7 @@ public interface MLKAgent {
 	public void setAlgorithm(Algorithm algorithm);
 	
 	/**
-	 * Initializes the agent's policy with necessary parameters.
+	 * Initializes the agent's policy and algorithm with necessary parameters.
 	 */
 	public void initializeAll();
 	
@@ -77,6 +77,9 @@ public interface MLKAgent {
 	
 	
 	
+	/**
+	 * Observes the environment, selects an action, and sends it as an influence to the environment.
+	 */
 	public void takeAction();
 	
 	/**
@@ -85,6 +88,11 @@ public interface MLKAgent {
 	public void collectExperience();
 	
 	
+	/**
+	 * Returns the environment this agent belongs to, cast to {@link MLKEnvironment}.
+	 *
+	 * @return the agent's environment
+	 */
 	public MLKEnvironment getMLKEnvironment();
 	
 	/**
