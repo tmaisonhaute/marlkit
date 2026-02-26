@@ -20,10 +20,6 @@ public abstract class State2DGrid<T> implements State{
 	protected boolean observeAgentsPositions = false;
 	protected Map<MLKAgent, Pair<Integer, Integer>> agentsPosition = new HashMap<>();
 	
-	/**
-	 * Resets the grid to its initial state.
-	 */
-	public abstract void reset();
 	
 	/**
 	 * Returns the value at the specified grid position.

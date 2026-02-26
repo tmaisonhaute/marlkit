@@ -46,7 +46,7 @@ public class UniteTransformation extends Unite {
     }
     
     public TradeProposal requestBuy(ObservationBuy obsBuy) {
-    	ActionBuy action = (ActionBuy) takeAction(obsBuy);
+    	ActionBuy action = (ActionBuy) selectAction(obsBuy);
     	return actionBuyToTradeProposal(action);
     }
     
@@ -57,7 +57,7 @@ public class UniteTransformation extends Unite {
     }
 
     public TradeProposal requestSell(ObservationSell obsSell) {
-    	ActionSell action = (ActionSell) takeAction(obsSell);
+    	ActionSell action = (ActionSell) selectAction(obsSell);
     	return actionSellToTradeProposal(action); 
     }
     

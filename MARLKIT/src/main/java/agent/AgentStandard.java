@@ -1,8 +1,7 @@
 package agent;
-import java.util.List;
-
 import agent.action.Action;
 import environment.MLKEnvironment;
+import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
@@ -16,9 +15,9 @@ import madkit.simulation.SimuAgent;
  * This agent maintains a policy and accumulates experiences in a batch for learning.
  */
 public class AgentStandard extends SimuAgent implements MLKAgent{
-	public Policy policy;
-	public Algorithm algorithm;
-	public Batch pastExperiences;
+	protected Policy policy;
+	protected Algorithm algorithm;
+	protected Batch pastExperiences;
 	
 	/**
 	 * Creates a new standard agent with the specified policy.
@@ -39,7 +38,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	@Override
 	protected void onActivation() {
 		requestRole(getCommunity(), getModelGroup(), "mlkagent");
-        sendInfo();
+        notifySelfToEnvironment();
 		initializeAll();
 	}
 	
@@ -47,29 +46,39 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 * Sends agent information to the environment for setup.
 	 */
 	@Override
-	public void sendInfo() {
-		((MLKEnvironment) getEnvironment()).addAgent(this);
+	public void notifySelfToEnvironment() {
+		getMLKEnvironment().addAgent(this);
 	}
 
 	/**
-     * Takes an action based on a single observation.
-     * 
-     * @param input the PolicyInput based on which the action is taken
-     * @return the action taken
-     */
+	 * Selects and returns an action based on the given observation.
+	 *
+	 * @param input the observation to act upon
+	 * @return the selected action
+	 */
+	protected Action selectAction(PolicyInput input) {
+		return policy.selectAction(input);
+	}
+
+	/**
+	 * Executes the action selection and influence process for this agent.
+	 * The agent observes the environment, selects an action, and influences the environment accordingly.
+	 */
+	public void takeAction(){
+		Observation obs = getMLKEnvironment().getObservation(this);
+		Action action = selectAction(obs);
+		getMLKEnvironment().influence(this, action);
+	}
+
+	/**
+	 * Retrieves the experience from the environment and records it.
+	 */
 	@Override
-	public Action takeAction(PolicyInput input) {
-		return policy.takeAction(input);
-	}
-
-	/**
-     * Takes a list of actions based on a list of observations.
-     * 
-     * @param inputs the list of PolicyInput based on which the actions are taken
-     * @return the list of actions taken
-     */
-	public List<Action> takeActionList(List<PolicyInput> inputs){
-		return policy.takeActionsList(inputs);
+	public void collectExperience() {
+		Experience experience = getMLKEnvironment().getExperience(this);
+		if (experience != null) {
+			feedbackExperience(experience);
+		}
 	}
 
 	/**
@@ -159,4 +168,8 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		this.algorithm = algorithm;
 	}
 	
+	@Override
+	public MLKEnvironment getMLKEnvironment() {
+		return ((MLKEnvironment) getEnvironment());
+	}
 }

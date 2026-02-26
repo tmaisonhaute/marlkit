@@ -6,6 +6,7 @@ import java.util.Map;
 
 import agent.action.Action;
 import environment.MLKEnvironment;
+import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
@@ -46,7 +47,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	@Override
 	protected void onActivation() {
 		requestRole(getCommunity(), getModelGroup(), "mlkagent");
-        sendInfo();
+        notifySelfToEnvironment();
 		initializeAll();
 	}
 
@@ -55,8 +56,8 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * Sends agent information to the environment for setup.
 	 */
 	@Override
-	public void sendInfo() {
-        ((MLKEnvironment) getEnvironment()).addAgent(this);
+	public void notifySelfToEnvironment() {
+        getMLKEnvironment().addAgent(this);
     }
 
 	/**
@@ -112,6 +113,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
         return policies.get(tag);
 	}
 
+	@Override
 	public Algorithm getAlgorithm() {
 		return getAlgorithm(DEFAULT_TAG);
 	}
@@ -128,6 +130,9 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 		for (Policy policy : policies.values()) {
 			policy.init(this);
 		}
+		for (Algorithm algorithm : algorithms.values()) {
+			algorithm.init(this);
+		}
 	}
 	
 	/**
@@ -140,31 +145,67 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
     }
 
 	/**
-	 * Takes an action using the default policy based on the given observation.
+	 * Selects an action using the default policy based on the given observation.
 	 *
 	 * @param input the PolicyInput to act upon
 	 * @return the selected action
 	 */
-	@Override
-	public Action takeAction(PolicyInput input) {
-		return takeAction(DEFAULT_TAG, input);
+	protected Action selectAction(PolicyInput input) {
+		return selectAction(DEFAULT_TAG, input);
 	}
 	
 	/**
-	 * Takes an action using the policy associated with the given tag.
+	 * Selects an action using the policy associated with the given tag.
 	 *
 	 * @param tag the policy identifier
 	 * @param input the PolicyInput to act upon
 	 * @return the selected action
 	 * @throws IllegalArgumentException if no policy exists for the tag
 	 */
-	public Action takeAction(String tag, PolicyInput input) {
+	protected Action selectAction(String tag, PolicyInput input) {
         Policy policy = getPolicy(tag);
 		if (policy != null) {
-			return policy.takeAction(input);
+			return policy.selectAction(input);
 		} else {
 			throw new IllegalArgumentException("No policy found for tag: " + tag);
 		}
+	}
+
+	/**
+	 * Executes the action selection and influence process for this agent.
+	 * The agent observes the environment, selects an action, and influences the environment accordingly.
+	 */
+	@Override
+	public void takeAction() {
+		Observation obs = getMLKEnvironment().getObservation(this);
+		Action action = selectAction(obs);
+		getMLKEnvironment().influence(this, action);
+	}
+
+	public void takeAction(String tag) {
+		Observation obs = getMLKEnvironment().getObservation(this);
+		Action action = selectAction(tag, obs);
+		getMLKEnvironment().influence(this, action);
+	}
+
+	/**
+	 * Retrieves the experience from the environment and records it.
+	 */
+	@Override
+	public void collectExperience() {
+		Experience experience = getMLKEnvironment().getExperience(this);
+		if (experience != null) {
+			feedbackExperience(experience);
+		}
+	}
+
+	/**
+	 * Returns the environment cast to MLKEnvironment.
+	 * @return the MLK environment
+	 */
+	@Override
+	public MLKEnvironment getMLKEnvironment() {
+		return ((MLKEnvironment) getEnvironment());
 	}
 
 	/**

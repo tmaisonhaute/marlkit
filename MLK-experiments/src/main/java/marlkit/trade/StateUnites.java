@@ -20,6 +20,13 @@ public class StateUnites implements State {
 		this.unitesProductions = unitesProductions;
 	}
 
+	@Override
+	public void reset() {
+		for (UniteProduction up : unitesProductions) {
+			up.reset();
+		}
+	}
+
 	public List<UniteProduction> getUnitesProductions() {
 		return unitesProductions;
 	}

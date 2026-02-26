@@ -48,7 +48,7 @@ public class QValueBasedPolicy implements Policy{
 	}
 
 	@Override
-	public Action takeAction(PolicyInput input) {
+	public Action selectAction(PolicyInput input) {
 		Optional<Action> exploratoryAction = getExplorationStrategy().getExploratoryAction(actionsSet, pnrg());
 		if (!exploratoryAction.isEmpty()) {
 			return exploratoryAction.get();

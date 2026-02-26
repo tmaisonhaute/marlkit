@@ -40,10 +40,6 @@ public class EnvListenOrGo extends EnvironmentStandard {
         RandomGenerator rg = prng();
         correctChoice = rg.nextBoolean() ? Choice.RIGHT : Choice.LEFT;
         
-        for (MLKAgent agent : agents.getAgents()) {
-            agentObservations.put(agent, new ObservationListenOrGo());
-            agentsChoice.put(agent, Choice.NONE);
-        }
     }
     
     @Override
@@ -52,11 +48,6 @@ public class EnvListenOrGo extends EnvironmentStandard {
     		agentObservations.put(agent, new ObservationListenOrGo());
             agentsChoice.put(agent, Choice.NONE);
     	}
-    }
-    
-    @Override
-    public void reset() {
-        setupState();
     }
 
     
@@ -67,12 +58,12 @@ public class EnvListenOrGo extends EnvironmentStandard {
     }
     
     @Override
-    public Map<MLKAgent, Observation> getObservation() {
+    public void computeObservations() {
         Map<MLKAgent, Observation> observations = new HashMap<>();
         for (MLKAgent agent : agents.getAgents()) {
             observations.put(agent, agentObservations.get(agent));
         }
-        return observations;
+        setAgentsObservations(observations);
     }
     
     @Override
@@ -131,15 +122,20 @@ public class EnvListenOrGo extends EnvironmentStandard {
     @Override
     public State getState() {
         return new State() {
-            @Override
-            public Map<MLKAgent, Observation> getObservations() {
-                return getObservation();
-            }
             
             @Override
             public void print() {
                 System.out.println("Correct direction: " + correctChoice);
             }
+
+			@Override
+			public Map<MLKAgent, Observation> getObservations() {
+				return getAgentsObservations();
+			}
+
+			@Override
+			public void reset() {
+			}
         };
     }
     

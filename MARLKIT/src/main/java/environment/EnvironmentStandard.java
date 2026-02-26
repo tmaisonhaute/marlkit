@@ -30,7 +30,9 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	private boolean logSetup = false;
 	private final int EPISODES_BEFORE_LOG = 1_000;
 	
-
+	private Map<MLKAgent, Observation> agentsObservations;
+	private Map<MLKAgent, Action> agentsActions;
+	private Map<MLKAgent, Experience> agentsExperiences;
 	
 	/**
 	 * Creates a new environment with the specified dimensions and interaction method.
@@ -42,6 +44,9 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	protected EnvironmentStandard(int width, int height, RewardModel rewardModel) {
 		super(width, height);
 		this.rewardModel = rewardModel;
+		agentsObservations = new HashMap<>();
+		agentsActions = new HashMap<>();
+		agentsExperiences = new HashMap<>();
     }
 	
 	/**
@@ -80,30 +85,36 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		setupAgents();
 	}
 	
+	@Override
+	public void reset() {
+		getState().reset();
+		setupAgents();
+		setupState();
+	}
+	
 	/**
 	 * Executes one environment step where all agents: 1.observe, 2.act and 3.learn from the resulting experience.
 	 *
 	 * @return map of each agent to their experience for this step.
 	 */
-	public Map<MLKAgent, Experience> step(){
-		// Observations
-		Map<MLKAgent,Observation> observations = getObservation();
-		
-		//Influence
-		Map<MLKAgent, Action> actions = agents.allAgentsTakeAction(observations);
+	public void step(){
 		
 		//Reaction
-		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> result = dynamics(actions);
+		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> result = dynamics(agentsActions);
 		
 		//Reward computation
 		Map<MLKAgent, Pair<Action, Reward>> rewards = rewardComputation(result);
 		
-		//Update
-		Map<MLKAgent, Experience> experiences = feedExpToAgent(rewards, observations);
-		collectAndLogLearningData(experiences);
-		
-		return experiences;
-	       
+		//Store experiences for agents to collect
+		agentsExperiences = combineObsActReward(rewards, agentsObservations);
+		collectAndLogLearningData(agentsExperiences);
+	}
+	public void computeObservations() {
+		agentsObservations = getState().getObservations();
+	}
+	
+	public void influence(MLKAgent agent, Action action) {
+		agentsActions.put(agent, action);
 	}
 	
 	protected Map<MLKAgent, Pair<Action, Reward>> rewardComputation(Map<MLKAgent, Pair<Action, List<ReactionEvent>>> result) {
@@ -155,6 +166,18 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 			saveLogCSV(logMessage);
 			learningData.clearEpisodes();
 		}
+	}
+	
+	@Override
+	public void clearStepVariables() {
+		agentsObservations.clear();
+		agentsActions.clear();
+		agentsExperiences.clear();
+	}
+	
+	@Override
+	public Experience getExperience(MLKAgent agent) {
+		return agentsExperiences.get(agent);
 	}
 	
 	@Override
@@ -241,22 +264,6 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		}
 	}
 
-	/**
-	 * Process the social observations of each agent in 3 steps:
-	 * for each agent:
-	 * 1. observes environment state
-	 * 2. Compute interaction information (ex: predict other agent next action)
-	 * 3. Merges both into a final observation.
-	 *
-	 * @return a map of each agent to their complete observations.
-	 */
-	public Map<MLKAgent,Observation> processSocialObservations(){
-		Map<MLKAgent, Observation> observations = getObservation();
-		Map<MLKAgent, Observation> interactionInformations =  observations; //interactionMethod.getInteractionInformation(observations);
-		getLogger().info("interactionInformations: " + interactionInformations);
-		Map<MLKAgent, Observation> mergedObservations = mergeObservations(observations, interactionInformations);
-		return mergedObservations;
-	}
 
 	/**
 	 * Process and sends experience data to each agent.
@@ -272,13 +279,6 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		return experiences;
 	}
 
-	/**
-	 * Get the current observations of all agents in the environment.
-	 * @return A map of each agent to their observation.
-	 */
-	public Map<MLKAgent,Observation> getObservation() {
-		return getState().getObservations();
-	}
 	
 	/**
 	 * Defines the environment dynamics based on agent actions.
@@ -358,5 +358,26 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		getState().print();
 	}
 	
+	@Override
+	public Observation getObservation(MLKAgent agent) {
+		return agentsObservations.get(agent);
+	}
+	
+	protected void setAgentsObservations(Map<MLKAgent, Observation> agentsObs) {
+		agentsObservations = agentsObs;
+	}
+
+	protected Map<MLKAgent, Observation> getAgentsObservations() {
+		return agentsObservations;
+	}
+
+	protected void setAgentsActions(Map<MLKAgent, Action> agentsActs) {
+		agentsActions = agentsActs;
+	}
+	
+	protected Map<MLKAgent, Action> getAgentsActions() {
+		return agentsActions;
+	}
+
 	
 }

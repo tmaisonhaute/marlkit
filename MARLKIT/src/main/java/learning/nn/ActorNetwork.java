@@ -76,7 +76,7 @@ public class ActorNetwork implements Policy{
 	 * @param input the current PolicyInput
 	 * @return the selected action
 	 */
-    public Action takeAction(PolicyInput input) {
+    public Action selectAction(PolicyInput input) {
         double[] logits = forwardLogits(input);
         double[] probs = softmax(logits);
         

@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import agent.MLKAgent;
+import agent.action.Action;
+import environment.observation.Observation;
 import environment.state.State;
 import learning.Experience;
 import util.grafana.Extra;
@@ -34,18 +36,33 @@ public interface MLKEnvironment {
 	public abstract void reset();
 	
 	/**
-	 * Executes one step in the environment, where agents observe, act, and receive rewards.
-	 *
-	 * @return a map of agents to their experiences from this step
-	 */
-	public abstract Map<MLKAgent, Experience> step();
-
-	/**
 	 * Sets up an agent in the environment.
 	 *
 	 * @param agent the agent to set up
 	 */
 	void addAgent(MLKAgent agent);
+	
+	
+	public abstract void computeObservations();
+	public abstract Observation getObservation(MLKAgent agent);
+	
+	public abstract void influence(MLKAgent agent, Action action);
+	
+	/**
+	 * Returns the experience computed for the given agent during this step.
+	 *
+	 * @param agent the agent to get the experience for
+	 * @return the agent's experience, or null if not yet computed
+	 */
+	public Experience getExperience(MLKAgent agent);
+	
+	
+	/**
+	 * Executes one step in the environment, where agents observe, act, and receive rewards.
+	 *
+	 * @return a map of agents to their experiences from this step
+	 */
+	public abstract void step();
 	
 	/**
 	 * Returns the current state of the environment.
@@ -54,6 +71,8 @@ public interface MLKEnvironment {
 	 */
 	public State getState();
 
+	public void clearStepVariables();
+	
 	public void onEpisodeEnd();
 	
 	/**

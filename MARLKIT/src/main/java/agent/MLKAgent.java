@@ -3,6 +3,7 @@ package agent;
 import java.util.random.RandomGenerator;
 
 import agent.action.Action;
+import environment.MLKEnvironment;
 import environment.reward.Reward;
 import learning.Experience;
 import learning.algorithm.Algorithm;
@@ -38,7 +39,7 @@ public interface MLKAgent {
 	/**
 	 * Sends agent information to the environment during initialization.
 	 */
-	public void sendInfo();
+	public void notifySelfToEnvironment();
 	
 	/**
 	 * Sets the policy for this agent.
@@ -74,13 +75,17 @@ public interface MLKAgent {
 	 */
 	public abstract void feedbackExperience(Experience experience);
 	
+	
+	
+	public void takeAction();
+	
 	/**
-	 * Selects and returns an action based on the given observation.
-	 *
-	 * @param input the observation to act upon
-	 * @return the selected action
+	 * Retrieves the experience from the environment and records it.
 	 */
-	public Action takeAction(PolicyInput input);
+	public void collectExperience();
+	
+	
+	public MLKEnvironment getMLKEnvironment();
 	
 	/**
 	 * Updates the policy based on accumulated experience at the given timestep.

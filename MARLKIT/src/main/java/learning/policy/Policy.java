@@ -41,7 +41,7 @@ public interface Policy {
      * @param input based on which the action is taken
      * @return the action taken
      */
-	public abstract Action takeAction(PolicyInput input);
+	public abstract Action selectAction(PolicyInput input);
 
 	/**
      * Takes a list of actions based on a list of PolicyInput (usually Observation).
@@ -52,7 +52,7 @@ public interface Policy {
 	public default List<Action> takeActionsList(List<PolicyInput> inputs){
 		List<Action> actions = new ArrayList<>();
 		for(PolicyInput i : inputs) {
-			actions.add(takeAction(i));
+			actions.add(selectAction(i));
 		}
 		return actions;
 	}

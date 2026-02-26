@@ -69,13 +69,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		state.addValue(i, j, 1);
 	}
 	
-	@Override
-	public void reset() {
-		state.reset();
-		setupAgents();
-		setupState();
-	}
-	
+
 
 	@Override
 	public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {

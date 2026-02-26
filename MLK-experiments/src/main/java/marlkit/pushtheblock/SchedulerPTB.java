@@ -9,11 +9,11 @@ import util.criteria.ReachTimeCriterion;
 public class SchedulerPTB extends MLKScheduler {
 	
 	public static final int EPISODE_DURATION = 100;
-	public static final int MINIMUM_STEP_BEFORE_VIEW = 10000;
+	public static final int MINIMUM_STEP_BEFORE_VIEW = 5_000;
 	public static final int UPDATE_INTERVAL = 1000;
 	public static final int DISPLAYED_EPISODES = 1;
 	public static final int PAUSE_DISPLAY_VALUE = 50;
-	public static final int MAXIMUM_EPISODE_COUNT = 100_000;
+	public static final int MAXIMUM_EPISODE_COUNT = 10_000;
 
 	private final Criterion criteriaEndEpisode = new ReachTimeCriterion(EPISODE_DURATION);
 	private final Criterion criteriaStartDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL), 
@@ -44,7 +44,7 @@ public class SchedulerPTB extends MLKScheduler {
 
 	@Override
 	public int getPauseDisplayValue() {
-		return PAUSE_DISPLAY_VALUE; // Enable display by default
+		return PAUSE_DISPLAY_VALUE; 
 	}
 
 }

@@ -41,7 +41,7 @@ public class QValueBasedPolicyTest {
         );
         
         // When
-        Action action = policy.takeAction(observation);
+        Action action = policy.selectAction(observation);
         
         // Then
         assertThat(action).isNotNull();
@@ -79,7 +79,7 @@ public class QValueBasedPolicyTest {
         policy.getTable().setValue(new Pair<>(observation, Action2DMove.right()), 3.0);
         
         // When
-        Action selectedAction = policy.takeAction(observation);
+        Action selectedAction = policy.selectAction(observation);
         
         // Then
         assertThat(selectedAction).isEqualTo(bestAction);
@@ -177,9 +177,9 @@ public class QValueBasedPolicyTest {
         
         // When - take many actions
         int differentActionsCount = 0;
-        Action firstAction = policy.takeAction(observation);
+        Action firstAction = policy.selectAction(observation);
         for (int i = 0; i < 100; i++) {
-            Action action = policy.takeAction(observation);
+            Action action = policy.selectAction(observation);
             if (!action.equals(firstAction)) {
                 differentActionsCount++;
             }

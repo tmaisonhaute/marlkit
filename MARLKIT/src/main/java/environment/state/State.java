@@ -17,6 +17,11 @@ public interface State {
 	public Map<MLKAgent, Observation> getObservations();
 	
 	/**
+	 * Resets the state to its initial configuration.
+	 */
+	public void reset();
+	
+	/**
 	 * Prints a representation of the current state.
 	 */
 	public void print();

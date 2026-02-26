@@ -58,7 +58,7 @@ public class EnvPTC extends EnvironmentStandard {
     }
 
     @Override
-    public Map<MLKAgent, Experience> step() {
+    public void step() {
         Map<MLKAgent,Experience> experiences = new HashMap<>();
         List<ObservationRessource> observations = new ArrayList<>();
         List<ActionAgentAdress> actions = new ArrayList<>();
@@ -119,7 +119,7 @@ public class EnvPTC extends EnvironmentStandard {
 //        for(int i = 0;i<transformationUnits.size();i++ ) {
 //            experiences.put(transformationUnits.get(i), new Experience(observations.get(i),actions.get(i),rewards.get(i)));
 //        }
-        return experiences;
+        return ;
     }
 
 

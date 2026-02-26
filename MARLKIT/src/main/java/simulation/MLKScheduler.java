@@ -20,14 +20,18 @@ import util.criteria.Criterion;
 public abstract class MLKScheduler extends TickBasedScheduler {
 	private MLKEnvironment env;
 	
-	private Activator agentUpdatePolicy;
-	private Activator agentEndEpisode;
-
 	private Activator initEnvironment;
+	private Activator computeObservations;
 	private Activator step;
 	private Activator reset;
-	private Activator endEpisode;
+	private Activator clearPreviousStepVariables;
+	private Activator envEndEpisode;
 	private Activator envEnd;
+	
+	private Activator agentAct;
+	private Activator agentCollectExperience;
+	private Activator agentUpdatePolicy;
+	private Activator agentEndEpisode;
 
 	private MethodActivator viewers;
 	
@@ -41,21 +45,30 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		getLogger().setLevel(Level.INFO);
 		super.onActivation();
 		final String roleAgent = "mlkagent";
-		agentEndEpisode = new MethodActivator(getModelGroup(), roleAgent, "endEpisode");
-		addActivator(agentEndEpisode);
-		agentUpdatePolicy = new MethodActivator(getModelGroup(), roleAgent, "updatePolicy");
-		addActivator(agentUpdatePolicy);
 		
 		initEnvironment = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "init");
 		addActivator(initEnvironment);
+		computeObservations = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "computeObservations");
+		addActivator(computeObservations);
 		step = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
 		addActivator(step);
+		clearPreviousStepVariables = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "clearStepVariables");
+		addActivator(clearPreviousStepVariables);
 		reset = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "reset");
 		addActivator(reset);
-		endEpisode = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEpisodeEnd");
-		addActivator(endEpisode);
+		envEndEpisode = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEpisodeEnd");
+		addActivator(envEndEpisode);
 		envEnd = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
 		addActivator(envEnd);
+		
+		agentAct = new MethodActivator(getModelGroup(), roleAgent, "takeAction");
+		addActivator(agentAct);
+		agentCollectExperience = new MethodActivator(getModelGroup(), roleAgent, "collectExperience");
+		addActivator(agentCollectExperience);
+		agentUpdatePolicy = new MethodActivator(getModelGroup(), roleAgent, "updatePolicy");
+		addActivator(agentUpdatePolicy);
+		agentEndEpisode = new MethodActivator(getModelGroup(), roleAgent, "endEpisode");
+		addActivator(agentEndEpisode);
 		viewers = new MethodActivator(getEngineGroup(), SimuOrganization.VIEWER_ROLE, "display");
 		addActivator(viewers);
 
@@ -77,15 +90,27 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	@Override
 	public void doSimulationStep() {
 		super.doSimulationStep();
+		
+		clearPreviousStepVariables.execute();
+		
+		computeObservations.execute();
+		
+		agentAct.execute();
+		
 		step.execute();
+		
+		agentCollectExperience.execute();
+		
 		agentUpdatePolicy.execute(counter);
 		
 		handleEndEpisode();
+		
 		handleDisplay();
+		viewers.execute();
 		
 		counter++;
 		getCriteriaEndEpisode().update(Optional.of(env.getState()));
-		viewers.execute();
+		
 		handleEndSimulation();
 	}
 	
@@ -130,7 +155,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 */
 	protected void episodeEnded() {
 		updateOnEndEpisode(Optional.of(env.getState()));
-		endEpisode.execute();
+		envEndEpisode.execute();
 		agentEndEpisode.execute();
 		reset.execute();
 		getCriteriaEndEpisode().reset();
