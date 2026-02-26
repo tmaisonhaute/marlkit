@@ -20,6 +20,9 @@ controlsfx.iml
 bin/
 test-output/
 
+# VsCode
+.vscode/
+
 # MacOS
 .DS_Store
 
