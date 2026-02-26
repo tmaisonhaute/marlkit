@@ -65,6 +65,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 * Executes the action selection and influence process for this agent.
 	 * The agent observes the environment, selects an action, and influences the environment accordingly.
 	 */
+	@Override
 	public void takeAction(){
 		Observation obs = getMLKEnvironment().getObservation(this);
 		Action action = selectAction(obs);
@@ -106,6 +107,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	/**
 	 * Initializes the agent's policy and algorithm with necessary parameters.
 	 */
+	@Override
 	public void initializeAll() {
 		this.policy.init(this);
 		this.algorithm.init(this);
@@ -118,6 +120,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 * @param act the action taken
 	 * @param rew the reward received
 	 */
+	@Override
 	public void feedbackExperience(PolicyInput input, Action act, Reward rew) {
 		pastExperiences.addExperience(input, act, rew);
 	}
@@ -127,6 +130,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 *
 	 * @param experience the experience to record
 	 */
+	@Override
 	public void feedbackExperience(Experience experience) {
 		pastExperiences.addExperience(experience);
 	}

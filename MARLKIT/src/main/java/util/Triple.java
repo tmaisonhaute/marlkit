@@ -86,8 +86,9 @@ public class Triple<T, U, V> {
 	 *
 	 * @return a new triple with the same elements
 	 */
+	@Override
     public Triple<T, U, V> clone() {
-        return new Triple<T, U, V>(first, second, third);
+        return new Triple<>(first, second, third);
     }
 
 	@Override

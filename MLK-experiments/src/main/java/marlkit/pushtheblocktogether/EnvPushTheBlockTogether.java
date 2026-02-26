@@ -27,8 +27,8 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 	}
 	
 	@Override
-	public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
-		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results = new HashMap<>();
+	public Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions) {
+		Map<MLKAgent, List<ReactionEvent>> results = new HashMap<>();
 		Map<MLKAgent, List<ReactionEvent>> agentsEvents = new HashMap<>();
 		agentsForcePush = new HashMap<>();
 		numberOfBlocksPushed = new HashMap<>();
@@ -50,7 +50,7 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 		
 		for (MLKAgent ag : agents.getAgents()) {
 			List<ReactionEvent> agentEvents = new ArrayList<>(agentsEvents.get(ag));
-			results.put(ag, new Pair<>(actions.get(ag), agentEvents));
+			results.put(ag, agentEvents);
 		}
 		
 		return results;

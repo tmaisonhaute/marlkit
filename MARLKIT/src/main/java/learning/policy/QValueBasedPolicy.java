@@ -7,7 +7,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 import learning.policy.explorationsettings.ExplorationStrategy;
-import learning.valuefunction.QTable;
+import learning.policy.valuefunction.QTable;
 import util.Pair;
 
 public class QValueBasedPolicy implements Policy{
@@ -70,7 +70,6 @@ public class QValueBasedPolicy implements Policy{
 		return qTable;
 	}
 	
-	@Override
 	public ExplorationStrategy getExplorationStrategy() {
 		return explorationStrategy;
 	}

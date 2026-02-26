@@ -12,7 +12,6 @@ import environment.state.State;
 import rewardmodeling.ReactionEvent;
 import rewardmodeling.RewardModel;
 import rewardmodels.FullyCooperativeReward;
-import util.Pair;
 
 public class EnvTrade extends EnvironmentStandard {
 	private static final int QUANTITY_PER_REQUEST = 1;
@@ -74,7 +73,7 @@ public class EnvTrade extends EnvironmentStandard {
 	}
 
 	@Override
-	public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
+	public Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions) {
 		this.lastActions = new HashMap<>(actions);
 		
 		state.updateState();
@@ -86,7 +85,7 @@ public class EnvTrade extends EnvironmentStandard {
 		Map<MLKAgent, ResourceQuantify> receivedResource = new HashMap<>();
 		upProcessRequests(receivedResource, requestingAgents);
 		
-		return computeEvents(receivedResource, actions);
+		return computeEvents(receivedResource);
 	}
 	
 	private void initUPRequestingAgents(Map<UniteProduction, List<MLKAgent>> requestingAgents ) {
@@ -108,13 +107,14 @@ public class EnvTrade extends EnvironmentStandard {
 		}
 	}
 	
-	private Map<MLKAgent, Pair<Action, List<ReactionEvent>>> computeEvents(Map<MLKAgent, ResourceQuantify> receivedResource, Map<MLKAgent, Action> actions) {
-		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results = new HashMap<>();
+	
+	private Map<MLKAgent, List<ReactionEvent>> computeEvents(Map<MLKAgent, ResourceQuantify> receivedResource) {
+		Map<MLKAgent, List<ReactionEvent>> results = new HashMap<>();
 		for(MLKAgent agent : receivedResource.keySet()){
-			Pair<Action, List<ReactionEvent>> p = new Pair<>(actions.get(agent), new ArrayList<>());
+			List<ReactionEvent> events = new ArrayList<>();
 			ReactionEvent e = new CollectResourceEvent(basePrices, receivedResource.get(agent));
-			p.getSecond().add(e);
-			results.put(agent, p);
+			events.add(e);
+			results.put(agent, events);
 		}
 		return results;
 	}

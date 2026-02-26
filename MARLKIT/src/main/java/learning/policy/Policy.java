@@ -6,7 +6,6 @@ import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import learning.policy.explorationsettings.ExplorationStrategy;
 
 /**
  * Policy interface for reinforcement learning agents. A policy is a function that maps observations to actions.
@@ -56,7 +55,5 @@ public interface Policy {
 		}
 		return actions;
 	}
-
-	public ExplorationStrategy getExplorationStrategy() ;
 
 }

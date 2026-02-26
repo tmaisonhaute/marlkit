@@ -17,7 +17,6 @@ import marlkit.uputuc.unite.UniteProduction;
 import marlkit.uputuc.unite.UniteTransformation;
 import rewardmodeling.ReactionEvent;
 import rewardmodels.MixedReward;
-import util.Pair;
 
 
 public class EnvPTC extends EnvironmentStandard {
@@ -137,7 +136,7 @@ public class EnvPTC extends EnvironmentStandard {
 
 
 	@Override
-	public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
+	public Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions) {
 		// TODO Auto-generated method stub
 		return null;
 	}

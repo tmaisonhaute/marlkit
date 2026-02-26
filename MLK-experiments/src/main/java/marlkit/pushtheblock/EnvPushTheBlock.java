@@ -72,8 +72,8 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 
 
 	@Override
-	public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
-		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results = new HashMap<>();
+	public Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions) {
+		Map<MLKAgent, List<ReactionEvent>> results = new HashMap<>();
 		
 		for (MLKAgent ag : agents.getAgents()) {
 			List<ReactionEvent> events = new ArrayList<>();
@@ -83,7 +83,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 			
 			checkIfPushBlock(events, action, newPosition);
 			
-			results.put(ag, new Pair<>(action, events));
+			results.put(ag, events);
 		}
 		return results;
 	}

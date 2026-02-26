@@ -12,6 +12,14 @@ import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
+/**
+ * Launcher for the ListenOrGo multi-agent simulation.
+ * <p>
+ * Configures and starts a set of agents, each equipped with a
+ * {@link learning.algorithm.QLearning Q-Learning} algorithm and an
+ * epsilon-greedy exploration policy with exponential decay.
+ * </p>
+ */
 @EngineAgents(
     scheduler = SchedulerListenOrGo.class, 
     environment = EnvListenOrGo.class, 
@@ -20,6 +28,14 @@ import simulation.MLKModel;
 )
 public class LauncherListenOrGo extends MLKLauncher {
     
+    /**
+     * Creates and launches all agents into the simulation.
+     * <p>
+     * Each agent is given the three available actions ({@link ActionListen},
+     * {@link ActionGoLeft}, {@link ActionGoRight}) and learns via Q-Learning
+     * with an epsilon-greedy policy using exponential decay.
+     * </p>
+     */
     @Override
     protected void onLaunchSimulatedAgents() {
         Action listen = new ActionListen();
@@ -37,6 +53,11 @@ public class LauncherListenOrGo extends MLKLauncher {
         }
     }
     
+    /**
+     * Entry point to launch the ListenOrGo simulation.
+     *
+     * @param args command-line arguments (not used).
+     */
     public static void main(String[] args) {
         executeThisAgent(
             "--agentLogLevel"

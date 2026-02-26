@@ -1,4 +1,4 @@
-package learning.valuefunction;
+package learning.policy.valuefunction;
 
 
 import java.util.HashMap;

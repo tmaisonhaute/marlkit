@@ -4,6 +4,14 @@ import java.util.Objects;
 
 import agent.action.Action;
 
+/**
+ * Action representing an agent's decision to listen for a noisy clue
+ * about the correct door in the ListenOrGo environment.
+ * <p>
+ * Listening incurs a small negative reward but provides probabilistic
+ * information about the correct direction.
+ * </p>
+ */
 public class ActionListen implements Action {
     
     @Override

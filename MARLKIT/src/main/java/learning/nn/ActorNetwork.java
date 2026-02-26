@@ -8,8 +8,6 @@ import agent.action.Action;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
-import learning.policy.explorationsettings.ExplorationStrategy;
-import learning.policy.explorationsettings.NoExploration;
 
 /**
  * Actor neural network for policy gradient methods.
@@ -18,11 +16,10 @@ public class ActorNetwork implements Policy{
 
 	
 	private MLKAgent agent;
-    private NeuralNetwork network;
-    private WrapperPolicyInputVector inputWrapper;
-    private List<Action> actionSet;
+    private final NeuralNetwork network;
+    private final WrapperPolicyInputVector inputWrapper;
+    private final List<Action> actionSet;
 
-	private ExplorationStrategy explorationStrategy;
     
     /**
 	 * Creates an actor network for policy learning.
@@ -46,7 +43,6 @@ public class ActorNetwork implements Policy{
         		NeuralNetwork.Activations.relu(),
         		NeuralNetwork.Activations.identity()
         );
-        explorationStrategy = new NoExploration();
     }
     
     @Override
@@ -65,17 +61,13 @@ public class ActorNetwork implements Policy{
 		return agent.prng();
 	}
     
-    @Override
-    public ExplorationStrategy getExplorationStrategy() {
-    	return explorationStrategy;
-    }
-    
     /**
 	 * Selects an action based on the policy distribution for the given PolicyInput.
 	 *
 	 * @param input the current PolicyInput
 	 * @return the selected action
 	 */
+	@Override
     public Action selectAction(PolicyInput input) {
         double[] logits = forwardLogits(input);
         double[] probs = softmax(logits);

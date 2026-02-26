@@ -1,20 +1,27 @@
 package marlkit.listenorgo;
 
-import static javafx.scene.paint.Color.BLACK;
-import static javafx.scene.paint.Color.LIGHTBLUE;
-import static javafx.scene.paint.Color.LIGHTGRAY;
-import static javafx.scene.paint.Color.RED;
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import agent.MLKAgent;
+import static javafx.scene.paint.Color.BLACK;
+import static javafx.scene.paint.Color.LIGHTBLUE;
+import static javafx.scene.paint.Color.LIGHTGRAY;
+import static javafx.scene.paint.Color.RED;
 import madkit.kernel.Agent;
 import madkit.simulation.PropertyProbe;
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import simulation.MLKViewer;
 
+/**
+ * JavaFX-based viewer for the ListenOrGo simulation.
+ * <p>
+ * Renders the two doors (left and right) on a canvas, highlights the correct
+ * door, and shows each undecided agent as a coloured circle together with
+ * counters displaying how many agents have moved to each side.
+ * </p>
+ */
 public class ViewerListenOrGo extends MLKViewer {
     
     private PropertyProbe<Choice> correctChoiceProbe;
@@ -33,6 +40,10 @@ public class ViewerListenOrGo extends MLKViewer {
     private static final double AGENT_SIZE = 15;
     private static final double AGENT_Y = 80;
     
+    /**
+     * Initialises the viewer by setting up property probes on the environment
+     * and configuring the canvas dimensions.
+     */
     @Override
     protected void onActivation() {
         super.onActivation();
@@ -48,6 +59,14 @@ public class ViewerListenOrGo extends MLKViewer {
         getGUI().getCanvas().setHeight(CANVAS_HEIGHT);
     }
     
+    /**
+     * Renders the current episode state on the canvas.
+     * <p>
+     * Draws the two door boxes (highlighting the correct one), positions
+     * undecided agents as circles, and displays per-door commitment counters.
+     * If the probes are not yet ready, the method returns immediately.
+     * </p>
+     */
     @Override
     public void render() {
         super.render();
@@ -154,6 +173,11 @@ public class ViewerListenOrGo extends MLKViewer {
         getGraphics().setFont(javafx.scene.text.Font.getDefault());
     }
     
+    /**
+     * Returns the {@link EnvListenOrGo} environment associated with this viewer.
+     *
+     * @return the typed environment instance.
+     */
     @Override
     public EnvListenOrGo getEnvironment() {
         return (EnvListenOrGo) super.getEnvironment();

@@ -4,6 +4,10 @@ import java.util.Objects;
 
 import agent.action.Action;
 
+/**
+ * Action representing an agent's choice to move to the right door
+ * in the ListenOrGo environment.
+ */
 public class ActionGoRight implements Action {
     
     @Override

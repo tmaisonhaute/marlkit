@@ -97,10 +97,11 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 * Computes dynamics based on agent actions, calculates rewards, and stores the resulting
 	 * experiences for agents to collect via {@link #getExperience(MLKAgent)}.
 	 */
+	@Override
 	public void step(){
 		
 		//Reaction
-		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> result = dynamics(agentsActions);
+		Map<MLKAgent, List<ReactionEvent>> result = dynamics(agentsActions);
 		
 		//Reward computation
 		Map<MLKAgent, Pair<Action, Reward>> rewards = rewardComputation(result);
@@ -113,6 +114,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 * {@inheritDoc}
 	 * Delegates to the state to compute observations for all agents.
 	 */
+	@Override
 	public void computeObservations() {
 		agentsObservations = getState().getObservations();
 	}
@@ -120,41 +122,23 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void influence(MLKAgent agent, Action action) {
 		agentsActions.put(agent, action);
 	}
 	
 	/**
 	 * Computes rewards for all agents based on the dynamics result.
-	 * Splits the result into actions and events, applies the reward model, and combines actions with rewards.
+	 * Applies the reward model to the reaction events and combines actions with rewards.
 	 *
-	 * @param result map of agents to their action and reaction events from dynamics
+	 * @param result map of agents to their reaction events from dynamics
 	 * @return map of agents to their action and computed reward
 	 */
-	protected Map<MLKAgent, Pair<Action, Reward>> rewardComputation(Map<MLKAgent, Pair<Action, List<ReactionEvent>>> result) {
-		Pair<Map<MLKAgent, Action>, Map<MLKAgent, List<ReactionEvent>>> splitResult = splitAgentsActionsEvents(result);
-		Map<MLKAgent, Action> agentsActions = splitResult.getFirst();
-		Map<MLKAgent, List<ReactionEvent>> agentsEvents = splitResult.getSecond();
-		Map<MLKAgent, Reward> rewards = rewardModel.rewardFunctions(agentsEvents);
+	protected Map<MLKAgent, Pair<Action, Reward>> rewardComputation(Map<MLKAgent, List<ReactionEvent>> result) {
+		Map<MLKAgent, Reward> rewards = rewardModel.rewardFunctions(result);
 		
 		return combineActionReward(agentsActions, rewards);
 	}
-	
-	/**
-	 * Splits a combined actions-events map into two separate maps.
-	 *
-	 * @param result the combined map of agents to their action/events pairs
-	 * @return a pair of (actions map, events map)
-	 */
-	private Pair<Map<MLKAgent, Action>, Map<MLKAgent, List<ReactionEvent>>> splitAgentsActionsEvents(Map<MLKAgent, Pair<Action, List<ReactionEvent>>> result) {
-		Map<MLKAgent, Action> agentsActions = new HashMap<>();
-        Map<MLKAgent, List<ReactionEvent>> agentsEvents = new HashMap<>();
-        for (Map.Entry<MLKAgent, Pair<Action, List<ReactionEvent>>> entry : result.entrySet()) {
-        	agentsActions.put(entry.getKey(), entry.getValue().getFirst());
-            agentsEvents.put(entry.getKey(), entry.getValue().getSecond());
-        }
-        return new Pair<>(agentsActions, agentsEvents);
-    }
 	
 	/**
 	 * Combines separate action and reward maps into a single map of action-reward pairs per agent.
@@ -312,9 +296,9 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	/**
 	 * Defines the environment dynamics based on agent actions.
 	 * @param actions A map of each agent to their action.
-	 * @return A map of each agent to their action and events.
+	 * @return A map of each agent to their reaction events.
 	 */
-	public abstract Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions);
+	public abstract Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions);
 	
 	/**
 	 * Pushes experiences directly to agents.

@@ -88,13 +88,13 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     }
 
     @Override
-    public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
-        Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results = new HashMap<>();
+    public Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions) {
+        Map<MLKAgent, List<ReactionEvent>> results = new HashMap<>();
         moveAllAgents(actions);
         double hunterDistancePenaltyReward = AllHxHDistancePenalityRewardValue();
 		for (MLKAgent ag : hunterAgents) {
 			HunterDistancePenalty distanceEvent = new HunterDistancePenalty(hunterDistancePenaltyReward);
-			results.put(ag, new Pair<>(actions.get(ag), distanceEvent.toList()));
+			results.put(ag, distanceEvent.toList());
         }
 		computeEventCatch(results);
         return results;
@@ -113,17 +113,17 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         }
     }
     
-    private void computeEventCatch(Map<MLKAgent, Pair<Action, List<ReactionEvent>>> results){
+    private void computeEventCatch(Map<MLKAgent, List<ReactionEvent>> results){
     	boolean caught = false;
     	
     	for (MLKAgent Hag : hunterAgents) {
             for (MLKAgent Pag : preyAgents) {
                 int distance = distance2D(Hag,Pag);
                 HunterDistancePenalty penalty = new HunterDistancePenalty(- distance * REWARDDISTANCEPENALTYPxH);
-                results.get(Hag).getSecond().add(penalty);
+                results.get(Hag).add(penalty);
                 if (distance == 1){
                 	caught = true;
-                	results.get(Hag).getSecond().add(new PreyCatchEvent());
+                	results.get(Hag).add(new PreyCatchEvent());
                 }
             }
         }

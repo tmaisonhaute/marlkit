@@ -20,6 +20,7 @@ import simulation.MLKModel;
 		ViewerForaging.class })
 public class LauncherForagingMixedReward extends MLKLauncher {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected <E extends SimuEnvironment> E onLaunchEnvironment() {
 		EnvForaging env = new EnvForaging(5, 6, new ScenarioDeterministic1(), new MixedReward());

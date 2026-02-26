@@ -68,12 +68,12 @@ public class EnvForaging extends EnvironmentStandard {
 	
 
 	@Override
-	public Map<MLKAgent, Pair<Action, List<ReactionEvent>>> dynamics(Map<MLKAgent, Action> actions) {
-		Map<MLKAgent, Pair<Action, List<ReactionEvent>>> reactionEventsAction = new HashMap<>();
+	public Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions) {
+		Map<MLKAgent, List<ReactionEvent>> reactionEventsAction = new HashMap<>();
 		Map<Pair<Integer, Integer>, List<MLKAgent>> newAgentsPositions = new HashMap<>();
 		
 		moveAgents(actions, reactionEventsAction, newAgentsPositions);
-		computeReactionEventsByPositions(actions, reactionEventsAction, newAgentsPositions);
+		computeReactionEventsByPositions(reactionEventsAction, newAgentsPositions);
 		
 		return reactionEventsAction;
 	}
@@ -82,10 +82,10 @@ public class EnvForaging extends EnvironmentStandard {
 	 * Moves agents according to their actions and fills the newAgentsPositions map with the new positions of the agents.
 	 * Also fills the reactionEventsAction map with the move events for the agents that have moved.
 	 * @param actions the actions of the agents
-	 * @param reactionEventsAction a map between agents and their corresponding actions and reaction events, to be filled
+	 * @param reactionEventsAction a map between agents and their corresponding reaction events, to be filled
 	 * @param newAgentsPositions a map between positions and the agents at those positions after the move phase, to be filled
 	 */
-	protected void moveAgents(Map<MLKAgent, Action> actions, Map<MLKAgent, Pair<Action, List<ReactionEvent>>> reactionEventsAction
+	protected void moveAgents(Map<MLKAgent, Action> actions, Map<MLKAgent, List<ReactionEvent>> reactionEventsAction
 			, Map<Pair<Integer, Integer>, List<MLKAgent>> newAgentsPositions) {
 		for (MLKAgent ag : agents.getAgents()) {
 			Action2DMove action = (Action2DMove) actions.get(ag);
@@ -94,41 +94,39 @@ public class EnvForaging extends EnvironmentStandard {
 			newAgentsPositions.putIfAbsent(newPosition, new ArrayList<>());
 			newAgentsPositions.get(newPosition).add(ag);
 			
-			handleMoveEvent(ag, action, reactionEventsAction, oldPosition != newPosition);
+			handleMoveEvent(ag, reactionEventsAction, oldPosition != newPosition);
 		} 
 	}
 	
 	/**
 	 * Handles the move event for an agent. If the agent has moved, adds the move event to the reactionEventsAction map for the agent.
 	 * @param ag the agent that has moved
-	 * @param action the action that the agent has taken
-	 * @param reactionEventsAction the map between agents and their corresponding actions and reaction events
+	 * @param reactionEventsAction the map between agents and their corresponding reaction events
 	 * @param hasMoved a boolean indicating whether the agent has moved or not.
 	 */
-	protected void handleMoveEvent(MLKAgent ag, Action action, 
-			Map<MLKAgent, Pair<Action, List<ReactionEvent>>> reactionEventsAction, boolean hasMoved) {
+	protected void handleMoveEvent(MLKAgent ag,
+			Map<MLKAgent, List<ReactionEvent>> reactionEventsAction, boolean hasMoved) {
 		List<ReactionEvent> events = new ArrayList<>();
-		reactionEventsAction.putIfAbsent(ag, new Pair<>(action, events));
+		reactionEventsAction.putIfAbsent(ag, events);
 		if (hasMoved) {
-			reactionEventsAction.get(ag).getSecond().add(moveEvent);	
+			reactionEventsAction.get(ag).add(moveEvent);	
 		}
 	}
 	
 	/**
 	 * Computes the reaction events for the agents at their new positions. For each position, checks the value of the state at that position and computes the corresponding events (e.g., food collected) for the agents at that position. Also updates the state by setting the value at that position to 0 (i.e., removing the food).
 	 * The reaction events are added to the reactionEventsAction map for each agent.
-	 * @param actions the actions of the agents
-	 * @param reactionEventsAction a map between agents and their corresponding actions and reaction events
+	 * @param reactionEventsAction a map between agents and their corresponding reaction events
 	 * @param newAgentsPositions a map between positions and the agents at those positions after the move phase
 	 */
-	protected void computeReactionEventsByPositions(Map<MLKAgent, Action> actions, 
-			Map<MLKAgent, Pair<Action, List<ReactionEvent>>> reactionEventsAction, 
+	protected void computeReactionEventsByPositions(
+			Map<MLKAgent, List<ReactionEvent>> reactionEventsAction, 
 			Map<Pair<Integer, Integer>, List<MLKAgent>> newAgentsPositions) {
 		
 		for(Map.Entry<Pair<Integer, Integer>, List<MLKAgent>> entry : newAgentsPositions.entrySet()) { 
 			Pair<Integer, Integer> position = entry.getKey(); 
 			List<MLKAgent> agentsAtPosition = entry.getValue(); 
-			handlePositionEvents(position, agentsAtPosition, actions, reactionEventsAction);
+			handlePositionEvents(position, agentsAtPosition, reactionEventsAction);
 		}
 	}
 
@@ -136,21 +134,19 @@ public class EnvForaging extends EnvironmentStandard {
 	 * Computes the events based on the value of the state at that position.
 	 * @param position the position of the agents
 	 * @param agentsAtPosition the agents at that position
-	 * @param actions the actions of the agents
-	 * @param reactionEventsAction the map between agents and their corresponding actions and reaction events
+	 * @param reactionEventsAction the map between agents and their corresponding reaction events
 	 */
 	protected void handlePositionEvents(Pair<Integer, Integer> position, List<MLKAgent> agentsAtPosition,
-			Map<MLKAgent, Action> actions, Map<MLKAgent, Pair<Action, List<ReactionEvent>>> reactionEventsAction) {
+			Map<MLKAgent, List<ReactionEvent>> reactionEventsAction) {
 		int foodValue = state.getValue(position);
 		state.setValue(position, 0);
 		int numberOfAgents = agentsAtPosition.size();
 
 		for(MLKAgent ag : agentsAtPosition) {
-			Action action = actions.get(ag);
-			reactionEventsAction.putIfAbsent(ag, new Pair<>(action, new ArrayList<>()));
+			reactionEventsAction.putIfAbsent(ag, new ArrayList<>());
 			List<ReactionEvent> events = new ArrayList<>();
 			computeEvents(events, foodValue, numberOfAgents);
-			reactionEventsAction.get(ag).getSecond().addAll(events);
+			reactionEventsAction.get(ag).addAll(events);
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package learning.valuefunction;
+package learning.policy.valuefunction;
 
 import agent.action.Action;
 import learning.policy.PolicyInput;
