@@ -3,7 +3,9 @@ package agent;
 import java.util.random.RandomGenerator;
 
 import agent.action.Action;
+import communication.CommunicationModule;
 import environment.MLKEnvironment;
+import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Experience;
 import learning.algorithm.Algorithm;
@@ -28,6 +30,16 @@ public interface MLKAgent {
 	 * @return the agent's learning algorithm
 	 */
 	public Algorithm getAlgorithm();
+
+	/** 
+	 * Returns the communication module used by this agent for interacting with other agents.
+	*/
+	public CommunicationModule getCommunicationModule();
+	
+	public default Observation getObservation() {
+		return getMLKEnvironment().getObservation(this);
+	}
+	
 	
 	/**
 	 * Returns the pseudo-random number generator used by this agent.
@@ -55,6 +67,12 @@ public interface MLKAgent {
 	public void setAlgorithm(Algorithm algorithm);
 	
 	/**
+	 * Sets the communication module for this agent.
+	 * @param communicationModule the communication module to use
+	 */
+	public void setCommunicationModule(CommunicationModule communicationModule);
+
+	/**
 	 * Initializes the agent's policy and algorithm with necessary parameters.
 	 */
 	public void initializeAll();
@@ -75,7 +93,12 @@ public interface MLKAgent {
 	 */
 	public abstract void feedbackExperience(Experience experience);
 	
-	
+	/** 
+	 * Communicates with other agents.
+	*/
+	public default void communicate(){
+		getCommunicationModule().communicate(this);
+	}
 	
 	/**
 	 * Observes the environment, selects an action, and sends it as an influence to the environment.
@@ -86,7 +109,6 @@ public interface MLKAgent {
 	 * Retrieves the experience from the environment and records it.
 	 */
 	public void collectExperience();
-	
 	
 	/**
 	 * Returns the environment this agent belongs to, cast to {@link MLKEnvironment}.

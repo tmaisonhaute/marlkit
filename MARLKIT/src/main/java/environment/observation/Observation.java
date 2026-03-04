@@ -13,6 +13,14 @@ public interface Observation extends PolicyInput{
 	 * @return the combined observation
 	 */
 	Observation add(Observation other);
+
+	@Override
+    default PolicyInput add(PolicyInput other) {
+        if (other instanceof Observation obs) {
+            return add(obs);
+        }
+        throw new IllegalArgumentException("Can only combine observations with other observations");
+    }
 	
 	/**
      * Implementations must override equals() to provide meaningful equality comparison.

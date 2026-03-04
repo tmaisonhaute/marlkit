@@ -43,6 +43,7 @@ open module marlkit.base {
 	exports agent.interaction;
 	exports learning;
 	exports learning.policy;
+	exports learning.policy.valuefunction;
 	exports learning.algorithm;
 	exports learning.policy.explorationsettings;
 	exports learning.nn;
@@ -52,4 +53,5 @@ open module marlkit.base {
     exports util.grafana;
     exports environment.observation.wrapperactionobservation;
     exports rewardmodeling;
+    exports communication;
 }

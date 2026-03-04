@@ -1,5 +1,9 @@
 package agent;
+import java.util.List;
+
 import agent.action.Action;
+import communication.CommunicationModule;
+import communication.NoCommunication;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
 import environment.reward.Reward;
@@ -8,6 +12,7 @@ import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
+import madkit.messages.ObjectMessage;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -17,6 +22,7 @@ import madkit.simulation.SimuAgent;
 public class AgentStandard extends SimuAgent implements MLKAgent{
 	protected Policy policy;
 	protected Algorithm algorithm;
+	protected CommunicationModule communicationModule;
 	protected Batch pastExperiences;
 	
 	/**
@@ -24,12 +30,24 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 *
 	 * @param policy the learning policy for this agent
 	 * @param algorithm the learning algorithm for this agent
+	 * @param communicationModule the communication module for this agent
+	 */
+	public AgentStandard(Policy policy, Algorithm algorithm, CommunicationModule communicationModule) {
+		super();
+		this.policy = policy;
+		this.algorithm = algorithm;
+		this.communicationModule = communicationModule;
+		pastExperiences = new Batch();
+	}
+
+	/**
+	 * Creates a new standard agent with the specified policy and algorithm, and no communication module.
+	 *
+	 * @param policy the learning policy for this agent
+	 * @param algorithm the learning algorithm for this agent
 	 */
 	public AgentStandard(Policy policy, Algorithm algorithm) {
-		super();
-		this.setPolicy(policy);
-		this.setAlgorithm(algorithm);
-		pastExperiences = new Batch();
+		this(policy, algorithm, new NoCommunication());
 	}
 	
 	/**
@@ -67,7 +85,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void takeAction(){
-		Observation obs = getMLKEnvironment().getObservation(this);
+		Observation obs = getExtendedObservation();
 		Action action = selectAction(obs);
 		getMLKEnvironment().influence(this, action);
 	}
@@ -81,27 +99,6 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		if (experience != null) {
 			feedbackExperience(experience);
 		}
-	}
-
-	/**
-	 * Returns the policy used by this agent.
-	 *
-	 * @return the agent's policy
-	 */
-	@Override
-	public Policy getPolicy() {
-		return policy;
-	}
-
-	/**
-	 * Sets the policy for this agent.
-	 *
-	 * @param policy the policy to use
-	 */
-	@Override
-	public void setPolicy(Policy policy) {
-		this.policy = policy;
-
 	}
 
 	/**
@@ -163,6 +160,27 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		algorithm.endEpisode(pastExperiences, getLogger());
 	}
 
+	/**
+	 * Returns the policy used by this agent.
+	 *
+	 * @return the agent's policy
+	 */
+	@Override
+	public Policy getPolicy() {
+		return policy;
+	}
+
+	/**
+	 * Sets the policy for this agent.
+	 *
+	 * @param policy the policy to use
+	 */
+	@Override
+	public void setPolicy(Policy policy) {
+		this.policy = policy;
+
+	}
+
 	@Override
 	public Algorithm getAlgorithm() {
 		return algorithm;
@@ -172,9 +190,27 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	public void setAlgorithm(Algorithm algorithm) {
 		this.algorithm = algorithm;
 	}
+
+	@Override
+	public CommunicationModule getCommunicationModule() {
+		return communicationModule;
+	}
 	
+	@Override
+	public void setCommunicationModule(CommunicationModule communicationModule) {
+		this.communicationModule = communicationModule;
+	}
+
 	@Override
 	public MLKEnvironment getMLKEnvironment() {
 		return ((MLKEnvironment) getEnvironment());
 	}
+	
+	protected Observation getExtendedObservation() {
+		Observation obs = getObservation();
+		//TODO : get only Observation messages.
+		List<ObjectMessage<Observation>> messagesObservations = getMailbox().getAll(null);
+		return getCommunicationModule().extendObservation(obs, messagesObservations);
+	}
+	
 }

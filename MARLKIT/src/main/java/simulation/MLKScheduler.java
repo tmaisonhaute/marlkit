@@ -1,5 +1,7 @@
 package simulation;
 
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
+
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -7,7 +9,6 @@ import environment.MLKEnvironment;
 import environment.state.State;
 import madkit.kernel.Activator;
 import madkit.simulation.SimuOrganization;
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 import util.criteria.Criterion;
@@ -27,6 +28,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private Activator envEndEpisode;
 	private Activator envEnd;
 	
+	private Activator agentCommunicate;
 	private Activator agentAct;
 	private Activator agentCollectExperience;
 	private Activator agentUpdatePolicy;
@@ -60,6 +62,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		envEnd = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
 		addActivator(envEnd);
 		
+		agentCommunicate = new MethodActivator(getModelGroup(), roleAgent, "communicate");
+		addActivator(agentCommunicate);
 		agentAct = new MethodActivator(getModelGroup(), roleAgent, "takeAction");
 		addActivator(agentAct);
 		agentCollectExperience = new MethodActivator(getModelGroup(), roleAgent, "collectExperience");

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import agent.action.Action;
+import communication.CommunicationModule;
+import communication.NoCommunication;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
 import environment.reward.Reward;
@@ -23,9 +25,21 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 
 	private Map<String, Policy> policies;
 	private Map<String, Algorithm> algorithms;
+	private Map<String, CommunicationModule> communicationModules;
 	private Map<String, Batch> dimensionalBatches;
 	static final String DEFAULT_TAG = "default";
 	
+	
+	public MultiDimensionalAgent(Policy policy, Algorithm algorithm, CommunicationModule communicationModule){
+		super();
+		policies = new HashMap<>();
+		algorithms = new HashMap<>();
+		communicationModules = new HashMap<>();
+		dimensionalBatches = new HashMap<>();
+		this.setPolicy(policy);
+		this.setAlgorithm(algorithm);
+		this.communicationModules.put(DEFAULT_TAG, communicationModule);
+	}
 	/**
 	 * Creates a new multi-dimensional agent with a default policy and algorithm.
 	 *
@@ -33,12 +47,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * @param algorithm the default algorithm for this agent
 	 */
 	public MultiDimensionalAgent(Policy policy, Algorithm algorithm) {
-		super();
-		policies = new HashMap<>();
-		algorithms = new HashMap<>();
-		dimensionalBatches = new HashMap<>();
-		this.setPolicy(policy);
-		this.setAlgorithm(algorithm);
+		this(policy, algorithm, new NoCommunication());
 	}
 	
 	/**
@@ -80,6 +89,24 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 		addPolicyAlgo(DEFAULT_TAG, getPolicy(), algorithm);
 	}
 
+	/** 
+	 * Sets the default communication module for this agent.
+	 * @param communicationModule the communication module to use for default policy
+	 */
+	@Override
+	public void setCommunicationModule(CommunicationModule communicationModule) {
+		this.communicationModules.put(DEFAULT_TAG, communicationModule);
+	}
+
+	/**
+	 * Adds a communication module with a specific tag identifier.
+	 * @param tag the tag associated with the communication module
+	 * @param communicationModule the communication module to add
+	 */
+	public void setCommunicationModule(String tag, CommunicationModule communicationModule) {
+		this.communicationModules.put(tag, communicationModule);
+	}
+
 	/**
 	 * Adds a policy with a specific tag identifier.
 	 *
@@ -92,6 +119,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
         algorithms.put(tag, algorithm);
 		algorithm.setPolicy(policy);
         dimensionalBatches.put(tag, new Batch());
+		communicationModules.put(tag, getCommunicationModule());
     }
 	
 	/**
@@ -132,6 +160,20 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 */
 	public Algorithm getAlgorithm(String tag) {
 		return algorithms.get(tag);
+	}
+
+	@Override
+	public CommunicationModule getCommunicationModule() {
+		return this.communicationModules.get(DEFAULT_TAG);
+	}
+
+	/**
+	 * Returns the communication module associated with the given tag.
+	 * @param tag the communication module identifier
+	 * @return the communication module, or null if not found
+	 */
+	public CommunicationModule getCommunicationModule(String tag) {
+		return this.communicationModules.get(tag);
 	}
 
 	/**
