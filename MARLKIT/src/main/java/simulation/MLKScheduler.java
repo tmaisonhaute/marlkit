@@ -110,6 +110,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		computeObservations.execute();
 		
+		agentCommunicate.execute();
+		
 		agentAct.execute();
 		
 		envReaction.execute();
