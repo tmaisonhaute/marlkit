@@ -11,6 +11,7 @@ import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
+import madkit.simulation.SimuAgent;
 
 /**
  * Core interface for agents in the MARLKIT framework.
@@ -100,6 +101,8 @@ public interface MLKAgent {
 		getCommunicationModule().communicate(this);
 	}
 	
+	public Action selectAction(PolicyInput policy);
+	
 	/**
 	 * Observes the environment, selects an action, and sends it as an influence to the environment.
 	 */
@@ -133,6 +136,8 @@ public interface MLKAgent {
 	 * Signals the end of an episode and performs any necessary cleanup or learning.
 	 */
 	public void endEpisode();
+	
+	public SimuAgent getSimuAgent();
 
 	
 }

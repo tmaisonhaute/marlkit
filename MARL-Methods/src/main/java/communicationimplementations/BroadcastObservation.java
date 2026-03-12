@@ -17,6 +17,8 @@ public class BroadcastObservation implements CommunicationModule {
 			ObjectMessage<Observation> messageObservation = new ObjectMessage<>(obs);
 			simuAgent.broadcast(messageObservation, 
 					simuAgent.getAgentsWithRole(simuAgent.getCommunity(), simuAgent.getModelGroup(), "mlkagent"));
+		} else {
+			throw new IllegalArgumentException("agent is not instance of simuAgent");
 		}
 
 	}

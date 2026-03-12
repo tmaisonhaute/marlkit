@@ -378,6 +378,10 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
             algorithm.endEpisode(batch, getLogger());
         }
     }
+	@Override
+	public SimuAgent getSimuAgent() {
+		return this;
+	}
 
 	
 

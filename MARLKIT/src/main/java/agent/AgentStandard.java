@@ -50,6 +50,10 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		this(policy, algorithm, new NoCommunication());
 	}
 	
+	public AgentStandard() {
+		
+	}
+	
 	/**
 	 * Called when the agent is activated in the simulation.
 	 * Requests the agent role, registers itself with the environment, and initializes its policy and algorithm.
@@ -75,7 +79,8 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 * @param input the observation to act upon
 	 * @return the selected action
 	 */
-	protected Action selectAction(PolicyInput input) {
+	@Override
+	public Action selectAction(PolicyInput input) {
 		return policy.selectAction(input);
 	}
 
@@ -211,6 +216,11 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		//TODO : get only Observation messages.
 		List<ObjectMessage<Observation>> messagesObservations = getMailbox().getAll(null);
 		return getCommunicationModule().extendObservation(obs, messagesObservations);
+	}
+
+	@Override
+	public SimuAgent getSimuAgent() {
+		return this;
 	}
 	
 }

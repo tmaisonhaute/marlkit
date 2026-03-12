@@ -95,6 +95,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 * <ol>
 	 *   <li>Clear previous step variables in the environment</li>
 	 *   <li>Environment computes observations for all agents</li>
+	 *   <li>Agents communicate</li>
 	 *   <li>Agents observe, select, and send their actions (influences) to the environment</li>
 	 *   <li>Environment processes dynamics, computes rewards, and stores experiences</li>
 	 *   <li>Agents collect their experiences from the environment</li>

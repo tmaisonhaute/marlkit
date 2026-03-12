@@ -3,7 +3,6 @@ package marlkit.pushtheblock;
 import java.util.ArrayList;
 import java.util.List;
 
-import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Action2DMove;
 import learning.algorithm.QLearning;
@@ -34,7 +33,8 @@ public class LauncherPTB extends MLKLauncher {
 //        			new WrapperVectorObservationPositionsValues(false), possibleActions);
 //        	Reinforce algorithm = new Reinforce(policy, 0.01, 0.95);
 
-			AgentStandard ag = new AgentStandard(policy, algorithm);
+//			AgentStandard ag = new AgentStandard(policy, algorithm);
+			AgentPTB ag = new AgentPTB();
 			launchAgent(ag);
 		}
 	}
