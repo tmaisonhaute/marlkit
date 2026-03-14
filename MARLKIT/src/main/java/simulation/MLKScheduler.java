@@ -5,6 +5,8 @@ import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import java.util.Optional;
 import java.util.logging.Level;
 
+import agent.MLKAgent;
+import agent.communication.MLKAgentCommunicating;
 import environment.MLKEnvironment;
 import environment.state.State;
 import madkit.kernel.Activator;
@@ -45,7 +47,6 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	protected void onActivation() {
 		getLogger().setLevel(Level.INFO);
 		super.onActivation();
-		final String roleAgent = "mlkagent";
 		
 		initEnvironment = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "init");
 		addActivator(initEnvironment);
@@ -62,15 +63,15 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		envEnd = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
 		addActivator(envEnd);
 		
-		agentCommunicate = new MethodActivator(getModelGroup(), roleAgent, "communicate");
+		agentCommunicate = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "communicate");
 		addActivator(agentCommunicate);
-		agentAct = new MethodActivator(getModelGroup(), roleAgent, "takeAction");
+		agentAct = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "takeAction");
 		addActivator(agentAct);
-		agentCollectExperience = new MethodActivator(getModelGroup(), roleAgent, "collectExperience");
+		agentCollectExperience = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "collectExperience");
 		addActivator(agentCollectExperience);
-		agentUpdatePolicy = new MethodActivator(getModelGroup(), roleAgent, "updatePolicy");
+		agentUpdatePolicy = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "updatePolicy");
 		addActivator(agentUpdatePolicy);
-		agentEndEpisode = new MethodActivator(getModelGroup(), roleAgent, "endEpisode");
+		agentEndEpisode = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "endEpisode");
 		addActivator(agentEndEpisode);
 		viewers = new MethodActivator(getEngineGroup(), SimuOrganization.VIEWER_ROLE, "display");
 		addActivator(viewers);
@@ -88,6 +89,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		getLogger().info("Simulation has Started");
 		initEnvironment.execute();
 		env = (MLKEnvironment) getEnvironment();
+		reset.execute(); //TODO Useful only because SimulationStart is called multiple times (madkit related issue).
 	}
 
 	/**

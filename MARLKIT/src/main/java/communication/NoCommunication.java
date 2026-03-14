@@ -1,10 +1,7 @@
 package communication;
 
-import java.util.List;
-
 import agent.MLKAgent;
-import environment.observation.Observation;
-import madkit.messages.ObjectMessage;
+import madkit.kernel.Mailbox;
 
 public class NoCommunication implements CommunicationModule {
 
@@ -12,10 +9,10 @@ public class NoCommunication implements CommunicationModule {
 	public void communicate(MLKAgent agent) {
 		//Do Nothing
 	}
-
+	
 	@Override
-	public Observation extendObservation(Observation observation, List<ObjectMessage<Observation>> messages) {
-		return observation;
+	public void handleCommunication(MLKAgent agent, Mailbox mailbox) {
+		// Do Nothing
 	}
 
 }

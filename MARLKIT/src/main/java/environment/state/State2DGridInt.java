@@ -235,8 +235,7 @@ public class State2DGridInt extends State2DGrid<Integer> {
 		Pair<Integer, Integer> agentPos = agentsPosition.get(agent);
 		int agentX = agentPos.getFirst();
 		int agentY = agentPos.getSecond();
-
-		// Add cell values to observation
+		
 		for (Cell c : cells) {
 			if (c.val != 0) {
 				Tuple relativePosition = new Tuple(Arrays.asList(
@@ -247,13 +246,10 @@ public class State2DGridInt extends State2DGrid<Integer> {
 			}
 		}
 		
-		// If configured to observe agent positions
 		if (observeAgentsPositions) {
-			// Add current agent's absolute position
 			Tuple currentAgentPosition = new Tuple(Arrays.asList((double) agentX, (double) agentY));
 			observation.addObservationPosition(new ObservationPositionValue(currentAgentPosition, -1)); // -1 indicates current agent
 			
-			// Add other agents' relative positions - using our optimized method
 			for (MLKAgent otherAgent : getAgentsInViewRange(agent, cells)) {
 				Pair<Integer, Integer> otherAgentPos = agentsPosition.get(otherAgent);
 				int otherX = otherAgentPos.getFirst();

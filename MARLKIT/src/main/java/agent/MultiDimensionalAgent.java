@@ -23,11 +23,13 @@ import madkit.simulation.SimuAgent;
  */
 public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 
-	private Map<String, Policy> policies;
-	private Map<String, Algorithm> algorithms;
-	private Map<String, CommunicationModule> communicationModules;
-	private Map<String, Batch> dimensionalBatches;
+	protected Map<String, Policy> policies;
+	protected Map<String, Algorithm> algorithms;
+	protected Map<String, CommunicationModule> communicationModules;
+	protected Map<String, Batch> dimensionalBatches;
 	static final String DEFAULT_TAG = "default";
+	
+	protected PolicyInput policyInput;
 	
 	
 	public MultiDimensionalAgent(Policy policy, Algorithm algorithm, CommunicationModule communicationModule){
@@ -56,7 +58,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 */
 	@Override
 	protected void onActivation() {
-		requestRole(getCommunity(), getModelGroup(), "mlkagent");
+		requestRole(getCommunity(), getModelGroup(), getRole());
         notifySelfToEnvironment();
 		initializeAll();
 	}
@@ -204,7 +206,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * @param input the PolicyInput to act upon
 	 * @return the selected action
 	 */
-	protected Action selectAction(PolicyInput input) {
+	public Action selectAction(PolicyInput input) {
 		return selectAction(DEFAULT_TAG, input);
 	}
 	
@@ -381,6 +383,16 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	@Override
 	public SimuAgent getSimuAgent() {
 		return this;
+	}
+	
+	@Override
+	public PolicyInput getPolicyInput() {
+		return policyInput;
+	}
+	
+	@Override
+	public void setPolicyInput(PolicyInput policyInput) {
+		this.policyInput = policyInput;
 	}
 
 	

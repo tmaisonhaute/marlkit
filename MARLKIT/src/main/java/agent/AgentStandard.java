@@ -1,6 +1,4 @@
 package agent;
-import java.util.List;
-
 import agent.action.Action;
 import communication.CommunicationModule;
 import communication.NoCommunication;
@@ -12,7 +10,6 @@ import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
-import madkit.messages.ObjectMessage;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -24,6 +21,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	protected Algorithm algorithm;
 	protected CommunicationModule communicationModule;
 	protected Batch pastExperiences;
+	protected PolicyInput policyInput;
 	
 	/**
 	 * Creates a new standard agent with the specified policy and algorithm.
@@ -51,7 +49,8 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	}
 	
 	public AgentStandard() {
-		
+		pastExperiences = new Batch();
+		communicationModule = new NoCommunication();
 	}
 	
 	/**
@@ -60,7 +59,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	protected void onActivation() {
-		requestRole(getCommunity(), getModelGroup(), "mlkagent");
+		requestRole(getCommunity(), getModelGroup(), getRole());
         notifySelfToEnvironment();
 		initializeAll();
 	}
@@ -90,8 +89,10 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void takeAction(){
-		Observation obs = getExtendedObservation();
-		Action action = selectAction(obs);
+		Observation obs = getObservation();
+		setPolicyInput(obs);
+		handleCommunication(getMailbox());
+		Action action = selectAction(getPolicyInput());
 		getMLKEnvironment().influence(this, action);
 	}
 
@@ -205,22 +206,27 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	public void setCommunicationModule(CommunicationModule communicationModule) {
 		this.communicationModule = communicationModule;
 	}
+	
+	@Override
+	public PolicyInput getPolicyInput() {
+		return policyInput;
+	}
+	
+	@Override
+	public void setPolicyInput(PolicyInput policyInput) {
+		this.policyInput = policyInput;
+	}
 
 	@Override
 	public MLKEnvironment getMLKEnvironment() {
 		return ((MLKEnvironment) getEnvironment());
-	}
-	
-	protected Observation getExtendedObservation() {
-		Observation obs = getObservation();
-		//TODO : get only Observation messages.
-		List<ObjectMessage<Observation>> messagesObservations = getMailbox().getAll(null);
-		return getCommunicationModule().extendObservation(obs, messagesObservations);
 	}
 
 	@Override
 	public SimuAgent getSimuAgent() {
 		return this;
 	}
+	
+	
 	
 }

@@ -11,6 +11,7 @@ import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
+import madkit.kernel.Mailbox;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -18,6 +19,7 @@ import madkit.simulation.SimuAgent;
  * Defines the fundamental behavior and lifecycle methods for reinforcement learning agents.
  */
 public interface MLKAgent {
+	public static final String DEFAULT_AGENT_ROLE = "MLKAgents";
 	
 	/**
 	 * Returns the policy used by this agent for decision making.
@@ -41,6 +43,17 @@ public interface MLKAgent {
 		return getMLKEnvironment().getObservation(this);
 	}
 	
+	/**
+	 * Returns the policy input used by this agent for action selection for this timestep.
+	 * @return the policy input for this agent
+	 */
+	public PolicyInput getPolicyInput();
+
+	/**
+	 * Sets the policy input for this agent for this timestep, which will be used for action selection.
+	 * @param policyInput the policy input to set
+	 */
+	public void setPolicyInput(PolicyInput policyInput);
 	
 	/**
 	 * Returns the pseudo-random number generator used by this agent.
@@ -100,8 +113,19 @@ public interface MLKAgent {
 	public default void communicate(){
 		getCommunicationModule().communicate(this);
 	}
+
+	/**
+	 * Handles communication system for this agent. 
+	 */
+	public default void handleCommunication(Mailbox mailbox) {
+	}
 	
-	public Action selectAction(PolicyInput policy);
+	/**
+	 * Selects an action based on the given policy input.
+	 * @param input the policy input to use for action selection
+	 * @return the selected action
+	 */
+	public Action selectAction(PolicyInput input);
 	
 	/**
 	 * Observes the environment, selects an action, and sends it as an influence to the environment.
@@ -139,5 +163,8 @@ public interface MLKAgent {
 	
 	public SimuAgent getSimuAgent();
 
+	public default String getRole() {
+		return DEFAULT_AGENT_ROLE;
+	}
 	
 }
