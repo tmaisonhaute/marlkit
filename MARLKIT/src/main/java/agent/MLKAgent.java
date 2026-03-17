@@ -44,16 +44,16 @@ public interface MLKAgent {
 	}
 	
 	/**
-	 * Returns the policy input used by this agent for action selection for this timestep.
-	 * @return the policy input for this agent
+	 * Returns the registered observation used by this agent for action selection for this timestep.
+	 * @return the registered observation for this agent
 	 */
-	public PolicyInput getPolicyInput();
+	public Observation getRegisteredObservation();
 
 	/**
-	 * Sets the policy input for this agent for this timestep, which will be used for action selection.
-	 * @param policyInput the policy input to set
+	 * Sets the registered observation for this agent for this timestep, which will be used for action selection.
+	 * @param registeredObservation the registered observation to set
 	 */
-	public void setPolicyInput(PolicyInput policyInput);
+	public void setRegisteredObservation(Observation registeredObservation);
 	
 	/**
 	 * Returns the pseudo-random number generator used by this agent.

@@ -29,7 +29,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	protected Map<String, Batch> dimensionalBatches;
 	static final String DEFAULT_TAG = "default";
 	
-	protected PolicyInput policyInput;
+	protected Observation registeredObservation;
 	
 	
 	public MultiDimensionalAgent(Policy policy, Algorithm algorithm, CommunicationModule communicationModule){
@@ -386,13 +386,13 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	}
 	
 	@Override
-	public PolicyInput getPolicyInput() {
-		return policyInput;
+	public Observation getRegisteredObservation() {
+		return registeredObservation;
 	}
 	
 	@Override
-	public void setPolicyInput(PolicyInput policyInput) {
-		this.policyInput = policyInput;
+	public void setRegisteredObservation(Observation registeredObservation) {
+		this.registeredObservation = registeredObservation;
 	}
 
 	

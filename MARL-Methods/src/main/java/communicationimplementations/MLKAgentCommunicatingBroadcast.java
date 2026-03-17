@@ -3,30 +3,29 @@ package communicationimplementations;
 import java.util.List;
 
 import agent.MLKAgent;
-import communication.CommunicationModule;
+import agent.communication.MLKAgentCommunicating;
 import environment.observation.Observation;
 import madkit.kernel.Mailbox;
 import madkit.messages.ObjectMessage;
 import madkit.simulation.SimuAgent;
 
-public class BroadcastObservation implements CommunicationModule {
+public interface MLKAgentCommunicatingBroadcast extends MLKAgentCommunicating {
 
 	@Override
-	public void communicate(MLKAgent agent) {
-		if (agent instanceof SimuAgent simuAgent) {
-			Observation obs = agent.getObservation();
+	public default void communicate(){
+		if (this instanceof SimuAgent simuAgent) {
+			Observation obs = this.getObservation();
 			ObjectMessage<Observation> messageObservation = new ObjectMessage<>(obs);
 			simuAgent.broadcast(messageObservation, 
 					simuAgent.getAgentsWithRole(simuAgent.getCommunity(), simuAgent.getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE));
 		} else {
 			throw new IllegalArgumentException("agent is not instance of simuAgent");
 		}
-
 	}
 	
 	@Override
-	public void handleCommunication(MLKAgent agent, Mailbox mailbox) {
-		Observation obs = agent.getObservation();
+	public default void handleCommunication(Mailbox mailbox) {
+		Observation obs = this.getObservation();
 		//TODO filter only observation messages
 		List<ObjectMessage<Observation>> messagesObservations = mailbox.getAll(null);
 		Observation extendedObservation = obs;
@@ -34,7 +33,6 @@ public class BroadcastObservation implements CommunicationModule {
 			extendedObservation = extendedObservation.add(message.getContent());
 		}
 		
-		agent.setRegisteredObservation(extendedObservation);
+		this.setRegisteredObservation(extendedObservation);
 	}
-
 }

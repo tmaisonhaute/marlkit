@@ -21,7 +21,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	protected Algorithm algorithm;
 	protected CommunicationModule communicationModule;
 	protected Batch pastExperiences;
-	protected PolicyInput policyInput;
+	protected Observation registeredObservation;
 	
 	/**
 	 * Creates a new standard agent with the specified policy and algorithm.
@@ -90,9 +90,9 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	@Override
 	public void takeAction(){
 		Observation obs = getObservation();
-		setPolicyInput(obs);
+		setRegisteredObservation(obs);
 		handleCommunication(getMailbox());
-		Action action = selectAction(getPolicyInput());
+		Action action = selectAction(getRegisteredObservation());
 		getMLKEnvironment().influence(this, action);
 	}
 
@@ -208,13 +208,13 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	}
 	
 	@Override
-	public PolicyInput getPolicyInput() {
-		return policyInput;
+	public Observation getRegisteredObservation() {
+		return registeredObservation;
 	}
 	
 	@Override
-	public void setPolicyInput(PolicyInput policyInput) {
-		this.policyInput = policyInput;
+	public void setRegisteredObservation(Observation registeredObservation) {
+		this.registeredObservation = registeredObservation;
 	}
 
 	@Override
