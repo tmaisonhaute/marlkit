@@ -21,3 +21,4 @@ public interface MLKAgentCommunicating extends MLKAgent {
 		return DEFAULT_AGENT_ROLE;
 	}
 }
+
