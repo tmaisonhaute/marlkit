@@ -34,5 +34,6 @@ open module marlkit.xp {
 	exports marlkit.uputuc;
 	exports marlkit.foraging;
 	exports marlkit.trade;
+	exports marlkit.maze;
 	
 }
