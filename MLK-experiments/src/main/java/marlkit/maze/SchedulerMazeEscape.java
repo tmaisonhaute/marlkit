@@ -13,7 +13,7 @@ public class SchedulerMazeEscape extends MLKScheduler {
 	public static final int UPDATE_INTERVAL = 1_000;
 	public static final int DISPLAYED_EPISODES = 1;
 	public static final int PAUSE_DISPLAY_VALUE = 50;
-	public static final int MAXIMUM_EPISODE_COUNT = 10_000;
+	public static final int MAXIMUM_EPISODE_COUNT = 100_000;
 
 	private final Criterion criteriaEndEpisode = Criteria.or(
 			new ReachTimeCriterion(EPISODE_DURATION),

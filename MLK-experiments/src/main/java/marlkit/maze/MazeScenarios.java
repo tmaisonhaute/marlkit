@@ -66,11 +66,11 @@ public final class MazeScenarios {
 	public static MazeScenario defaultMaze() {
 		return fromText(
 				"......",
-				".W....",
-				".W....",
-				"EW.H.S",
-				".W....",
-				".W...."
+				".WW...",
+				"..W...",
+				"W.W.S.",
+				"..W...",
+				"E.W..H"
 		);
 	}
 }

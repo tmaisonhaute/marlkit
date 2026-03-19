@@ -5,7 +5,7 @@ import simulation.MLKModel;
 
 @EngineAgents(scheduler = SchedulerMazeEscape.class, model = MLKModel.class, viewers = {
 		ViewerMazeEscape.class })
-public class LauncherMazeEscapeCustom extends LauncherMazeEscapeBase {
+public class LauncherMazeEscapeDefault extends LauncherMazeEscapeBase {
 
 	@Override
 	protected MazeRewardConfig getRewardConfig() {
