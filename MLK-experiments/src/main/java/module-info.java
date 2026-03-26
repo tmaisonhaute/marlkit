@@ -36,5 +36,6 @@ open module marlkit.xp {
 	exports marlkit.trade;
 	exports marlkit.maze;
 	exports marlkit.crossescape;
+	exports marlkit.teambattle;
 	
 }
