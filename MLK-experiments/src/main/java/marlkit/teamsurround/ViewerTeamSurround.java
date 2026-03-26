@@ -1,4 +1,4 @@
-package marlkit.teambattle;
+package marlkit.teamsurround;
 
 import java.util.Map;
 
@@ -6,17 +6,17 @@ import agent.MLKAgent;
 import environment.state.State2DGridInt;
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.LIGHTGRAY;
+import static javafx.scene.paint.Color.SEAGREEN;
 import static javafx.scene.paint.Color.STEELBLUE;
-import static javafx.scene.paint.Color.TOMATO;
 import madkit.simulation.PropertyProbe;
 import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.viewer.Viewer2D;
 import util.Pair;
 
-public class ViewerTeamBattle extends Viewer2D {
+public class ViewerTeamSurround extends Viewer2D {
 
-	private static final double CELL_SIZE = 30;
-	private static final double AGENT_SIZE = 20;
+	private static final double CELL_SIZE = 40;
+	private static final double AGENT_SIZE = 26;
 
 	private PropertyProbe<State2DGridInt> stateProbe;
 
@@ -32,7 +32,7 @@ public class ViewerTeamBattle extends Viewer2D {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public EnvTeamBattle getEnvironment() {
+	public EnvTeamSurround getEnvironment() {
 		return super.getEnvironment();
 	}
 
@@ -61,30 +61,27 @@ public class ViewerTeamBattle extends Viewer2D {
 
 	private void renderAliveAgents() {
 		Map<MLKAgent, Pair<Integer, Integer>> alivePositions = getEnvironment().getAliveAgentsPositions();
-		Map<MLKAgent, Integer> teams = getEnvironment().getTeams();
-		Map<MLKAgent, Double> hps = getEnvironment().getHealthPoints();
 		for (Map.Entry<MLKAgent, Pair<Integer, Integer>> entry : alivePositions.entrySet()) {
 			MLKAgent agent = entry.getKey();
 			Pair<Integer, Integer> pos = entry.getValue();
 			double x = pos.getFirst() * CELL_SIZE + (CELL_SIZE - AGENT_SIZE) / 2.0;
 			double y = pos.getSecond() * CELL_SIZE + (CELL_SIZE - AGENT_SIZE) / 2.0;
-			if (teams.get(agent) == 1) {
+			if (getEnvironment().getTeamAt(agent) == 1) {
 				getGraphics().setFill(STEELBLUE);
 			} else {
-				getGraphics().setFill(TOMATO);
+				getGraphics().setFill(SEAGREEN);
 			}
 			getGraphics().fillOval(x, y, AGENT_SIZE, AGENT_SIZE);
 			getGraphics().setStroke(BLACK);
 			getGraphics().strokeOval(x, y, AGENT_SIZE, AGENT_SIZE);
-			getGraphics().setFill(BLACK);
-			getGraphics().fillText(String.format("%.1f", hps.get(agent)), x - 2, y - 2);
 		}
 	}
 
 	private void drawHud() {
 		getGraphics().setFill(BLACK);
-		String txt = "Team A alive: " + getEnvironment().getAliveCountTeamA()
-				+ " | Team B alive: " + getEnvironment().getAliveCountTeamB();
+		String txt = "Team1 alive: " + getEnvironment().getAliveCountTeam1()
+				+ " | Team2 alive: " + getEnvironment().getAliveCountTeam2()
+				+ " | stochasticDeath=" + getEnvironment().isStochasticDeath();
 		getGraphics().fillText(txt, 10, 18);
 	}
 }

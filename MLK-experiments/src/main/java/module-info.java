@@ -37,5 +37,6 @@ open module marlkit.xp {
 	exports marlkit.maze;
 	exports marlkit.crossescape;
 	exports marlkit.teambattle;
+	exports marlkit.teamsurround;
 	
 }
