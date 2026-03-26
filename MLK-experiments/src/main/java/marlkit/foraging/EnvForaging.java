@@ -44,8 +44,7 @@ public class EnvForaging extends EnvironmentStandard {
 	}
 	
 	
-	@Override
-	public void addAgent(MLKAgent agent) {
+	@Override	public void addAgent(MLKAgent agent) {
 		agents.addAgent(agent);
 	}
 	
