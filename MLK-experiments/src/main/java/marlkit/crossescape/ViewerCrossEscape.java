@@ -2,21 +2,27 @@ package marlkit.crossescape;
 
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.DARKGRAY;
+import static javafx.scene.paint.Color.DARKORANGE;
 import static javafx.scene.paint.Color.DEEPSKYBLUE;
 import static javafx.scene.paint.Color.GOLD;
+import static javafx.scene.paint.Color.GREEN;
+import static javafx.scene.paint.Color.TOMATO;
 import static javafx.scene.paint.Color.WHITESMOKE;
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 
 import java.util.List;
 import java.util.Map;
 
 import environment.state.State2DGridInt;
+import javafx.scene.paint.Color;
 import madkit.kernel.Agent;
 import madkit.simulation.PropertyProbe;
 import madkit.simulation.viewer.Viewer2D;
 import util.Pair;
 
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
-
+/**
+ * 2D viewer for the CrossEscape environment.
+ */
 public class ViewerCrossEscape extends Viewer2D {
 
 	private static final double CELL_SIZE = 55;
@@ -79,11 +85,15 @@ public class ViewerCrossEscape extends Viewer2D {
 
 	private void renderAgents(State2DGridInt state) {
 		List<Pair<Integer, Integer>> positions = state.getAgentsPositions().values().stream().toList();
+		List<Color> colors = List.of(DEEPSKYBLUE, TOMATO, GREEN, DARKORANGE);
+		Color currentColor = colors.get(0);
 		for (Pair<Integer, Integer> position : positions) {
 			double x = position.getFirst() * CELL_SIZE + (CELL_SIZE - AGENT_SIZE) / 2.0;
 			double y = position.getSecond() * CELL_SIZE + (CELL_SIZE - AGENT_SIZE) / 2.0;
-			getGraphics().setFill(DEEPSKYBLUE);
+			getGraphics().setFill(currentColor);
 			getGraphics().fillOval(x, y, AGENT_SIZE, AGENT_SIZE);
+			currentColor = colors.get((colors.indexOf(currentColor) + 1) % colors.size());
+
 			getGraphics().setStroke(BLACK);
 			getGraphics().strokeOval(x, y, AGENT_SIZE, AGENT_SIZE);
 		}

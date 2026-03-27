@@ -2,6 +2,9 @@ package marlkit.crossescape.events;
 
 import rewardmodeling.ReactionEventDefault;
 
+/**
+ * Reward event emitted when an agent reaches its target exit.
+ */
 public class EscapedEvent extends ReactionEventDefault {
 	private static final double REWARD = 10.0;
 

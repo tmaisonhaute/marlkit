@@ -7,6 +7,9 @@ import learning.algorithm.QLearning;
 import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 
+/**
+ * Q-learning implementation of a TeamBattle agent.
+ */
 public class AgentTeamBattleQLearning extends AgentTeamBattle {
 
 	public AgentTeamBattleQLearning() {

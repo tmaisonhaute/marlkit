@@ -1,18 +1,22 @@
 package marlkit.teamsurround;
 
+import static javafx.scene.paint.Color.BLACK;
+import static javafx.scene.paint.Color.INDIANRED;
+import static javafx.scene.paint.Color.LIGHTGRAY;
+import static javafx.scene.paint.Color.STEELBLUE;
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
+
 import java.util.Map;
 
 import agent.MLKAgent;
 import environment.state.State2DGridInt;
-import static javafx.scene.paint.Color.BLACK;
-import static javafx.scene.paint.Color.LIGHTGRAY;
-import static javafx.scene.paint.Color.SEAGREEN;
-import static javafx.scene.paint.Color.STEELBLUE;
 import madkit.simulation.PropertyProbe;
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.viewer.Viewer2D;
 import util.Pair;
 
+/**
+ * 2D viewer for the TeamSurround environment.
+ */
 public class ViewerTeamSurround extends Viewer2D {
 
 	private static final double CELL_SIZE = 40;
@@ -69,7 +73,7 @@ public class ViewerTeamSurround extends Viewer2D {
 			if (getEnvironment().getTeamAt(agent) == 1) {
 				getGraphics().setFill(STEELBLUE);
 			} else {
-				getGraphics().setFill(SEAGREEN);
+				getGraphics().setFill(INDIANRED);
 			}
 			getGraphics().fillOval(x, y, AGENT_SIZE, AGENT_SIZE);
 			getGraphics().setStroke(BLACK);

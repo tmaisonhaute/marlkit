@@ -5,6 +5,9 @@ import madkit.simulation.SimuEnvironment;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
+/**
+ * Launcher for the stochastic-death TeamSurround setup.
+ */
 @EngineAgents(scheduler = SchedulerTeamSurround.class, model = MLKModel.class, viewers = {
 		ViewerTeamSurround.class })
 public class LauncherTeamSurroundStochastic extends MLKLauncher {

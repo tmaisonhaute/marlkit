@@ -4,6 +4,9 @@ import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
+/**
+ * Launcher for the default TeamBattle experiment setup.
+ */
 @EngineAgents(scheduler = SchedulerTeamBattle.class, environment = EnvTeamBattle.class, model = MLKModel.class, viewers = {
 		ViewerTeamBattle.class })
 public class LauncherTeamBattle extends MLKLauncher {

@@ -6,6 +6,11 @@ import environment.state.State;
 import environment.state.State2DGridInt;
 import util.criteria.Criterion;
 
+/**
+ * Terminal criterion for CrossEscape episodes.
+ *
+ * <p>The criterion is met when all four goal markers are present in the grid.</p>
+ */
 public class CrossEscapeTerminalCriterion implements Criterion {
 
 	private static final int REQUIRED_MARKERS = 4;

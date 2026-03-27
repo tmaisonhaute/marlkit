@@ -17,6 +17,13 @@ import marlkit.teamsurround.events.StepPenaltyEvent;
 import rewardmodeling.ReactionEvent;
 import util.Pair;
 
+/**
+ * Environment for the TeamSurround experiment.
+ *
+ * <p>Agents move on a grid and may die when local enemy pressure dominates
+ * ally support in the 4-neighborhood. The death rule can be deterministic or
+ * stochastic depending on configuration.</p>
+ */
 public class EnvTeamSurround extends EnvironmentStandard {
 
 	public static final int DEFAULT_WIDTH = 10;

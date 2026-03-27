@@ -13,6 +13,9 @@ import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.viewer.Viewer2D;
 import util.Pair;
 
+/**
+ * 2D viewer for TeamBattle.
+ */
 public class ViewerTeamBattle extends Viewer2D {
 
 	private static final double CELL_SIZE = 30;

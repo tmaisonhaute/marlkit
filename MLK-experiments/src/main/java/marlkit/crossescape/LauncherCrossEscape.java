@@ -4,6 +4,9 @@ import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
+/**
+ * Launcher for the default CrossEscape training setup.
+ */
 @EngineAgents(scheduler = SchedulerCrossEscape.class, environment = EnvCrossEscape.class, model = MLKModel.class, viewers = {
 		ViewerCrossEscape.class })
 public class LauncherCrossEscape extends MLKLauncher {

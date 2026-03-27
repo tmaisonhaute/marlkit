@@ -13,12 +13,19 @@ import agent.action.Action2DMove;
 import environment.EnvironmentStandard;
 import environment.state.State2DGridInt;
 import marlkit.crossescape.events.EscapedEvent;
-import marlkit.crossescape.events.NothingEvent;
 import marlkit.crossescape.events.NotEscapedYetEvent;
+import marlkit.crossescape.events.NothingEvent;
 import rewardmodeling.ReactionEvent;
 import rewardmodels.MixedReward;
 import util.Pair;
 
+/**
+ * Environment for the CrossEscape experiment.
+ *
+ * <p>Four agents start on the extremities of a cross-shaped corridor and must
+ * reach the opposite extremity. The dynamics enforce collision constraints and
+ * resolve simultaneous target conflicts with a seeded random tie-break.</p>
+ */
 public class EnvCrossEscape extends EnvironmentStandard {
 
 	public static final int GOAL_REACHED_MARKER = 1;

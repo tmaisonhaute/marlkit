@@ -6,6 +6,12 @@ import environment.state.State;
 import environment.state.State2DGridInt;
 import util.criteria.Criterion;
 
+/**
+ * Terminal criterion for TeamBattle episodes.
+ *
+ * <p>The episode terminates when one team has no remaining alive agents in the
+ * grid state representation.</p>
+ */
 public class TeamBattleTerminalCriterion implements Criterion {
 
 	private boolean met;

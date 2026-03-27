@@ -21,6 +21,13 @@ import rewardmodeling.ReactionEvent;
 import rewardmodels.MixedReward;
 import util.Pair;
 
+/**
+ * Team battle environment with movement, attack, hit points, and regeneration.
+ *
+ * <p>Agents belong to one of two teams and receive individual rewards.
+ * The environment applies simultaneous movement resolution, directional attacks,
+ * death handling, and per-turn health regeneration.</p>
+ */
 public class EnvTeamBattle extends EnvironmentStandard {
 
 	public static final int DEFAULT_WIDTH = 10;

@@ -9,6 +9,12 @@ import environment.reward.Reward;
 import rewardmodeling.ReactionEvent;
 import rewardmodeling.RewardModel;
 
+/**
+ * Team-aware reward model for TeamSurround.
+ *
+ * <p>Raw rewards are first computed per agent from events, then averaged within
+ * each team so that all teammates receive the same team mean reward.</p>
+ */
 public class RewardModelTeam implements RewardModel {
 
 	@Override

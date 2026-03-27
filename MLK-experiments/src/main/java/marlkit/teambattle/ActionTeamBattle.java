@@ -5,8 +5,17 @@ import java.util.Objects;
 import agent.action.Action;
 import util.Pair;
 
+/**
+ * Action type used by TeamBattle agents.
+ *
+ * <p>An action can either be a movement or an attack, both parameterized by a
+ * cardinal direction vector.</p>
+ */
 public class ActionTeamBattle implements Action {
 
+	/**
+	 * High-level category of TeamBattle actions.
+	 */
 	public enum Kind {
 		MOVE,
 		ATTACK

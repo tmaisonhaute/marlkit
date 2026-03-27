@@ -1,50 +1,22 @@
 package marlkit.pushtheblock;
 
-import simulation.MLKScheduler;
-import util.criteria.Criteria;
-import util.criteria.Criterion;
-import util.criteria.ModuloTimeCriterion;
-import util.criteria.ReachTimeCriterion;
+import simulation.TimedScheduler;
 
-public class SchedulerPTB extends MLKScheduler {
+public class SchedulerPTB extends TimedScheduler {
 	
 	public static final int EPISODE_DURATION = 100;
 	public static final int MINIMUM_STEP_BEFORE_VIEW = 5_000;
 	public static final int UPDATE_INTERVAL = 1000;
 	public static final int DISPLAYED_EPISODES = 1;
-	public static final int PAUSE_DISPLAY_VALUE = 50;
+	public static final int PAUSE_VALUE = 50;
 	public static final int MAXIMUM_EPISODE_COUNT = 10_000;
 
-	private final Criterion criteriaEndEpisode = new ReachTimeCriterion(EPISODE_DURATION);
-	private final Criterion criteriaStartDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL), 
-			new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
-	private final Criterion criteriaEndDisplay = Criteria.and(new ModuloTimeCriterion(UPDATE_INTERVAL, DISPLAYED_EPISODES), 
-			new ReachTimeCriterion(MINIMUM_STEP_BEFORE_VIEW));
-	private final Criterion criteriaEndSimulation = new ReachTimeCriterion(MAXIMUM_EPISODE_COUNT);
-
-	@Override
-	public Criterion getCriteriaEndEpisode() {
-		return criteriaEndEpisode;
-	}
-
-	@Override
-	public Criterion getCriteriaStartDisplay() {
-		return criteriaStartDisplay;
-	}
-
-	@Override
-	public Criterion getCriteriaEndDisplay() {
-		return criteriaEndDisplay;
-	}
-
-	@Override
-	public Criterion getCriteriaEndSimulation() {
-		return criteriaEndSimulation;
-	}
-
-	@Override
-	public int getPauseDisplayValue() {
-		return PAUSE_DISPLAY_VALUE; 
+	public SchedulerPTB() {
+		initEpisodeDuration(EPISODE_DURATION);
+		initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
+		initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
+		initEndSimulation(MAXIMUM_EPISODE_COUNT);
+		setPauseDisplayValue(PAUSE_VALUE);
 	}
 
 }

@@ -6,6 +6,12 @@ import environment.state.State;
 import environment.state.State2DGridInt;
 import util.criteria.Criterion;
 
+/**
+ * Terminal criterion for TeamSurround episodes.
+ *
+ * <p>The criterion is met when at least one team has no remaining alive agent
+ * on the grid.</p>
+ */
 public class TeamSurroundTerminalCriterion implements Criterion {
 
 	private boolean met;

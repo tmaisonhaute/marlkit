@@ -7,6 +7,11 @@ import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Action2DMove;
 
+/**
+ * Base agent type for the TeamSurround experiment.
+ *
+ * <p>Agents can only perform cardinal movement actions.</p>
+ */
 public abstract class AgentTeam extends AgentStandard {
 
 	public static final Action GO_LEFT = Action2DMove.left();

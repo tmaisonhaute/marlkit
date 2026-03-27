@@ -7,6 +7,9 @@ import learning.algorithm.QLearning;
 import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 
+/**
+ * Q-learning implementation for agents of team 2 in TeamSurround.
+ */
 public class AgentTeam2 extends AgentTeam {
 
 	public AgentTeam2() {
