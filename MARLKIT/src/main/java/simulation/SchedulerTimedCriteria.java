@@ -5,9 +5,9 @@ import util.criteria.Criterion;
 import util.criteria.ModuloTimeCriterion;
 import util.criteria.ReachTimeCriterion;
 
-public abstract class TimedScheduler extends MLKScheduler {
+public abstract class SchedulerTimedCriteria implements SchedulerCriteria {
 
-	public int PAUSE_DISPLAY_VALUE = 100;
+	public int pauseDisplayValue = 100;
 
 	private Criterion criteriaEndEpisode;
 	private Criterion criteriaStartDisplay;
@@ -46,7 +46,7 @@ public abstract class TimedScheduler extends MLKScheduler {
 	}
 
 	public void setPauseDisplayValue(int pauseDisplayValue) {
-		PAUSE_DISPLAY_VALUE = pauseDisplayValue;
+		this.pauseDisplayValue = pauseDisplayValue;
 	}
 	
 	@Override
@@ -71,7 +71,7 @@ public abstract class TimedScheduler extends MLKScheduler {
 
 	@Override
 	public int getPauseDisplayValue() {
-		return PAUSE_DISPLAY_VALUE;
+		return pauseDisplayValue;
 	}
 
 }

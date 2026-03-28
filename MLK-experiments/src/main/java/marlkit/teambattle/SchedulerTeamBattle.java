@@ -1,13 +1,14 @@
 package marlkit.teambattle;
 
-import simulation.TimedScheduler;
+import simulation.MLKScheduler;
+import simulation.SchedulerTimedCriteria;
 import util.criteria.Criteria;
 import util.criteria.ReachTimeCriterion;
 
 /**
  * Scheduler configuration for the TeamBattle experiment.
  */
-public class SchedulerTeamBattle extends TimedScheduler {
+public class SchedulerTeamBattle extends MLKScheduler {
 
 	public static final int EPISODE_DURATION = 100;
 	public static final int MINIMUM_STEP_BEFORE_VIEW = 500;
@@ -17,11 +18,18 @@ public class SchedulerTeamBattle extends TimedScheduler {
 	public static final int MAXIMUM_EPISODE_COUNT = 50_000;
 
 	public SchedulerTeamBattle() {
-		initEpisodeDuration(EPISODE_DURATION);
-		setCriteriaEndEpisode(Criteria.or(new ReachTimeCriterion(EPISODE_DURATION), new TeamBattleTerminalCriterion()));
-		initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
-		initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
-		initEndSimulation(MAXIMUM_EPISODE_COUNT);
-		setPauseDisplayValue(PAUSE_VALUE);
+		setCriteriaModule(new SchedulerTeamBattleCriteria());
+	}
+
+	class SchedulerTeamBattleCriteria extends SchedulerTimedCriteria {
+
+		public SchedulerTeamBattleCriteria() {
+			initEpisodeDuration(EPISODE_DURATION);
+			setCriteriaEndEpisode(Criteria.or(new ReachTimeCriterion(EPISODE_DURATION), new TeamBattleTerminalCriterion()));
+			initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
+			initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
+			initEndSimulation(MAXIMUM_EPISODE_COUNT);
+			setPauseDisplayValue(PAUSE_VALUE);
+		}
 	}
 }

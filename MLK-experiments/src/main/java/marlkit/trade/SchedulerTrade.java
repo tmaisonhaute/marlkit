@@ -1,8 +1,9 @@
 package marlkit.trade;
 
-import simulation.TimedScheduler;
+import simulation.MLKScheduler;
+import simulation.SchedulerTimedCriteria;
 
-public class SchedulerTrade extends TimedScheduler {
+public class SchedulerTrade extends MLKScheduler {
 	
 	public static final int EPISODE_DURATION = 20;
 	public static final int MINIMUM_STEP_BEFORE_VIEW = 500;
@@ -12,11 +13,18 @@ public class SchedulerTrade extends TimedScheduler {
 	public static final int MAXIMUM_EPISODE_COUNT = 2_000;
 
 	public SchedulerTrade() {
-		initEpisodeDuration(EPISODE_DURATION);
-		initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
-		initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
-		initEndSimulation(MAXIMUM_EPISODE_COUNT);
-		setPauseDisplayValue(PAUSE_VALUE);
+		setCriteriaModule(new SchedulerTradeCriteria());
+	}
+
+	class SchedulerTradeCriteria extends SchedulerTimedCriteria {
+
+		public SchedulerTradeCriteria() {
+			initEpisodeDuration(EPISODE_DURATION);
+			initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
+			initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
+			initEndSimulation(MAXIMUM_EPISODE_COUNT);
+			setPauseDisplayValue(PAUSE_VALUE);
+		}
 	}
 
 }

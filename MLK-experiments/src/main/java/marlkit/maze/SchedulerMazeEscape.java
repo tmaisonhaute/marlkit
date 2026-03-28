@@ -1,10 +1,11 @@
 package marlkit.maze;
 
-import simulation.TimedScheduler;
+import simulation.MLKScheduler;
+import simulation.SchedulerTimedCriteria;
 import util.criteria.Criteria;
 import util.criteria.ReachTimeCriterion;
 
-public class SchedulerMazeEscape extends TimedScheduler {
+public class SchedulerMazeEscape extends MLKScheduler {
 
 	public static final int EPISODE_DURATION = 100;
 	public static final int MINIMUM_STEP_BEFORE_VIEW = 5_000;
@@ -14,11 +15,18 @@ public class SchedulerMazeEscape extends TimedScheduler {
 	public static final int MAXIMUM_EPISODE_COUNT = 100_000;
 
 	public SchedulerMazeEscape() {
-		initEpisodeDuration(EPISODE_DURATION);
-		setCriteriaEndEpisode(Criteria.or(new ReachTimeCriterion(EPISODE_DURATION), new MazeTerminalCriterion()));
-		initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
-		initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
-		initEndSimulation(MAXIMUM_EPISODE_COUNT);
-		setPauseDisplayValue(PAUSE_VALUE);
+		setCriteriaModule(new SchedulerMazeEscapeCriteria());
+	}
+
+	class SchedulerMazeEscapeCriteria extends SchedulerTimedCriteria {
+
+		public SchedulerMazeEscapeCriteria() {
+			initEpisodeDuration(EPISODE_DURATION);
+			setCriteriaEndEpisode(Criteria.or(new ReachTimeCriterion(EPISODE_DURATION), new MazeTerminalCriterion()));
+			initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
+			initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
+			initEndSimulation(MAXIMUM_EPISODE_COUNT);
+			setPauseDisplayValue(PAUSE_VALUE);
+		}
 	}
 }

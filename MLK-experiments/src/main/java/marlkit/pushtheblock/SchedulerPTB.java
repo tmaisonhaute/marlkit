@@ -1,8 +1,9 @@
 package marlkit.pushtheblock;
 
-import simulation.TimedScheduler;
+import simulation.MLKScheduler;
+import simulation.SchedulerTimedCriteria;
 
-public class SchedulerPTB extends TimedScheduler {
+public class SchedulerPTB extends MLKScheduler {
 	
 	public static final int EPISODE_DURATION = 100;
 	public static final int MINIMUM_STEP_BEFORE_VIEW = 5_000;
@@ -12,11 +13,18 @@ public class SchedulerPTB extends TimedScheduler {
 	public static final int MAXIMUM_EPISODE_COUNT = 10_000;
 
 	public SchedulerPTB() {
-		initEpisodeDuration(EPISODE_DURATION);
-		initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
-		initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
-		initEndSimulation(MAXIMUM_EPISODE_COUNT);
-		setPauseDisplayValue(PAUSE_VALUE);
+		setCriteriaModule(new SchedulerPTBCriteria());
+	}
+
+	class SchedulerPTBCriteria extends SchedulerTimedCriteria {
+
+		public SchedulerPTBCriteria() {
+			initEpisodeDuration(EPISODE_DURATION);
+			initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
+			initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
+			initEndSimulation(MAXIMUM_EPISODE_COUNT);
+			setPauseDisplayValue(PAUSE_VALUE);
+		}
 	}
 
 }

@@ -1,6 +1,7 @@
 package marlkit.listenorgo;
 
-import simulation.TimedScheduler;
+import simulation.MLKScheduler;
+import simulation.SchedulerTimedCriteria;
 
 /**
  * Scheduler for the ListenOrGo simulation.
@@ -10,7 +11,7 @@ import simulation.TimedScheduler;
  * {@code public static final} fields for external configuration.
  * </p>
  */
-public class SchedulerListenOrGo extends TimedScheduler {
+public class SchedulerListenOrGo extends MLKScheduler {
 
     /** Number of steps per episode. */
     public static final int EPISODE_DURATION = 5;
@@ -26,10 +27,17 @@ public class SchedulerListenOrGo extends TimedScheduler {
     public static final int MAXIMUM_EPISODE_COUNT = 100_000;
     
 	public SchedulerListenOrGo() {
-		initEpisodeDuration(EPISODE_DURATION);
-		initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
-		initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
-		initEndSimulation(MAXIMUM_EPISODE_COUNT);
-		setPauseDisplayValue(PAUSE_VALUE);
+        setCriteriaModule(new SchedulerListenOrGoCriteria());
+    }
+
+    class SchedulerListenOrGoCriteria extends SchedulerTimedCriteria {
+
+        public SchedulerListenOrGoCriteria() {
+            initEpisodeDuration(EPISODE_DURATION);
+            initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
+            initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
+            initEndSimulation(MAXIMUM_EPISODE_COUNT);
+            setPauseDisplayValue(PAUSE_VALUE);
+        }
 	}
 }

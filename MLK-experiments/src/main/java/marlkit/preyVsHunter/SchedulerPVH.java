@@ -1,8 +1,9 @@
 package marlkit.preyVsHunter;
 
-import simulation.TimedScheduler;
+import simulation.MLKScheduler;
+import simulation.SchedulerTimedCriteria;
 
-public class SchedulerPVH extends TimedScheduler {
+public class SchedulerPVH extends MLKScheduler {
 
     public static final int EPISODE_DURATION = 100;
     public static final int MINIMUM_STEP_BEFORE_VIEW = 1000;
@@ -12,10 +13,17 @@ public class SchedulerPVH extends TimedScheduler {
 	public static final int MAXIMUM_EPISODE_COUNT = 10_000;
 
 	public SchedulerPVH() {
-		initEpisodeDuration(EPISODE_DURATION);
-		initStartDisplay(VIEWER_UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
-		initEndDisplay(VIEWER_UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
-		initEndSimulation(MAXIMUM_EPISODE_COUNT);
-		setPauseDisplayValue(PAUSE_VALUE);
+		setCriteriaModule(new SchedulerPVHCriteria());
+	}
+
+	class SchedulerPVHCriteria extends SchedulerTimedCriteria {
+
+		public SchedulerPVHCriteria() {
+			initEpisodeDuration(EPISODE_DURATION);
+			initStartDisplay(VIEWER_UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
+			initEndDisplay(VIEWER_UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
+			initEndSimulation(MAXIMUM_EPISODE_COUNT);
+			setPauseDisplayValue(PAUSE_VALUE);
+		}
 	}
 }
