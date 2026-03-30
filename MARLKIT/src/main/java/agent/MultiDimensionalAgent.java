@@ -254,10 +254,15 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 */
 	@Override
 	public void collectExperience() {
-		Experience experience = getMLKEnvironment().getExperience(this);
+		Experience experience = getEnvExperience();
 		if (experience != null) {
 			feedbackExperience(experience);
 		}
+	}
+	
+	@Override
+	public Experience getEnvExperience() {
+		return getMLKEnvironment().getExperience(this);
 	}
 
 	/**

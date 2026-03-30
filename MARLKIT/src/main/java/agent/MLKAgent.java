@@ -19,7 +19,7 @@ import madkit.simulation.SimuAgent;
  * Defines the fundamental behavior and lifecycle methods for reinforcement learning agents.
  */
 public interface MLKAgent {
-	public static final String DEFAULT_AGENT_ROLE = "MLKAgents";
+	public static final String DEFAULT_AGENT_ROLE = "MLKAgent";
 	
 	/**
 	 * Returns the policy used by this agent for decision making.
@@ -136,6 +136,12 @@ public interface MLKAgent {
 	 * Retrieves the experience from the environment and records it.
 	 */
 	public void collectExperience();
+	
+	/**
+	 * Get the experience from the environment, not the accumulated experience in the agent's memory.
+	 * @return the experience from the environment
+	 */
+	public Experience getEnvExperience();
 	
 	/**
 	 * Returns the environment this agent belongs to, cast to {@link MLKEnvironment}.
