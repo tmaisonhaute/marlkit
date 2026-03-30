@@ -18,7 +18,7 @@ public class SchedulerListenOrGo extends MLKScheduler {
     /** Minimum number of episodes that must elapse before the display is activated. */
     public static final int MINIMUM_STEP_BEFORE_VIEW = 100;
     /** Interval (in episodes) between consecutive display updates. */
-    public static final int UPDATE_INTERVAL = 1;
+    public static final int UPDATE_DISPLAY_INTERVAL = 1;
 	/** Number of consecutive episodes rendered during each display phase. */
 	public static final int DISPLAYED_EPISODES = 1;
     /** Duration in milliseconds of the pause inserted between display updates. */
@@ -34,8 +34,8 @@ public class SchedulerListenOrGo extends MLKScheduler {
 
         public SchedulerListenOrGoCriteria() {
             initEpisodeDuration(EPISODE_DURATION);
-            initStartDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
-            initEndDisplay(UPDATE_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
+            initStartDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
+            initEndDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
             initEndSimulation(MAXIMUM_EPISODE_COUNT);
             setPauseDisplayValue(PAUSE_VALUE);
         }

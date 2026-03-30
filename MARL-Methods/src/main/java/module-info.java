@@ -8,4 +8,5 @@ open module marlkit.methods {
     exports modelofotheragents.learning;
     exports rewardmodels;
     exports communicationimplementations;
+    exports centralizedtraining;
 }

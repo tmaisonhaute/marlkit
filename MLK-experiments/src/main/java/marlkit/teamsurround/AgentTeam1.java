@@ -12,6 +12,8 @@ import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
  */
 public class AgentTeam1 extends AgentTeam {
 
+	public static final String SHARED_EXPERIENCE_TEAM_ROLE = "AgentTeam1";
+
 	public AgentTeam1() {
 		super();
 		List<Action> actions = defaultActions();
@@ -21,4 +23,15 @@ public class AgentTeam1 extends AgentTeam {
 		setPolicy(qPolicy);
 		setAlgorithm(qLearning);
 	}
+
+	/**
+	 * Requests a team-specific role for shared-experience centralized training.
+	 */
+	@Override
+	protected void onActivation() {
+		super.onActivation();
+		requestRole(getCommunity(), getModelGroup(), SHARED_EXPERIENCE_TEAM_ROLE);
+	}
+	
+	
 }
