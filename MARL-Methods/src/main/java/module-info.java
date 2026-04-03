@@ -9,4 +9,5 @@ open module marlkit.methods {
     exports rewardmodels;
     exports communicationimplementations;
     exports centralizedtraining;
+    exports algorithm;
 }

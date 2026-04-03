@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import agent.action.Action;
-import algorithm.TDActorCritic;
 import environment.observation.wrapperobservationvector.WrapperVectorObservationPositionsValues;
+import learning.algorithm.Reinforce;
 import learning.nn.ActorNetwork;
 
-public class AgentPTBReinforce extends AgentPTB {
-	public AgentPTBReinforce(){
+public class AgentPTBTDActorCritic extends AgentPTB {
+	public AgentPTBTDActorCritic(){
 		super();
 		List<Action> possibleActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
 		ActorNetwork pol = new ActorNetwork(4, 20, 
     			new WrapperVectorObservationPositionsValues(false), possibleActions);
-    	TDActorCritic algo = new TDActorCritic(pol, null, 0.01, 0.95);
+    	Reinforce algo = new Reinforce(pol, 0.01, 0.95);
     	setPolicy(pol);
     	setAlgorithm(algo);
 	}

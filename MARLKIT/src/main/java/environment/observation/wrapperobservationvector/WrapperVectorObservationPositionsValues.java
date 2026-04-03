@@ -12,10 +12,10 @@ import util.Tuple;
 
 public class WrapperVectorObservationPositionsValues implements WrapperPolicyInputVector{
 
-	private boolean mustTranslateValue;
+	private boolean doWrapPositionValue;
 	
-	public WrapperVectorObservationPositionsValues(boolean mustTranslateValue) {
-		this.mustTranslateValue = mustTranslateValue;
+	public WrapperVectorObservationPositionsValues(boolean doWrapPositionValue) {
+		this.doWrapPositionValue = doWrapPositionValue;
 	}
 	
 	@Override
@@ -27,7 +27,7 @@ public class WrapperVectorObservationPositionsValues implements WrapperPolicyInp
 			throw new IllegalArgumentException("ObservationPositionValue must have a position of size 2");
 		}
 		
-		int numberValuesForObservation = mustTranslateValue ? 3 : 2;
+		int numberValuesForObservation = doWrapPositionValue ? 3 : 2;
 		double[] vector = new double[obs.getListObs().size() * numberValuesForObservation];
 		
 		for (ObservationPositionValue o : obs.getListObs()) {
@@ -35,7 +35,7 @@ public class WrapperVectorObservationPositionsValues implements WrapperPolicyInp
 			Tuple position = o.getPosition();
 			vector[i * numberValuesForObservation] = position.getValue(0);
 			vector[i * numberValuesForObservation + 1] = position.getValue(1);
-			if (mustTranslateValue) {
+			if (doWrapPositionValue) {
 				vector[i * numberValuesForObservation + 2] = o.getValue();
 			}
 		}
@@ -45,11 +45,11 @@ public class WrapperVectorObservationPositionsValues implements WrapperPolicyInp
 	@Override
 	public ObservationPositionsValues transform(double[] vector) {
 		ObservationPositionsValues obs = new ObservationPositionsValues();
-		int numberValuesForObservation = mustTranslateValue ? 3 : 2;
+		int numberValuesForObservation = doWrapPositionValue ? 3 : 2;
 		for(int i = 0; i < vector.length; i += numberValuesForObservation) {
 			List<Double> position = new ArrayList<>(Arrays.asList(vector[i], vector[i + 1]));
 			Tuple positionTuple = new Tuple(position);
-			if (mustTranslateValue) {
+			if (doWrapPositionValue) {
                 obs.addObservation(new ObservationPositionValue(positionTuple, vector[i + 2]));
 			}
 			else {

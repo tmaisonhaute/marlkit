@@ -17,7 +17,8 @@ public class LauncherPTB extends MLKLauncher {
 		for (int i = 0; i < nbAgents; i++) {
 
 //			AgentPTBReinforce ag = new AgentPTBReinforce();
-			AgentPTBqLearning ag = new AgentPTBqLearning();
+			AgentPTBTDActorCritic ag = new AgentPTBTDActorCritic();
+//			AgentPTBqLearning ag = new AgentPTBqLearning();
 			launchAgent(ag);
 		}
 	}
