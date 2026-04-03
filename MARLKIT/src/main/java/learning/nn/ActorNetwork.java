@@ -26,10 +26,7 @@ public class ActorNetwork implements Policy{
 	 *
 	 * @param inputSize the observation vector size
 	 * @param hiddenSize the number of hidden neurons
-	 * @param prng the random number generator
-	 * @param learningRate the learning rate
 	 * @param inputWrapper converts observations to vectors
-	 * @param actionWrapper converts actions to/from vectors
 	 * @param actionSet the set of possible actions
 	 */
     public ActorNetwork(int inputSize, int hiddenSize,
@@ -57,7 +54,7 @@ public class ActorNetwork implements Policy{
     	return agent;
     }
     
-	private RandomGenerator prng() {
+	protected RandomGenerator prng() {
 		return agent.prng();
 	}
     

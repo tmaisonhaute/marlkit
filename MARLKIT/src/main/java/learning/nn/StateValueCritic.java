@@ -2,8 +2,10 @@ package learning.nn;
 
 import java.util.random.RandomGenerator;
 
+import agent.MLKAgent;
 import environment.observation.Observation;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import madkit.simulation.SimuAgent;
 
 /**
  * State-value critic used in actor-critic methods.
@@ -20,7 +22,7 @@ public class StateValueCritic {
 
     private final NeuralNetwork network;
     private final WrapperPolicyInputVector observationWrapper;
-    private double learningRate;
+    protected MLKAgent agent;
 
     /**
      * Creates a state-value critic with one hidden layer.
@@ -34,17 +36,23 @@ public class StateValueCritic {
     public StateValueCritic(
             int inputSize,
             int hiddenSize,
-            RandomGenerator prng,
-            double learningRate,
             WrapperPolicyInputVector observationWrapper) {
 
         this.observationWrapper = observationWrapper;
-        this.learningRate = learningRate;
 
         // Architecture: input -> hidden -> scalar state value V(s)
         this.network = NeuralNetwork.reluIdentity(new int[] { inputSize, hiddenSize, 1 });
-        this.network.initializeParameters(prng);
     }
+    
+    public void init(MLKAgent agent) {
+    	this.agent = agent;
+    	this.network.initializeParameters(prng());
+    	
+    }
+    
+    protected RandomGenerator prng() {
+		return agent.prng();
+	}
 
     /**
      * Estimates the state value V(s).
@@ -64,6 +72,7 @@ public class StateValueCritic {
      * @return the estimated state value
      */
     public double getValue(double[] observationVector) {
+    	((SimuAgent) agent).getLogger().info("State value : " + network.predict(observationVector)[0]);
         return network.predict(observationVector)[0];
     }
 
@@ -132,7 +141,8 @@ public class StateValueCritic {
             double reward,
             Observation nextObservation,
             boolean terminal,
-            double gamma) {
+            double gamma, 
+            double learningRate) {
 
         double[] observationVector = observationWrapper.transform(observation);
 
@@ -141,7 +151,7 @@ public class StateValueCritic {
 
         double tdError = targetValue - currentValue;
 
-        applyRegressionUpdate(observationVector, targetValue);
+        applyRegressionUpdate(observationVector, targetValue, learningRate);
 
         return tdError;
     }
@@ -155,12 +165,12 @@ public class StateValueCritic {
      * @param targetValue the target value for V(s)
      * @return the prediction error targetValue - V(s)
      */
-    public double updateTowardTarget(Observation observation, double targetValue) {
+    public double updateTowardTarget(Observation observation, double targetValue, double learningRate) {
         double[] observationVector = observationWrapper.transform(observation);
         double currentValue = getValue(observationVector);
         double error = targetValue - currentValue;
 
-        applyRegressionUpdate(observationVector, targetValue);
+        applyRegressionUpdate(observationVector, targetValue, learningRate);
 
         return error;
     }
@@ -173,7 +183,7 @@ public class StateValueCritic {
      * @param observationVector the input vector
      * @param targetValue the scalar target value
      */
-    private void applyRegressionUpdate(double[] observationVector, double targetValue) {
+    private void applyRegressionUpdate(double[] observationVector, double targetValue, double learningRate) {
         double prediction = getValue(observationVector);
         
         double[] dLossDOutput = new double[] { 2.0 * (prediction - targetValue) };
@@ -181,21 +191,4 @@ public class StateValueCritic {
         network.applyOutputGradient(observationVector, dLossDOutput, learningRate);
     }
 
-    /**
-     * Sets the critic learning rate.
-     *
-     * @param learningRate the new learning rate
-     */
-    public void setLearningRate(double learningRate) {
-        this.learningRate = learningRate;
-    }
-
-    /**
-     * Returns the current critic learning rate.
-     *
-     * @return the learning rate
-     */
-    public double getLearningRate() {
-        return learningRate;
-    }
 }

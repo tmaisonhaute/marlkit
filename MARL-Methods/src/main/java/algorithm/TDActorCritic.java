@@ -33,6 +33,7 @@ public class TDActorCritic implements Algorithm {
 
 	private final double gamma;
     private final double actorLearningRate;
+    private final double criticLearningRate;
 
     private MLKAgent agent;
     private ActorNetwork actor;
@@ -51,10 +52,12 @@ public class TDActorCritic implements Algorithm {
             ActorNetwork actor,
             StateValueCritic critic,
             double actorLearningRate,
+            double criticLearningRate,
             double gamma) {
         this.actor = actor;
         this.critic = critic;
         this.actorLearningRate = actorLearningRate;
+        this.criticLearningRate = criticLearningRate;
         this.gamma = gamma;
     }
 
@@ -65,7 +68,7 @@ public class TDActorCritic implements Algorithm {
      * @param critic the state-value critic V(s)
      */
     public TDActorCritic(ActorNetwork actor, StateValueCritic critic) {
-        this(actor, critic, 0.001, 0.95);
+        this(actor, critic, 0.0001, 0.0001, 0.95);
     }
 
 
@@ -73,6 +76,7 @@ public class TDActorCritic implements Algorithm {
 	public void init(MLKAgent agent) {
 		this.agent = agent;
         actor.init(agent);
+        critic.init(agent);
 	}
 
 	@Override
@@ -129,7 +133,8 @@ public class TDActorCritic implements Algorithm {
                 reward,
                 nextObservation,
                 false,
-                gamma
+                gamma, 
+                getCriticLearningRate()
         );
 
         updateActor(currentInput, selectedAction, tdError);
@@ -162,7 +167,7 @@ public class TDActorCritic implements Algorithm {
         }
         dLossDLogits[actionIndex] -= tdError;
 
-        actor.updateFromLogitsGradient(input, dLossDLogits, actorLearningRate);
+        actor.updateFromLogitsGradient(input, dLossDLogits, getActorLearningRate());
     }
 
     /**
@@ -194,14 +199,23 @@ public class TDActorCritic implements Algorithm {
                     reward,
                     null,
                     true,
-                    gamma
+                    gamma,
+                    getCriticLearningRate()
             );
 
             updateActor(currentInput, selectedAction, tdError);
         }
-
         batch.clear();
 
 	}
+	
+	public double getActorLearningRate() {
+		return actorLearningRate;
+	}
+	
+	public double getCriticLearningRate() {
+        return criticLearningRate;
+    }
+	
 
 }
