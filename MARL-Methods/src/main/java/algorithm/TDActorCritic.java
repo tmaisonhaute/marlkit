@@ -4,8 +4,9 @@ import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import learning.Batch;
+import learning.Critic;
 import learning.Experience;
-import learning.algorithm.Algorithm;
+import learning.algorithm.ActorCritic;
 import learning.nn.ActorNetwork;
 import learning.nn.StateValueCritic;
 import learning.policy.Policy;
@@ -29,7 +30,7 @@ import madkit.kernel.AgentLogger;
  *     L = -delta * log pi(a|s)
  */
 
-public class TDActorCritic implements Algorithm {
+public class TDActorCritic implements ActorCritic {
 
 	private final double gamma;
     private final double actorLearningRate;
@@ -71,14 +72,6 @@ public class TDActorCritic implements Algorithm {
         this(actor, critic, 0.0001, 0.0001, 0.95);
     }
 
-
-	@Override
-	public void init(MLKAgent agent) {
-		this.agent = agent;
-        actor.init(agent);
-        critic.init(agent);
-	}
-
 	@Override
 	public void setPolicy(Policy policy) {
         if (policy instanceof ActorNetwork actorNetwork) {
@@ -93,7 +86,12 @@ public class TDActorCritic implements Algorithm {
 
 	@Override
 	public Policy getPolicy() {
-		return actor;
+		return getActor();
+	}
+	
+	@Override
+	public void setAgent(MLKAgent agent) {
+		this.agent = agent;
 	}
 
 	@Override
@@ -217,5 +215,14 @@ public class TDActorCritic implements Algorithm {
         return criticLearningRate;
     }
 	
+	@Override
+	public ActorNetwork getActor() {
+		return actor;
+	}
+	
+	@Override
+	public Critic getCritic() {
+		return critic;
+	}
 
 }

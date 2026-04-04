@@ -37,12 +37,9 @@ public class MonteCarlo implements Algorithm {
      */
     @Override
     public void init(MLKAgent agent) {
-        this.agent = agent;
+        setAgent(agent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setPolicy(Policy policy) {
         if (policy instanceof QValueBasedPolicy qPolicy) {
@@ -52,17 +49,16 @@ public class MonteCarlo implements Algorithm {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public QValueBasedPolicy getPolicy() {
         return this.policy;
     }
+    
+    @Override
+	public void setAgent(MLKAgent agent) {
+		this.agent = agent;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public MLKAgent getAgent() {
         return this.agent;

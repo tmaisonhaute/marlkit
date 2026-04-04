@@ -5,6 +5,7 @@ import java.util.random.RandomGenerator;
 import agent.MLKAgent;
 import environment.observation.Observation;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import learning.Critic;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -18,7 +19,7 @@ import madkit.simulation.SimuAgent;
  *       target = r + gamma * V(s')</li>
  * </ul>
  */
-public class StateValueCritic {
+public class StateValueCritic implements Critic {
 
     private final NeuralNetwork network;
     private final WrapperPolicyInputVector observationWrapper;
@@ -44,10 +45,10 @@ public class StateValueCritic {
         this.network = NeuralNetwork.reluIdentity(new int[] { inputSize, hiddenSize, 1 });
     }
     
+    @Override
     public void init(MLKAgent agent) {
     	this.agent = agent;
     	this.network.initializeParameters(prng());
-    	
     }
     
     protected RandomGenerator prng() {

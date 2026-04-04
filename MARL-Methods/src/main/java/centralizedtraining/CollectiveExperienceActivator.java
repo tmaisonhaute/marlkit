@@ -73,7 +73,7 @@ public class CollectiveExperienceActivator extends Activator {
 	}
 
 	/**
-	 * Resolves the current environment experience for an agent.
+	 * Get the current environment experience for an agent.
 	 *
 	 * @param agent the agent
 	 * @return the environment experience, or null if unavailable

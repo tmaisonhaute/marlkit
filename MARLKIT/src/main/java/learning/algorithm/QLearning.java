@@ -56,18 +56,13 @@ public class QLearning implements Algorithm {
         this(policy, actionsSet, 0.1, 0.95);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void init(MLKAgent agent) {
-        this.agent = agent;
+        setAgent(agent);
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setPolicy(Policy policy) {
         if (policy instanceof QValueBasedPolicy qPolicy) {
@@ -77,17 +72,16 @@ public class QLearning implements Algorithm {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public QValueBasedPolicy getPolicy() {
         return this.policy;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+	public void setAgent(MLKAgent agent) {
+		this.agent = agent;
+	}
+
     @Override
     public MLKAgent getAgent() {
         return this.agent;

@@ -22,12 +22,10 @@ public class Reinforce implements Algorithm {
 
 	@Override
 	public void init(MLKAgent agent) {
-		this.agent = agent;
+		setAgent(agent);
 	}
 
-	/**
-     * {@inheritDoc}
-     */
+
     @Override
     public void setPolicy(Policy policy) {
         if (policy instanceof ActorNetwork an) {
@@ -40,6 +38,11 @@ public class Reinforce implements Algorithm {
 	@Override
 	public Policy getPolicy() {
 		return policy;
+	}
+	
+	@Override
+	public void setAgent(MLKAgent agent) {
+		this.agent = agent;
 	}
 
 	@Override

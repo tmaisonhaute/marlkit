@@ -14,27 +14,33 @@ public interface Algorithm {
 	 *
 	 * @param agent the agent using this algorithm
 	 */
-	public abstract void init(MLKAgent agent);
+	public void init(MLKAgent agent);
 
 	/**
 	 * Sets the policy used by this Algorithm.
 	 * @param policy the policy to set
 	 */
-	public abstract void setPolicy(Policy policy);
+	public void setPolicy(Policy policy);
 	
 	/**
 	 * Returns the policy used by this Algorithm.
 	 *
 	 * @return the policy
 	 */
-	public abstract Policy getPolicy();
+	public Policy getPolicy();
 	
 	/**
 	 * Returns the agent using this Algorithm.
 	 *
 	 * @return the agent
 	 */
-	public abstract MLKAgent getAgent();
+	public MLKAgent getAgent();
+	
+	/**
+	 * Sets the agent that will use this Algorithm.
+	 * @param agent the agent to set
+	 */
+	public void setAgent(MLKAgent agent); 
 	
 	/**
 	 * Returns the pseudo-random number generator from the agent.
@@ -51,7 +57,7 @@ public interface Algorithm {
 	 *
 	 * @return the learning frequency
 	 */
-	public abstract int getLearningFrequency();
+	public int getLearningFrequency();
 	
 	
 	/**
@@ -60,7 +66,7 @@ public interface Algorithm {
 	 * @param batch the batch of experiences to learn from
 	 * @param logger the agent's logger for debug information
 	 */
-	public abstract void learnOnBatch(Batch batch, AgentLogger logger);
+	public void learnOnBatch(Batch batch, AgentLogger logger);
 	
 	/**
 	 * Called at the end of an episode to perform episode-level learning or cleanup.
@@ -68,6 +74,6 @@ public interface Algorithm {
 	 * @param batch the batch of experiences from the episode
 	 * @param logger the agent's logger for debug information
 	 */
-	public abstract void endEpisode(Batch batch, AgentLogger logger);
+	public void endEpisode(Batch batch, AgentLogger logger);
 	
 }

@@ -1,21 +1,20 @@
 package marlkit.pushtheblocktogether;
 
 import madkit.simulation.EngineAgents;
-import marlkit.pushtheblock.AgentPTBqLearning;
-import marlkit.pushtheblock.SchedulerPTB;
+import marlkit.pushtheblock.AgentPTBTDActorCritic;
 import marlkit.pushtheblock.ViewerPTB;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
-@EngineAgents(scheduler = SchedulerPTB.class, environment = EnvPushTheBlockTogether.class, model = MLKModel.class, viewers = {
+@EngineAgents(scheduler = SchedulerCentralizedCriticPTB.class, environment = EnvPushTheBlockTogether.class, model = MLKModel.class, viewers = {
 		ViewerPTB.class })
-public class LauncherPTBTogether extends MLKLauncher {
+public class LauncherPTBTogetherCentralizedCritic extends MLKLauncher {
 
 	@Override
 	protected void onLaunchSimulatedAgents() {
 		int nbAgents = 2;
 		for (int i = 0; i < nbAgents; i++) {
-			AgentPTBqLearning ag = new AgentPTBqLearning();
+			AgentPTBTDActorCritic ag = new AgentPTBTDActorCritic();
 			launchAgent(ag);
 		}
 	}
