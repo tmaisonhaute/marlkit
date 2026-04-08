@@ -1,7 +1,6 @@
 package marlkit.pushtheblocktogether;
 
 import madkit.simulation.EngineAgents;
-import marlkit.pushtheblock.AgentPTBTDActorCritic;
 import marlkit.pushtheblock.ViewerPTB;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
@@ -14,7 +13,7 @@ public class LauncherPTBTogetherCentralizedCritic extends MLKLauncher {
 	protected void onLaunchSimulatedAgents() {
 		int nbAgents = 2;
 		for (int i = 0; i < nbAgents; i++) {
-			AgentPTBTDActorCritic ag = new AgentPTBTDActorCritic();
+			AgentPTBTogetherTDActorCriticCentralized ag = new AgentPTBTogetherTDActorCriticCentralized();
 			launchAgent(ag);
 		}
 	}

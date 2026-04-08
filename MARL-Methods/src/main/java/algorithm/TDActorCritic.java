@@ -2,7 +2,6 @@ package algorithm;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import environment.observation.Observation;
 import learning.Batch;
 import learning.Critic;
 import learning.Experience;
@@ -116,20 +115,23 @@ public class TDActorCritic implements ActorCritic {
      * Processes one transition (s, a, r, s') from the first two experiences in the batch.
      */
     private void handleTransition(Batch batch) {
-        Experience current = batch.getExperiences().get(0);
-        Experience next = batch.getExperiences().get(1);
+        Experience currentExperience = batch.getExperiences().get(0);
+        Experience nextExperience = batch.getExperiences().get(1);
+        
+        Experience criticCurrentExperience = critic.getEnrichedExperience(currentExperience);
+        Experience criticNextExperience = critic.getEnrichedExperience(nextExperience);
+        
+        criticCurrentExperience = criticCurrentExperience != null ? criticCurrentExperience : currentExperience;
+        criticNextExperience = criticNextExperience != null ? criticNextExperience : nextExperience;
 
-        PolicyInput currentInput = current.getInput();
-        Action selectedAction = current.getAction();
-        double reward = current.getRewardValue();
-
-        Observation currentObservation = toObservation(currentInput);
-        Observation nextObservation = toObservation(next.getInput());
+        PolicyInput currentInput = currentExperience.getInput();
+        Action selectedAction = currentExperience.getAction();
+        double reward = currentExperience.getRewardValue();
 
         double tdError = critic.updateFromTransition(
-                currentObservation,
+        		criticCurrentExperience.getInput(),
                 reward,
-                nextObservation,
+                criticNextExperience.getInput(),
                 false,
                 gamma, 
                 getCriticLearningRate()
@@ -138,6 +140,7 @@ public class TDActorCritic implements ActorCritic {
         updateActor(currentInput, selectedAction, tdError);
 
         batch.getExperiences().removeFirst();
+        getCritic().removeEnrichedExperience(currentExperience);
     }
 
 
@@ -168,32 +171,24 @@ public class TDActorCritic implements ActorCritic {
         actor.updateFromLogitsGradient(input, dLossDLogits, getActorLearningRate());
     }
 
-    /**
-     * Converts a PolicyInput into an Observation for the critic.
-     */
-    private Observation toObservation(PolicyInput input) {
-        if (input instanceof Observation observation) {
-            return observation;
-        }
-        throw new IllegalArgumentException(
-                "TDActorCritic requires PolicyInput to also be an Observation."
-        );
-    }
+
 
 
 	@Override
 	public void endEpisode(Batch batch, AgentLogger logger) {
         if (batch.getExperiences().size() == 1) {
             Experience last = batch.getExperiences().get(0);
+            
+            Experience criticLastExperience = critic.getEnrichedExperience(last);
+            criticLastExperience = criticLastExperience != null ? criticLastExperience : last;
 
             PolicyInput currentInput = last.getInput();
             Action selectedAction = last.getAction();
             double reward = last.getRewardValue();
 
-            Observation currentObservation = toObservation(currentInput);
-
+            
             double tdError = critic.updateFromTransition(
-                    currentObservation,
+            		criticLastExperience.getInput(),
                     reward,
                     null,
                     true,
@@ -204,6 +199,7 @@ public class TDActorCritic implements ActorCritic {
             updateActor(currentInput, selectedAction, tdError);
         }
         batch.clear();
+        critic.clearEnrichedExperiences();
 
 	}
 	

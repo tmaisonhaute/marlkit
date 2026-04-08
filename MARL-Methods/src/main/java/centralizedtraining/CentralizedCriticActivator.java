@@ -11,6 +11,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.JointAction;
 import learning.Experience;
+import learning.algorithm.ActorCritic;
 import learning.policy.PolicyInput;
 import madkit.kernel.Activator;
 import madkit.kernel.Agent;
@@ -196,14 +197,21 @@ public class CentralizedCriticActivator extends Activator {
       * @param jointAction the centralized joint action
       */
      protected void redistributeMergedExperiences(Map<MLKAgent, Experience> experiencesByAgent, PolicyInput mergedInput, JointAction jointAction) {
-
+    	 
          for (Map.Entry<MLKAgent, Experience> entry : experiencesByAgent.entrySet()) {
              MLKAgent agent = entry.getKey();
+             
              Experience originalExperience = entry.getValue();
-
              Experience centralizedExperience = new Experience(mergedInput, jointAction, originalExperience.getReward());
 
-             agent.feedbackExperience(centralizedExperience);
+             agent.feedbackExperience(originalExperience);
+             
+             if (agent.getAlgorithm() instanceof ActorCritic actorCritic) {
+            	 actorCritic.getCritic().enrichExperience(originalExperience, centralizedExperience);
+				} else {
+					throw new IllegalStateException(
+							"CentralizedCriticActivator requires agents with ActorCritic algorithms.");
+				}
          }
      }
 
