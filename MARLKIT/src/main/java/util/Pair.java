@@ -61,15 +61,9 @@ public class Pair<T, U > {
 		this.second = second;
 	}
 	
-	/**
-	 * Creates a shallow copy of this pair.
-	 *
-	 * @return a new pair with the same elements
-	 */
-	public Pair<T, U> clone(){
-		return new Pair<T, U>(first, second);
+	public Pair<T, U> clone() {
+		return new Pair<>(first, second);
 	}
-	
 	
 	
 	@Override

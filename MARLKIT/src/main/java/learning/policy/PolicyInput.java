@@ -19,4 +19,6 @@ public interface PolicyInput {
 	 * @return a new PolicyInput that is the combination of this and the other
 	 */
 	PolicyInput add(PolicyInput other);
+	
+	public PolicyInput copy();
 }

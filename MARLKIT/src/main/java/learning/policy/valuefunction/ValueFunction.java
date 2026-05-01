@@ -15,7 +15,7 @@ import java.util.Map;
  * @see QTable
  * @see VTable
  */
-public class ValueFunction<K> {
+public abstract class ValueFunction<K> {
     protected Map<K, Double> tableValue;
 	protected final double defaultValue;
 
@@ -53,7 +53,7 @@ public class ValueFunction<K> {
 	 * @param value the value to associate with the key
 	 */
 	public void setValue(K key, double value) {
-        tableValue.put(key, value);
+        tableValue.put(copyKey(key), value);
     }
 
 	/**
@@ -73,5 +73,13 @@ public class ValueFunction<K> {
 	public int size() {
 		return tableValue.size();
 	}
+	
+	/**
+	 * Creates a copy of the key to ensure immutability in storage.
+	 * @param key the key to copy
+	 * @return a copy of the key for safe storage in the value function
+	 */
+	protected abstract K copyKey(K key);
+	
 	
 }

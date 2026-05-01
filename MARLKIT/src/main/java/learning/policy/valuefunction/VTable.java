@@ -21,5 +21,10 @@ public class VTable extends ValueFunction<Observation> {
 	public VTable(double defaultValue) {
 		super(defaultValue);
 	}
+	
+	@Override
+	protected Observation copyKey(Observation key) {
+		return key.copy();
+	}
 
 }

@@ -86,7 +86,7 @@ public class Tuple {
 	 *
 	 * @return a new tuple with the same values
 	 */
-	public Tuple clone() {
+	public Tuple copy() {
 		List<Double> newL = new ArrayList<>();
 		for (int i = 0; i < this.getSize(); i++) {
 			newL.add(this.getValue(i));

@@ -1,10 +1,15 @@
 package environment.observation.wrapperactionobservation;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import agent.action.Action;
 import environment.observation.Observation;
 import environment.observation.ObservationOneHotEncoding;
-
-import java.util.*;
 
 /**
  * A wrapper that converts discrete agent actions into one-hot encoded observations.
@@ -56,6 +61,6 @@ public class WrapperActionObservationOneHotEncoding implements WrapperActionObse
     @Override
     public Observation transform(Action action) {
         ObservationOneHotEncoding encoding = actions2obs.get(action);
-        return encoding != null ? encoding.clone() : null;
+        return encoding != null ? encoding.copy() : null;
     }
 }

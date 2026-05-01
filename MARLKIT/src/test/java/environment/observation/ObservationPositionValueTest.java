@@ -120,6 +120,12 @@ public class ObservationPositionValueTest {
             public Observation add(Observation other) {
                 return null;
             }
+
+			@Override
+			public Observation copy() {
+				// TODO Auto-generated method stub
+				return null;
+			}
         };
         
         // When/Then

@@ -13,9 +13,9 @@ import util.Pair;
 public class QValueBasedPolicy implements Policy{
 
 	protected QTable qTable;
-	private ExplorationStrategy explorationStrategy;
-	private MLKAgent agent;
-	private List<Action> actionsSet;
+	protected ExplorationStrategy explorationStrategy;
+	protected MLKAgent agent;
+	protected List<Action> actionsSet;
 	
 	public QValueBasedPolicy(List<Action> actionsSet) {
 		this(actionsSet, 0.0);
@@ -30,8 +30,8 @@ public class QValueBasedPolicy implements Policy{
 		this.qTable = new QTable(defaultValue);
 		this.explorationStrategy = explorationStrategy;
 	}
-	
-	
+
+
 	@Override
 	public void init(MLKAgent agent) {
 		this.agent = agent;
@@ -72,6 +72,11 @@ public class QValueBasedPolicy implements Policy{
 	
 	public ExplorationStrategy getExplorationStrategy() {
 		return explorationStrategy;
+	}
+
+
+	public void setExplorationStrategy(ExplorationStrategy explorationStrategy) {
+		this.explorationStrategy = explorationStrategy;
 	}
 
 }

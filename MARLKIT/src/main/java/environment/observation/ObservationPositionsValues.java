@@ -124,5 +124,14 @@ public class ObservationPositionsValues implements Observation {
         return false;
 	}
 	
+	@Override
+	public ObservationPositionsValues copy() {
+		ObservationPositionsValues copy = new ObservationPositionsValues();
+		for (ObservationPositionValue o : obs) {
+			copy.addObservationPosition(o.copy());
+		}
+		return copy;
+	}
+	
 
 }

@@ -177,7 +177,7 @@ public class CentralizedCriticActivator extends Activator {
          for (Map.Entry<MLKAgent, Experience> entry : experiencesByAgent.entrySet()) {
              MLKAgent agent = entry.getKey();
              Action action = entry.getValue().getAction();
-             jointAction.addActions(action);
+             jointAction.addAction(action);
          }
 
          return jointAction;

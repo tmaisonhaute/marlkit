@@ -83,4 +83,13 @@ public class ObservationOneHotEncodings implements Observation {
         avg.divide(oneHotEncodings.size());
         return avg;
     }
+    
+    @Override
+	public ObservationOneHotEncodings copy() {
+		List<ObservationOneHotEncoding> copiedEncodings = new ArrayList<>();
+		for (ObservationOneHotEncoding ohe : oneHotEncodings) {
+			copiedEncodings.add(ohe.copy());
+		}
+		return new ObservationOneHotEncodings(copiedEncodings);
+	}
 }

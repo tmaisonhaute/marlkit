@@ -99,13 +99,7 @@ public class ObservationOneHotEncoding implements Observation {
         return this;
     }
 
-    /**
-     * Creates a deep copy of this observation.
-     *
-     * @return a new ObservationOneHotEncoding instance with the same vector values
-     */
-    @Override
-    public Observation clone() {
+    public ObservationOneHotEncoding copy() {
         return new ObservationOneHotEncoding(new ArrayList<>(this.OHE));
     }
 }

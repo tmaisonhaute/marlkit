@@ -35,4 +35,15 @@ public class QTable extends ValueFunction<Pair<PolicyInput, Action>> {
         return tableValue.getOrDefault(new Pair<>(input, action), getDefaultValue());
     }
 
+	@Override
+	protected Pair<PolicyInput, Action> copyKey(Pair<PolicyInput, Action> key) {
+	    return new Pair<>(
+	        key.getFirst(),
+	        key.getSecond().copy()
+	    );
+	}
+
+	
+	
+
 }

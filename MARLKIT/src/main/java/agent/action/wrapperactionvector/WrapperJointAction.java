@@ -50,7 +50,7 @@ public class WrapperJointAction implements WrapperActionVector{
 		for (int i = 0; i < nbAgents; i++) {
 			double[] individualVector = new double[sizeIndividualAction];
 			Action action = wrapperActionVector.transform(individualVector);
-			jointAction.addActions(action);
+			jointAction.addAction(action);
 		}
 		return jointAction;
 	}

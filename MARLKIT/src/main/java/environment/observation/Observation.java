@@ -28,4 +28,6 @@ public interface Observation extends PolicyInput{
      */
     @Override
     boolean equals(Object obj);
+    
+    public Observation copy();
 }

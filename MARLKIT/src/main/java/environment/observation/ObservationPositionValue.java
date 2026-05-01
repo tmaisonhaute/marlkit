@@ -98,5 +98,10 @@ public class ObservationPositionValue implements Observation {
     public String toString() {
     	return "(" + position.toString() + " -> " + value + ")";
     }
+    
+    @Override
+	public ObservationPositionValue copy() {
+		return new ObservationPositionValue(position.copy(), value);
+	}
 	
 }

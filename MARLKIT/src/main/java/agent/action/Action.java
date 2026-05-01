@@ -10,4 +10,6 @@ public interface Action {
      */
     @Override
     boolean equals(Object obj);
+    
+    public Action copy();
 }

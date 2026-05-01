@@ -123,7 +123,7 @@ public class TupleTest {
         Tuple originalTuple = new Tuple(values);
 
         // When
-        Tuple clonedTuple = originalTuple.clone();
+        Tuple clonedTuple = originalTuple.copy();
 
         // Then
         assertThat(clonedTuple).isEqualTo(originalTuple);
@@ -138,7 +138,7 @@ public class TupleTest {
         // Given
         List<Double> values = new ArrayList<>(Arrays.asList(1.0, 2.0, 3.0));
         Tuple originalTuple = new Tuple(values);
-        Tuple clonedTuple = originalTuple.clone();
+        Tuple clonedTuple = originalTuple.copy();
 
         // When
         clonedTuple.setValue(0, 99.0);

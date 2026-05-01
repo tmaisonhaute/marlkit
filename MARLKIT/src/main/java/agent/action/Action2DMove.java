@@ -162,4 +162,9 @@ public class Action2DMove implements Action {
 	public static List<Action> getVonNeumannmove(){
 		return List.of( up(), down(), left(), right() );
 	}
+	
+	@Override
+	public Action copy() {
+		return new Action2DMove(new Pair<>(getFirst(), getSecond()));
+	}
 }

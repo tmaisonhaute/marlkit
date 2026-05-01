@@ -52,5 +52,10 @@ public class ActionInt implements Action {
 		return value == other.value;
 	}
 	
+	@Override
+	public ActionInt copy() {
+		return new ActionInt(this.value);
+	}
+	
 	
 }
