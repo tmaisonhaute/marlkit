@@ -5,7 +5,7 @@ import java.util.List;
 
 import agent.AgentStandard;
 import agent.action.Action;
-import agent.action.Action2DMove;
+import agent.action.Move2D;
 import learning.algorithm.QLearning;
 import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;

@@ -36,5 +36,6 @@ public class BroadcastObservation implements CommunicationModule {
 		
 		agent.setRegisteredObservation(extendedObservation);
 	}
+	 
 
 }

@@ -5,19 +5,24 @@ import java.util.Optional;
 
 import agent.action.Action;
 import agent.action.JointAction;
-import agent.moa.MoaGroupPredictAction;
+import agent.modelofotheragent.GroupModelPredictAction;
 import learning.policy.PolicyInput;
 import learning.policy.QValueBasedPolicy;
 
 public class QLearningJAL extends QValueBasedPolicy {
 	
-	protected MoaGroupPredictAction moaGroupPredictAction;
+	protected GroupModelPredictAction groupModelPredictAction;
+	protected final int selfIndex;
 
-	public QLearningJAL(List<Action> actionsSet, MoaGroupPredictAction moaGroupPredictAction) {
+	public QLearningJAL(List<Action> actionsSet, GroupModelPredictAction moaGroupPredictAction) {
 		super(actionsSet);
-		this.moaGroupPredictAction = moaGroupPredictAction;
+		this.groupModelPredictAction = moaGroupPredictAction;
+		selfIndex = 0;
 	}
 	
+	public void setGroupModelPredictAction(GroupModelPredictAction groupModel) {
+		this.groupModelPredictAction = groupModel;
+	}
 
 	@Override
 	public Action selectAction(PolicyInput input) {
@@ -26,13 +31,14 @@ public class QLearningJAL extends QValueBasedPolicy {
 			return exploratoryAction.get();
 		}
 		
-	    JointAction predictedOthersActions = moaGroupPredictAction.predictAction(input);
 	
 	    Action bestAction = null;
 	    double bestValue = Double.NEGATIVE_INFINITY;
 	
 	    for (Action ownAction : actionsSet) {
-	        JointAction jointAction = predictedOthersActions.withActionFirst(ownAction);
+	    	JointAction predictedOthersActions = groupModelPredictAction.predictAction(input, ownAction);
+	    	
+	        JointAction jointAction = predictedOthersActions.withActionAtIndex(ownAction, selfIndex);
 	
 	        double value = qTable.getValue(input, jointAction);
 	

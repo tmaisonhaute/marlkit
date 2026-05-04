@@ -1,14 +1,13 @@
 package agent.action;
 
 import java.util.List;
-import java.util.Objects;
 
 import util.Pair;
 
 /**
  * An action representing a 2D movement with delta-x and delta-y components.
  */
-public class Action2DMove implements Action {
+public class Move2D implements Action {
 	protected Pair<Integer, Integer> value;
 
 	/**
@@ -16,7 +15,7 @@ public class Action2DMove implements Action {
 	 *
 	 * @param value a pair containing (delta-x, delta-y) movement values
 	 */
-	public Action2DMove(Pair<Integer, Integer> value) {
+	public Move2D(Pair<Integer, Integer> value) {
 		this.value = value;
 	}
 
@@ -58,14 +57,14 @@ public class Action2DMove implements Action {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(value);
+		return value.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj instanceof Action2DMove a) {
+		if (obj instanceof Move2D a) {
 			return this.getValue().equals(a.value);
 		}
 		return false;
@@ -76,7 +75,7 @@ public class Action2DMove implements Action {
 	 *
 	 * @param other the movement to add
 	 */
-	public void add(Action2DMove other) {
+	public void add(Move2D other) {
 		getValue().setFirst(getFirst() + other.getFirst());
 		getValue().setSecond(getSecond() + other.getSecond());
 	}
@@ -104,8 +103,8 @@ public class Action2DMove implements Action {
 	 * @param b the second movement
 	 * @return a new movement representing the sum
 	 */
-	public static Action2DMove add(Action2DMove a, Action2DMove b) {
-		return new Action2DMove(
+	public static Move2D add(Move2D a, Move2D b) {
+		return new Move2D(
 				new Pair<>(a.getFirst() + b.getFirst(), a.getSecond() + b.getSecond()));
 	}
 
@@ -114,8 +113,8 @@ public class Action2DMove implements Action {
 	 *
 	 * @return an upward movement action
 	 */
-	public static Action2DMove up() {
-        return new Action2DMove(new Pair<>(0, 1));
+	public static Move2D up() {
+        return new Move2D(new Pair<>(0, 1));
     }
 	
 	/**
@@ -123,8 +122,8 @@ public class Action2DMove implements Action {
 	 *
 	 * @return a downward movement action
 	 */
-	public static Action2DMove down() {
-		return new Action2DMove(new Pair<>(0, -1));
+	public static Move2D down() {
+		return new Move2D(new Pair<>(0, -1));
 	}
 	
 	/**
@@ -132,8 +131,8 @@ public class Action2DMove implements Action {
 	 *
 	 * @return a leftward movement action
 	 */
-	public static Action2DMove left() {
-		return new Action2DMove(new Pair<>(-1, 0));
+	public static Move2D left() {
+		return new Move2D(new Pair<>(-1, 0));
 	}
 	
 	/**
@@ -141,8 +140,8 @@ public class Action2DMove implements Action {
 	 *
 	 * @return a rightward movement action
 	 */
-	public static Action2DMove right() {
-		return new Action2DMove(new Pair<>(1, 0));
+	public static Move2D right() {
+		return new Move2D(new Pair<>(1, 0));
 	}
 	
 	/**
@@ -150,8 +149,8 @@ public class Action2DMove implements Action {
 	 *
 	 * @return an idle movement action
 	 */
-	public static Action2DMove idle() {
-		return new Action2DMove(new Pair<>(0, 0));
+	public static Move2D idle() {
+		return new Move2D(new Pair<>(0, 0));
 	}
 
 	/**
@@ -165,6 +164,6 @@ public class Action2DMove implements Action {
 	
 	@Override
 	public Action copy() {
-		return new Action2DMove(new Pair<>(getFirst(), getSecond()));
+		return new Move2D(new Pair<>(getFirst(), getSecond()));
 	}
 }

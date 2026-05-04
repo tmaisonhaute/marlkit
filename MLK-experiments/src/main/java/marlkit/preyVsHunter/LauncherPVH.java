@@ -5,7 +5,7 @@ import java.util.List;
 
 import agent.AgentStandard;
 import agent.action.Action;
-import agent.action.Action2DMove;
+import agent.action.Move2D;
 import learning.algorithm.Sarsa;
 import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
@@ -20,8 +20,8 @@ public class LauncherPVH extends MLKLauncher {
     @Override
     protected void onLaunchSimulatedAgents() {
 
-        List<Action> possibleHunterActions = new ArrayList<>(Action2DMove.getVonNeumannmove());
-        List<Action> possiblePreyActions = new ArrayList<>(Action2DMove.getVonNeumannmove());
+        List<Action> possibleHunterActions = new ArrayList<>(Move2D.getVonNeumannmove());
+        List<Action> possiblePreyActions = new ArrayList<>(Move2D.getVonNeumannmove());
 
         int nbHunterAgents = 2;
         int nbPreyAgents = 1 ;

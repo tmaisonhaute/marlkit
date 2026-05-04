@@ -24,7 +24,7 @@ public abstract class ValueFunction<K> {
 	 *
 	 * @param defaultValue the value returned for unseen keys
 	 */
-	public ValueFunction(double defaultValue) {
+	protected ValueFunction(double defaultValue) {
 		this.tableValue = new HashMap<>();
 		this.defaultValue = defaultValue;
 	}

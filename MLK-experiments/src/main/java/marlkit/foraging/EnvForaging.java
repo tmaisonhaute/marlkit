@@ -7,7 +7,7 @@ import java.util.Map;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Action2DMove;
+import agent.action.Move2D;
 import environment.EnvironmentStandard;
 import environment.state.State2DGridInt;
 import marlkit.foraging.events.FoodCollectedEvent;
@@ -87,7 +87,7 @@ public class EnvForaging extends EnvironmentStandard {
 	protected void moveAgents(Map<MLKAgent, Action> actions, Map<MLKAgent, List<ReactionEvent>> reactionEventsAction
 			, Map<Pair<Integer, Integer>, List<MLKAgent>> newAgentsPositions) {
 		for (MLKAgent ag : agents.getAgents()) {
-			Action2DMove action = (Action2DMove) actions.get(ag);
+			Move2D action = (Move2D) actions.get(ag);
 			Pair<Integer, Integer> oldPosition = state.getAgentPosition(ag);
 			Pair<Integer, Integer> newPosition = stateMoveAgent(ag, action);
 			newAgentsPositions.putIfAbsent(newPosition, new ArrayList<>());
@@ -167,7 +167,7 @@ public class EnvForaging extends EnvironmentStandard {
 	 * @param action the action indicating the direction of the move
 	 * @return the new position of the agent after the move
 	 */
-	protected Pair<Integer, Integer> stateMoveAgent(MLKAgent agent, Action2DMove action) {
+	protected Pair<Integer, Integer> stateMoveAgent(MLKAgent agent, Move2D action) {
 		state.moveAgent(agent, action.getValue());
 		return state.getAgentPosition(agent).clone();
 	}

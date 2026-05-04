@@ -8,7 +8,7 @@ import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Action2DMove;
+import agent.action.Move2D;
 import environment.EnvironmentStandard;
 import environment.reward.Reward;
 import environment.reward.RewardStandard;
@@ -107,7 +107,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
      */
     private void moveAllAgents(Map<MLKAgent, Action> actions) {
         for (MLKAgent ag : agents.getAgents()) {
-            Action2DMove action = (Action2DMove) actions.get(ag);
+            Move2D action = (Move2D) actions.get(ag);
             state.moveAgentwithVal(ag, action.getValue(), getclassId(ag));
             
         }
@@ -245,7 +245,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     private void addCollectifReward(List<? extends MLKAgent> agents,double reward, Map<MLKAgent, Action> actions, Map<MLKAgent, Pair<Action, Reward>> results) {
         for (MLKAgent ag : agents) {
             Reward R = new RewardStandard(reward);
-            Action2DMove action = (Action2DMove) actions.get(ag);
+            Move2D action = (Move2D) actions.get(ag);
             results.put(ag, new Pair<>(action, R));
         }
     }

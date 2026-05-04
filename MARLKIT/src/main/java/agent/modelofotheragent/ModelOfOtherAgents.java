@@ -1,4 +1,4 @@
-package modelofotheragents;
+package agent.modelofotheragent;
 
 public interface ModelOfOtherAgents {
 

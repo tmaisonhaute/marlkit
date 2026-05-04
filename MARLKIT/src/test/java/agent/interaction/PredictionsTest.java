@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Action2DMove;
+import agent.action.Move2D;
 import agent.interaction.wrapper.WapperActionProbabilities;
 import environment.observation.Observation;
 import environment.observation.ObservationPositionValue;
@@ -48,8 +48,8 @@ public class PredictionsTest {
             new ObservationPositionValue(new Tuple(Arrays.asList(3.0, 4.0)), 2.0));
         
         // Create test actions
-        action1 = Action2DMove.up();
-        action2 = Action2DMove.right();
+        action1 = Move2D.up();
+        action2 = Move2D.right();
         
         // Create mock wrapper
         mockWrapper = mock(WapperActionProbabilities.class);

@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.testng.annotations.Test;
 
 import agent.action.Action;
-import agent.action.Action2DMove;
+import agent.action.Move2D;
 import util.Pair;
 
 public class WrapperAction2DMoveVectorTest {
@@ -14,7 +14,7 @@ public class WrapperAction2DMoveVectorTest {
     @Test
     public void givenAction2DMove_whenTransformToVector_thenCorrectVectorReturned() {
         // Given
-        Action2DMove action = new Action2DMove(new Pair<>(2, 3));
+        Move2D action = new Move2D(new Pair<>(2, 3));
         WrapperAction2DMoveVector wrapper = new WrapperAction2DMoveVector();
         
         // When
@@ -36,8 +36,8 @@ public class WrapperAction2DMoveVectorTest {
         Action action = wrapper.transform(vector);
         
         // Then
-        assertThat(action).isInstanceOf(Action2DMove.class);
-        Action2DMove actionMove = (Action2DMove) action;
+        assertThat(action).isInstanceOf(Move2D.class);
+        Move2D actionMove = (Move2D) action;
         assertThat(actionMove.getValue().getFirst()).isEqualTo(2);
         assertThat(actionMove.getValue().getSecond()).isEqualTo(3);
     }
@@ -58,10 +58,10 @@ public class WrapperAction2DMoveVectorTest {
     public void givenPredefinedActions_whenTransformed_thenCorrectVectorsReturned() {
         // Given
         WrapperAction2DMoveVector wrapper = new WrapperAction2DMoveVector();
-        Action2DMove up = Action2DMove.up();
-        Action2DMove down = Action2DMove.down();
-        Action2DMove left = Action2DMove.left();
-        Action2DMove right = Action2DMove.right();
+        Move2D up = Move2D.up();
+        Move2D down = Move2D.down();
+        Move2D left = Move2D.left();
+        Move2D right = Move2D.right();
         
         // When
         double[] upVector = wrapper.transform(up);

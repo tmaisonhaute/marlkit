@@ -69,7 +69,7 @@ public class QTableJointActionMutationTest {
         Pair<PolicyInput, Action> key = new Pair<>(input, ja);
         qTable.setValue(key, 42.0);
 
-        ja.addAction(a2); 
+        ja.addAction(a2); 	
 
         JointAction ja2 = new JointAction();
         ja2.addAction(a1);

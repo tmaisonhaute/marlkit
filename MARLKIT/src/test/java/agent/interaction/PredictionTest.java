@@ -9,7 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import agent.action.Action;
-import agent.action.Action2DMove;
+import agent.action.Move2D;
 import environment.observation.Observation;
 import environment.observation.ObservationPositionValue;
 import environment.observation.ObservationPositionsValues;
@@ -37,8 +37,8 @@ public class PredictionTest {
             new ObservationPositionValue(new Tuple(Arrays.asList(3.0, 4.0)), 2.0));
         
         // Create test actions
-        action1 = Action2DMove.up();
-        action2 = Action2DMove.right();
+        action1 = Move2D.up();
+        action2 = Move2D.right();
     }
     
     @Test

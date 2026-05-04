@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class JointAction implements Action {
-	public final List<Action> agentActions;
+	protected List<Action> agentActions;
 	
 	public JointAction() {
 		agentActions = new ArrayList<>();
@@ -44,6 +44,33 @@ public class JointAction implements Action {
 		return newJointAction;
 	}
     
+	/**
+	 * Creates a new JointAction with the given action inserted at the specified index of the existing joint action.
+	 * 
+	 * <p>
+	 * Note:
+	 * If the specified index is lower than 0, no action will be added.
+	 * If the specified index is greater than the current size of the joint action, the new action will be added at the end.
+	 * </p>
+	 * 
+	 * @param action the action to be added at the specified index of the joint action
+	 * @param index the index at which the action should be inserted in the joint action
+	 * @return a new JointAction instance with the specified action inserted at the given index, followed by the existing actions in the joint action
+	 */
+	public JointAction withActionAtIndex(Action action, int index) {
+
+		JointAction newJointAction = new JointAction();
+		for (int i = 0; i < agentActions.size(); i++) {
+			if (i == index) {
+				newJointAction.addAction(action);
+			} 
+			newJointAction.addAction(agentActions.get(i));
+		}
+		if (index >= agentActions.size()) {
+			newJointAction.addAction(action);
+		}
+		return newJointAction;
+	}
 
     /**
      * Returns the list of all actions in the joint action.
@@ -57,9 +84,17 @@ public class JointAction implements Action {
      * @param agentIndex the index of the agent whose action is to be retrieved
      * @return the action corresponding to the specified agent index
      */
-    public Action getAction(int agentIndex) {
+    public Action getActionAtIndex(int agentIndex) {
         return agentActions.get(agentIndex);
     }
+    
+    /**
+     * Remove the action at the specified index from the joint action.
+     * @param index the index of the action to be removed from the joint action
+     */
+	public void removeActionAtIndex(int index) {
+		agentActions.remove(index);
+	}
 
     
     /**
