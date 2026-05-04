@@ -28,4 +28,9 @@ public class ActionListen implements Action {
     public String toString() {
         return "Listen";
     }
+
+	@Override
+	public Action copy() {
+		return new ActionListen();
+	}
 }

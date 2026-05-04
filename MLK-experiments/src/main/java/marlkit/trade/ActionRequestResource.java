@@ -31,4 +31,8 @@ public class ActionRequestResource implements Action {
         }
         return false;
     }
+	@Override
+	public Action copy() {
+		return new ActionRequestResource(this.uniteProduction);
+	}
 }

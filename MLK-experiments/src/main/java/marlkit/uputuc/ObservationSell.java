@@ -30,6 +30,12 @@ public class ObservationSell implements Observation {
 		return null;
 	}
 
+	@Override
+	public Observation copy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
 
 class Need{

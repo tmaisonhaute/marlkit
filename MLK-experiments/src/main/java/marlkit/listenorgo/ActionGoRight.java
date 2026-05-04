@@ -24,4 +24,9 @@ public class ActionGoRight implements Action {
     public String toString() {
         return "GoRight";
     }
+
+	@Override
+	public Action copy() {
+		return new ActionGoRight();
+	}
 }

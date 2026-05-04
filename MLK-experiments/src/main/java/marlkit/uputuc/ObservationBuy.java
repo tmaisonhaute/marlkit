@@ -36,6 +36,15 @@ public class ObservationBuy implements Observation {
 	public void setStocksAndDistances(List<Pair<ResourcesStock, Double>> stocksAndDistances) {
 		this.stocksAndDistances = stocksAndDistances;
 	}
+
+	@Override
+	public Observation copy() {
+		ObservationBuy copy = new ObservationBuy();
+		for (Pair<ResourcesStock, Double> pair : this.stocksAndDistances) {
+			copy.getStocksAndDistances().add(new Pair<>(pair.getFirst(), pair.getSecond()));
+		}
+		return copy;
+	}
 	
 
 }

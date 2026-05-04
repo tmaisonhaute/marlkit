@@ -44,4 +44,9 @@ public class ObservationUnites implements Observation {
 		return false;
 	}
 
+	@Override
+	public Observation copy() {
+		return new ObservationUnites(new ArrayList<>(this.unites));
+	}
+
 }

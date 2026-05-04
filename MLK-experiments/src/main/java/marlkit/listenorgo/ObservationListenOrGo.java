@@ -121,4 +121,9 @@ public class ObservationListenOrGo implements Observation {
     public String toString() {
         return "ObservationListenOrGo{listens=" + listenResults + ", others=" + othersDirections + "}";
     }
+
+	@Override
+	public Observation copy() {
+		return new ObservationListenOrGo(this.listenResults, this.othersDirections);
+	}
 }

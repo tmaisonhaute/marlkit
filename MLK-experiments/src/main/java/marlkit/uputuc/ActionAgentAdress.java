@@ -13,4 +13,9 @@ public class ActionAgentAdress implements Action {
     public AgentAddress getAction() {
         return action;
     }
+
+	@Override
+	public Action copy() {
+		return new ActionAgentAdress(this.action);
+	}
 }

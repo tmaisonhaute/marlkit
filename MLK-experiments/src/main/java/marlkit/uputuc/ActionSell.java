@@ -45,6 +45,11 @@ public class ActionSell implements Action {
 	public void setUniteCons(UniteConsumption uniteCons) {
 		this.uniteCons = uniteCons;
 	}
+
+	@Override
+	public Action copy() {
+		return new ActionSell(new ResourceQuantify(this.getResourceType(), this.getResourceQuantity()), this.uniteCons);
+	}
 	
 	
 }

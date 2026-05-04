@@ -65,4 +65,9 @@ public class ActionTeamBattle implements Action {
 	public static ActionTeamBattle attack(int dx, int dy) {
 		return new ActionTeamBattle(Kind.ATTACK, new Pair<>(dx, dy));
 	}
+
+	@Override
+	public Action copy() {
+		return new ActionTeamBattle(this.kind, new Pair<>(this.direction.getFirst(), this.direction.getSecond()));
+	}
 }

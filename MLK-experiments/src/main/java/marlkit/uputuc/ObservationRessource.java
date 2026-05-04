@@ -21,4 +21,9 @@ public class ObservationRessource implements Observation {
     public Resource getRessource(){
         return this.ressource;
     }
+
+	@Override
+	public Observation copy() {
+		return new ObservationRessource(this.ressource);
+	}
 }

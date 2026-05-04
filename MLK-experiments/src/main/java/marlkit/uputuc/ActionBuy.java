@@ -44,4 +44,9 @@ public class ActionBuy implements Action {
 		this.uniteProd = uniteProd;
 	}
 
+	@Override
+	public Action copy() {
+		return new ActionBuy(new ResourceQuantify(this.getResourceType(), this.getResourceQuantity()), this.uniteProd);
+	}
+
 }
