@@ -118,15 +118,22 @@ public class QTableJointActionMutationTest {
 
 
     private static class DummyPolicyInput implements PolicyInput {
-
-		@Override
-		public PolicyInput add(PolicyInput other) {
-			return null;
+        @Override
+        public PolicyInput add(PolicyInput other) {
+            return null;
+        }
+        
+        public boolean equals(Object o) {
+			return this == o || (o != null && getClass() == o.getClass());
 		}
+        
+        public int hashCode() {
+        	return getClass().hashCode();
+        }
 
 		@Override
 		public PolicyInput copy() {
-			return null;
+			return new DummyPolicyInput();
 		}
     }
 }

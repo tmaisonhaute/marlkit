@@ -49,7 +49,7 @@ public class QTableAction2DMoveTest {
     }
 
     @Test
-    public void givenMutatedStoredAction2DMove_whenGetWithFreshEquivalentOldKey_thenReturnDefaultValue() {
+    public void givenMutatedStoredAction2DMove_whenGetWithFreshEquivalentOldKey_thenReturnStoredValue() {
         // Given
         QTable qTable = new QTable(0.0);
 
@@ -79,11 +79,18 @@ public class QTableAction2DMoveTest {
         public PolicyInput add(PolicyInput other) {
             return null;
         }
+        
+        public boolean equals(Object o) {
+			return this == o || (o != null && getClass() == o.getClass());
+		}
+        
+        public int hashCode() {
+        	return getClass().hashCode();
+        }
 
 		@Override
 		public PolicyInput copy() {
-			// TODO Auto-generated method stub
-			return null;
+			return new DummyPolicyInput();
 		}
     }
 }

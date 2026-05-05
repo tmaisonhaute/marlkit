@@ -58,8 +58,3 @@ public class LauncherTrade extends MLKLauncher {
 
 }
 
-//class EnvTrade1 extends EnvTrade {
-//    public EnvTrade1() {
-//        super(800, 600, new RewardConfigurationMixed(), new IndependantLearning(), new Scenario1());
-//    }
-//}

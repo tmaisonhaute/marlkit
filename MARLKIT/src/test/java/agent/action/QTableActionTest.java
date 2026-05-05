@@ -107,11 +107,18 @@ public class QTableActionTest {
         public PolicyInput add(PolicyInput other) {
             return null;
         }
+        
+        public boolean equals(Object o) {
+			return this == o || (o != null && getClass() == o.getClass());
+		}
+        
+        public int hashCode() {
+        	return getClass().hashCode();
+        }
 
 		@Override
 		public PolicyInput copy() {
-			// TODO Auto-generated method stub
-			return null;
+			return new DummyPolicyInput();
 		}
     }
 }
