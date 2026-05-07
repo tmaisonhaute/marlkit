@@ -3,8 +3,9 @@ package algorithm;
 import java.util.List;
 import java.util.Optional;
 
+import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.JointAction;
+import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
 import learning.policy.PolicyInput;
 import learning.policy.QValueBasedPolicy;
@@ -12,16 +13,25 @@ import learning.policy.QValueBasedPolicy;
 public class QLearningJAL extends QValueBasedPolicy {
 	
 	protected GroupModelPredictAction groupModelPredictAction;
-	protected final int selfIndex;
 
 	public QLearningJAL(List<Action> actionsSet, GroupModelPredictAction moaGroupPredictAction) {
 		super(actionsSet);
 		this.groupModelPredictAction = moaGroupPredictAction;
-		selfIndex = 0;
+	}
+	
+	@Override
+	public void init(MLKAgent agent) {
+		super.init(agent);
+		if (groupModelPredictAction != null) {
+			groupModelPredictAction.setPredictingAgent(agent);
+		}
 	}
 	
 	public void setGroupModelPredictAction(GroupModelPredictAction groupModel) {
 		this.groupModelPredictAction = groupModel;
+		if (getAgent() != null && this.groupModelPredictAction != null) {
+			this.groupModelPredictAction.setPredictingAgent(getAgent());
+		}
 	}
 
 	@Override
@@ -30,15 +40,17 @@ public class QLearningJAL extends QValueBasedPolicy {
 		if (!exploratoryAction.isEmpty()) {
 			return exploratoryAction.get();
 		}
-		
 	
 	    Action bestAction = null;
 	    double bestValue = Double.NEGATIVE_INFINITY;
+
+	    if (getAgent() == null) {
+	    	throw new IllegalStateException("QLearningJAL must be initialized with an agent before selecting actions.");
+	    }
 	
 	    for (Action ownAction : actionsSet) {
-	    	JointAction predictedOthersActions = groupModelPredictAction.predictAction(input, ownAction);
-	    	
-	        JointAction jointAction = predictedOthersActions.withActionAtIndex(ownAction, selfIndex);
+	    	MappedJointAction predictedOthersActions = groupModelPredictAction.predictAction(input, ownAction);
+	        MappedJointAction jointAction = predictedOthersActions.withAction(getAgent(), ownAction);
 	
 	        double value = qTable.getValue(input, jointAction);
 	

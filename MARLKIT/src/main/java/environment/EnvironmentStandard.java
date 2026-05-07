@@ -11,6 +11,7 @@ import java.util.Map;
 import agent.AgentsGroup;
 import agent.MLKAgent;
 import agent.action.Action;
+import agent.action.MappedJointAction;
 import environment.observation.Observation;
 import environment.reward.Reward;
 import learning.Experience;
@@ -192,6 +193,14 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	}
 	
 	@Override
+	public Experience getExperienceJointAction(MLKAgent agent) {
+		Experience originalExperience = agentsExperiences.get(agent);
+		Map<MLKAgent, Action> allMappedActions = getAgentsActions();
+		MappedJointAction jointAction = new MappedJointAction(allMappedActions);
+		return new Experience(originalExperience.getInput(), jointAction, originalExperience.getReward());
+	}
+	
+	@Override
 	public void onEpisodeEnd() {}
 
 	/**
@@ -276,22 +285,6 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	}
 
 
-	/**
-	 * Combines observations, actions, and rewards into experiences, then pushes them to agents.
-	 *
-	 * @deprecated Agents now pull their own experiences via {@link #getExperience(MLKAgent)}.
-	 *             Use {@link #combineObsActReward(Map, Map)} directly if needed.
-	 * @param result map of agents to their action/reward pairs
-	 * @param observations map of agents to their observations
-	 * @return map of agents to their experiences
-	 */
-	@Deprecated
-	public Map<MLKAgent, Experience> feedExpToAgent(Map<MLKAgent, Pair<Action, Reward>> result, Map<MLKAgent,Observation> observations) {
-		Map<MLKAgent, Experience> experiences = combineObsActReward(result, observations);
-		sendFeedbackExperience(experiences);
-		return experiences;
-	}
-
 	
 	/**
 	 * Defines the environment dynamics based on agent actions.
@@ -299,21 +292,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 * @return A map of each agent to their reaction events.
 	 */
 	public abstract Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions);
-	
-	/**
-	 * Pushes experiences directly to agents.
-	 *
-	 * @deprecated Agents now pull their own experiences via {@link MLKAgent#collectExperience()}.
-	 * @param experiences map of agents to their experiences
-	 */
-	@Deprecated
-	protected void sendFeedbackExperience(Map<MLKAgent,Experience> experiences){
-		for (Map.Entry<MLKAgent, Experience> entry : experiences.entrySet()) {
-			MLKAgent agent = entry.getKey();
-			Experience experience = entry.getValue();
-			agent.feedbackExperience(experience);
-		}
-	}
+
 
 
 	/**
@@ -424,8 +403,14 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 *
 	 * @return map of agents to their actions
 	 */
-	protected Map<MLKAgent, Action> getAgentsActions() {
+	@Override
+	public Map<MLKAgent, Action> getAgentsActions() {
 		return agentsActions;
+	}
+	
+	@Override
+	public Action getAction(MLKAgent agent) {
+		return agentsActions.get(agent);
 	}
 
 	

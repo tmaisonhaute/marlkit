@@ -8,4 +8,6 @@ public interface ModelPredictAction {
 	public Action predictAction(PolicyInput observation, Action action);
 	
 	public void updateModel(PolicyInput observation, Action predictedAction, Action actualAction);
+	
+	public Action getLastPredictedJointAction();
 }

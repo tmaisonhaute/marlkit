@@ -1,15 +1,17 @@
 package simulation;
 
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
+
 import java.util.Optional;
 import java.util.logging.Level;
 
 import agent.MLKAgent;
 import agent.communication.MLKAgentCommunicating;
+import agent.modelofotheragent.MLKAgentModelingOthers;
 import environment.MLKEnvironment;
 import environment.state.State;
 import madkit.kernel.Activator;
 import madkit.simulation.SimuOrganization;
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 import util.criteria.Criterion;
@@ -30,11 +32,13 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private Activator envEndEpisode;
 	private Activator envEnd;
 	
-	private Activator agentsCommunicate;
 	private Activator agentsAct;
 	private Activator agentsCollectExperience;
 	private Activator agentsUpdatePolicy;
 	private Activator agentsEndEpisode;
+	
+	private Activator agentsCommunicate;
+	private Activator agentsUpdateModelsOfOtherAgents;
 
 	private MethodActivator viewers;
 	
@@ -63,8 +67,6 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		envEnd = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
 		addActivator(envEnd);
 		
-		agentsCommunicate = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "communicate");
-		addActivator(agentsCommunicate);
 		agentsAct = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "takeAction");
 		addActivator(agentsAct);
 		agentsCollectExperience = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "collectExperience");
@@ -73,6 +75,12 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		addActivator(agentsUpdatePolicy);
 		agentsEndEpisode = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "endEpisode");
 		addActivator(agentsEndEpisode);
+		
+		agentsCommunicate = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "communicate");
+		addActivator(agentsCommunicate);
+		agentsUpdateModelsOfOtherAgents = new MethodActivator(getModelGroup(), MLKAgentModelingOthers.DEFAULT_AGENT_ROLE, "updateModelsOfOtherAgents");
+		addActivator(agentsUpdateModelsOfOtherAgents);
+		
 		viewers = new MethodActivator(getEngineGroup(), SimuOrganization.VIEWER_ROLE, "display");
 		addActivator(viewers);
 
@@ -124,6 +132,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		environmentReaction();
 		
 		agentsCollectExperience();
+		
+		agentsUpdateModelsOfOtherAgents();
 		
 		agentsUpdatePolicy(counter);
 		
@@ -178,6 +188,13 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 */
 	protected void agentsCollectExperience() {
 		agentsCollectExperience.execute();
+	}
+	
+	/**
+	 * Triggers the model update phase for agents that model other agents, allowing them to update their internal models based on observed actions.
+	 */
+	protected void agentsUpdateModelsOfOtherAgents() {
+		agentsUpdateModelsOfOtherAgents.execute();
 	}
 
 	/**

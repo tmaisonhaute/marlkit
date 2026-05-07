@@ -1,5 +1,6 @@
 package agent.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,12 +10,12 @@ public class ActionSpace {
     private List<Action> actions;
 
 	public ActionSpace() {
-		this.actions = List.of();
+		this.actions = new ArrayList<>();
 	}
     
-    public ActionSpace(List<Action> actions) {
-        this.actions = actions;
-    }
+	public ActionSpace(List<Action> actions) {
+		this.actions = new ArrayList<>(actions);
+	}
     
     public static JointAction of(Action... actions) {
         return new JointAction(List.of(actions));

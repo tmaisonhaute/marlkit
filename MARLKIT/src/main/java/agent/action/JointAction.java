@@ -13,7 +13,7 @@ public class JointAction implements Action {
 	
 
 	public JointAction(List<Action> agentActions) {
-        this.agentActions = List.copyOf(agentActions);
+        this.agentActions = new ArrayList<>(agentActions);
     }
 
     public static JointAction of(Action... actions) {
@@ -122,7 +122,7 @@ public class JointAction implements Action {
     }
     
     @Override
-	public Action copy() {
+	public JointAction copy() {
 		JointAction copy = new JointAction();
 		for (Action action : agentActions) {
 			copy.addAction(action.copy());

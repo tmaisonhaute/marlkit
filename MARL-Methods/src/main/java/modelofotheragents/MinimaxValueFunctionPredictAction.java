@@ -1,21 +1,37 @@
 package modelofotheragents;
 
+import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.ActionSpace;
-import agent.action.JointAction;
+import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
 import learning.policy.PolicyInput;
 import learning.policy.valuefunction.ActionEvaluator;
 
 public class MinimaxValueFunctionPredictAction implements GroupModelPredictAction {
 	protected ActionEvaluator evaluator;
-	protected final int predictingAgentIndex;
-	protected final int defaultJointActionSize;
+	protected MLKAgent predictingAgent;
+	protected MappedJointAction lastPredictedJointAction;
 	
 	public MinimaxValueFunctionPredictAction(ActionEvaluator evaluator) {
+		this();
+		setActionEvaluator(evaluator);
+	}
+	public MinimaxValueFunctionPredictAction() {
+	}
+
+	@Override
+	public void setPredictingAgent(MLKAgent predictingAgent) {
+		this.predictingAgent = predictingAgent;
+	}
+
+	@Override
+	public MLKAgent getPredictingAgent() {
+		return predictingAgent;
+	}
+	
+	public void setActionEvaluator(ActionEvaluator evaluator) {
 		this.evaluator = evaluator;
-		predictingAgentIndex = 0;
-		defaultJointActionSize = 1;
 	}
 	
 	@Override
@@ -24,7 +40,7 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 	}
 
 	@Override
-	public JointAction predictAction(PolicyInput observation) {
+	public MappedJointAction predictAction(PolicyInput observation) {
 		throw new UnsupportedOperationException("This method should not be used. Minimax prediction requires the own action as input to filter the possible joint actions.");
 	}
 
@@ -42,14 +58,20 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 	 * @param action the action of the predicting agent that should be consistent with the predicted joint action
 	 * @return a JointAction representing the predicted actions of the other agents, consistent with the given own action, and chosen to be worst for the predicting agent according to the evaluator
 	 */
-	public JointAction predictAction(PolicyInput observation, Action action) {
+	public MappedJointAction predictAction(PolicyInput observation, Action action) {
+		if (predictingAgent == null) {
+			throw new IllegalStateException("Predicting agent must be set before calling predictAction.");
+		}
 		ActionSpace filteredActionSpace = filterPossibleJointActions(evaluator.getActionSpace(observation), action);
-		handleEmptyActionSpace(filteredActionSpace, action);
-		JointAction predictedJointAction = getWorstJointAction(observation, filteredActionSpace);
-		
-		JointAction result = (JointAction) predictedJointAction.copy();
-		result.removeActionAtIndex(predictingAgentIndex);
-        
+		if (filteredActionSpace.getActions().isEmpty()) {
+			MappedJointAction empty = new MappedJointAction();
+			this.lastPredictedJointAction = empty.copy();
+			return empty;
+		}
+		MappedJointAction predictedJointAction = getWorstJointAction(observation, filteredActionSpace);
+		MappedJointAction result = predictedJointAction.copy();
+		result.removeAction(predictingAgent);
+		this.lastPredictedJointAction = result.copy();
 		return result;
 	}
 	
@@ -61,33 +83,18 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 	 */
 	protected ActionSpace filterPossibleJointActions(ActionSpace actionSpace, Action ownAction) {
 		ActionSpace filteredActionSpace = new ActionSpace();
-		for (Action action : actionSpace.getActions()) {
-			if (!(action instanceof JointAction)) {
-				throw new IllegalArgumentException("ActionSpace must contain JointActions");
+		for (Action actions : actionSpace.getActions()) {
+			if (!(actions instanceof MappedJointAction jointAction)) {
+				throw new IllegalArgumentException("ActionSpace must contain MappedJointActions");
 			}
-			JointAction jointAction = (JointAction) action;
-            if (jointAction.getActionAtIndex(predictingAgentIndex).equals(ownAction)) {
-            	filteredActionSpace.addAction(jointAction);
-            }
+			Action selfAction = jointAction.getAction(predictingAgent);
+			if (selfAction != null && selfAction.equals(ownAction)) {
+				filteredActionSpace.addAction(jointAction);
+			}
 		}
 		return filteredActionSpace;
 	}
 	
-	/**
-	 * Handles the case when the filtered action space is empty. In this case, it creates a default JointAction where all actions are copies of
-	 * the given own action and adds it to the action space. This ensures that there is always at least one JointAction to evaluate.
-	 * @param actionSpace the ActionSpace to check and potentially modify
-	 * @param ownAction the action of the predicting agent that should be consistent with the JointActions in the action space
-	 */
-	protected void handleEmptyActionSpace(ActionSpace actionSpace, Action ownAction) {
-		if (actionSpace.getActions().isEmpty()) {
-			JointAction defaultJointAction = new JointAction();
-			for (int i = 0; i < defaultJointActionSize; i++) {
-				defaultJointAction.addAction(ownAction.copy());
-			}
-			actionSpace.addAction(defaultJointAction);
-		}
-	}
 	
 	/**
 	 * Finds the JointAction in the given action space that has the lowest value according to the evaluator for the given observation.
@@ -95,15 +102,14 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 	 * @param actionSpace the ActionSpace containing the JointActions to evaluate
 	 * @return the JointAction with the lowest value for the given observation according to the evaluator
 	 */
-	protected JointAction getWorstJointAction(PolicyInput observation, ActionSpace actionSpace) {
-		JointAction worstJointAction = null;
+	protected MappedJointAction getWorstJointAction(PolicyInput observation, ActionSpace actionSpace) {
+		MappedJointAction worstJointAction = null;
 		Double worstValue = Double.POSITIVE_INFINITY;
-		for ( Action action : actionSpace.getActions()) {
-            if (!(action instanceof JointAction)) {
-                throw new IllegalArgumentException("ActionSpace must contain JointActions");
-            }
-            JointAction jointAction = (JointAction) action;
-            Double value = evaluator.getValue(observation, jointAction);
+		for ( Action actions : actionSpace.getActions()) {
+	        if (!(actions instanceof MappedJointAction jointAction)) {
+	            throw new IllegalArgumentException("ActionSpace must contain MappedJointActions");
+	        }
+	        Double value = evaluator.getValue(observation, jointAction);
             
 			if (value < worstValue || worstJointAction == null) {
 				worstValue = value;
@@ -113,5 +119,12 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 		
 		return worstJointAction;
 	}
+
+	@Override
+	public MappedJointAction getLastPredictedJointAction() {
+		return lastPredictedJointAction;
+	}
+	
+	
 
 }

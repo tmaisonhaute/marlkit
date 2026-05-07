@@ -163,7 +163,7 @@ public class Move2D implements Action {
 	}
 	
 	@Override
-	public Action copy() {
+	public Move2D copy() {
 		return new Move2D(new Pair<>(getFirst(), getSecond()));
 	}
 }

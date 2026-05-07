@@ -26,6 +26,9 @@ test-output/
 # MacOS
 .DS_Store
 
+#github
+.github/
+
 # work in progress
 MDK-benchmark
 madkit/TIPS

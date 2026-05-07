@@ -123,10 +123,11 @@ public class QLearning implements Algorithm {
      */
     private void handleBatch(Batch batch) {
         Experience current = batch.getExperiences().get(0);
-        Experience next = batch.getExperiences().get(1);
+        Experience next = (batch.getExperiences().size() > 1) ? batch.getExperiences().get(1) : null;
+        
 
         Pair<PolicyInput, Action> stateAction = new Pair<>(current.getInput(), current.getAction());
-        PolicyInput nextInput = next.getInput();
+        PolicyInput nextInput = (next == null) ? null : next.getInput();
         double reward = current.getRewardValue();
 
         updateQ(stateAction, reward, nextInput);
@@ -170,7 +171,7 @@ public class QLearning implements Algorithm {
      */
     private void updateQ(Pair<PolicyInput, Action> stateAction, double reward, PolicyInput nextInput) {
         double prevQ = policy.getTable().getValue(stateAction);
-        double maxNextQ = getMaxNextQ(nextInput);
+        double maxNextQ = (nextInput != null) ? getMaxNextQ(nextInput) : 0;
         double updatedQ = prevQ + alpha * (reward + gamma * maxNextQ - prevQ);
         policy.getTable().setValue(stateAction, updatedQ);
     }
@@ -184,6 +185,9 @@ public class QLearning implements Algorithm {
      */
     @Override
     public void endEpisode(Batch batch, AgentLogger logger) {
+    	while (!batch.getExperiences().isEmpty()) {
+            handleBatch(batch);
+        }
         policy.getExplorationStrategy().update();
         logger.info(policy.getExplorationStrategy().getLoggerInfo());
         logger.info("size Q: " + policy.getTable().size());

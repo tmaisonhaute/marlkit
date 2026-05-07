@@ -74,6 +74,26 @@ public interface MLKEnvironment {
 	 */
 	public Experience getExperience(MLKAgent agent);
 	
+	/**
+	 * Returns the experience computed for the given agent during this step, using the joint action of agents.
+	 * @param agent the agent to get the experience for
+	 * @return the agent's experience
+	 */
+	public Experience getExperienceJointAction(MLKAgent agent);
+	
+	/**
+	 * Returns the last action (influence) performed by the given agent.
+	 * @param agent the agent to get the last influence for
+	 * @return the last action performed by the agent, or null if the agent has not influenced the environment yet
+	 */
+	public Action getAction(MLKAgent agent);
+
+	/**
+	 * Returns a map of all agents and their corresponding last actions (influences) performed on the environment.
+	 * @return a map where keys are agents and values are their last actions, or null if no agents have influenced the environment yet
+	 */
+	public Map<MLKAgent, Action> getAgentsActions();
+	
 	
 	/**
 	 * Executes one step in the environment, performs reaction to the influence of agents and computes their rewards.
