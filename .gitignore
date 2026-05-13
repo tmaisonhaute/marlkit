@@ -22,6 +22,7 @@ test-output/
 
 # VsCode
 .vscode/
+docs/
 
 # MacOS
 .DS_Store
