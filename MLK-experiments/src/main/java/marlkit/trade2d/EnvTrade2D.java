@@ -21,7 +21,7 @@ import util.Position;
  */
 public class EnvTrade2D extends EnvironmentStandard {
 	private static final int QUANTITY_PER_REQUEST = 1;
-	private static final double DEFAULT_DISTANCE_PENALTY_PER_UNIT = 2.0;
+	private static final double DEFAULT_DISTANCE_PENALTY_PER_UNIT = 1.0;
 
 	private final double distancePenaltyPerUnit;
 	private Map<ResourceType, Float> basePrices;

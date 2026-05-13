@@ -30,7 +30,7 @@ public interface Policy {
 	 *
 	 * @return the random number generator
 	 */
-	public default RandomGenerator pnrg() {
+	public default RandomGenerator prng() {
 		return getAgent().prng();
 	}
 

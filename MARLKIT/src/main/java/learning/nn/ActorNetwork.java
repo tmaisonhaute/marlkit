@@ -54,7 +54,8 @@ public class ActorNetwork implements Policy{
     	return agent;
     }
     
-	protected RandomGenerator prng() {
+	@Override
+	public RandomGenerator prng() {
 		return agent.prng();
 	}
     

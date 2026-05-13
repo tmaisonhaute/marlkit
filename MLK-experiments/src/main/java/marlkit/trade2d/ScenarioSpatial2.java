@@ -28,7 +28,7 @@ public class ScenarioSpatial2 extends ScenarioTrade2D {
 		MapProba<Integer> probaC = new MapProba<>(prng);
 		probaC.put(0, 0.0);
 		probaC.put(1, 1.0);
-		addUnit(ResourceType.C, probaC, 1,  new Position(8, 8));
+		addUnit(ResourceType.C, probaC, 4,  new Position(9, 6));
 
 		addAgentPosition(new Position(9, 2));
 		addAgentPosition(new Position(1, 6));

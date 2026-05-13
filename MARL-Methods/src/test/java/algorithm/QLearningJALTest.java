@@ -318,7 +318,7 @@ public class QLearningJALTest {
         }
 
         @Override
-        public RandomGenerator pnrg() {
+        public RandomGenerator prng() {
             return randomGenerator;
         }
     }

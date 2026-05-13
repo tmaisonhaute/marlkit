@@ -36,7 +36,7 @@ public class QLearningJAL extends QValueBasedPolicy {
 
 	@Override
 	public Action selectAction(PolicyInput input) {
-		Optional<Action> exploratoryAction = getExplorationStrategy().getExploratoryAction(actionsSet, pnrg());
+		Optional<Action> exploratoryAction = getExplorationStrategy().getExploratoryAction(actionsSet, prng());
 		if (!exploratoryAction.isEmpty()) {
 			return exploratoryAction.get();
 		}

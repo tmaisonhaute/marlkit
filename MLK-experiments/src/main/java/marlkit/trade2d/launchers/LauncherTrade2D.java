@@ -1,10 +1,17 @@
-package marlkit.trade2d;
+package marlkit.trade2d.launchers;
 
 import java.util.List;
 
 import madkit.simulation.EngineAgents;
 import madkit.simulation.SimuEnvironment;
-import rewardmodels.MixedReward;
+import marlkit.trade2d.EnvTrade2D;
+import marlkit.trade2d.ScenarioTrade2D;
+import marlkit.trade2d.SchedulerTrade2D;
+import marlkit.trade2d.StateUnites2D;
+import marlkit.trade2d.Trade2DAgent;
+import marlkit.trade2d.UniteProductionSpatial;
+import marlkit.trade2d.ViewerTrade2D;
+import rewardmodeling.RewardModel;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
@@ -13,8 +20,7 @@ import simulation.MLKModel;
  */
 @EngineAgents(scheduler = SchedulerTrade2D.class, model = MLKModel.class, viewers = {
 		ViewerTrade2D.class })
-public class LauncherTrade2D extends MLKLauncher {
-	ScenarioTrade2D scenario = new ScenarioSpatial2();
+public abstract class LauncherTrade2D extends MLKLauncher {
 
 	/**
 	 * Create and launch the Trade2D environment.
@@ -24,7 +30,7 @@ public class LauncherTrade2D extends MLKLauncher {
 	 */
 	@Override
 	protected <E extends SimuEnvironment> E onLaunchEnvironment() {
-		EnvTrade2D env = new EnvTrade2D(10, 10, new MixedReward(), this.scenario);
+		EnvTrade2D env = new EnvTrade2D(10, 10, getRewardModel(), getScenario());
 		launchAgent(env, Integer.MAX_VALUE);
 		return (E) env;
 	}
@@ -39,19 +45,13 @@ public class LauncherTrade2D extends MLKLauncher {
 		List<UniteProductionSpatial> unites = state.getUnitesProductions();
 
 
-		int nbAgents = this.scenario.getNumberOfAgents();
+		int nbAgents = getScenario().getNumberOfAgents();
 		for (int i = 0; i < nbAgents; i++) {
 			Trade2DAgent ag = new Trade2DAgent(unites);
 			launchAgent(ag);
 		}
 	}
-
-	/**
-	 * Entry point to run the Trade2D experiment.
-	 *
-	 * @param args Command line arguments.
-	 */
-	public static void main(String[] args) {
-		executeThisAgent("--agentLogLevel", "INFO", "--start");
-	}
+	
+	protected abstract RewardModel getRewardModel();
+	protected abstract ScenarioTrade2D getScenario();
 }
