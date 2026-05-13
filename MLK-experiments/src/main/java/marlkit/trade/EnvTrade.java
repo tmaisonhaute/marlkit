@@ -25,7 +25,6 @@ public class EnvTrade extends EnvironmentStandard {
 	}
 	
 	public EnvTrade(int width, int height) {
-//		this(width, height, new MixedReward());
 		this(width, height, new FullyCooperativeReward());
 	}
 
