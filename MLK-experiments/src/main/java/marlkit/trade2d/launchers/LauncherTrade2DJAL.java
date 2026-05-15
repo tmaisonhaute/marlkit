@@ -34,5 +34,7 @@ public abstract class LauncherTrade2DJAL extends LauncherTrade2D {
 		}
 	}
 
-	protected abstract int getWindowSize();
+	protected int getWindowSize() {
+		return 1000;
+	}
 }
