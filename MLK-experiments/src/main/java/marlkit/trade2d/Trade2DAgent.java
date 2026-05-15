@@ -5,9 +5,7 @@ import java.util.List;
 
 import agent.AgentStandard;
 import agent.action.Action;
-import learning.algorithm.Algorithm;
 import learning.algorithm.QLearning;
-import learning.policy.Policy;
 import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 import marlkit.trade.ActionRequestResource;
@@ -19,15 +17,12 @@ import util.Position;
  */
 public class Trade2DAgent extends AgentStandard {
 	private Position position;
-
-	public Trade2DAgent(Policy policy, Algorithm algorithm) {
-		super(policy, algorithm);
-	}
+	List<Action> possibleActions;
 
 	public Trade2DAgent(List<UniteProductionSpatial> unites) {
 		super();
 		
-		List<Action> possibleActions = new ArrayList<>();
+		possibleActions = new ArrayList<>();
 		for (UniteProduction unite : unites) {
 			possibleActions.add(new ActionRequestResource(unite));
 		}
