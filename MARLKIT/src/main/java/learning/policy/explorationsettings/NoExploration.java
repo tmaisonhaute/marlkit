@@ -20,7 +20,7 @@ public class NoExploration implements ExplorationStrategy {
 
 	@Override
 	public String getLoggerInfo() {
-		return null;
+		return "NoExploration";
 	}
 
 }

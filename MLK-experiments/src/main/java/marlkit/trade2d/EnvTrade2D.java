@@ -21,41 +21,23 @@ import util.Position;
  */
 public class EnvTrade2D extends EnvironmentStandard {
 	private static final int QUANTITY_PER_REQUEST = 1;
-	private static final double DEFAULT_DISTANCE_PENALTY_PER_UNIT = 1.0;
-
-	private final double distancePenaltyPerUnit;
 	private Map<ResourceType, Float> basePrices;
 	private ScenarioTrade2D scenario;
 	private StateUnites2D state;
 	protected Map<MLKAgent, Action> lastActions;
 
 	/**
-	 * Create a Trade2D environment with default distance penalty.
+	 * Create a Trade2D environment using scenario-defined distance penalty.
 	 *
 	 * @param width Environment width.
 	 * @param height Environment height.
 	 * @param rewardModel Reward model used by the environment.
-	 * @param scenario Scenario defining units and base prices.
+	 * @param scenario Scenario defining units, base prices, and distance penalty.
 	 */
 	public EnvTrade2D(int width, int height, RewardModel rewardModel, ScenarioTrade2D scenario) {
-		this(width, height, rewardModel, scenario, DEFAULT_DISTANCE_PENALTY_PER_UNIT);
-	}
-
-	/**
-	 * Create a Trade2D environment with custom distance penalty.
-	 *
-	 * @param width Environment width.
-	 * @param height Environment height.
-	 * @param rewardModel Reward model used by the environment.
-	 * @param scenario Scenario defining units and base prices.
-	 * @param distancePenaltyPerUnit Penalty applied per Euclidean distance unit.
-	 */
-	public EnvTrade2D(int width, int height, RewardModel rewardModel, ScenarioTrade2D scenario,
-			double distancePenaltyPerUnit) {
 		super(width, height, rewardModel);
 		this.scenario = scenario;
 		this.basePrices = scenario.getBasePrices();
-		this.distancePenaltyPerUnit = distancePenaltyPerUnit;
 	}
 
 	/**
@@ -216,7 +198,8 @@ public class EnvTrade2D extends EnvironmentStandard {
 			Position unitPos = requestedUnit == null ? null : requestedUnit.getPosition();
 			if (agentPos != null && unitPos != null) {
 				double distance = agentPos.distancePoint(unitPos);
-				events.add(new DistancePenaltyEvent(distance, distancePenaltyPerUnit));
+				double penalty = scenario.getDistancePenaltyPerUnit();
+				events.add(new DistancePenaltyEvent(distance, penalty));
 			}
 			results.put(agent, events);
 		}

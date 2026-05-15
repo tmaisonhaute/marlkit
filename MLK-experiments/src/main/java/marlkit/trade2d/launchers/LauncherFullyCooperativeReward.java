@@ -1,6 +1,6 @@
 package marlkit.trade2d.launchers;
 
-import marlkit.trade2d.ScenarioSpatial2;
+import marlkit.trade2d.ScenarioSpatial4;
 import marlkit.trade2d.ScenarioTrade2D;
 import rewardmodeling.RewardModel;
 import rewardmodels.FullyCooperativeReward;
@@ -11,7 +11,7 @@ public class LauncherFullyCooperativeReward extends LauncherTrade2D {
 
 	public LauncherFullyCooperativeReward() {
 		super();
-		scenario = new ScenarioSpatial2();
+		scenario = new ScenarioSpatial4();
 		rewardModel = new FullyCooperativeReward();
 	}
 

@@ -1,19 +1,19 @@
 package marlkit.trade2d.launchers;
 
-import marlkit.trade2d.ScenarioSpatial2;
+import marlkit.trade2d.ScenarioSpatial4;
 import marlkit.trade2d.ScenarioTrade2D;
 import rewardmodeling.RewardModel;
 import rewardmodels.FairMixedReward;
 
 public class LauncherFairMixedReward extends LauncherTrade2D {
-	private static final double DEFAULT_DELTA = 0.2;
+	private static final double DEFAULT_DELTA = 0.5;
 
 	private final ScenarioTrade2D scenario;
 	private final RewardModel rewardModel;
 
 	public LauncherFairMixedReward() {
 		super();
-		scenario = new ScenarioSpatial2();
+		scenario = new ScenarioSpatial4();
 		rewardModel = new FairMixedReward(DEFAULT_DELTA);
 	}
 

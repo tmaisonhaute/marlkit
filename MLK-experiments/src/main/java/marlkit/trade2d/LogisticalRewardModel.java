@@ -16,7 +16,7 @@ import rewardmodeling.RewardModel;
  * <p>For each collection event, the base reward is multiplied by
  * $\min(1, \frac{available}{requesters})^{c}$ where $c$ is the coefficient.</p>
  */
-public class SupplyDemandScaledRewardModel implements RewardModel {
+public class LogisticalRewardModel implements RewardModel {
 	private final double coefficient;
 
 	/**
@@ -24,7 +24,7 @@ public class SupplyDemandScaledRewardModel implements RewardModel {
 	 *
 	 * @param coefficient Scaling coefficient applied to collection rewards.
 	 */
-	public SupplyDemandScaledRewardModel(double coefficient) {
+	public LogisticalRewardModel(double coefficient) {
 		if (coefficient < 0.0) {
 			throw new IllegalArgumentException("coefficient must be positive.");
 		}

@@ -7,12 +7,12 @@ import simulation.SchedulerTimedCriteria;
  * Scheduler for Trade2D experiment episodes and display timing.
  */
 public class SchedulerTrade2D extends MLKScheduler {
-	public static final int EPISODE_DURATION = 20;
+	public static final int EPISODE_DURATION = 30;
 	public static final int MINIMUM_STEP_BEFORE_VIEW = 500;
-	public static final int UPDATE_DISPLAY_INTERVAL = 50;
+	public static final int UPDATE_DISPLAY_INTERVAL = 100;
 	public static final int DISPLAYED_EPISODES = 1;
-	public static final int PAUSE_VALUE = 50;
-	public static final int MAXIMUM_EPISODE_COUNT = 2_000;
+	public static final int PAUSE_VALUE = 10;
+	public static final int MAXIMUM_EPISODE_COUNT = 5_000;
 
 	/**
 	 * Create a scheduler with Trade2D timing criteria.

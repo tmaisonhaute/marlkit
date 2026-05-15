@@ -13,6 +13,8 @@ import util.Position;
  */
 public class ScenarioSpatial1 extends ScenarioTrade2D {
 
+	private static final double DISTANCE_PENALTY_PER_UNIT = 1;
+
 	@Override
 	protected void configure(RandomGenerator prng, double width, double height) {
 		MapProba<Integer> probaA = new MapProba<>(prng);
@@ -41,5 +43,10 @@ public class ScenarioSpatial1 extends ScenarioTrade2D {
 		basePrices.put(ResourceType.B, 12f);
 		basePrices.put(ResourceType.C, 0f);
 		return basePrices;
+	}
+
+	@Override
+	public double getDistancePenaltyPerUnit() {
+		return DISTANCE_PENALTY_PER_UNIT;
 	}
 }

@@ -82,6 +82,8 @@ public abstract class ScenarioTrade2D {
 
 	public abstract Map<ResourceType, Float> getBasePrices();
 
+	public abstract double getDistancePenaltyPerUnit();
+
 	protected static class UPConfig {
 		private final ResourceType type;
 		private final MapProba<Integer> probabilityProduction;

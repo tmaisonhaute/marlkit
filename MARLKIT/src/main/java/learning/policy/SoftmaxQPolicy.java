@@ -1,46 +1,43 @@
 package learning.policy;
 
 import java.util.List;
+import java.util.Optional;
 
-import agent.MLKAgent;
 import agent.action.Action;
-import learning.policy.valuefunction.QTable;
+import learning.policy.explorationsettings.ExplorationStrategy;
+import learning.policy.explorationsettings.NoExploration;
 import util.Pair;
 
 /**
  * Stochastic policy that samples actions using a softmax over Q-values.
  */
-public class SoftmaxQPolicy implements Policy {
-	private final QTable qTable;
-	private final List<Action> actionsSet;
+
+public class SoftmaxQPolicy extends QValueBasedPolicy {
 	private final double temperature;
-	private MLKAgent agent;
 
 	public SoftmaxQPolicy(List<Action> actionsSet, double temperature) {
 		this(actionsSet, 0.0, temperature);
 	}
 
 	public SoftmaxQPolicy(List<Action> actionsSet, double defaultValue, double temperature) {
+		this(actionsSet, defaultValue, temperature, new NoExploration());
+	}
+
+	public SoftmaxQPolicy(List<Action> actionsSet, double defaultValue, double temperature,
+			ExplorationStrategy explorationStrategy) {
+		super(actionsSet, defaultValue, explorationStrategy);
 		if (temperature <= 0.0) {
 			throw new IllegalArgumentException("temperature must be positive.");
 		}
-		this.actionsSet = actionsSet;
-		this.qTable = new QTable(defaultValue);
 		this.temperature = temperature;
 	}
 
 	@Override
-	public void init(MLKAgent agent) {
-		this.agent = agent;
-	}
-
-	@Override
-	public MLKAgent getAgent() {
-		return agent;
-	}
-
-	@Override
 	public Action selectAction(PolicyInput input) {
+		Optional<Action> exploratoryAction = getExplorationStrategy().getExploratoryAction(actionsSet, prng());
+		if (exploratoryAction.isPresent()) {
+			return exploratoryAction.get();
+		}
 		if (actionsSet.isEmpty()) {
 			return null;
 		}
@@ -135,9 +132,5 @@ public class SoftmaxQPolicy implements Policy {
 			this.weights = weights;
 			this.sum = sum;
 		}
-	}
-
-	public QTable getTable() {
-		return qTable;
 	}
 }

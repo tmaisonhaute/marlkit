@@ -1,8 +1,8 @@
 package marlkit.trade2d.launchers;
 
-import marlkit.trade2d.ScenarioSpatial2;
+import marlkit.trade2d.LogisticalRewardModel;
+import marlkit.trade2d.ScenarioSpatial4;
 import marlkit.trade2d.ScenarioTrade2D;
-import marlkit.trade2d.SupplyDemandScaledRewardModel;
 import rewardmodeling.RewardModel;
 
 public class LauncherSupplyDemandScaledReward extends LauncherTrade2D {
@@ -13,8 +13,8 @@ public class LauncherSupplyDemandScaledReward extends LauncherTrade2D {
 
 	public LauncherSupplyDemandScaledReward() {
 		super();
-		scenario = new ScenarioSpatial2();
-		rewardModel = new SupplyDemandScaledRewardModel(DEFAULT_COEFFICIENT);
+		scenario = new ScenarioSpatial4();
+		rewardModel = new LogisticalRewardModel(DEFAULT_COEFFICIENT);
 	}
 
 	@Override
