@@ -1,7 +1,5 @@
 package simulation;
 
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
-
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -10,8 +8,10 @@ import agent.communication.MLKAgentCommunicating;
 import agent.modelofotheragent.MLKAgentModelingOthers;
 import environment.MLKEnvironment;
 import environment.state.State;
+import evaluation.SystemEvaluator;
 import madkit.kernel.Activator;
 import madkit.simulation.SimuOrganization;
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 import util.criteria.Criterion;
@@ -23,6 +23,7 @@ import util.criteria.Criterion;
 public abstract class MLKScheduler extends TickBasedScheduler {
 	protected MLKEnvironment env;
 	protected SchedulerCriteria criteriaModule;
+	private SystemEvaluator systemEvaluator;
 	
 	private Activator initEnvironment;
 	private Activator computeObservations;
@@ -90,6 +91,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		this.criteriaModule = criteriaModule;
 	}
 
+	public void setSystemEvaluator(SystemEvaluator systemEvaluator) {
+		this.systemEvaluator = systemEvaluator;
+	}
+
 	
 	/**
 	 * Called when the simulation starts.
@@ -101,6 +106,9 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		getLogger().info("Simulation has Started");
 		initEnvironment.execute();
 		env = (MLKEnvironment) getEnvironment();
+		if (systemEvaluator != null) {
+			env.setSystemEvaluator(systemEvaluator);
+		}
 		reset.execute(); //TODO Useful only because SimulationStart is called multiple times (madkit related issue).
 	}
 

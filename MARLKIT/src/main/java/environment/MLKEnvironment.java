@@ -1,6 +1,7 @@
 package environment;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.Observation;
 import environment.state.State;
+import evaluation.SystemEvaluator;
 import learning.Experience;
 import util.grafana.Extra;
 import util.grafana.LearningData;
@@ -18,11 +20,6 @@ import util.grafana.StepData;
  * Represents an environment in which agents operate.
  */
 public interface MLKEnvironment {
-	/**
-	 * The learning data that can be collected during the simulation.
-	 * It can be used to log agent rewards, and other statistics.
-	 */
-	public LearningData learningData = new LearningData();
 	
 	/**
 	 * Initializes the environment, setting up the initial state and any necessary configurations. 
@@ -118,6 +115,15 @@ public interface MLKEnvironment {
 	 */
 	public void onEpisodeEnd();
 	
+	
+	LearningData getLearningData();
+	
+	
+	public default void finalizeEpisodeData() {
+		getLearningData().finalizeEpisode();
+
+	}
+	
 	/**
 	 * Collect progress made by agents to make statistics.
 	 * You can Override this method to add extra data to the learning data, by calling {@link LearningData#addStep(StepData)},
@@ -128,8 +134,45 @@ public interface MLKEnvironment {
 	 */
 	default void collectLearningData(Map<MLKAgent, Experience> experiences) {
 		StepData stepData = new StepData(experiences);
-        learningData.addStep(stepData);
+		getLearningData().addStep(stepData);
     }
+
+	/**
+	 * Collect progress made by agents along with extra metrics.
+	 *
+	 * @param experiences A map of agents and their corresponding experiences.
+	 * @param extras      A list of extra metrics to log alongside experiences.
+	 */
+	default void collectLearningData(Map<MLKAgent, Experience> experiences, List<? extends Extra> extras) {
+		if (extras == null || extras.isEmpty()) {
+			collectLearningData(experiences);
+			return;
+		}
+		StepData stepData = new StepData(experiences, Optional.of(new ArrayList<>(extras)));
+		getLearningData().addStep(stepData);
+	}
+	
+	/**
+	 * Collects episode-level data, which can include extra metrics that summarize the episode's performance.
+	 * @param extras a list of extra metrics to log for the episode, such as total rewards, success indicators, or other performance measures.
+	 */
+	default void collectEpisodeData(List<? extends Extra> extras) {
+	    getLearningData().addEpisodeExtras(extras);
+	}
+
+	/**
+	 * Sets the system evaluator used for system-level measurements.
+	 *
+	 * @param systemEvaluator the evaluator to use
+	 */
+	default void setSystemEvaluator(SystemEvaluator systemEvaluator) {}
+
+	/**
+	 * Returns the system evaluator used for system-level measurements.
+	 *
+	 * @return the current system evaluator
+	 */
+	public SystemEvaluator getSystemEvaluator();
 
 	/**
 	 * Initializes the log file with the specified lines.
@@ -140,7 +183,7 @@ public interface MLKEnvironment {
 	 * @throws IOException if a write error occurs
 	 */
 	default void initLogFile(List<String> rows) throws IOException {
-		learningData.initLogfile(rows);
+		getLearningData().initLogfile(rows);
 	}
 
 	/**
@@ -156,6 +199,6 @@ public interface MLKEnvironment {
 	 * @throws IOException if a write error occurs
 	 */
 	default void writeLog(String message) throws IOException {
-		learningData.writeLog(message);
+		getLearningData().writeLog(message);
 	}
 }

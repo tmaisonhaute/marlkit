@@ -14,11 +14,15 @@ import agent.action.Action;
 import agent.action.MappedJointAction;
 import environment.observation.Observation;
 import environment.reward.Reward;
+import evaluation.Measure;
+import evaluation.NoSystemEvaluation;
+import evaluation.SystemEvaluator;
 import learning.Experience;
 import madkit.simulation.environment.Environment2D;
 import rewardmodeling.ReactionEvent;
 import rewardmodeling.RewardModel;
 import util.Pair;
+import util.grafana.LearningData;
 
 /**
  * Standard implementation of a 2D multi-agent reinforcement learning environment.
@@ -28,8 +32,17 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 
 	protected AgentsGroup agents;
 	protected RewardModel rewardModel;
+	protected SystemEvaluator systemEvaluator;
 	private boolean logSetup = false;
 	private final int EPISODES_BEFORE_LOG = 1_000;
+	
+	/**
+	 * The learning data that can be collected during the simulation.
+	 * It can be used to log agent rewards, and other statistics.
+	 */
+	private final LearningData learningData = new LearningData();
+
+	private List<String> evaluationMeasureNames;
 	
 	private Map<MLKAgent, Observation> agentsObservations;
 	private Map<MLKAgent, Action> agentsActions;
@@ -45,6 +58,8 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	protected EnvironmentStandard(int width, int height, RewardModel rewardModel) {
 		super(width, height);
 		this.rewardModel = rewardModel;
+		this.systemEvaluator = new NoSystemEvaluation();
+		this.evaluationMeasureNames = new ArrayList<>();
 		agentsObservations = new HashMap<>();
 		agentsActions = new HashMap<>();
 		agentsExperiences = new HashMap<>();
@@ -103,6 +118,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		
 		//Reaction
 		Map<MLKAgent, List<ReactionEvent>> result = dynamics(agentsActions);
+		systemEvaluator.evaluate(result);
 		
 		//Reward computation
 		Map<MLKAgent, Pair<Action, Reward>> rewards = rewardComputation(result);
@@ -164,7 +180,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 * Collects, processes and logs learning data from agent experiences.
 	 *
 	 * This method ensures the log system is properly set up, then collects learning data
-	 * from the experiences of all agents. Every 1,000 episodes, it generates a CSV log
+	 * from the experiences of all agents. Every EPISODES_BEFORE_LOG episodes, it generates a CSV log
 	 * of the average rewards, saves it to the log file, and clears the episode data.
 	 *
 	 * @param experiences A map associating each agent with its experience for the current step
@@ -172,12 +188,6 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	private void collectAndLogLearningData(Map<MLKAgent, Experience> experiences) {
 		checkLogSetup();
 		collectLearningData(experiences);
-		int epCount = learningData.getAverageEpisodesCount();
-		if (epCount % EPISODES_BEFORE_LOG == 0) {
-			String logMessage = generateLogCSV(learningData.getAverageEpisodesReward());
-			saveLogCSV(logMessage);
-			learningData.clearEpisodes();
-		}
 	}
 	
 	@Override
@@ -201,7 +211,22 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	}
 	
 	@Override
-	public void onEpisodeEnd() {}
+	public void onEpisodeEnd() {
+		systemEvaluator.onEpisodeEnd();
+		List<Measure> measures = systemEvaluator.getEpisodeMeasures();
+		collectEpisodeData(measures);
+		
+		finalizeEpisodeData();
+		
+		int epCount = learningData.getAverageEpisodesCount();
+		if (epCount > 0 && epCount % EPISODES_BEFORE_LOG == 0) {
+			String logMessage = generateLogCSV(learningData.getAverageEpisodesReward());
+			saveLogCSV(logMessage);
+			learningData.clearEpisodes();
+		}
+		
+		systemEvaluator.reset();
+	}
 
 	/**
 	 * Called when the environment ends, typically at the end of a simulation run.
@@ -210,6 +235,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 */
 	@Override
 	public void onEnd() {
+		systemEvaluator.onSimulationEnd();
 		checkLogSetup();
 		if (learningData.getAverageEpisodesCount() > 0) {
 			String logMessage = generateLogCSV(learningData.getAverageEpisodesReward());
@@ -237,6 +263,10 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 				for (MLKAgent agent : agents.getAgents()) {
 					agentsNames.add(agent.toString());
 				}
+				evaluationMeasureNames = systemEvaluator.getMeasureNames();
+				if (evaluationMeasureNames != null && !evaluationMeasureNames.isEmpty()) {
+					agentsNames.addAll(evaluationMeasureNames);
+				}
 				initLogFile(agentsNames);
 				logSetup = true;
 			} catch (Exception e) {
@@ -256,6 +286,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		StringBuilder logMessage = new StringBuilder();
 		for (Pair<Map<MLKAgent, Double>, Map<String, Double>> d : data) {
 			Map<MLKAgent, Double> avgReward = d.getFirst();
+			Map<String, Double> avgExtras = d.getSecond();
 			for (MLKAgent agent: agents.getAgents()) {
 				Double reward = avgReward.get(agent);
 				if (reward == null) {
@@ -263,6 +294,15 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 				}
 				logMessage.append(reward)
 						.append(",");
+			}
+			if (evaluationMeasureNames != null && !evaluationMeasureNames.isEmpty()) {
+				for (String measureName : evaluationMeasureNames) {
+					Double value = avgExtras.get(measureName);
+					if (value == null) {
+						value = 0.0;
+					}
+					logMessage.append(value).append(",");
+				}
 			}
 			logMessage.setLength(logMessage.length() - 1);
 			logMessage.append("\n");
@@ -411,6 +451,23 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	@Override
 	public Action getAction(MLKAgent agent) {
 		return agentsActions.get(agent);
+	}
+	
+	@Override
+	public LearningData getLearningData() {
+		return learningData;
+	}
+
+	@Override
+	public void setSystemEvaluator(SystemEvaluator systemEvaluator) {
+		this.systemEvaluator = systemEvaluator;
+		this.evaluationMeasureNames = new ArrayList<>();
+		logSetup = false;
+	}
+
+	@Override
+	public SystemEvaluator getSystemEvaluator() {
+		return systemEvaluator;
 	}
 
 	

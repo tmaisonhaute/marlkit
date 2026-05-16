@@ -38,6 +38,7 @@ public class EnvTrade2D extends EnvironmentStandard {
 		super(width, height, rewardModel);
 		this.scenario = scenario;
 		this.basePrices = scenario.getBasePrices();
+		setSystemEvaluator(new Trade2DEvaluator());
 	}
 
 	/**

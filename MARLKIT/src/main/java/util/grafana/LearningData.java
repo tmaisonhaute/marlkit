@@ -26,6 +26,7 @@ public class LearningData {
     private final Set<String> extraKeys;
     private String logFilePath;
     private int totalEpisodes;
+    private EpisodeData currentEpisodeData;
 
 
     public LearningData() {
@@ -47,7 +48,6 @@ public class LearningData {
 
     /**
      * Adds a step to the learning data, registering experiences and extras.
-     * If the step count reaches 100, it finalizes the episode.
      *
      * @param step the step data containing experiences and optional extras
      */
@@ -57,10 +57,18 @@ public class LearningData {
             registerExtras(step.getExtra().get());
         }
         stepCount++;
-        if (stepCount == 100) {
-            finalizeEpisode();
-        }
     }
+    
+
+	public void addEpisodeExtras(List<? extends Extra> extras) {
+		if (extras == null || extras.isEmpty()) {
+	        currentEpisodeData = null;
+	        return;
+	    }
+
+	    currentEpisodeData = new EpisodeData(extras);
+	}
+
 
     /**
      * Adds a step to the learning data, registering experiences and extras.
@@ -101,12 +109,18 @@ public class LearningData {
      * Finalizes the current episode by calculating average rewards and extras,
      * and resetting the step count and current episode data.
      */
-    private void finalizeEpisode() {
+    public void finalizeEpisode() {
         Map<MLKAgent, Double> averageRewards = getAverageRewards(currentEp.getFirst());
         Map<String, Double> averageExtras = getAverageExtras(currentEp.getSecond());
-        averageEpisodesReward.add(new Pair<>(averageRewards, averageExtras));
+        Map<String, Double> episodeExtras = (currentEpisodeData == null) ? new HashMap<>() : currentEpisodeData.getExtras();
+
+		Map<String, Double> allExtras = new HashMap<>(averageExtras);
+		allExtras.putAll(episodeExtras);
+
+        averageEpisodesReward.add(new Pair<>(averageRewards, allExtras));
         stepCount = 0;
         currentEp = new Pair<>(new HashMap<>(), new HashMap<>());
+        currentEpisodeData = null;
     }
 
     /**
@@ -235,7 +249,7 @@ public class LearningData {
      *
      * @return the list of average episodes rewards
      */
-    public  List<Pair<Map<MLKAgent, Double>, Map<String, Double>>> getAverageEpisodesReward() {
+    public List<Pair<Map<MLKAgent, Double>, Map<String, Double>>> getAverageEpisodesReward() {
         return averageEpisodesReward;
     }
 

@@ -56,4 +56,5 @@ open module marlkit.base {
     exports environment.observation.wrapperactionobservation;
     exports rewardmodeling;
     exports communication;
+	exports evaluation;
 }
