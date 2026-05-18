@@ -26,8 +26,7 @@ public class Trade2DAgent extends AgentStandard {
 		for (UniteProduction unite : unites) {
 			possibleActions.add(new ActionRequestResource(unite));
 		}
-		QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedyExponentialDecay(1.0, 0.005));
-//		SoftmaxQPolicy policy = new SoftmaxQPolicy(possibleActions, 1.0, 1.0, new EpsilonGreedyExponentialDecay(1.0, 0.005));
+		QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedyExponentialDecay(1.0, 0.003));
 		QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.95);
 		
 		setPolicy(policy);

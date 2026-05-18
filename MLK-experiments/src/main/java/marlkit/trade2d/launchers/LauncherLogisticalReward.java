@@ -1,7 +1,7 @@
 package marlkit.trade2d.launchers;
 
 import marlkit.trade2d.LogisticalRewardModel;
-import marlkit.trade2d.ScenarioSpatial4;
+import marlkit.trade2d.ScenarioSpatial5;
 import marlkit.trade2d.ScenarioTrade2D;
 import rewardmodeling.RewardModel;
 
@@ -13,7 +13,7 @@ public class LauncherLogisticalReward extends LauncherTrade2D {
 
 	public LauncherLogisticalReward() {
 		super();
-		scenario = new ScenarioSpatial4();
+		scenario = new ScenarioSpatial5();
 		rewardModel = new LogisticalRewardModel(DEFAULT_COEFFICIENT);
 	}
 
