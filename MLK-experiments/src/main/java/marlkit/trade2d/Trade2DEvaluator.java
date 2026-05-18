@@ -14,13 +14,16 @@ public class Trade2DEvaluator implements SystemEvaluator {
 
 	protected Measure totalRewardMeasure;
 	protected Measure fairnessMeasure;
+	protected Measure totalResourcesMeasure;
 	
 	protected double totalRewardValue;
+	protected double totalResourcesAcquired;
 	protected Map<MLKAgent, Double> agentCumulativeRewards;
 	
 	public Trade2DEvaluator() {
 		this.totalRewardMeasure = new Measure("TotalReward", 0.0);
 		this.fairnessMeasure = new Measure("LowestAgentReward", 0.0);
+		this.totalResourcesMeasure = new Measure("NumberOfResources", 0.0);
 		agentCumulativeRewards = new HashMap<>();
 	}
 	
@@ -32,6 +35,9 @@ public class Trade2DEvaluator implements SystemEvaluator {
 				double eventReward = event.toReward().getValue();
 				totalRewardValue += eventReward;
 				agentCumulativeRewards.put(agent, agentCumulativeRewards.getOrDefault(agent, 0.0) + eventReward);
+				if (event instanceof CollectResourceEventTrade2D) {
+					totalResourcesAcquired ++;
+                }
 			}
 		}
 	}
@@ -50,22 +56,24 @@ public class Trade2DEvaluator implements SystemEvaluator {
 	public void onEpisodeEnd() {
 		this.totalRewardMeasure.setValue(totalRewardValue);
 		this.fairnessMeasure.setValue(computeLowestAgentReward());
+		this.totalResourcesMeasure.setValue(totalResourcesAcquired);
 	}
 
 	@Override
 	public List<Measure> getEpisodeMeasures() {
-		return List.of(totalRewardMeasure, fairnessMeasure);
+		return List.of(totalRewardMeasure, fairnessMeasure, totalResourcesMeasure);
 	}
 
 	@Override
 	public List<String> getMeasureNames() {
-		return List.of(totalRewardMeasure.toString(), fairnessMeasure.toString());
+		return List.of(totalRewardMeasure.toString(), fairnessMeasure.toString(), totalResourcesMeasure.toString());
 	}
 	
 	@Override
 	public void reset() {
 		this.totalRewardValue = 0;
 		this.agentCumulativeRewards.clear();
+		this.totalResourcesAcquired = 0;
 	}
 
 }

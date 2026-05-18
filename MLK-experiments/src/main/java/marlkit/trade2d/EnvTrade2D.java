@@ -191,10 +191,13 @@ public class EnvTrade2D extends EnvironmentStandard {
 		for (Map.Entry<MLKAgent, ResourceQuantify> entry : receivedResource.entrySet()) {
 			MLKAgent agent = entry.getKey();
 			List<ReactionEvent> events = new ArrayList<>();
+			ResourceQuantify collected = entry.getValue();
 			UniteProductionSpatial requestedUnit = requestedUnits.get(agent);
 			int available = requestedUnit == null ? 0 : availableStock.getOrDefault(requestedUnit, 0);
 			int requesters = requestedUnit == null ? 0 : requesterCounts.getOrDefault(requestedUnit, 0);
-			events.add(new CollectResourceEventTrade2D(basePrices, entry.getValue(), available, requesters));
+			if (collected != null && collected.getValue() > 0) {
+				events.add(new CollectResourceEventTrade2D(basePrices, collected, available, requesters));
+			}
 			Position agentPos = state.getAgentPosition(agent);
 			Position unitPos = requestedUnit == null ? null : requestedUnit.getPosition();
 			if (agentPos != null && unitPos != null) {

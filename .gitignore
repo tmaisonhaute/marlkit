@@ -23,6 +23,7 @@ test-output/
 # VsCode
 .vscode/
 docs/
+create_toy_problem.pdf
 
 # MacOS
 .DS_Store
@@ -30,16 +31,6 @@ docs/
 #github
 .github/
 
-# work in progress
-MDK-benchmark
-madkit/TIPS
-madkit/find-deps.sh
-madkit/trash/
-MDK-turtlekit
-MDK-tk-demos
-/Z-bees-app/
-TODO
-Trash
 
 #MaDKit build dirs
 Logs
