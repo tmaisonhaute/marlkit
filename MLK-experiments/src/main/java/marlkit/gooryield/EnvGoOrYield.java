@@ -11,8 +11,8 @@ import environment.EnvironmentStandard;
 import environment.observation.Observation;
 import environment.state.State;
 import marlkit.gooryield.events.MatrixRewardEvent;
-import rewardmodeling.ReactionEvent;
-import rewardmodels.MixedReward;
+import reward.ReactionEvent;
+import rewardmodelimplementation.MixedReward;
 
 /**
  * Two-agent, single-step, single-state matrix game: GoOrYield.

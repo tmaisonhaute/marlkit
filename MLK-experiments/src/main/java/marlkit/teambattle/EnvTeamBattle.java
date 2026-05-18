@@ -17,8 +17,8 @@ import marlkit.teambattle.events.AttackPenaltyEvent;
 import marlkit.teambattle.events.DeadPenaltyEvent;
 import marlkit.teambattle.events.KillOpponentEvent;
 import marlkit.teambattle.events.StepPenaltyEvent;
-import rewardmodeling.ReactionEvent;
-import rewardmodels.MixedReward;
+import reward.ReactionEvent;
+import rewardmodelimplementation.MixedReward;
 import util.Pair;
 
 /**

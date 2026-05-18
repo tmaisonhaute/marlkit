@@ -15,8 +15,8 @@ import environment.state.State2DGridInt;
 import marlkit.pushtheblock.events.BlockPushedEvent;
 import marlkit.pushtheblock.events.BlockPushedOutEvent;
 import marlkit.pushtheblock.events.MoveEvent;
-import rewardmodeling.ReactionEvent;
-import rewardmodels.MixedReward;
+import reward.ReactionEvent;
+import rewardmodelimplementation.MixedReward;
 import util.Pair;
 
 public class EnvPushTheBlock extends EnvironmentStandard {

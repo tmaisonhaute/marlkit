@@ -1,6 +1,6 @@
 package marlkit.foraging.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 public class MoveEvent extends ReactionEventDefault {
 	private static final double REWARD_MOVE = -1.0;

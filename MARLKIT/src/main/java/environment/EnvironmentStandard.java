@@ -13,14 +13,14 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
 import environment.observation.Observation;
-import environment.reward.Reward;
 import evaluation.Measure;
 import evaluation.NoSystemEvaluation;
 import evaluation.SystemEvaluator;
 import learning.Experience;
 import madkit.simulation.environment.Environment2D;
-import rewardmodeling.ReactionEvent;
-import rewardmodeling.RewardModel;
+import reward.ReactionEvent;
+import reward.Reward;
+import reward.RewardModel;
 import util.Pair;
 import util.grafana.LearningData;
 

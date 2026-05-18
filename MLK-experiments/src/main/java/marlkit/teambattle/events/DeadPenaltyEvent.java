@@ -1,6 +1,6 @@
 package marlkit.teambattle.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 /**
  * Penalty event emitted when an agent dies.

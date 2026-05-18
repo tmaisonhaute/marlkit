@@ -1,6 +1,6 @@
 package marlkit.preyVsHunter.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 public class HunterDistancePenalty extends ReactionEventDefault {
 

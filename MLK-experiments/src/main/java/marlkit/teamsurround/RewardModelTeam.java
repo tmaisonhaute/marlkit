@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import agent.MLKAgent;
-import environment.reward.Reward;
-import rewardmodeling.ReactionEvent;
-import rewardmodeling.RewardModel;
+import reward.ReactionEvent;
+import reward.Reward;
+import reward.RewardModel;
 
 /**
  * Team-aware reward model for TeamSurround.

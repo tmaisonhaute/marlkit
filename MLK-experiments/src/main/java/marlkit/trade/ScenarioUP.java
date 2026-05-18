@@ -43,10 +43,10 @@ public abstract class ScenarioUP {
      * 
      * @return A list of UniteProduction instances.
      */
-    public List<UniteProduction> createUnites(RandomGenerator prng) {
-        List<UniteProduction> unites = new ArrayList<>();
+    public List<ProductionUnit> createUnites(RandomGenerator prng) {
+        List<ProductionUnit> unites = new ArrayList<>();
         for (UPConfig config : configs) {
-            unites.add(new UniteProduction(config.type, config.probabilityProduction, config.initialStock, config.maxStock, prng));
+            unites.add(new ProductionUnit(config.type, config.probabilityProduction, config.initialStock, config.maxStock, prng));
         }
         return unites;
     }

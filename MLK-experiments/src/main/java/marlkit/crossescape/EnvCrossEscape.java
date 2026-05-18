@@ -15,8 +15,8 @@ import environment.state.State2DGridInt;
 import marlkit.crossescape.events.EscapedEvent;
 import marlkit.crossescape.events.NotEscapedYetEvent;
 import marlkit.crossescape.events.NothingEvent;
-import rewardmodeling.ReactionEvent;
-import rewardmodels.MixedReward;
+import reward.ReactionEvent;
+import rewardmodelimplementation.MixedReward;
 import util.Pair;
 
 /**

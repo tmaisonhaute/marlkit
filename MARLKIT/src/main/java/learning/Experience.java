@@ -1,8 +1,8 @@
 package learning;
 
 import agent.action.Action;
-import environment.reward.Reward;
 import learning.policy.PolicyInput;
+import reward.Reward;
 
 /**
  * Represents a single experience tuple (observation, action, reward) in reinforcement learning.

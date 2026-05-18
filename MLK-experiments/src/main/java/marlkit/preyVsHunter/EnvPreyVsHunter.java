@@ -10,14 +10,14 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Move2D;
 import environment.EnvironmentStandard;
-import environment.reward.Reward;
-import environment.reward.RewardStandard;
 import environment.state.State;
 import environment.state.State2DGridInt;
 import marlkit.preyVsHunter.events.HunterDistancePenalty;
 import marlkit.preyVsHunter.events.PreyCatchEvent;
-import rewardmodeling.ReactionEvent;
-import rewardmodels.FullyCooperativeReward;
+import reward.ReactionEvent;
+import reward.Reward;
+import reward.RewardStandard;
+import rewardmodelimplementation.FullyCooperativeReward;
 import util.Pair;
 
 

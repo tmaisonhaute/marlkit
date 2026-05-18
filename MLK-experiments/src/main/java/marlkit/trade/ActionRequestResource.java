@@ -6,15 +6,15 @@ import agent.action.Action;
 
 public class ActionRequestResource implements Action {
 
-    private UniteProduction uniteProduction;
+    private ProductionUnit uniteProduction;
 
-    public ActionRequestResource(UniteProduction uniteProduction) {
+    public ActionRequestResource(ProductionUnit uniteProduction) {
         this.uniteProduction = uniteProduction;
     }
-    public UniteProduction getUniteProduction() {
+    public ProductionUnit getUniteProduction() {
         return uniteProduction;
     }
-    public void setUniteProduction(UniteProduction uniteProduction) {
+    public void setUniteProduction(ProductionUnit uniteProduction) {
         this.uniteProduction = uniteProduction;
     }
 

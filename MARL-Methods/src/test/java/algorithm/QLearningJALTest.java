@@ -461,7 +461,7 @@ public class QLearningJALTest {
         }
 
         @Override
-        public void feedbackExperience(PolicyInput input, Action act, environment.reward.Reward rew) {
+        public void feedbackExperience(PolicyInput input, Action act, reward.Reward rew) {
         }
 
         @Override

@@ -13,25 +13,25 @@ import environment.state.State;
  */
 public class StateUnites implements State {
 	private final List<MLKAgent> agents;
-	private final List<UniteProduction> unitesProductions;
+	private final List<ProductionUnit> unitesProductions;
 
-	public StateUnites(List<MLKAgent> agents, List<UniteProduction> unitesProductions) {
+	public StateUnites(List<MLKAgent> agents, List<ProductionUnit> unitesProductions) {
 		this.agents = agents;
 		this.unitesProductions = unitesProductions;
 	}
 
 	@Override
 	public void reset() {
-		for (UniteProduction up : unitesProductions) {
+		for (ProductionUnit up : unitesProductions) {
 			up.reset();
 		}
 	}
 
-	public List<UniteProduction> getUnitesProductions() {
+	public List<ProductionUnit> getUnitesProductions() {
 		return unitesProductions;
 	}
 	public void updateState() {
-		for (UniteProduction up : unitesProductions) {
+		for (ProductionUnit up : unitesProductions) {
 			up.productResource();
 		}
 	}
@@ -54,7 +54,7 @@ public class StateUnites implements State {
 	@Override
 	public void print() {
 		System.out.println("StateUnites:");
-		for (UniteProduction unite : unitesProductions) {
+		for (ProductionUnit unite : unitesProductions) {
 			System.out.println("  UniteProduction of type " + unite.getResourceType() + " has stock: " + unite.getStockValue());
 		}
 

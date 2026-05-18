@@ -3,8 +3,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import agent.action.Action;
-import environment.reward.Reward;
 import learning.policy.PolicyInput;
+import reward.Reward;
 
 /**
  * Represents a batch of data used for learning.

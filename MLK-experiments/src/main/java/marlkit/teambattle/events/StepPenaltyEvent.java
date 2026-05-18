@@ -1,6 +1,6 @@
 package marlkit.teambattle.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 /**
  * Per-step penalty event for TeamBattle agents.

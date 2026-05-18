@@ -13,8 +13,8 @@ import environment.state.State;
 import marlkit.listenorgo.events.DoNothingEvent;
 import marlkit.listenorgo.events.ListenEvent;
 import marlkit.listenorgo.events.MoveEvent;
-import rewardmodeling.ReactionEvent;
-import rewardmodels.MixedReward;
+import reward.ReactionEvent;
+import rewardmodelimplementation.MixedReward;
 
 /**
  * Environment for the ListenOrGo multi-agent cooperative task.
@@ -39,7 +39,7 @@ public class EnvListenOrGo extends EnvironmentStandard {
     private final Map<MLKAgent, ObservationListenOrGo> agentObservations;
 
     /**
-     * Creates a new ListenOrGo environment with a {@link rewardmodels.MixedReward} reward model.
+     * Creates a new ListenOrGo environment with a {@link rewardmodelimplementation.MixedReward} reward model.
      */
     public EnvListenOrGo() {
         super(1, 1, new MixedReward());

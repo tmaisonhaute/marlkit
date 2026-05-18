@@ -15,13 +15,13 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.ActionInt;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
-import environment.reward.RewardStandard;
 import learning.Batch;
 import learning.Experience;
 import learning.nn.ActorNetwork;
 import learning.nn.StateValueCritic;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
+import reward.RewardStandard;
 
 public class TDActorCriticTest {
 

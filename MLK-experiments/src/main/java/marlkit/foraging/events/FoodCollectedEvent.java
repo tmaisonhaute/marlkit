@@ -1,6 +1,6 @@
 package marlkit.foraging.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 public class FoodCollectedEvent extends ReactionEventDefault {
 	private static final double REWARD_FOOD_COLLECTED = 15.0;

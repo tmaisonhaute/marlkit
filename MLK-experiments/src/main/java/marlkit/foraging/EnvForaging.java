@@ -12,9 +12,9 @@ import environment.EnvironmentStandard;
 import environment.state.State2DGridInt;
 import marlkit.foraging.events.FoodCollectedEvent;
 import marlkit.foraging.events.MoveEvent;
-import rewardmodeling.ReactionEvent;
-import rewardmodeling.RewardModel;
-import rewardmodels.MixedReward;
+import reward.ReactionEvent;
+import reward.RewardModel;
+import rewardmodelimplementation.MixedReward;
 import util.Pair;
 
 public class EnvForaging extends EnvironmentStandard {

@@ -31,11 +31,9 @@ open module marlkit.base {
     requires org.apache.commons.lang3;
     
 
-    exports marlkit.test;
 	exports environment;
 	exports environment.observation;
 	exports environment.observation.wrapperobservationvector;
-	exports environment.reward;
 	exports environment.state;
 	exports agent;
 	exports agent.action;
@@ -54,7 +52,7 @@ open module marlkit.base {
 	exports simulation;
     exports util.grafana;
     exports environment.observation.wrapperactionobservation;
-    exports rewardmodeling;
+    exports reward;
     exports communication;
 	exports evaluation;
 }

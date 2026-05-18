@@ -1,6 +1,6 @@
 package marlkit.teambattle.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 /**
  * Reward event emitted when an agent kills an opposing agent.

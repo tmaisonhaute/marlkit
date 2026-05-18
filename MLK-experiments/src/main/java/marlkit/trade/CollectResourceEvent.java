@@ -2,9 +2,9 @@ package marlkit.trade;
 
 import java.util.Map;
 
-import environment.reward.Reward;
-import environment.reward.RewardStandard;
-import rewardmodeling.ReactionEvent;
+import reward.ReactionEvent;
+import reward.Reward;
+import reward.RewardStandard;
 
 public class CollectResourceEvent extends ReactionEvent{
 	private double rewardValue;

@@ -6,13 +6,13 @@ import agent.action.Action;
 import communication.CommunicationModule;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
-import environment.reward.Reward;
 import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
 import madkit.kernel.Mailbox;
 import madkit.simulation.SimuAgent;
+import reward.Reward;
 
 /**
  * Core interface for agents in the MARLKIT framework.

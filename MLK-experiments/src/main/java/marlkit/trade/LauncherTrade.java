@@ -10,7 +10,7 @@ import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 import madkit.simulation.EngineAgents;
 import madkit.simulation.SimuEnvironment;
-import rewardmodels.FullyCooperativeReward;
+import rewardmodelimplementation.FullyCooperativeReward;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
@@ -31,10 +31,10 @@ public class LauncherTrade extends MLKLauncher {
 
         EnvTrade env = getEnvironment();
         StateUnites state = (StateUnites) env.getState();
-        List<UniteProduction> unites = state.getUnitesProductions();
+        List<ProductionUnit> unites = state.getUnitesProductions();
 		
 		List<Action> possibleActions = new ArrayList<>();
-		for (UniteProduction unite : unites) {
+		for (ProductionUnit unite : unites) {
 			possibleActions.add(new ActionRequestResource(unite));
 		}
 		

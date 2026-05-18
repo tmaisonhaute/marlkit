@@ -78,10 +78,10 @@ public class ViewerTrade extends Viewer2D {
 			StateUnites state = stateProbe.getPropertyValue(env);
 			Map<MLKAgent, Action> lastActions = lastActionsProbe.getPropertyValue(env);
 			
-			List<UniteProduction> unites = state.getUnitesProductions();
+			List<ProductionUnit> unites = state.getUnitesProductions();
 			List<MLKAgent> agents = state.getAgents();
 			
-			Map<UniteProduction, Double> unitPositions = drawProductionUnits(unites);
+			Map<ProductionUnit, Double> unitPositions = drawProductionUnits(unites);
 			
 			Map<MLKAgent, Double> agentPositions = drawAgents(agents);
 			
@@ -91,12 +91,12 @@ public class ViewerTrade extends Viewer2D {
 		}
 	}
 	
-	private Map<UniteProduction, Double> drawProductionUnits(List<UniteProduction> unites) {
-		Map<UniteProduction, Double> positions = new HashMap<>();
+	private Map<ProductionUnit, Double> drawProductionUnits(List<ProductionUnit> unites) {
+		Map<ProductionUnit, Double> positions = new HashMap<>();
 		double yPos = TOP_MARGIN;
 		
 		for (int i = 0; i < unites.size(); i++) {
-			UniteProduction unite = unites.get(i);
+			ProductionUnit unite = unites.get(i);
 			double xPos = 20 + i * (UNIT_WIDTH + 20);
 			
 			// Draw unit rectangle
@@ -152,7 +152,7 @@ public class ViewerTrade extends Viewer2D {
 	}
 	
 	private void drawConnections(Map<MLKAgent, Double> agentPositions, 
-	                            Map<UniteProduction, Double> unitPositions,
+	                            Map<ProductionUnit, Double> unitPositions,
 	                            Map<MLKAgent, Action> lastActions) {
 		double agentY = TOP_MARGIN + UNIT_HEIGHT + MIDDLE_GAP + AGENT_SIZE / 2;
 		double unitY = TOP_MARGIN + UNIT_HEIGHT;
@@ -162,7 +162,7 @@ public class ViewerTrade extends Viewer2D {
 			Action action = entry.getValue();
 			
 			if (action instanceof ActionRequestResource arr) {
-				UniteProduction requestedUnit = arr.getUniteProduction();
+				ProductionUnit requestedUnit = arr.getUniteProduction();
 				
 				Double agentX = agentPositions.get(agent);
 				Double unitX = unitPositions.get(requestedUnit);

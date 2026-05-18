@@ -11,7 +11,7 @@ import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedyPowerDecay;
 import madkit.simulation.EngineAgents;
 import madkit.simulation.SimuEnvironment;
-import rewardmodels.FullyCooperativeReward;
+import rewardmodelimplementation.FullyCooperativeReward;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 

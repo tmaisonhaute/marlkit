@@ -1,6 +1,6 @@
 package marlkit.crossescape.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 /**
  * Reward event emitted when an agent reaches its target exit.

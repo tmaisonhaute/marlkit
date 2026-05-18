@@ -9,13 +9,13 @@ import communication.CommunicationModule;
 import communication.NoCommunication;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
-import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
 import madkit.simulation.SimuAgent;
+import reward.Reward;
 
 /**
  * An agent that supports multiple policies for different dimensions or aspects of learning.

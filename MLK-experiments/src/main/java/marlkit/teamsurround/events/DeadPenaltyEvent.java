@@ -1,6 +1,6 @@
 package marlkit.teamsurround.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 /**
  * Penalty event emitted when a TeamSurround agent dies.

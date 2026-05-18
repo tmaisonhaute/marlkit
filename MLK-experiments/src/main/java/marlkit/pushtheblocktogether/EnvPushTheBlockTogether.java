@@ -12,7 +12,7 @@ import marlkit.pushtheblock.EnvPushTheBlock;
 import marlkit.pushtheblock.events.BlockPushedEvent;
 import marlkit.pushtheblock.events.BlockPushedOutEvent;
 import marlkit.pushtheblock.events.MoveEvent;
-import rewardmodeling.ReactionEvent;
+import reward.ReactionEvent;
 import util.Pair;
 
 public class EnvPushTheBlockTogether extends EnvPushTheBlock {

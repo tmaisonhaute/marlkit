@@ -14,7 +14,7 @@ import environment.EnvironmentStandard;
 import environment.state.State2DGridInt;
 import marlkit.teamsurround.events.DeadPenaltyEvent;
 import marlkit.teamsurround.events.StepPenaltyEvent;
-import rewardmodeling.ReactionEvent;
+import reward.ReactionEvent;
 import util.Pair;
 
 /**

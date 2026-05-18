@@ -4,13 +4,13 @@ import communication.CommunicationModule;
 import communication.NoCommunication;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
-import environment.reward.Reward;
 import learning.Batch;
 import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
 import madkit.simulation.SimuAgent;
+import reward.Reward;
 
 /**
  * Standard implementation of an agent in the multi-agent reinforcement learning system.

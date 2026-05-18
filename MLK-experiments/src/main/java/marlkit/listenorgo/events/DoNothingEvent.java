@@ -1,6 +1,6 @@
 package marlkit.listenorgo.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 /**
  * Reaction event produced when an agent attempts an action but is already

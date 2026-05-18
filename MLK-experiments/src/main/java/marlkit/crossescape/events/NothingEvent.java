@@ -1,6 +1,6 @@
 package marlkit.crossescape.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 /**
  * Neutral event emitted for agents that already completed their objective.

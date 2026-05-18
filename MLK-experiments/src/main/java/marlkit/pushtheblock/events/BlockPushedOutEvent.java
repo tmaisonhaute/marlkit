@@ -1,6 +1,6 @@
 package marlkit.pushtheblock.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 public class BlockPushedOutEvent extends ReactionEventDefault {
 	private static final double REWARDBLOCKPUSHEDOUT = 10;

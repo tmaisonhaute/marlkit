@@ -1,6 +1,6 @@
 package marlkit.teamsurround.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 /**
  * Per-step penalty event for TeamSurround agents.

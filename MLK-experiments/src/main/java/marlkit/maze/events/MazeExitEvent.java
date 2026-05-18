@@ -1,6 +1,6 @@
 package marlkit.maze.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 public class MazeExitEvent extends ReactionEventDefault {
 

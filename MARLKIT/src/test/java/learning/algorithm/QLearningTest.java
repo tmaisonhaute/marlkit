@@ -14,12 +14,12 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Move2D;
 import environment.observation.ObservationPositionValue;
-import environment.reward.RewardStandard;
 import learning.Batch;
 import learning.Experience;
 import learning.policy.QValueBasedPolicy;
 import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
 import madkit.kernel.AgentLogger;
+import reward.RewardStandard;
 import util.Pair;
 import util.Tuple;
 

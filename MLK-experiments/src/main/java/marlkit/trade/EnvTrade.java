@@ -9,9 +9,9 @@ import agent.MLKAgent;
 import agent.action.Action;
 import environment.EnvironmentStandard;
 import environment.state.State;
-import rewardmodeling.ReactionEvent;
-import rewardmodeling.RewardModel;
-import rewardmodels.FullyCooperativeReward;
+import reward.ReactionEvent;
+import reward.RewardModel;
+import rewardmodelimplementation.FullyCooperativeReward;
 
 public class EnvTrade extends EnvironmentStandard {
 	private static final int QUANTITY_PER_REQUEST = 1;
@@ -61,7 +61,7 @@ public class EnvTrade extends EnvironmentStandard {
 	@Override
 	protected void setupState() {
 		getLogger().info("RestingState.");
-		for (UniteProduction up : state.getUnitesProductions()) {
+		for (ProductionUnit up : state.getUnitesProductions()) {
 			up.reset();
 		}
 	}
@@ -76,7 +76,7 @@ public class EnvTrade extends EnvironmentStandard {
 		this.lastActions = new HashMap<>(actions);
 		
 		state.updateState();
-		Map<UniteProduction, List<MLKAgent>> requestingAgents = new HashMap<>();
+		Map<ProductionUnit, List<MLKAgent>> requestingAgents = new HashMap<>();
 
 		initUPRequestingAgents(requestingAgents);
 		setupAgentsRequests(requestingAgents, actions);
@@ -87,21 +87,21 @@ public class EnvTrade extends EnvironmentStandard {
 		return computeEvents(receivedResource);
 	}
 	
-	private void initUPRequestingAgents(Map<UniteProduction, List<MLKAgent>> requestingAgents ) {
-		for(UniteProduction up : state.getUnitesProductions()) {
+	private void initUPRequestingAgents(Map<ProductionUnit, List<MLKAgent>> requestingAgents ) {
+		for(ProductionUnit up : state.getUnitesProductions()) {
 			requestingAgents.put(up,  new ArrayList<>());
 		}
 	}
 	
-	private void setupAgentsRequests(Map<UniteProduction, List<MLKAgent>> requestingAgents, Map<MLKAgent, Action> actions) {
+	private void setupAgentsRequests(Map<ProductionUnit, List<MLKAgent>> requestingAgents, Map<MLKAgent, Action> actions) {
 		for (MLKAgent agent : actions.keySet()) {
 			ActionRequestResource action = (ActionRequestResource)actions.get(agent);
 			requestingAgents.get(action.getUniteProduction()).add(agent);
 		}
 	}
 	
-	private void upProcessRequests(Map<MLKAgent, ResourceQuantify> receivedResource, Map<UniteProduction, List<MLKAgent>> requestingAgents) {
-		for (UniteProduction up : state.getUnitesProductions()){
+	private void upProcessRequests(Map<MLKAgent, ResourceQuantify> receivedResource, Map<ProductionUnit, List<MLKAgent>> requestingAgents) {
+		for (ProductionUnit up : state.getUnitesProductions()){
 			receivedResource.putAll(up.processRequests(requestingAgents.get(up), QUANTITY_PER_REQUEST));
 		}
 	}

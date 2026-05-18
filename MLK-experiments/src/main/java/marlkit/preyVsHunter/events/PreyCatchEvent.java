@@ -1,6 +1,6 @@
 package marlkit.preyVsHunter.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 public class PreyCatchEvent extends ReactionEventDefault {
 	private static final double REWARDPREYCATCH = 100;

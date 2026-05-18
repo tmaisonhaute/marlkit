@@ -7,16 +7,16 @@ import java.util.Objects;
 import environment.observation.Observation;
 
 public class ObservationUnites implements Observation {
-	private final List<UniteProduction> unites;
+	private final List<ProductionUnit> unites;
 
-	public ObservationUnites(List<UniteProduction> unites) {
+	public ObservationUnites(List<ProductionUnit> unites) {
 		this.unites = unites;
 	}
 
 	@Override
 	public Observation add(Observation other) {
 		if (other instanceof ObservationUnites o ){
-			List<UniteProduction> newUnites = new ArrayList<>();
+			List<ProductionUnit> newUnites = new ArrayList<>();
 			newUnites.addAll(this.unites);
 			newUnites.addAll(o.unites);
 			return new ObservationUnites(newUnites);
@@ -25,7 +25,7 @@ public class ObservationUnites implements Observation {
 		}
 	}
 
-	public ResourceType getResourceType(UniteProduction unite) {
+	public ResourceType getResourceType(ProductionUnit unite) {
 		return unite.getResourceType();
 	}
 

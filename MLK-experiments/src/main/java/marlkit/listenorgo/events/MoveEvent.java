@@ -1,8 +1,8 @@
 package marlkit.listenorgo.events;
 
-import environment.reward.Reward;
-import environment.reward.RewardStandard;
-import rewardmodeling.ReactionEvent;
+import reward.ReactionEvent;
+import reward.Reward;
+import reward.RewardStandard;
 
 /**
  * Reaction event produced when an agent commits to a direction

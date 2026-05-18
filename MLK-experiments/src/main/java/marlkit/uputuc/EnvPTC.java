@@ -8,15 +8,15 @@ import java.util.Map;
 import agent.MLKAgent;
 import agent.action.Action;
 import environment.EnvironmentStandard;
-import environment.reward.Reward;
 import environment.state.State;
 import environment.state.State2DGridInt;
 import learning.Experience;
 import marlkit.uputuc.unite.UniteConsumption;
 import marlkit.uputuc.unite.UniteProduction;
 import marlkit.uputuc.unite.UniteTransformation;
-import rewardmodeling.ReactionEvent;
-import rewardmodels.MixedReward;
+import reward.ReactionEvent;
+import reward.Reward;
+import rewardmodelimplementation.MixedReward;
 
 
 public class EnvPTC extends EnvironmentStandard {

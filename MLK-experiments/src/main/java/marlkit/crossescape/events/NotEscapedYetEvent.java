@@ -1,6 +1,6 @@
 package marlkit.crossescape.events;
 
-import rewardmodeling.ReactionEventDefault;
+import reward.ReactionEventDefault;
 
 /**
  * Per-step penalty event emitted while an agent has not escaped yet.
