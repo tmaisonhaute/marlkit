@@ -3,6 +3,7 @@ package communicationimplementation;
 import java.util.List;
 
 import agent.MLKAgent;
+import agent.communication.MLKAgentCommunicating;
 import communication.CommunicationModule;
 import environment.observation.Observation;
 import madkit.kernel.Mailbox;
@@ -17,7 +18,7 @@ public class BroadcastObservation implements CommunicationModule {
 			Observation obs = agent.getObservation();
 			ObjectMessage<Observation> messageObservation = new ObjectMessage<>(obs);
 			simuAgent.broadcast(messageObservation, 
-					simuAgent.getAgentsWithRole(simuAgent.getCommunity(), simuAgent.getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE));
+					simuAgent.getAgentsWithRole(simuAgent.getCommunity(), simuAgent.getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE));
 		} else {
 			throw new IllegalArgumentException("agent is not instance of simuAgent");
 		}
