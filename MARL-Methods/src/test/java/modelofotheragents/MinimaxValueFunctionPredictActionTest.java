@@ -1,12 +1,13 @@
 package modelofotheragents;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.testng.annotations.Test;
 
 import agent.MLKAgent;
@@ -15,7 +16,6 @@ import agent.action.ActionInt;
 import agent.action.ActionSpace;
 import agent.action.JointAction;
 import agent.action.MappedJointAction;
-import communication.CommunicationModule;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
 import learning.Experience;
@@ -311,10 +311,7 @@ public class MinimaxValueFunctionPredictActionTest {
             return null;
         }
 
-        @Override
-        public CommunicationModule getCommunicationModule() {
-            return null;
-        }
+
 
         @Override
         public Observation getRegisteredObservation() {
@@ -342,9 +339,6 @@ public class MinimaxValueFunctionPredictActionTest {
         public void setAlgorithm(Algorithm algorithm) {
         }
 
-        @Override
-        public void setCommunicationModule(CommunicationModule communicationModule) {
-        }
 
         @Override
         public void initializeAll() {

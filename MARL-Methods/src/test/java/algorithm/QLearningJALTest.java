@@ -1,11 +1,12 @@
 package algorithm;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.random.RandomGenerator;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import org.testng.annotations.Test;
 
 import agent.MLKAgent;
@@ -13,7 +14,6 @@ import agent.action.Action;
 import agent.action.ActionInt;
 import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
-import communication.CommunicationModule;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
 import learning.Experience;
@@ -421,10 +421,7 @@ public class QLearningJALTest {
             return null;
         }
 
-        @Override
-        public CommunicationModule getCommunicationModule() {
-            return null;
-        }
+
 
         @Override
         public Observation getRegisteredObservation() {
@@ -452,9 +449,6 @@ public class QLearningJALTest {
         public void setAlgorithm(Algorithm algorithm) {
         }
 
-        @Override
-        public void setCommunicationModule(CommunicationModule communicationModule) {
-        }
 
         @Override
         public void initializeAll() {

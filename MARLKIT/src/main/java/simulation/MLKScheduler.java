@@ -1,5 +1,7 @@
 package simulation;
 
+import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
+
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -11,7 +13,6 @@ import environment.state.State;
 import evaluation.SystemEvaluator;
 import madkit.kernel.Activator;
 import madkit.simulation.SimuOrganization;
-import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
 import util.criteria.Criterion;
@@ -32,13 +33,15 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private Activator clearPreviousStepVariables;
 	private Activator envEndEpisode;
 	private Activator envEnd;
-	
+
 	private Activator agentsAct;
+	private Activator agentsMakeObservation;
 	private Activator agentsCollectExperience;
 	private Activator agentsUpdatePolicy;
 	private Activator agentsEndEpisode;
 	
 	private Activator agentsCommunicate;
+	private Activator agentsHandleCommunication;
 	private Activator agentsUpdateModelsOfOtherAgents;
 
 	private MethodActivator viewers;
@@ -68,6 +71,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		envEnd = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
 		addActivator(envEnd);
 		
+		agentsMakeObservation = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "registerObservation");
+		addActivator(agentsMakeObservation);
 		agentsAct = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "takeAction");
 		addActivator(agentsAct);
 		agentsCollectExperience = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "collectExperience");
@@ -79,6 +84,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		agentsCommunicate = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "communicate");
 		addActivator(agentsCommunicate);
+		agentsHandleCommunication = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "handleCommunication");
+		addActivator(agentsHandleCommunication);
 		agentsUpdateModelsOfOtherAgents = new MethodActivator(getModelGroup(), MLKAgentModelingOthers.DEFAULT_AGENT_ROLE, "updateModelsOfOtherAgents");
 		addActivator(agentsUpdateModelsOfOtherAgents);
 		
@@ -135,6 +142,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		agentsCommunicate();
 		
+		agentsMakeObservation();
+		
+		agentsHandleCommunication();
+		
 		agentsAct();
 		
 		environmentReaction();
@@ -176,7 +187,21 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	protected void agentsCommunicate() {
 		agentsCommunicate.execute();
 	}
+	
+	/**
+	 *  observationTriggers the observation phase for all agents, where they register their observations based on the current environment state.
+	 */
+	protected void agentsMakeObservation() {
+		agentsMakeObservation.execute();
+	}
 
+	/**
+	 * Triggers the communication handling phase for communicating agents, allowing them to process incoming messages and update their internal state accordingly.
+	 */
+	protected void agentsHandleCommunication() {
+		agentsHandleCommunication.execute();
+	}
+	
 	/**
 	 * Triggers the action selection and action sending phase for all agents.
 	 */

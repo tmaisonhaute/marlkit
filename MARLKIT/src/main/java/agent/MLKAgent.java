@@ -3,14 +3,12 @@ package agent;
 import java.util.random.RandomGenerator;
 
 import agent.action.Action;
-import communication.CommunicationModule;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
 import learning.Experience;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
 import learning.policy.PolicyInput;
-import madkit.kernel.Mailbox;
 import madkit.simulation.SimuAgent;
 import reward.Reward;
 
@@ -34,13 +32,21 @@ public interface MLKAgent {
 	 */
 	public Algorithm getAlgorithm();
 
-	/** 
-	 * Returns the communication module used by this agent for interacting with other agents.
-	*/
-	public CommunicationModule getCommunicationModule();
 	
+	/**
+	 * Returns the current observation provided by the environment for this agent.
+	 * @return the current observation for this agent
+	 */
 	public default Observation getObservation() {
 		return getMLKEnvironment().getObservation(this);
+	}
+	
+	/**
+	 * Registers the current observation for this agent, which will be used for action selection in the current timestep.
+	 * 
+	 */
+	public default void registerObservation() {
+		setRegisteredObservation(getObservation());
 	}
 	
 	/**
@@ -79,12 +85,6 @@ public interface MLKAgent {
 	 * @param algorithm the algorithm to use
 	 */
 	public void setAlgorithm(Algorithm algorithm);
-	
-	/**
-	 * Sets the communication module for this agent.
-	 * @param communicationModule the communication module to use
-	 */
-	public void setCommunicationModule(CommunicationModule communicationModule);
 
 	/**
 	 * Initializes the agent's policy and algorithm with necessary parameters.
@@ -107,18 +107,8 @@ public interface MLKAgent {
 	 */
 	public abstract void feedbackExperience(Experience experience);
 	
-	/** 
-	 * Communicates with other agents.
-	*/
-	public default void communicate(){
-		getCommunicationModule().communicate(this);
-	}
+	
 
-	/**
-	 * Handles communication system for this agent. 
-	 */
-	public default void handleCommunication(Mailbox mailbox) {
-	}
 	
 	/**
 	 * Selects an action based on the given policy input.

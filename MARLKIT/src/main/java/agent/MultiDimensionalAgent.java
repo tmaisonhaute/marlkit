@@ -95,7 +95,6 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * Sets the default communication module for this agent.
 	 * @param communicationModule the communication module to use for default policy
 	 */
-	@Override
 	public void setCommunicationModule(CommunicationModule communicationModule) {
 		this.communicationModules.put(DEFAULT_TAG, communicationModule);
 	}
@@ -164,7 +163,6 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 		return algorithms.get(tag);
 	}
 
-	@Override
 	public CommunicationModule getCommunicationModule() {
 		return this.communicationModules.get(DEFAULT_TAG);
 	}
