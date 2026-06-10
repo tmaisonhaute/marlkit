@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import agent.action.Action;
-import communication.CommunicationModule;
+import communication.CommunicationModel;
 import communication.NoCommunication;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
@@ -31,7 +31,7 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 	protected Observation registeredObservation;
 	
 	
-	public MultiPoliciesAgent(Policy policy, Algorithm algorithm, CommunicationModule communicationModule){
+	public MultiPoliciesAgent(Policy policy, Algorithm algorithm, CommunicationModel communicationModule){
 		super();
 		policies = new HashMap<>();
 		algorithms = new HashMap<>();

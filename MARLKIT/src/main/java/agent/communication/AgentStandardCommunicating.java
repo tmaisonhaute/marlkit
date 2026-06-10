@@ -1,16 +1,16 @@
 package agent.communication;
 
 import agent.AgentStandard;
-import communication.CommunicationModule;
+import communication.CommunicationModel;
 import communication.NoCommunication;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
 
 public class AgentStandardCommunicating extends AgentStandard implements MLKAgentCommunicating {
 	
-	protected CommunicationModule communicationModule;
+	protected CommunicationModel communicationModule;
 	
-	public AgentStandardCommunicating(Policy policy, Algorithm algorithm, CommunicationModule communicationModule) {
+	public AgentStandardCommunicating(Policy policy, Algorithm algorithm, CommunicationModel communicationModule) {
 		super(policy, algorithm);
 		this.communicationModule = communicationModule;
 	}
@@ -26,12 +26,12 @@ public class AgentStandardCommunicating extends AgentStandard implements MLKAgen
 	}
 	
 	@Override
-	public CommunicationModule getCommunicationModule() {
+	public CommunicationModel getCommunicationModule() {
 		return communicationModule;
 	}
 	
 	@Override
-	public void setCommunicationModule(CommunicationModule communicationModule) {
+	public void setCommunicationModule(CommunicationModel communicationModule) {
 		this.communicationModule = communicationModule;
 	}
 

@@ -111,7 +111,7 @@ public class MLKAgentCommunicatingTest {
                 .containsExactly(new HandleCommunicationCall(agent, agent.getCommunicationMailbox()));
     }
 
-    private static final class RecordingCommunicationModule implements CommunicationModule {
+    private static final class RecordingCommunicationModule implements CommunicationModel {
 
         private final List<MLKAgent> communicateCalls = new ArrayList<>();
         private final List<HandleCommunicationCall> handleCommunicationCalls = new ArrayList<>();
@@ -132,21 +132,21 @@ public class MLKAgentCommunicatingTest {
 
     private static final class DummyCommunicatingAgent implements MLKAgentCommunicating {
 
-        private CommunicationModule communicationModule;
+        private CommunicationModel communicationModule;
         private final Mailbox communicationMailbox;
 
-        private DummyCommunicatingAgent(CommunicationModule communicationModule) {
+        private DummyCommunicatingAgent(CommunicationModel communicationModule) {
             this.communicationModule = communicationModule;
             this.communicationMailbox = null;
         }
 
         @Override
-        public CommunicationModule getCommunicationModule() {
+        public CommunicationModel getCommunicationModule() {
             return communicationModule;
         }
 
         @Override
-        public void setCommunicationModule(CommunicationModule communicationModule) {
+        public void setCommunicationModule(CommunicationModel communicationModule) {
             this.communicationModule = communicationModule;
         }
 

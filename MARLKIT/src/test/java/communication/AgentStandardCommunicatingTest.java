@@ -56,7 +56,7 @@ public class AgentStandardCommunicatingTest {
         assertThat(module.lastCommunicatingAgent).isSameAs(agent);
     }
 
-    private static final class RecordingCommunicationModule implements CommunicationModule {
+    private static final class RecordingCommunicationModule implements CommunicationModel {
 
         private MLKAgent lastCommunicatingAgent;
         private MLKAgent lastHandlingAgent;

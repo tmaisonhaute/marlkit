@@ -3,7 +3,7 @@ package communication;
 import agent.MLKAgent;
 import madkit.kernel.Mailbox;
 
-public class NoCommunication implements CommunicationModule {
+public class NoCommunication implements CommunicationModel {
 
 	@Override
 	public void communicate(MLKAgent agent) {

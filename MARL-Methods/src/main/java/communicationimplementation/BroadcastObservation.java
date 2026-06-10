@@ -4,13 +4,13 @@ import java.util.List;
 
 import agent.MLKAgent;
 import agent.communication.MLKAgentCommunicating;
-import communication.CommunicationModule;
+import communication.CommunicationModel;
 import environment.observation.Observation;
 import madkit.kernel.Mailbox;
 import madkit.messages.ObjectMessage;
 import madkit.simulation.SimuAgent;
 
-public class BroadcastObservation implements CommunicationModule {
+public class BroadcastObservation implements CommunicationModel {
 
 	@Override
 	public void communicate(MLKAgent agent) {

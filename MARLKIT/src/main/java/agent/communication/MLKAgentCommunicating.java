@@ -1,7 +1,7 @@
 package agent.communication;
 
 import agent.MLKAgent;
-import communication.CommunicationModule;
+import communication.CommunicationModel;
 import madkit.kernel.Mailbox;
 
 public interface MLKAgentCommunicating extends MLKAgent {
@@ -12,13 +12,13 @@ public interface MLKAgentCommunicating extends MLKAgent {
 	/** 
 	 * Returns the communication module used by this agent for interacting with other agents.
 	*/
-	public CommunicationModule getCommunicationModule();
+	public CommunicationModel getCommunicationModule();
 	
 	/**
 	 * Sets the communication module for this agent, which will be used for interacting with other agents.
 	 * @param communicationModule
 	 */
-	public void setCommunicationModule(CommunicationModule communicationModule);
+	public void setCommunicationModule(CommunicationModel communicationModule);
 	
 	/**
 	 * Communicates with other agents using the communication module.
