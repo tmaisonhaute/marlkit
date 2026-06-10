@@ -21,26 +21,22 @@ import reward.Reward;
  * An agent that supports multiple policies for different dimensions or aspects of learning.
  * Each policy is associated with a tag and maintains its own batch of experiences.
  */
-public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
+public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 
 	protected Map<String, Policy> policies;
 	protected Map<String, Algorithm> algorithms;
-	protected Map<String, CommunicationModule> communicationModules;
 	protected Map<String, Batch> dimensionalBatches;
 	static final String DEFAULT_TAG = "default";
 	
 	protected Observation registeredObservation;
 	
 	
-	public MultiDimensionalAgent(Policy policy, Algorithm algorithm, CommunicationModule communicationModule){
+	public MultiPoliciesAgent(Policy policy, Algorithm algorithm, CommunicationModule communicationModule){
 		super();
 		policies = new HashMap<>();
 		algorithms = new HashMap<>();
-		communicationModules = new HashMap<>();
 		dimensionalBatches = new HashMap<>();
-		this.setPolicy(policy);
-		this.setAlgorithm(algorithm);
-		this.communicationModules.put(DEFAULT_TAG, communicationModule);
+		addPolicyAlgo(DEFAULT_TAG, policy, algorithm);
 	}
 	/**
 	 * Creates a new multi-dimensional agent with a default policy and algorithm.
@@ -48,7 +44,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * @param policy the default policy for this agent
 	 * @param algorithm the default algorithm for this agent
 	 */
-	public MultiDimensionalAgent(Policy policy, Algorithm algorithm) {
+	public MultiPoliciesAgent(Policy policy, Algorithm algorithm) {
 		this(policy, algorithm, new NoCommunication());
 	}
 	
@@ -79,7 +75,14 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 */
 	@Override
 	public void setPolicy(Policy policy) {
-        addPolicyAlgo(DEFAULT_TAG, policy, getAlgorithm());
+		policies.put(DEFAULT_TAG, policy);
+		Algorithm algorithm = getAlgorithm();
+		if (algorithm != null && policy != null) {
+			algorithm.setPolicy(policy);
+		}
+		if (!dimensionalBatches.containsKey(DEFAULT_TAG)) {
+			dimensionalBatches.put(DEFAULT_TAG, new Batch());
+		}
     }
 	
 	/**
@@ -88,25 +91,16 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 */
 	@Override
 	public void setAlgorithm(Algorithm algorithm) {
-		addPolicyAlgo(DEFAULT_TAG, getPolicy(), algorithm);
+		algorithms.put(DEFAULT_TAG, algorithm);
+		Policy policy = getPolicy();
+		if (algorithm != null && policy != null) {
+			algorithm.setPolicy(policy);
+		}
+		if (!dimensionalBatches.containsKey(DEFAULT_TAG)) {
+			dimensionalBatches.put(DEFAULT_TAG, new Batch());
+		}
 	}
 
-	/** 
-	 * Sets the default communication module for this agent.
-	 * @param communicationModule the communication module to use for default policy
-	 */
-	public void setCommunicationModule(CommunicationModule communicationModule) {
-		this.communicationModules.put(DEFAULT_TAG, communicationModule);
-	}
-
-	/**
-	 * Adds a communication module with a specific tag identifier.
-	 * @param tag the tag associated with the communication module
-	 * @param communicationModule the communication module to add
-	 */
-	public void setCommunicationModule(String tag, CommunicationModule communicationModule) {
-		this.communicationModules.put(tag, communicationModule);
-	}
 
 	/**
 	 * Adds a policy with a specific tag identifier.
@@ -116,11 +110,14 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * @param algorithm the algorithm to add
 	 */
 	public void addPolicyAlgo(String tag, Policy policy, Algorithm algorithm) {
-        policies.put(tag, policy);
-        algorithms.put(tag, algorithm);
-		algorithm.setPolicy(policy);
-        dimensionalBatches.put(tag, new Batch());
-		communicationModules.put(tag, getCommunicationModule());
+		policies.put(tag, policy);
+		algorithms.put(tag, algorithm);
+		if (algorithm != null && policy != null) {
+			algorithm.setPolicy(policy);
+		}
+		if (!dimensionalBatches.containsKey(tag)) {
+			dimensionalBatches.put(tag, new Batch());
+		}
     }
 	
 	/**
@@ -163,18 +160,6 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 		return algorithms.get(tag);
 	}
 
-	public CommunicationModule getCommunicationModule() {
-		return this.communicationModules.get(DEFAULT_TAG);
-	}
-
-	/**
-	 * Returns the communication module associated with the given tag.
-	 * @param tag the communication module identifier
-	 * @return the communication module, or null if not found
-	 */
-	public CommunicationModule getCommunicationModule(String tag) {
-		return this.communicationModules.get(tag);
-	}
 
 	/**
 	 * Initializes all policies and algorithms with necessary parameters.
@@ -182,10 +167,14 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	@Override
 	public void initializeAll() {
 		for (Policy policy : policies.values()) {
-			policy.init(this);
+			if (policy != null) {
+				policy.init(this);
+			}
 		}
 		for (Algorithm algorithm : algorithms.values()) {
-			algorithm.init(this);
+			if (algorithm != null) {
+				algorithm.init(this);
+			}
 		}
 	}
 	
@@ -231,7 +220,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 */
 	@Override
 	public void takeAction() {
-		Observation obs = getMLKEnvironment().getObservation(this);
+		Observation obs = getRegisteredObservation();
 		Action action = selectAction(obs);
 		getMLKEnvironment().influence(this, action);
 	}
@@ -242,7 +231,7 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	 * @param tag the policy identifier to use for action selection
 	 */
 	public void takeAction(String tag) {
-		Observation obs = getMLKEnvironment().getObservation(this);
+		Observation obs = getRegisteredObservation();
 		Action action = selectAction(tag, obs);
 		getMLKEnvironment().influence(this, action);
 	}
@@ -331,7 +320,8 @@ public class MultiDimensionalAgent extends SimuAgent implements MLKAgent {
 	public void updatePolicy(int timestep) {
 		for (String key : policies.keySet()) {
 			Algorithm algorithm = algorithms.get(key);
-            if (algorithm.getLearningFrequency() > 0 && timestep % algorithm.getLearningFrequency() == 0) {
+			if (algorithm != null && algorithm.getLearningFrequency() > 0
+					&& timestep % algorithm.getLearningFrequency() == 0) {
                 learnOnBatch(key);
             }
         }

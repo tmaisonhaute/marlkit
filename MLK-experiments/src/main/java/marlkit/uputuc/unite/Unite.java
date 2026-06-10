@@ -3,7 +3,7 @@ package marlkit.uputuc.unite;
 import java.util.EnumMap;
 import java.util.HashMap;
 
-import agent.MultiDimensionalAgent;
+import agent.MultiPoliciesAgent;
 import javafx.scene.paint.Color;
 import learning.algorithm.Algorithm;
 import learning.policy.Policy;
@@ -14,7 +14,7 @@ import util.MapSelector;
 import util.Position;
 
 
-public abstract class Unite extends MultiDimensionalAgent { //extends Watcher {
+public abstract class Unite extends MultiPoliciesAgent { //extends Watcher {
 	protected static final String UNITE = "unite";
     protected Position position = new Position(0,0);
     private final Color color = Color.color(0.1, 0.1, 0.1);

@@ -145,7 +145,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void learnOnBatch() {
-		algorithm.learnOnBatch(pastExperiences, getLogger());
+		getAlgorithm().learnOnBatch(pastExperiences, getLogger());
 	}
 	
 	/**
@@ -153,7 +153,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void endEpisode() {
-		algorithm.endEpisode(pastExperiences, getLogger());
+		getAlgorithm().endEpisode(pastExperiences, getLogger());
 	}
 
 	/**
