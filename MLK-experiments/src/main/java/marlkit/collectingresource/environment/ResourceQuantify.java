@@ -1,8 +1,6 @@
-package marlkit.trade;
+package marlkit.collectingresource.environment;
 
 import java.util.Objects;
-
-import marlkit.uputuc.Resource;
 
 public class ResourceQuantify {
 	protected ResourceType type;
@@ -42,7 +40,7 @@ public class ResourceQuantify {
     }
     
     public int[] toOneHotEncoding() {
-        int[] encoding = new int[Resource.values().length];
+        int[] encoding = new int[ResourceType.values().length];
         encoding[type.ordinal()] = value;
         return encoding;
     }

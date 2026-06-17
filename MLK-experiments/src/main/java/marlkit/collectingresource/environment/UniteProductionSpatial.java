@@ -2,8 +2,6 @@ package marlkit.collectingresource.environment;
 
 import java.util.random.RandomGenerator;
 
-import marlkit.trade.ResourceType;
-import marlkit.trade.ProductionUnit;
 import util.MapProba;
 import util.Position;
 

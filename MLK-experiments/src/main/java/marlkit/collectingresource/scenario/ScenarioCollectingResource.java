@@ -7,8 +7,8 @@ import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import marlkit.collectingresource.agent.CollectingResourceAgent;
+import marlkit.collectingresource.environment.ResourceType;
 import marlkit.collectingresource.environment.UniteProductionSpatial;
-import marlkit.trade.ResourceType;
 import util.MapProba;
 import util.Position;
 

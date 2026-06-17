@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.random.RandomGenerator;
 
-import marlkit.trade.ResourceType;
+import marlkit.collectingresource.environment.ResourceType;
 import util.MapProba;
 import util.Position;
 

@@ -1,4 +1,4 @@
-package marlkit.trade;
+package marlkit.collectingresource.environment;
 
 import java.util.Collections;
 import java.util.HashMap;

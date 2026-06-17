@@ -8,13 +8,13 @@ import agent.action.Action;
 import learning.algorithms.QLearning;
 import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import learning.policies.QValueBasedPolicy;
+import marlkit.collectingresource.ActionRequestResource;
+import marlkit.collectingresource.environment.ProductionUnit;
 import marlkit.collectingresource.environment.UniteProductionSpatial;
-import marlkit.trade.ActionRequestResource;
-import marlkit.trade.ProductionUnit;
 import util.Position;
 
 /**
- * Agent with a continuous 2D position for Trade2D.
+ * Agent with a continuous 2D position for CollectingResource.
  */
 public class CollectingResourceAgent extends AgentStandard {
 	private Position position;

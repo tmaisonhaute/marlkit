@@ -21,7 +21,7 @@ import marlkit.collectingresource.environment.UniteProductionSpatial;
 import modelofotheragents.NActionFrequenciesDeterministicPredictionAction;
 
 /**
- * Trade2D agent using joint-action learning with deterministic N-step prediction.
+ * CollectingResource agent using joint-action learning with deterministic N-step prediction.
  */
 public class CollectingResourceJALAgent extends CollectingResourceAgent implements MLKAgentPredictingOthersAction {
 	private PredictionModelsManager modelsManager;

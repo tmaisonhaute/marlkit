@@ -1,8 +1,9 @@
-package marlkit.trade;
+package marlkit.collectingresource;
 
 import java.util.Objects;
 
 import agent.action.Action;
+import marlkit.collectingresource.environment.ProductionUnit;
 
 public class ActionRequestResource implements Action {
 

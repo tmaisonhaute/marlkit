@@ -2,8 +2,8 @@ package marlkit.collectingresource.environment.events;
 
 import java.util.Map;
 
-import marlkit.trade.ResourceQuantify;
-import marlkit.trade.ResourceType;
+import marlkit.collectingresource.environment.ResourceQuantify;
+import marlkit.collectingresource.environment.ResourceType;
 import reward.ReactionEvent;
 import reward.Reward;
 import reward.RewardStandard;

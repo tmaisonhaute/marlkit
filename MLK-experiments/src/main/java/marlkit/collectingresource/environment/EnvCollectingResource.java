@@ -9,19 +9,17 @@ import agent.MLKAgent;
 import agent.action.Action;
 import environment.EnvironmentStandard;
 import environment.state.State;
+import marlkit.collectingresource.ActionRequestResource;
 import marlkit.collectingresource.CollectingResourceEnvEvaluator;
 import marlkit.collectingresource.environment.events.CollectResourceEvent2D;
 import marlkit.collectingresource.environment.events.DistancePenaltyEvent;
 import marlkit.collectingresource.scenario.ScenarioCollectingResource;
-import marlkit.trade.ActionRequestResource;
-import marlkit.trade.ResourceQuantify;
-import marlkit.trade.ResourceType;
 import reward.ReactionEvent;
 import reward.RewardModel;
 import util.Position;
 
 /**
- * Spatialized trade environment with distance-based penalties.
+ * Spatialized collectingResource environment with distance-based penalties.
  */
 public class EnvCollectingResource extends EnvironmentStandard {
 	private static final int QUANTITY_PER_REQUEST = 1;
