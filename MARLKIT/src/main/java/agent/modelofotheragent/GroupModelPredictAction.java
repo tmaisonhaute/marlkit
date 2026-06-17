@@ -3,7 +3,7 @@ package agent.modelofotheragent;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 
 /**
  * Prediction model that returns a joint action for a group of agents.

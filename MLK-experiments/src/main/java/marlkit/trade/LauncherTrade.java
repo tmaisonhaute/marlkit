@@ -5,9 +5,9 @@ import java.util.List;
 
 import agent.AgentStandard;
 import agent.action.Action;
-import learning.algorithm.QLearning;
-import learning.policy.QValueBasedPolicy;
-import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
+import learning.algorithms.QLearning;
+import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
+import learning.policies.QValueBasedPolicy;
 import madkit.simulation.EngineAgents;
 import madkit.simulation.SimuEnvironment;
 import rewardmodelimplementation.FullyCooperativeReward;

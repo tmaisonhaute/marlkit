@@ -7,9 +7,9 @@ import agent.action.Action;
 import algorithm.TDActorCritic;
 import centralizedtraining.SchedulerCentralizedCritic;
 import environment.observation.wrapperobservationvector.WrapperVectorObservationPositionsValues;
-import learning.nn.ActorNetwork;
 import learning.nn.StateValueCritic;
-import marlkit.pushtheblock.AgentPTB;
+import learning.policies.ActorNetwork;
+import marlkit.pushtheblock.agent.AgentPTB;
 
 public class AgentPTBTogetherTDActorCriticCentralized extends AgentPTB {
 	public AgentPTBTogetherTDActorCriticCentralized(){

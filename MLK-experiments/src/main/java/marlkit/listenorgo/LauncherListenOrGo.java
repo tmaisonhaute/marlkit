@@ -5,9 +5,9 @@ import java.util.List;
 
 import agent.AgentStandard;
 import agent.action.Action;
-import learning.algorithm.QLearning;
-import learning.policy.QValueBasedPolicy;
-import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
+import learning.algorithms.QLearning;
+import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
+import learning.policies.QValueBasedPolicy;
 import madkit.simulation.EngineAgents;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
@@ -16,7 +16,7 @@ import simulation.MLKModel;
  * Launcher for the ListenOrGo multi-agent simulation.
  * <p>
  * Configures and starts a set of agents, each equipped with a
- * {@link learning.algorithm.QLearning Q-Learning} algorithm and an
+ * {@link learning.algorithms.QLearning Q-Learning} algorithm and an
  * epsilon-greedy exploration policy with exponential decay.
  * </p>
  */

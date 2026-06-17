@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.testng.annotations.Test;
 
-import learning.policy.PolicyInput;
-import learning.policy.valuefunction.QTable;
+import learning.policies.PolicyInput;
+import learning.policies.valuefunction.QTable;
 import util.Pair;
 
 public class QTableJointActionMutationTest {

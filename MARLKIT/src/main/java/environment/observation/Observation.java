@@ -1,6 +1,6 @@
 package environment.observation;
 
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 
 /**
  * Represents an observation of the state environment.

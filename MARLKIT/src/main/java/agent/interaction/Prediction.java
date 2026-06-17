@@ -7,7 +7,7 @@ import java.util.Set;
 
 import agent.action.Action;
 import environment.observation.Observation;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 
 /**
  * Stores predictions about an MLKAgent's future actions based on observations.

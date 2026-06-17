@@ -6,7 +6,7 @@ import java.util.List;
 
 import environment.observation.Observation;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 import util.Pair;
 
 public class WrapperObservationBuyVector implements WrapperPolicyInputVector {

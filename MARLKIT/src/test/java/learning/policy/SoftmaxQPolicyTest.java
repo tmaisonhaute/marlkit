@@ -19,8 +19,9 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Move2D;
 import environment.observation.ObservationPositionValue;
-import learning.policy.explorationsettings.ExplorationStrategy;
-import learning.policy.explorationsettings.NoExploration;
+import learning.ExplorationStrategy;
+import learning.explorationstrategies.NoExploration;
+import learning.policies.SoftmaxQPolicy;
 import util.Pair;
 import util.Tuple;
 

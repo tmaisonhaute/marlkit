@@ -1,6 +1,7 @@
 package marlkit.crossescape;
 
 import madkit.simulation.EngineAgents;
+import marlkit.crossescape.agent.AgentCrossEscapeQLearning;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 

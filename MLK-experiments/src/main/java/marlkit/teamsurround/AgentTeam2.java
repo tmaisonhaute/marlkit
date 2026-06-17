@@ -3,9 +3,9 @@ package marlkit.teamsurround;
 import java.util.List;
 
 import agent.action.Action;
-import learning.algorithm.QLearning;
-import learning.policy.QValueBasedPolicy;
-import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
+import learning.algorithms.QLearning;
+import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
+import learning.policies.QValueBasedPolicy;
 
 /**
  * Q-learning implementation for agents of team 2 in TeamSurround.

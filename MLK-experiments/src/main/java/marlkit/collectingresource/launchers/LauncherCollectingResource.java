@@ -4,13 +4,13 @@ import java.util.List;
 
 import madkit.simulation.EngineAgents;
 import madkit.simulation.SimuEnvironment;
-import marlkit.collectingresource.EnvCollectingResource;
-import marlkit.collectingresource.ScenarioCollectingResource;
 import marlkit.collectingresource.SchedulerCollectingResource;
-import marlkit.collectingresource.StateUnites2D;
-import marlkit.collectingresource.CollectingResourceAgent;
-import marlkit.collectingresource.UniteProductionSpatial;
 import marlkit.collectingresource.ViewerCollectingResource;
+import marlkit.collectingresource.agent.CollectingResourceAgent;
+import marlkit.collectingresource.environment.EnvCollectingResource;
+import marlkit.collectingresource.environment.StateUnites2D;
+import marlkit.collectingresource.environment.UniteProductionSpatial;
+import marlkit.collectingresource.scenario.ScenarioCollectingResource;
 import reward.RewardModel;
 import simulation.MLKLauncher;
 import simulation.MLKModel;

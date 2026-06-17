@@ -5,8 +5,8 @@ import agent.action.Action;
 import agent.action.ActionSpace;
 import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
-import learning.policy.PolicyInput;
-import learning.policy.valuefunction.ActionEvaluator;
+import learning.policies.PolicyInput;
+import learning.policies.valuefunction.ActionEvaluator;
 
 public class MinimaxValueFunctionPredictAction implements GroupModelPredictAction {
 	protected ActionEvaluator evaluator;

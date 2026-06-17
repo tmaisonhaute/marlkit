@@ -3,8 +3,8 @@ package agent.communication;
 import agent.AgentStandard;
 import communication.CommunicationModel;
 import communication.NoCommunication;
-import learning.algorithm.Algorithm;
-import learning.policy.Policy;
+import learning.Algorithm;
+import learning.Policy;
 
 public class AgentStandardCommunicating extends AgentStandard implements MLKAgentCommunicating {
 	

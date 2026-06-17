@@ -13,7 +13,8 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Move2D;
 import environment.observation.ObservationPositionValue;
-import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
+import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
+import learning.policies.QValueBasedPolicy;
 import util.Pair;
 import util.Tuple;
 

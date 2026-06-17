@@ -5,7 +5,7 @@ import java.util.Map;
 
 import agent.action.Action;
 import agent.modelofotheragent.ModelPredictAction;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 
 public class FictitiousPlayDeterministicPredictAction implements ModelPredictAction {
 	protected Map<PolicyInput, ActionsFrequencies> actionsFrequenciesByInput;

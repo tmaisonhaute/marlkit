@@ -5,8 +5,8 @@ import agent.modelofotheragent.ModelsManager;
 import agent.modelofotheragent.PredictionModelsManager;
 import algorithm.QLearningJAL;
 import learning.Experience;
-import learning.algorithm.QLearning;
-import learning.policy.explorationsettings.EpsilonGreedyExponentialDecay;
+import learning.algorithms.QLearning;
+import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import modelofotheragents.MinimaxValueFunctionPredictAction;
 
 public class AgentGoOrYieldMinMax extends AgentGoOrYield implements MLKAgentPredictingOthersAction {

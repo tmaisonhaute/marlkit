@@ -5,11 +5,11 @@ import agent.action.Action;
 import learning.Batch;
 import learning.Critic;
 import learning.Experience;
-import learning.algorithm.ActorCritic;
-import learning.nn.ActorNetwork;
+import learning.Policy;
+import learning.algorithms.ActorCritic;
 import learning.nn.StateValueCritic;
-import learning.policy.Policy;
-import learning.policy.PolicyInput;
+import learning.policies.ActorNetwork;
+import learning.policies.PolicyInput;
 import madkit.kernel.AgentLogger;
 
 

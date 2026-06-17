@@ -1,9 +1,9 @@
 package marlkit.collectingresource.launchers;
 
-import marlkit.collectingresource.ScenarioSpatial5;
+import marlkit.collectingresource.scenario.ScenarioCollectingResource;
+import marlkit.collectingresource.scenario.ScenarioSpatial5;
 import reward.RewardModel;
 import rewardmodelimplementation.FairMixedReward;
-import marlkit.collectingresource.ScenarioCollectingResource;
 
 public class LauncherFairMixedReward extends LauncherCollectingResource {
 	private static final double DEFAULT_DELTA = 0.5;

@@ -1,7 +1,7 @@
 package agent.modelofotheragent;
 
 import agent.action.Action;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 
 /**
  * Prediction model for other agents' actions.

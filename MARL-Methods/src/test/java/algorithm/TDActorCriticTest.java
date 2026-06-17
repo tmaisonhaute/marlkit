@@ -17,10 +17,10 @@ import agent.action.ActionInt;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
 import learning.Batch;
 import learning.Experience;
-import learning.nn.ActorNetwork;
+import learning.Policy;
 import learning.nn.StateValueCritic;
-import learning.policy.Policy;
-import learning.policy.PolicyInput;
+import learning.policies.ActorNetwork;
+import learning.policies.PolicyInput;
 import reward.RewardStandard;
 
 public class TDActorCriticTest {

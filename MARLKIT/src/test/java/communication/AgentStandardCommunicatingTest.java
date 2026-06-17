@@ -6,8 +6,8 @@ import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.communication.AgentStandardCommunicating;
-import learning.algorithm.Algorithm;
-import learning.policy.Policy;
+import learning.Algorithm;
+import learning.Policy;
 import madkit.kernel.Mailbox;
 
 public class AgentStandardCommunicatingTest {

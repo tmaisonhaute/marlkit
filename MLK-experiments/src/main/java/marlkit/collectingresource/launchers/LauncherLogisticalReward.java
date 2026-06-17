@@ -1,9 +1,9 @@
 package marlkit.collectingresource.launchers;
 
-import marlkit.collectingresource.LogisticalRewardModel;
-import marlkit.collectingresource.ScenarioSpatial5;
+import marlkit.collectingresource.reward.LogisticalRewardModel;
+import marlkit.collectingresource.scenario.ScenarioCollectingResource;
+import marlkit.collectingresource.scenario.ScenarioSpatial5;
 import reward.RewardModel;
-import marlkit.collectingresource.ScenarioCollectingResource;
 
 public class LauncherLogisticalReward extends LauncherCollectingResource {
 	private static final double DEFAULT_COEFFICIENT = 1.0;

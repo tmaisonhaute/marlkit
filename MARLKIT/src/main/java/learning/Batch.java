@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import agent.action.Action;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 import reward.Reward;
 
 /**

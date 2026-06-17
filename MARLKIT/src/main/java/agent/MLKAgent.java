@@ -5,10 +5,10 @@ import java.util.random.RandomGenerator;
 import agent.action.Action;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
+import learning.Algorithm;
 import learning.Experience;
-import learning.algorithm.Algorithm;
-import learning.policy.Policy;
-import learning.policy.PolicyInput;
+import learning.Policy;
+import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
 import reward.Reward;
 

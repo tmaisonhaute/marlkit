@@ -5,10 +5,6 @@ plugins {
 }
 
 
-application {
-    mainClass = 'marlkit.test.GUITestAgent'
-    mainModule = 'marlkit.base'
-}
 
 
 tasks.withType(JavaExec) {

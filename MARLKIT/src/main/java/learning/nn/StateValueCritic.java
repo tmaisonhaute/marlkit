@@ -8,7 +8,7 @@ import agent.MLKAgent;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
 import learning.Critic;
 import learning.Experience;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
 
 /**

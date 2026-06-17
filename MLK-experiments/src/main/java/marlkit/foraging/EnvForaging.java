@@ -12,6 +12,8 @@ import environment.EnvironmentStandard;
 import environment.state.State2DGridInt;
 import marlkit.foraging.events.FoodCollectedEvent;
 import marlkit.foraging.events.MoveEvent;
+import marlkit.foraging.scenario.Scenario;
+import marlkit.foraging.scenario.ScenarioUniform;
 import reward.ReactionEvent;
 import reward.RewardModel;
 import rewardmodelimplementation.MixedReward;

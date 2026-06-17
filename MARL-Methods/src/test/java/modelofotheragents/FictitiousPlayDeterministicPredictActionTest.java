@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 
 import agent.action.Action;
 import agent.action.ActionInt;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 
 public class FictitiousPlayDeterministicPredictActionTest {
 

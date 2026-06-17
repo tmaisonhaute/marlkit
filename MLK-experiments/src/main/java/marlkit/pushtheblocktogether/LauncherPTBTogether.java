@@ -1,9 +1,9 @@
 package marlkit.pushtheblocktogether;
 
 import madkit.simulation.EngineAgents;
-import marlkit.pushtheblock.AgentPTBqLearning;
 import marlkit.pushtheblock.SchedulerPTB;
 import marlkit.pushtheblock.ViewerPTB;
+import marlkit.pushtheblock.agent.AgentPTBqLearning;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 

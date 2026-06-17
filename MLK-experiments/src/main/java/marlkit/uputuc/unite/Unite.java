@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import agent.MultiPoliciesAgent;
 import javafx.scene.paint.Color;
-import learning.algorithm.Algorithm;
-import learning.policy.Policy;
+import learning.Algorithm;
+import learning.Policy;
 import madkit.messages.ObjectMessage;
 import madkit.simulation.environment.Environment2D;
 import marlkit.uputuc.Resource;

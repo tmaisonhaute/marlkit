@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.scene.paint.Color;
-import learning.algorithm.Algorithm;
-import learning.policy.Policy;
+import learning.Algorithm;
+import learning.Policy;
 import marlkit.uputuc.Resource;
 import marlkit.uputuc.TradeProposal;
 

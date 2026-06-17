@@ -2,6 +2,7 @@ package marlkit.pushtheblock;
 
 
 import madkit.simulation.EngineAgents;
+import marlkit.pushtheblock.agent.AgentPTBTDActorCritic;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 

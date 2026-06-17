@@ -7,8 +7,8 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
-import learning.policy.PolicyInput;
-import learning.policy.QValueBasedPolicy;
+import learning.policies.PolicyInput;
+import learning.policies.QValueBasedPolicy;
 
 public class QLearningJAL extends QValueBasedPolicy {
 	

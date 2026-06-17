@@ -11,8 +11,8 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.JointAction;
 import learning.Experience;
-import learning.algorithm.ActorCritic;
-import learning.policy.PolicyInput;
+import learning.algorithms.ActorCritic;
+import learning.policies.PolicyInput;
 import madkit.kernel.Activator;
 import madkit.kernel.Agent;
 

@@ -1,6 +1,6 @@
 package environment.observation.wrapperobservationvector;
 
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 
 public interface WrapperPolicyInputVector {
 	/**

@@ -9,7 +9,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.interaction.wrapper.WapperActionProbabilities;
 import environment.observation.Observation;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 
 /**
  * Manages predictions about multiple agents' behaviors.

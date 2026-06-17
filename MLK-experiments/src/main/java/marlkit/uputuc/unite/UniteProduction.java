@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.random.RandomGenerator;
 
 import javafx.scene.paint.Color;
-import learning.algorithm.Algorithm;
-import learning.policy.Policy;
+import learning.Algorithm;
+import learning.Policy;
 import marlkit.uputuc.Resource;
 import marlkit.uputuc.ResourceSlot;
 import marlkit.uputuc.TradeProposal;

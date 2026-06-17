@@ -7,7 +7,7 @@ import java.util.Map;
 
 import agent.action.Action;
 import agent.modelofotheragent.ModelPredictAction;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 
 /**
  * Deterministic prediction based on the last N actions per state.

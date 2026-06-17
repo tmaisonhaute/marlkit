@@ -18,11 +18,11 @@ import agent.action.JointAction;
 import agent.action.MappedJointAction;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
+import learning.Algorithm;
 import learning.Experience;
-import learning.algorithm.Algorithm;
-import learning.policy.Policy;
-import learning.policy.PolicyInput;
-import learning.policy.valuefunction.ActionEvaluator;
+import learning.Policy;
+import learning.policies.PolicyInput;
+import learning.policies.valuefunction.ActionEvaluator;
 import madkit.simulation.SimuAgent;
 
 public class MinimaxValueFunctionPredictActionTest {

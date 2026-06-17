@@ -1,9 +1,9 @@
 package marlkit.collectingresource.launchers;
 
-import marlkit.collectingresource.ScenarioSpatial5;
+import marlkit.collectingresource.scenario.ScenarioCollectingResource;
+import marlkit.collectingresource.scenario.ScenarioSpatial5;
 import reward.RewardModel;
 import rewardmodelimplementation.MixedReward;
-import marlkit.collectingresource.ScenarioCollectingResource;
 
 public class LauncherMixedReward extends LauncherCollectingResource {
 	private ScenarioCollectingResource scenario;

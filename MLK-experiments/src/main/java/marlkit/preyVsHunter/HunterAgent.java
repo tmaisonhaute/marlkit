@@ -1,8 +1,8 @@
 package marlkit.preyVsHunter;
 
 import agent.AgentStandard;
-import learning.algorithm.Algorithm;
-import learning.policy.Policy;
+import learning.Algorithm;
+import learning.Policy;
 
 public class HunterAgent extends AgentStandard {
 

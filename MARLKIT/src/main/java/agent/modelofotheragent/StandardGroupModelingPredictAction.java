@@ -6,7 +6,7 @@ import java.util.Map;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 
 public class StandardGroupModelingPredictAction implements GroupModelPredictAction {
 	protected Map<MLKAgent, ModelPredictAction> modelPredictActionsByAgent;

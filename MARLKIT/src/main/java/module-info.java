@@ -42,10 +42,10 @@ open module marlkit.base {
 	exports agent.modelofotheragent;
 	exports agent.communication;
 	exports learning;
-	exports learning.policy;
-	exports learning.policy.valuefunction;
-	exports learning.algorithm;
-	exports learning.policy.explorationsettings;
+	exports learning.policies;
+	exports learning.policies.valuefunction;
+	exports learning.algorithms;
+	exports learning.explorationstrategies;
 	exports learning.nn;
 	exports util;
 	exports util.criteria;

@@ -7,7 +7,7 @@ import java.util.List;
 
 import environment.observation.ObservationPositionValue;
 import environment.observation.ObservationPositionsValues;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 import util.Tuple;
 
 public class WrapperVectorObservationPositionsValues implements WrapperPolicyInputVector{

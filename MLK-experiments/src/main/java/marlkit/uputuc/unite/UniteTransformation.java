@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javafx.scene.paint.Color;
-import learning.algorithm.Algorithm;
-import learning.policy.Policy;
+import learning.Algorithm;
+import learning.Policy;
 import marlkit.uputuc.ActionBuy;
 import marlkit.uputuc.ActionSell;
 import marlkit.uputuc.ObservationBuy;

@@ -1,7 +1,7 @@
 package learning;
 
 import agent.action.Action;
-import learning.policy.PolicyInput;
+import learning.policies.PolicyInput;
 import reward.Reward;
 
 /**

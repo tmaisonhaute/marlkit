@@ -16,11 +16,11 @@ import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
+import learning.Algorithm;
 import learning.Experience;
-import learning.algorithm.Algorithm;
-import learning.policy.Policy;
-import learning.policy.PolicyInput;
-import learning.policy.explorationsettings.ExplorationStrategy;
+import learning.ExplorationStrategy;
+import learning.Policy;
+import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
 import util.Pair;
 
