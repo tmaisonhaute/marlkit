@@ -6,11 +6,14 @@ import java.util.Map;
 import agent.action.Action;
 import agent.modelofotheragent.ModelPredictAction;
 import learning.policies.PolicyInput;
+import madkit.kernel.AgentLogger;
 
 public class FictitiousPlayDeterministicPredictAction implements ModelPredictAction {
 	protected Map<PolicyInput, ActionsFrequencies> actionsFrequenciesByInput;
 	protected Action defaultAction;
 	protected Action lastPredictedAction;
+	private AgentLogger logger;
+	
 	
 	public FictitiousPlayDeterministicPredictAction(Action defaultAction) {
 		this.actionsFrequenciesByInput = new HashMap<>();
@@ -44,11 +47,20 @@ public class FictitiousPlayDeterministicPredictAction implements ModelPredictAct
 			this.actionsFrequenciesByInput.put(observation, frequencies);
 		}
 		frequencies.addAction(actualAction);
+		
+		if (logger != null) {
+		    logger.info("[FP predict] obs=" + observation + ", predicted=" + predictedAction + ", actual action=" + actualAction + ", frequencies=" + frequencies.frequencies);
+		}
+		
 	}
 
 	@Override
 	public Action getLastPredictedJointAction() {
 		return lastPredictedAction;
+	}
+	
+	public void setLogger(AgentLogger logger) {
+		this.logger = logger;
 	}
 
 }
@@ -82,4 +94,9 @@ class ActionsFrequencies{
 		}
 		return mostFrequent.copy();
 	}
+	
+	@Override
+	public String toString() {
+        return frequencies.toString();
+    }
 }

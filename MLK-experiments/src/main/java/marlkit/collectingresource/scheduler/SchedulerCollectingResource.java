@@ -1,4 +1,4 @@
-package marlkit.collectingresource;
+package marlkit.collectingresource.scheduler;
 
 import simulation.MLKScheduler;
 import simulation.SchedulerTimedCriteria;

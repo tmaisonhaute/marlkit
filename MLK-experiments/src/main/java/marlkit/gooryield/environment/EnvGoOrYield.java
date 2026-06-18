@@ -1,4 +1,4 @@
-package marlkit.gooryield;
+package marlkit.gooryield.environment;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +10,11 @@ import agent.action.Action;
 import environment.EnvironmentStandard;
 import environment.observation.Observation;
 import environment.state.State;
-import marlkit.gooryield.events.MatrixRewardEvent;
+import marlkit.gooryield.ObservationGoOrYield;
+import marlkit.gooryield.agent.action.ActionGo;
+import marlkit.gooryield.agent.action.ActionYield;
+import marlkit.gooryield.environment.events.MatrixRewardEvent;
+import marlkit.gooryield.systemevaluator.GoOrYieldSystemEvaluator;
 import reward.ReactionEvent;
 import rewardmodelimplementation.MixedReward;
 
@@ -47,6 +51,7 @@ public class EnvGoOrYield extends EnvironmentStandard {
 
 	public EnvGoOrYield() {
 		super(1, 1, new MixedReward());
+		setSystemEvaluator(new GoOrYieldSystemEvaluator());
 	}
 
 	@Override
@@ -91,8 +96,8 @@ public class EnvGoOrYield extends EnvironmentStandard {
 		double reward1 = PAYOFF[i0][i1][1];
 
 		Map<MLKAgent, List<ReactionEvent>> results = new HashMap<>();
-		results.put(agent0, new MatrixRewardEvent(reward0).toList());
-		results.put(agent1, new MatrixRewardEvent(reward1).toList());
+		results.put(agent0, new MatrixRewardEvent(action0, action1, reward0).toList());
+		results.put(agent1, new MatrixRewardEvent(action1, action0, reward1).toList());
 		return results;
 	}
 

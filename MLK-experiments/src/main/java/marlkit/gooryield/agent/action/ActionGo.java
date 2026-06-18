@@ -1,4 +1,4 @@
-package marlkit.gooryield;
+package marlkit.gooryield.agent.action;
 
 import java.util.Objects;
 

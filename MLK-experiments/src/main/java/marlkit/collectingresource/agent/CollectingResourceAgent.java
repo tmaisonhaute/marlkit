@@ -8,7 +8,6 @@ import agent.action.Action;
 import learning.algorithms.QLearning;
 import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import learning.policies.QValueBasedPolicy;
-import marlkit.collectingresource.ActionRequestResource;
 import marlkit.collectingresource.environment.ProductionUnit;
 import marlkit.collectingresource.environment.UniteProductionSpatial;
 import util.Position;

@@ -1,4 +1,4 @@
-package marlkit.collectingresource;
+package marlkit.collectingresource.agent;
 
 import java.util.Objects;
 

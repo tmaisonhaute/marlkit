@@ -3,6 +3,8 @@ package marlkit.gooryield;
 import static javafx.scene.paint.Color.BLACK;
 import madkit.kernel.Agent;
 import madkit.simulation.PropertyProbe;
+import marlkit.gooryield.environment.EnvGoOrYield;
+
 import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import simulation.MLKViewer;
 

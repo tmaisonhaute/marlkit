@@ -1,4 +1,4 @@
-package marlkit.collectingresource;
+package marlkit.collectingresource.systemevaluator;
 
 import java.util.HashMap;
 import java.util.List;

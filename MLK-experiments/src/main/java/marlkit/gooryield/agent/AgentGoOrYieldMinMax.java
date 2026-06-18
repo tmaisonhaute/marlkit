@@ -1,4 +1,4 @@
-package marlkit.gooryield;
+package marlkit.gooryield.agent;
 
 import agent.modelofotheragent.MLKAgentPredictingOthersAction;
 import agent.modelofotheragent.ModelsManager;

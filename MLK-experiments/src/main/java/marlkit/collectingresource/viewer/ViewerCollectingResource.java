@@ -1,4 +1,4 @@
-package marlkit.collectingresource;
+package marlkit.collectingresource.viewer;
 
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.DARKGRAY;
@@ -21,6 +21,7 @@ import javafx.scene.text.Font;
 import madkit.kernel.Agent;
 import madkit.simulation.PropertyProbe;
 import madkit.simulation.viewer.Viewer2D;
+import marlkit.collectingresource.agent.ActionRequestResource;
 import marlkit.collectingresource.environment.EnvCollectingResource;
 import marlkit.collectingresource.environment.ResourceType;
 import marlkit.collectingresource.environment.StateUnites2D;
