@@ -24,7 +24,7 @@ public class AgentStandardCommunicatingTest {
                 new AgentStandardCommunicating(policy, algorithm, module);
 
         // Then
-        assertThat(agent.getCommunicationModule()).isSameAs(module);
+        assertThat(agent.getCommunicationModel()).isSameAs(module);
     }
 
     @Test
@@ -36,10 +36,10 @@ public class AgentStandardCommunicatingTest {
         RecordingCommunicationModule newModule = new RecordingCommunicationModule();
 
         // When
-        agent.setCommunicationModule(newModule);
+        agent.setCommunicationModel(newModule);
 
         // Then
-        assertThat(agent.getCommunicationModule()).isSameAs(newModule);
+        assertThat(agent.getCommunicationModel()).isSameAs(newModule);
     }
 
     @Test

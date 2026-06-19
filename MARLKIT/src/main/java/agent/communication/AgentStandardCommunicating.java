@@ -26,12 +26,12 @@ public class AgentStandardCommunicating extends AgentStandard implements MLKAgen
 	}
 	
 	@Override
-	public CommunicationModel getCommunicationModule() {
+	public CommunicationModel getCommunicationModel() {
 		return communicationModule;
 	}
 	
 	@Override
-	public void setCommunicationModule(CommunicationModel communicationModule) {
+	public void setCommunicationModel(CommunicationModel communicationModule) {
 		this.communicationModule = communicationModule;
 	}
 

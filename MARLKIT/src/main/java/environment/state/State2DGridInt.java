@@ -15,7 +15,10 @@ import util.Tuple;
 
 /**
  * A 2D grid state where each cell contains an integer value.
- * Provides observation generation based on agent positions and view ranges.
+ * 
+ * ObservationPositionsValues are generated based on the agent's position and the values of the cells within its view range.
+ * environmental objects are represented by integer values in the grid. If agents can observe others, the value associated
+ * with other agents' positions is -2 and the value associated with the observing agent's own position is -1.
  */
 public class State2DGridInt extends State2DGrid<Integer> {
 	protected int[][] grid;
@@ -200,7 +203,8 @@ public class State2DGridInt extends State2DGrid<Integer> {
 	}
 	
 	/**
-	 * Identifies agents that are within the view range based on the already calculated visible cells
+	 * Identifies agents that are within the view range based on the already calculated visible cells.
+	 * Ignores the agent itself and checks if other agents' positions fall within the visible cells.
 	 * 
 	 * @param agent the agent observing
 	 * @param visibleCells the list of cells already determined to be visible
@@ -259,8 +263,8 @@ public class State2DGridInt extends State2DGrid<Integer> {
 					(double) (otherX - agentX), 
 					(double) (otherY - agentY)
 				));
-				observation.addObservationPosition(new ObservationPositionValue(relativePosition, -2)); // -2 indicates another agent
-			}
+				observation.addObservationPosition(new ObservationPositionValue(relativePosition, -2)); // -2 indicates other agent
+				}
 		}
 		
 		return observation;

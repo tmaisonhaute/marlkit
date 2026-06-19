@@ -10,21 +10,21 @@ public interface MLKAgentCommunicating extends MLKAgent {
 	Mailbox getCommunicationMailbox();
 	
 	/** 
-	 * Returns the communication module used by this agent for interacting with other agents.
+	 * Returns the communication model used by this agent for interacting with other agents.
 	*/
-	public CommunicationModel getCommunicationModule();
+	public CommunicationModel getCommunicationModel();
 	
 	/**
-	 * Sets the communication module for this agent, which will be used for interacting with other agents.
-	 * @param communicationModule
+	 * Sets the communication model for this agent, which will be used for interacting with other agents.
+	 * @param communicationModel
 	 */
-	public void setCommunicationModule(CommunicationModel communicationModule);
+	public void setCommunicationModel(CommunicationModel communicationModel);
 	
 	/**
-	 * Communicates with other agents using the communication module.
+	 * Communicates with other agents using the communication model.
 	 */
 	public default void communicate(){
-		getCommunicationModule().communicate(this);
+		getCommunicationModel().communicate(this);
 	}
 	
 	/**
@@ -36,7 +36,7 @@ public interface MLKAgentCommunicating extends MLKAgent {
 	
 	
 	public default void handleCommunication(Mailbox mailbox) {
-		getCommunicationModule().handleCommunication(this, mailbox);
+		getCommunicationModel().handleCommunication(this, mailbox);
 	}
 
 	

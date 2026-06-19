@@ -15,9 +15,9 @@ public class AgentPTBTogetherTDActorCriticCentralized extends AgentPTB {
 	public AgentPTBTogetherTDActorCriticCentralized(){
 		super();
 		List<Action> possibleActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
-		ActorNetwork pol = new ActorNetwork(6, 20, 
+		ActorNetwork pol = new ActorNetwork(6, 64, 
     			new WrapperVectorObservationPositionsValues(false), possibleActions);
-		StateValueCritic critic = new StateValueCritic(12, 20, new WrapperVectorObservationPositionsValues(false));
+		StateValueCritic critic = new StateValueCritic(12, 64, new WrapperVectorObservationPositionsValues(false));
     	TDActorCritic algo = new TDActorCritic(pol, critic, 0.0001, 0.0001, 0.95);
     	setPolicy(pol);
     	setAlgorithm(algo);

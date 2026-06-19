@@ -73,7 +73,7 @@ public class MLKAgentCommunicatingTest {
         DummyCommunicatingAgent agent = new DummyCommunicatingAgent(oldModule);
 
         // When
-        agent.setCommunicationModule(newModule);
+        agent.setCommunicationModel(newModule);
         agent.communicate();
 
         // Then
@@ -141,12 +141,12 @@ public class MLKAgentCommunicatingTest {
         }
 
         @Override
-        public CommunicationModel getCommunicationModule() {
+        public CommunicationModel getCommunicationModel() {
             return communicationModule;
         }
 
         @Override
-        public void setCommunicationModule(CommunicationModel communicationModule) {
+        public void setCommunicationModel(CommunicationModel communicationModule) {
             this.communicationModule = communicationModule;
         }
 

@@ -42,11 +42,16 @@ public class EnvForaging extends EnvironmentStandard {
 	@Override
 	protected void onActivation() {
 		super.onActivation();
+		initState();
+	}
+	
+	protected void initState() {
 		state = new State2DGridInt(getWidth(), getHeight(), true, true);
 	}
 	
 	
-	@Override	public void addAgent(MLKAgent agent) {
+	@Override	
+	public void addAgent(MLKAgent agent) {
 		agents.addAgent(agent);
 	}
 	
@@ -139,6 +144,8 @@ public class EnvForaging extends EnvironmentStandard {
 	 */
 	protected void handlePositionEvents(Pair<Integer, Integer> position, List<MLKAgent> agentsAtPosition,
 			Map<MLKAgent, List<ReactionEvent>> reactionEventsAction) {
+		
+		
 		int foodValue = state.getValue(position);
 		state.setValue(position, 0);
 		int numberOfAgents = agentsAtPosition.size();

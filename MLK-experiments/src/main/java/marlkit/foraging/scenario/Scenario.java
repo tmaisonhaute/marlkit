@@ -11,7 +11,7 @@ import environment.state.State2DGridInt;
  * A scenario defines how the environment state is initialized and how agents are placed in the environment at each reset.
  * 
  */
-public abstract class Scenario {
+public interface Scenario {
 	
 	/**
 	 * Initialize the state of the environment. This method is called at each reset of the environment. 
@@ -19,7 +19,7 @@ public abstract class Scenario {
 	 * @param prng a pseudo-random number generator that can be used to randomize the initialization of the state.
 	 * @param state the state of the environment to be initialized.
 	 */
-	public abstract void initState(RandomGenerator prng, State2DGridInt state);
+	public void initState(RandomGenerator prng, State2DGridInt state);
 	
 	/**
 	 * Initialize the agents in the environment. This method is called at each reset of the environment, after the state has been initialized.
@@ -27,5 +27,5 @@ public abstract class Scenario {
 	 * @param state
 	 * @param agents
 	 */
-	public abstract void initAgents(RandomGenerator prng, State2DGridInt state, List<MLKAgent> agents);
+	public void initAgents(RandomGenerator prng, State2DGridInt state, List<MLKAgent> agents);
 }

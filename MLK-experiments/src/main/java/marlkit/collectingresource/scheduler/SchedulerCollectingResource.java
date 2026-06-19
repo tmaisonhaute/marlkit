@@ -18,18 +18,18 @@ public class SchedulerCollectingResource extends MLKScheduler {
 	 * Create a scheduler with Trade2D timing criteria.
 	 */
 	public SchedulerCollectingResource() {
-		setCriteriaModule(new SchedulerTrade2DCriteria());
+		setCriteriaModule(new SchedulerCollectingResourceCriteria());
 	}
 
 	/**
 	 * Criteria configuration for Trade2D timing and display rules.
 	 */
-	class SchedulerTrade2DCriteria extends SchedulerTimedCriteria {
+	class SchedulerCollectingResourceCriteria extends SchedulerTimedCriteria {
 
 		/**
 		 * Initialize all timing and display constraints.
 		 */
-		public SchedulerTrade2DCriteria() {
+		public SchedulerCollectingResourceCriteria() {
 			initEpisodeDuration(EPISODE_DURATION);
 			initStartDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
 			initEndDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);

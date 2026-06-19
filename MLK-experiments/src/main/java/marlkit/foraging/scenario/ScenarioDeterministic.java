@@ -10,7 +10,7 @@ import util.Pair;
 /**
  * Scenario that places food and agents at fixed deterministic positions.
  */
-public class ScenarioDeterministic extends Scenario {
+public class ScenarioDeterministic implements Scenario {
 	
 	private Pair<Integer, Integer>[] foodPositions;
 	private Pair<Integer, Integer>[] agentPositions;

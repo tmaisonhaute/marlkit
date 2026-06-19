@@ -9,7 +9,7 @@ import environment.state.State2DGridInt;
 /**
  * Scenario that places food uniformly at random positions in the grid.
  */
-public class ScenarioUniform extends Scenario {
+public class ScenarioUniform implements Scenario {
 	
 	private int numberOfFoodItems;
 	

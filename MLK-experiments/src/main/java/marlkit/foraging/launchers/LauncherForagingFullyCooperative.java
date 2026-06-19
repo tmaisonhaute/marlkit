@@ -1,4 +1,4 @@
-package marlkit.foraging.launcher;
+package marlkit.foraging.launchers;
 
 import java.util.ArrayList;
 import java.util.List;
