@@ -6,7 +6,7 @@ import simulation.SchedulerTimedCriteria;
 public class SchedulerGoOrYield extends MLKScheduler {
 
 	public static final int EPISODE_DURATION = 1;
-	public static final int MINIMUM_STEP_BEFORE_VIEW = 0;
+	public static final int MINIMUM_EPISODES_BEFORE_VIEW = 0;
 	public static final int UPDATE_DISPLAY_INTERVAL = 1;
 	public static final int DISPLAYED_EPISODES = 1;
 	public static final int PAUSE_VALUE = 0;
@@ -19,8 +19,8 @@ public class SchedulerGoOrYield extends MLKScheduler {
 	class SchedulerGoOrYieldCriteria extends SchedulerTimedCriteria {
 		public SchedulerGoOrYieldCriteria() {
 			initEpisodeDuration(EPISODE_DURATION);
-			initStartDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_STEP_BEFORE_VIEW);
-			initEndDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_STEP_BEFORE_VIEW, DISPLAYED_EPISODES);
+			initStartDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_EPISODES_BEFORE_VIEW);
+			initEndDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_EPISODES_BEFORE_VIEW, DISPLAYED_EPISODES);
 			initEndSimulation(MAXIMUM_EPISODE_COUNT);
 			setPauseDisplayValue(PAUSE_VALUE);
 		}

@@ -23,9 +23,9 @@ public abstract class SchedulerTimedCriteria implements SchedulerCriteria {
 				new ReachTimeCriterion(minimumEpisodesBeforeView));
 	}
 
-	public void initEndDisplay(int updateInterval, int minimumStepBeforeView, int displayedEpisodes) {
+	public void initEndDisplay(int updateInterval, int minimumEpisodesBeforeView, int displayedEpisodes) {
 		criteriaEndDisplay = Criteria.and(new ModuloTimeCriterion(updateInterval, displayedEpisodes),
-				new ReachTimeCriterion(minimumStepBeforeView));
+				new ReachTimeCriterion(minimumEpisodesBeforeView));
 	}
 
 	public void initEndSimulation(int maximumEpisodeCount) {
