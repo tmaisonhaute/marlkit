@@ -6,11 +6,16 @@ import java.util.Objects;
 import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
-import learning.Policy;
 import learning.nn.NeuralNetwork;
 import util.VectorOperator;
 
-public class ObjectVotingNeuralPolicy implements Policy {
+/**
+ * A policy that uses a neural network to compute action logits based on input entities, and selects actions using a softmax distribution.
+ * 
+ * This policy is designed for environments where the observation can be represented as a vector of entities, and each entity contributes 
+ * to the overall action logits. The logits are averaged across all entities before applying the softmax function to select an action.
+ */
+public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy {
 
 
     private MLKAgent agent;
@@ -71,6 +76,11 @@ public class ObjectVotingNeuralPolicy implements Policy {
         return actions[actionIndex];
     }
 
+    /**
+     * Computes the logits for each action given the entities.
+     * @param entities the input entities, each represented as a vector
+     * @return the logits for each action
+     */
     public double[] computeLogits(double[][] entities) {
         double[] logits = new double[actions.length];
 
@@ -103,6 +113,11 @@ public class ObjectVotingNeuralPolicy implements Policy {
         return logits;
     }
 
+    /**
+     * Samples an action index from the softmax distribution of logits.
+     * @param logits the raw logits for each action
+     * @return the index of the selected action
+     */
     private int sampleSoftmax(double[] logits) {
         double[] probabilities = VectorOperator.softmax(logits, temperature);
         double r = prng().nextDouble();
@@ -117,6 +132,85 @@ public class ObjectVotingNeuralPolicy implements Policy {
 
         return probabilities.length - 1;
     }
+    
+	
+	@Override
+	public double[][] forwardLogits(PolicyInput[] inputs) {
+	    double[][] logits = new double[inputs.length][];
+	
+	    for (int i = 0; i < inputs.length; i++) {
+	        double[] vector = wrapper.transform(inputs[i]);
+	        double[][] entities = VectorOperator.split(vector, inputSize);
+	        logits[i] = computeLogits(entities);
+	    }
+	
+	    return logits;
+	}
+
+
+	@Override
+	public void updateFromLogitsGradient(PolicyInput[] inputs, double[][] dLossDLogits, double learningRate) {
+	    for (int i = 0; i < inputs.length; i++) {
+	        updateOneInput(inputs[i], dLossDLogits[i], learningRate);
+	    }
+	}
+	
+
+	@Override
+	public int actionIndex(Action action) {
+	    for (int i = 0; i < actions.length; i++) {
+	        if (actions[i].equals(action)) {
+	            return i;
+	        }
+	    }
+	
+	    throw new IllegalArgumentException("Unknown action.");
+	}
+	
+
+	/**
+	 * Updates the policy network for a single input using the provided gradient w.r.t logits.
+	 * @param input the policy input
+	 * @param dLossDLogits 	the gradient of the loss w.r.t the logits for this input
+	 * @param learningRate the learning rate for the update
+	 */
+	private void updateOneInput(PolicyInput input, double[] dLossDLogits, double learningRate) {
+	    double[] vector = wrapper.transform(input);
+	    double[][] entities = VectorOperator.split(vector, inputSize);
+	
+	    if (entities.length == 0) {
+	        return;
+	    }
+	
+	    double[] entityGradient = scaledGradient(dLossDLogits, 1.0 / entities.length);
+	
+	    for (double[] entity : entities) {
+	        objectToActionNetwork.applyOutputGradient(entity, entityGradient, learningRate);
+	    }
+	}
+	
+	/**
+	 * Scales the given gradient by the specified factor.
+	 * @param gradient the gradient to scale
+	 * @param factor the scaling factor
+	 * @return the scaled gradient
+	 */
+	private double[] scaledGradient(double[] gradient, double factor) {
+	    double[] scaled = new double[gradient.length];
+	
+	    for (int i = 0; i < gradient.length; i++) {
+	        scaled[i] = gradient[i] * factor;
+	    }
+	
+	    return scaled;
+	}
+
+	@Override
+	public double getSoftmaxTemperature() {
+		return temperature;
+	}
+
+
 
     
     

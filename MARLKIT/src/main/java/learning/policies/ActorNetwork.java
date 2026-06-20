@@ -6,19 +6,20 @@ import java.util.random.RandomGenerator;
 import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
-import learning.Policy;
 import learning.nn.NeuralNetwork;
+import util.VectorOperator;
 
 /**
  * Actor neural network for policy gradient methods.
  */
-public class ActorNetwork implements Policy{
+public class ActorNetwork implements PolicyGradientPolicy{
 
 	
 	private MLKAgent agent;
     private final NeuralNetwork network;
     private final WrapperPolicyInputVector inputWrapper;
     private final List<Action> actionSet;
+    protected double softmaxTemperature;
 
     
     /**
@@ -32,7 +33,14 @@ public class ActorNetwork implements Policy{
     public ActorNetwork(int inputSize, int hiddenSize,
                         WrapperPolicyInputVector inputWrapper,
                         List<Action> actionSet) {
-        this.inputWrapper = inputWrapper;
+    	this(inputSize, hiddenSize, inputWrapper, actionSet, 1.0);
+        
+    }
+
+	public ActorNetwork(int inputSize, int hiddenSize, WrapperPolicyInputVector inputWrapper, List<Action> actionSet,
+			double softmaxTemperature) {
+		
+		this.inputWrapper = inputWrapper;
         this.actionSet = actionSet;
         
         this.network = new NeuralNetwork(
@@ -40,7 +48,8 @@ public class ActorNetwork implements Policy{
         		NeuralNetwork.Activations.relu(),
         		NeuralNetwork.Activations.identity()
         );
-    }
+		this.softmaxTemperature = softmaxTemperature;
+	}
     
     @Override
     public void init(MLKAgent agent) {
@@ -82,119 +91,18 @@ public class ActorNetwork implements Policy{
         return actionSet.get(probs.length - 1); 
     }
     
-    /**
-     * Computes softmax probabilities for a batch of logits.
-     * @param logitsBatch the batch of raw scores
-     * @return batch of probability vectors
-     */
-	public double[][] softmax(double[][] logitsBatch) {
-		double[][] out = new double[logitsBatch.length][];
-		for (int i = 0; i < logitsBatch.length; i++) {
-			out[i] = softmax(logitsBatch[i]);
-		}
-		return out;
-	} 
 
 	/**
 	 * Computes a numerically stable softmax probability distribution from logits.
 	 *
 	 * @param logits the raw scores
 	 * @return a probability vector summing to 1
-	 * @throws NullPointerException if logits is null
-	 * @throws IllegalArgumentException if logits is empty
 	 */
 	public double[] softmax(double[] logits) {
-	    double max = maxValue(logits);
-	    double[] shiftedExponentials = exponentiateShifted(logits, max);
-	    double sum = sum(shiftedExponentials);
-	    return normalizeOrUniform(shiftedExponentials, sum);
+	    return VectorOperator.softmax(logits, getSoftmaxTemperature());
 	}
 	
-	/**
-	 * Computes maximum value in an array.
-	 * 
-	 * @param values the array of values
-	 */
-	private double maxValue(double[] values) {
-	    double max = Double.NEGATIVE_INFINITY;
-	    for (double v : values) {
-	        max = Math.max(max, v);
-	    }
-	    return max;
-	}
-	
-	/**
-	 * Computes exponentials of shifted logits for numerical stability.
-	 * @param logits the raw scores
-	 * @param max the maximum logit value
-	 * @return the exponentiated shifted logits
-	 */
-	private double[] exponentiateShifted(double[] logits, double max) {
-	    double[] out = new double[logits.length];
-	    for (int i = 0; i < logits.length; i++) {
-	        out[i] = Math.exp(logits[i] - max);
-	    }
-	    return out;
-	}
-	
-	/**
-	 * Computes the sum of an array of values.
-	 * @param values the array of values
-	 * @return the sum
-	 */
-	private double sum(double[] values) {
-	    double s = 0.0;
-	    for (double v : values) {
-	        s += v;
-	    }
-	    return s;
-	}
-	
-	/**
-	 * Normalizes values to sum to 1, or returns a uniform distribution if sum is
-	 * invalid.
-	 * 
-	 * @param values the array of values
-	 * @param sum    the sum of the values
-	 * @return normalized probabilities or uniform distribution
-	 */
-	private double[] normalizeOrUniform(double[] values, double sum) {
-	    if (sum == 0.0 || !Double.isFinite(sum)) {
-	        return uniform(values.length);
-	    }
-	    return normalize(values, sum);
-	}
-	
-	/**
-	 * Normalizes values to sum to 1.
-	 * 
-	 * @param values the array of values
-	 * @param sum    the sum of the values
-	 * @return normalized probabilities
-	 */
-	private double[] normalize(double[] values, double sum) {
-	    double[] out = new double[values.length];
-	    for (int i = 0; i < values.length; i++) {
-	        out[i] = values[i] / sum;
-	    }
-	    return out;
-	}
-	
-	/**
-	 * Generates a uniform probability distribution.
-	 * @param size the size of the distribution
-	 * @return the uniform probability vector
-	 */
-	private double[] uniform(int size) {
-	    double[] out = new double[size];
-	    double p = 1.0 / size;
-	    for (int i = 0; i < size; i++) {
-	        out[i] = p;
-	    }
-	    return out;
-	}
 
-	
 	
 	/**
 	 * Computes raw action logits for a single input.
@@ -207,6 +115,7 @@ public class ActorNetwork implements Policy{
 	    return network.forward(inputVector);
 	}
 
+	@Override
 	/**
 	 * Computes raw action logits for a batch of inputs.
 	 *
@@ -233,13 +142,7 @@ public class ActorNetwork implements Policy{
 	    network.applyOutputGradient(inputVector, dLossDLogits, learningRate);
 	}
 
-	/**
-	 * Updates the policy network from a batch of user-provided gradients w.r.t logits.
-	 *
-	 * @param inputs the policy inputs
-	 * @param dLossDLogits dL/dLogits for each input
-	 * @param learningRate the learning rate
-	 */
+	@Override
 	public void updateFromLogitsGradient(PolicyInput[] inputs, double[][] dLossDLogits, double learningRate) {
 	    double[][] inputVectors = new double[inputs.length][];
 	    for (int i = 0; i < inputs.length; i++) {
@@ -251,6 +154,24 @@ public class ActorNetwork implements Policy{
 	public List<Action> getActionSet() {
 		return actionSet;
 	}
+	
+	
+	@Override
+	public int actionIndex(Action action) {
+	    int index = actionSet.indexOf(action);
+	
+	    if (index < 0) {
+	        throw new IllegalArgumentException("Unknown action.");
+	    }
+	
+	    return index;
+	}
+
+	@Override
+	public double getSoftmaxTemperature() {
+		return softmaxTemperature;
+	}
+
 
     
     
