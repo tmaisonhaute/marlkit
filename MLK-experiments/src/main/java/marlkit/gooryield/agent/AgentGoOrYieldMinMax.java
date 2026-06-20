@@ -5,8 +5,6 @@ import agent.modelofotheragent.ModelsManager;
 import agent.modelofotheragent.PredictionModelsManager;
 import algorithm.QLearningJAL;
 import learning.Experience;
-import learning.algorithms.QLearning;
-import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import modelofotheragents.MinimaxValueFunctionPredictAction;
 
 public class AgentGoOrYieldMinMax extends AgentGoOrYield implements MLKAgentPredictingOthersAction {
@@ -26,14 +24,14 @@ public class AgentGoOrYieldMinMax extends AgentGoOrYield implements MLKAgentPred
 	@Override
 	protected void initPolicyAndAlgorithm() {
 		MinimaxValueFunctionPredictAction groupModelPrediction = new MinimaxValueFunctionPredictAction();
+		
 		QLearningJAL qPolicy = new QLearningJAL(possibleActions, groupModelPrediction);
-		qPolicy.setExplorationStrategy(new EpsilonGreedyExponentialDecay(1.0, 0.001));
+		setExplorationStrategy(qPolicy);
+		
 		groupModelPrediction.setActionEvaluator(qPolicy.getTable());
 		
-		QLearning qLearning = new QLearning(qPolicy, possibleActions, 0.2, 0.95);
-		
 		setPolicy(qPolicy);
-		setAlgorithm(qLearning);
+		setupAlgorithm(qPolicy);
 		
 		modelsManager = new PredictionModelsManager(groupModelPrediction);
 		

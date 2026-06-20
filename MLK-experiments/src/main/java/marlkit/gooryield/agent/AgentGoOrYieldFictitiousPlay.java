@@ -10,8 +10,6 @@ import agent.modelofotheragent.PredictionModelsManager;
 import agent.modelofotheragent.StandardGroupModelingPredictAction;
 import algorithm.QLearningJAL;
 import learning.Experience;
-import learning.algorithms.QLearning;
-import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import modelofotheragents.FictitiousPlayDeterministicPredictAction;
 
 public class AgentGoOrYieldFictitiousPlay extends AgentGoOrYield implements MLKAgentPredictingOthersAction {
@@ -45,12 +43,11 @@ public class AgentGoOrYieldFictitiousPlay extends AgentGoOrYield implements MLKA
         }
 
         QLearningJAL qPolicy = new QLearningJAL(possibleActions, groupModelPrediction);
-        qPolicy.setExplorationStrategy(new EpsilonGreedyExponentialDecay(1.0, 0.001));
-
-        QLearning qLearning = new QLearning(qPolicy, possibleActions, 0.2, 0.95);
+        setExplorationStrategy(qPolicy);
 
         setPolicy(qPolicy);
-        setAlgorithm(qLearning);
+        setupAlgorithm(qPolicy);
+
 
         modelsManager = new PredictionModelsManager(groupModelPrediction);
     }

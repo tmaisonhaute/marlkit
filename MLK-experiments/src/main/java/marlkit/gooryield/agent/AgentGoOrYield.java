@@ -27,13 +27,19 @@ public class AgentGoOrYield extends AgentStandard {
     }
 
     protected void initPolicyAndAlgorithm() {
-        QValueBasedPolicy qPolicy = new QValueBasedPolicy(
-                possibleActions,
-                1.0,
-                new EpsilonGreedyExponentialDecay(1.0, 0.001)
-        );
-        QLearning qLearning = new QLearning(qPolicy, possibleActions, 0.2, 0.95);
+        QValueBasedPolicy qPolicy = new QValueBasedPolicy(possibleActions, 1.0);
+        setExplorationStrategy(qPolicy);
+        
         setPolicy(qPolicy);
-        setAlgorithm(qLearning);
+        setupAlgorithm(qPolicy);
+    }
+    
+    protected void setExplorationStrategy(QValueBasedPolicy qPolicy) {
+    	 qPolicy.setExplorationStrategy(new EpsilonGreedyExponentialDecay(1.0, 0.001));
+//    	qPolicy.setExplorationStrategy(new EpsilonGreedyFix(0.05));
+    }
+    protected void setupAlgorithm(QValueBasedPolicy qPolicy) {
+    	QLearning qLearning = new QLearning(qPolicy, possibleActions, 0.2, 0.95);
+    	setAlgorithm(qLearning);
     }
 }

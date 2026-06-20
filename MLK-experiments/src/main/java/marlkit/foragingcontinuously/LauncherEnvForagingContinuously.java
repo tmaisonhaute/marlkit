@@ -25,7 +25,7 @@ public class LauncherEnvForagingContinuously extends MLKLauncher {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <E extends SimuEnvironment> E onLaunchEnvironment() {
-		EnvForaging env = new EnvForagingContinuously(5, 5, new ScenarioContinuously(15, 2));
+		EnvForaging env = new EnvForagingContinuously(4, 4, new ScenarioContinuously(50, 1));
 		launchAgent(env, Integer.MAX_VALUE);
 		return (E) env;
 	}
@@ -41,7 +41,7 @@ public class LauncherEnvForagingContinuously extends MLKLauncher {
 		
 		for (int i = 0; i < nbAgents; i++) {
 //			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedyPowerDecay(0.5));
-			SoftmaxQPolicy policy = new SoftmaxQPolicy(possibleActions, 1.0, 5, new EpsilonGreedyPowerDecay(0.5));
+			SoftmaxQPolicy policy = new SoftmaxQPolicy(possibleActions, 1.0, 3, new EpsilonGreedyPowerDecay(0.5));
         	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.995);
 
 			AgentStandard ag = new AgentStandard(policy, algorithm);
