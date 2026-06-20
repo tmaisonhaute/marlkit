@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import agent.MLKAgent;
-import agent.action.Action;
 import environment.state.State2DGridInt;
 import marlkit.foraging.EnvForaging;
 import marlkit.foragingcontinuously.scenario.ScenarioContinuously;
@@ -15,28 +14,27 @@ import util.Pair;
 
 public class EnvForagingContinuously extends EnvForaging {
 	
-	protected static final int REQUIRED_AGENTS_TO_COLLECT_FOOD = 2;
-	protected static final int VIEW_RANGE = 4;
+	protected int requiredAgentsToCollectFood;
+	protected int viewRange;
 
 	public EnvForagingContinuously(ScenarioContinuously scenario) {
         this(5, 5, scenario);
 	}
 	
 	public EnvForagingContinuously(int width, int height, ScenarioContinuously scenario) {
+		this(width, height, scenario, 2, 3);
+	}
+	
+	public EnvForagingContinuously(int width, int height, ScenarioContinuously scenario, int requiredAgentsToCollectFood, int viewRange) {
 		super(width, height, scenario, new FullyCooperativeReward());
+		this.requiredAgentsToCollectFood = requiredAgentsToCollectFood;
+		this.viewRange = viewRange;
 	}
 	
 	@Override
 	protected void initState() {
-		state = new State2DGridInt(getWidth(), getHeight(), VIEW_RANGE, true, true);
+		state = new State2DGridInt(getWidth(), getHeight(), viewRange, true, true);
     }
-	
-	@Override 
-	public Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions){
-		((ScenarioContinuously) scenario).updateState(prng(), state);
-		return super.dynamics(actions);
-		
-	}
 	
 	
 	@Override
@@ -44,7 +42,7 @@ public class EnvForagingContinuously extends EnvForaging {
 			Map<MLKAgent, List<ReactionEvent>> reactionEventsAction) {
 		int numberOfAgents = agentsAtPosition.size();
 		int foodValue;
-		if (numberOfAgents < REQUIRED_AGENTS_TO_COLLECT_FOOD) {
+		if (numberOfAgents < requiredAgentsToCollectFood) {
 			foodValue = 0;
 		} else {
 			foodValue = state.getValue(position);
@@ -56,6 +54,10 @@ public class EnvForagingContinuously extends EnvForaging {
 			List<ReactionEvent> events = new ArrayList<>();
 			computeEvents(events, foodValue, numberOfAgents);
 			reactionEventsAction.get(ag).addAll(events);
+		}
+		
+		for (int i = 0; i < foodValue; i++) {
+			((ScenarioContinuously) scenario).respawn(prng(), state);
 		}
 	}
 	

@@ -10,13 +10,9 @@ import marlkit.foraging.scenario.Scenario;
 import util.Pair;
 
 public class ScenarioContinuously implements Scenario {
-	protected int step;
-	protected int stepBeforeSpawn;
 	protected int initNumberOfResources;
 	
-	public ScenarioContinuously(int stepBeforeSpawn, int initNumberOfResources) {
-		step = 0;
-		this.stepBeforeSpawn = stepBeforeSpawn;
+	public ScenarioContinuously(int initNumberOfResources) {
 		this.initNumberOfResources = initNumberOfResources;
 	}
 	
@@ -39,17 +35,9 @@ public class ScenarioContinuously implements Scenario {
 		
 	}
 	
-	protected int stepBeforeNewResources() {
-		return stepBeforeSpawn;
-	}
-	
-	public void updateState(RandomGenerator prng, State2DGridInt state) {
-		step++;
-		if (step % stepBeforeNewResources() == 0) {
-			Pair<Integer, Integer> pos = getRandomEmptyPosition(prng, state);
-			state.setValue(pos, 1);
-		}
-		
+	public void respawn(RandomGenerator prng, State2DGridInt state) {
+		Pair<Integer, Integer> pos = getRandomEmptyPosition(prng, state);
+		state.setValue(pos, 1);
 	}
 
 	protected Pair<Integer, Integer> getRandomEmptyPosition(RandomGenerator prng, State2DGridInt state){

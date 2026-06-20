@@ -1,46 +1,37 @@
-package marlkit.foragingcontinuously;
+package marlkit.foragingcontinuously.launchers;
 
-import agent.AgentStandard;
 import madkit.simulation.EngineAgents;
 import madkit.simulation.SimuEnvironment;
 import marlkit.foraging.EnvForaging;
 import marlkit.foraging.SchedulerForaging;
 import marlkit.foraging.ViewerForaging;
-import marlkit.foragingcontinuously.agents.AgentForagingBroadcastObservation;
+import marlkit.foragingcontinuously.EnvForagingContinuously;
+import marlkit.foragingcontinuously.agents.AgentForaging;
 import marlkit.foragingcontinuously.scenario.ScenarioContinuously;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
 @EngineAgents(scheduler = SchedulerForaging.class, model = MLKModel.class, viewers = {
 		ViewerForaging.class })
-public class LauncherBroadcastObservation extends MLKLauncher {
+public abstract class LauncherConfig extends MLKLauncher {
+	int nbAgents = 2;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <E extends SimuEnvironment> E onLaunchEnvironment() {
-		EnvForaging env = new EnvForagingContinuously(5, 5, new ScenarioContinuously(15, 2));
+		EnvForaging env = new EnvForagingContinuously(6, 6, new ScenarioContinuously(1), 2, 3);
 		launchAgent(env, Integer.MAX_VALUE);
 		return (E) env;
 	}
 	
 	@Override
 	protected void onLaunchSimulatedAgents() {
-		int nbAgents = 2;
-		
-		for (int i = 0; i < nbAgents; i++) {			
-
-			AgentStandard ag = new AgentForagingBroadcastObservation();
+		for (int i = 0; i < nbAgents; i++) {
+			AgentForaging ag = createAgent();
 			launchAgent(ag);
 		}
 	}
-
-	public static void main(String[] args) {
-		executeThisAgent("--agentLogLevel"
-				, "INFO"
-//				,"--noLog"
-				, "--start"
-//				,"--viewers",MyViewer.class.getName()
-		);
-	}
+	
+	protected abstract AgentForaging createAgent();
 	
 }
