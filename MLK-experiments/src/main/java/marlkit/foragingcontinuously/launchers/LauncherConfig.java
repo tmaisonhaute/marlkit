@@ -14,12 +14,12 @@ import simulation.MLKModel;
 @EngineAgents(scheduler = SchedulerForaging.class, model = MLKModel.class, viewers = {
 		ViewerForaging.class })
 public abstract class LauncherConfig extends MLKLauncher {
-	int nbAgents = 2;
+	int nbAgents = 3;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <E extends SimuEnvironment> E onLaunchEnvironment() {
-		EnvForaging env = new EnvForagingContinuously(6, 6, new ScenarioContinuously(1), 2, 3);
+		EnvForaging env = new EnvForagingContinuously(5, 5, new ScenarioContinuously(2), 2, 3, false);
 		launchAgent(env, Integer.MAX_VALUE);
 		return (E) env;
 	}

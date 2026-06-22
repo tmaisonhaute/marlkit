@@ -28,8 +28,7 @@ public class BroadcastObservation implements CommunicationModel {
 	@Override
 	public void handleCommunication(MLKAgent agent, Mailbox mailbox) {
 		Observation obs = agent.getObservation();
-		//TODO filter only observation messages
-		List<ObjectMessage<Observation>> messagesObservations = mailbox.getAll(null);
+		List<ObjectMessage<Observation>> messagesObservations = mailbox.getAll(message -> message instanceof ObjectMessage<?> objectMessage && objectMessage.getContent() instanceof Observation);
 		Observation extendedObservation = obs;
 		for (ObjectMessage<Observation> message : messagesObservations) {
 			extendedObservation = extendedObservation.add(message.getContent());

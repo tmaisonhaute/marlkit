@@ -70,8 +70,14 @@ public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy {
     @Override
     public Action selectAction(PolicyInput input) {
         double[] vector = wrapper.transform(input);
-        double[][] entities = VectorOperator.split(vector, this.inputSize);
-        double[] logits = computeLogits(entities);
+        
+        double[] logits;
+        if(vector.length == 0) {
+        	logits = defaultLogits();
+        } else {
+        	double[][] entities = VectorOperator.split(vector, this.inputSize);
+        	logits = computeLogits(entities);
+        }
         int actionIndex = sampleSoftmax(logits);
         return actions[actionIndex];
     }
@@ -210,7 +216,20 @@ public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy {
 		return temperature;
 	}
 
-
+	/**
+	 * Returns the default logits for the policy, which are uniform across all actions.
+	 * @return an array of default logits, each set to 1.0 / number of actions
+	 */
+	protected double[] defaultLogits() {
+		int nbActions = actions.length;
+		
+		double[] logits = new double[nbActions];
+		for (int i = 0; i < nbActions; i++) {
+			logits[i] = 1.0 / nbActions;
+		}
+		
+		return logits;
+	}
 
     
     

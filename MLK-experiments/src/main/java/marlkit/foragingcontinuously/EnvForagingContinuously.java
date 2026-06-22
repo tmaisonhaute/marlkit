@@ -16,24 +16,26 @@ public class EnvForagingContinuously extends EnvForaging {
 	
 	protected int requiredAgentsToCollectFood;
 	protected int viewRange;
+	protected boolean observeAgentPosition;
 
 	public EnvForagingContinuously(ScenarioContinuously scenario) {
         this(5, 5, scenario);
 	}
 	
 	public EnvForagingContinuously(int width, int height, ScenarioContinuously scenario) {
-		this(width, height, scenario, 2, 3);
+		this(width, height, scenario, 2, 3, true);
 	}
 	
-	public EnvForagingContinuously(int width, int height, ScenarioContinuously scenario, int requiredAgentsToCollectFood, int viewRange) {
+	public EnvForagingContinuously(int width, int height, ScenarioContinuously scenario, int requiredAgentsToCollectFood, int viewRange, boolean observeAgentPosition) {
 		super(width, height, scenario, new FullyCooperativeReward());
 		this.requiredAgentsToCollectFood = requiredAgentsToCollectFood;
 		this.viewRange = viewRange;
+		this.observeAgentPosition = observeAgentPosition;
 	}
 	
 	@Override
 	protected void initState() {
-		state = new State2DGridInt(getWidth(), getHeight(), viewRange, true, true);
+		state = new State2DGridInt(getWidth(), getHeight(), viewRange, true, observeAgentPosition);
     }
 	
 	

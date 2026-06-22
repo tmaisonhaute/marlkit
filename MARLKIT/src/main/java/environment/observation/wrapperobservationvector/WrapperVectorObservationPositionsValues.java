@@ -22,17 +22,19 @@ public class WrapperVectorObservationPositionsValues implements WrapperPolicyInp
 	public double[] transform(PolicyInput input) {
 		ObservationPositionsValues obs = (ObservationPositionsValues) input;
 		
-		//TODO not really satisfying yet. It prevent wrapping for position that is not with 2 values for the position (2D)
-		if (obs.getPosition(0).getSize() != 2) {
-			throw new IllegalArgumentException("ObservationPositionValue must have a position of size 2");
-		}
+		if (obs.getListObs().isEmpty()) {
+	        return new double[0];
+	    }
+		
+		validatePositions(obs);
 		
 		int numberValuesForObservation = doWrapPositionValue ? 3 : 2;
 		double[] vector = new double[obs.getListObs().size() * numberValuesForObservation];
 		
-		for (ObservationPositionValue o : obs.getListObs()) {
-			int i = obs.getListObs().indexOf(o);
+		for (int i = 0; i < obs.getListObs().size(); i++) {
+		    ObservationPositionValue o = obs.getListObs().get(i);
 			Tuple position = o.getPosition();
+			
 			vector[i * numberValuesForObservation] = position.getValue(0);
 			vector[i * numberValuesForObservation + 1] = position.getValue(1);
 			if (doWrapPositionValue) {
@@ -58,5 +60,19 @@ public class WrapperVectorObservationPositionsValues implements WrapperPolicyInp
 		}
 		return obs;
 	}
+	
+
+	/**
+	 * Validates that all ObservationPositionValue objects in the given ObservationPositionsValues have positions of size 2.
+	 * @param obs the ObservationPositionsValues to validate
+	 */
+	private void validatePositions(ObservationPositionsValues obs) {
+	    for (ObservationPositionValue o : obs.getListObs()) {
+	        if (o.getPosition().getSize() != 2) {
+	            throw new IllegalArgumentException("ObservationPositionValue must have a position of size 2");
+	        }
+	    }
+	}
+
 
 }
