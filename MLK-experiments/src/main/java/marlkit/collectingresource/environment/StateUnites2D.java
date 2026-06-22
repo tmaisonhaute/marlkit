@@ -11,7 +11,7 @@ import marlkit.collectingresource.agent.CollectingResourceAgent;
 import util.Position;
 
 /**
- * State representation for the Trade2D environment.
+ * State representation for the CollectingResource environment.
  */
 public class StateUnites2D implements State {
 	private final List<MLKAgent> agents;
