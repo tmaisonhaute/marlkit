@@ -7,7 +7,7 @@ import java.util.Map;
 import agent.AgentsGroup;
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.observation.Observation;
 import environment.observation.ObservationOneHotEncoding;
 import environment.observation.ObservationOneHotEncodings;
@@ -69,7 +69,7 @@ public class MeanField implements MLKInteraction {
      * @return a list of allowed actions based on Von Neumann movement
      */
     public List<Action> getPossibleActions() {
-        return Move2D.getVonNeumannmove();
+        return Move2DInt.getVonNeumannMove();
     }
 
     /**

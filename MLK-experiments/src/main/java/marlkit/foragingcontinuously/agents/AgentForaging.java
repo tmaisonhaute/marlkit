@@ -5,7 +5,7 @@ import java.util.List;
 
 import agent.AgentStandard;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
 import environment.observation.wrapperobservationvector.WrapperVectorObservationPositionsValues;
 import learning.algorithms.Reinforce;
@@ -13,7 +13,7 @@ import learning.nn.NeuralNetwork;
 import learning.policies.ObjectVotingNeuralPolicy;
 
 public class AgentForaging extends AgentStandard {
-	List<Action> possibleActions = new ArrayList<>(List.of(Move2D.left(), Move2D.right(), Move2D.up(), Move2D.down(), Move2D.idle()));
+	List<Action> possibleActions = new ArrayList<>(List.of(Move2DInt.left(), Move2DInt.right(), Move2DInt.up(), Move2DInt.down(), Move2DInt.idle()));
 
 	public AgentForaging() {
 		super();

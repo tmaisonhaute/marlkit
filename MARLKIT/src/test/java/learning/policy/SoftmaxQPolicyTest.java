@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.observation.ObservationPositionValue;
 import learning.ExplorationStrategy;
 import learning.explorationstrategies.NoExploration;
@@ -31,10 +31,10 @@ public class SoftmaxQPolicyTest {
     public void givenObservation_whenTakeAction_thenActionIsReturned() {
         // Given
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         MLKAgent agent = mock(MLKAgent.class);
@@ -60,12 +60,12 @@ public class SoftmaxQPolicyTest {
     public void givenExplorationStrategy_whenSelectAction_thenExploratoryActionReturned() {
         // Given
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
-        Action exploratoryAction = Move2D.left();
+        Action exploratoryAction = Move2DInt.left();
 
         ExplorationStrategy strategy = mock(ExplorationStrategy.class);
         when(strategy.getExploratoryAction(anyList(), any(RandomGenerator.class)))
@@ -91,7 +91,7 @@ public class SoftmaxQPolicyTest {
     @Test
     public void givenDefaultQValue_whenGetQValue_thenDefaultReturned() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         double defaultValue = 5.0;
 
         SoftmaxQPolicy policy = new SoftmaxQPolicy(actionSet, defaultValue, 1.0, new NoExploration());
@@ -101,7 +101,7 @@ public class SoftmaxQPolicyTest {
         );
 
         // When
-        double qValue = policy.getTable().getValue(observation, Move2D.up());
+        double qValue = policy.getTable().getValue(observation, Move2DInt.up());
 
         // Then
         assertThat(qValue).isEqualTo(defaultValue);
@@ -110,7 +110,7 @@ public class SoftmaxQPolicyTest {
     @Test
     public void givenPolicy_whenInit_thenAgentSet() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         SoftmaxQPolicy policy = new SoftmaxQPolicy(actionSet, 0.0, 1.0, new NoExploration());
         MLKAgent agent = mock(MLKAgent.class);
 
@@ -124,7 +124,7 @@ public class SoftmaxQPolicyTest {
     @Test
     public void givenTemperatureNonPositive_whenConstruct_thenThrows() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
 
         // When / Then
         assertThatThrownBy(() -> new SoftmaxQPolicy(actionSet, 0.0, 0.0, new NoExploration()))
@@ -136,10 +136,10 @@ public class SoftmaxQPolicyTest {
     public void givenHigherQValue_whenSampling_thenBestActionMoreFrequent() {
         // Given
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         MLKAgent agent = mock(MLKAgent.class);
@@ -153,11 +153,11 @@ public class SoftmaxQPolicyTest {
             new Tuple(Arrays.asList(1.0, 2.0)), 1.0
         );
 
-        Action bestAction = Move2D.up();
+        Action bestAction = Move2DInt.up();
         policy.getTable().setValue(new Pair<>(observation, bestAction), 10.0);
-        policy.getTable().setValue(new Pair<>(observation, Move2D.down()), 0.0);
-        policy.getTable().setValue(new Pair<>(observation, Move2D.left()), 0.0);
-        policy.getTable().setValue(new Pair<>(observation, Move2D.right()), 0.0);
+        policy.getTable().setValue(new Pair<>(observation, Move2DInt.down()), 0.0);
+        policy.getTable().setValue(new Pair<>(observation, Move2DInt.left()), 0.0);
+        policy.getTable().setValue(new Pair<>(observation, Move2DInt.right()), 0.0);
 
         // When
         int bestCount = 0;

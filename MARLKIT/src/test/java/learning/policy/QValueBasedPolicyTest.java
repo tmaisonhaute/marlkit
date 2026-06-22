@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.observation.ObservationPositionValue;
 import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import learning.policies.QValueBasedPolicy;
@@ -24,10 +24,10 @@ public class QValueBasedPolicyTest {
     public void givenObservation_whenTakeAction_thenActionIsReturned() {
         // Given
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(), 
-            Move2D.down(), 
-            Move2D.left(), 
-            Move2D.right()
+            Move2DInt.up(), 
+            Move2DInt.down(), 
+            Move2DInt.left(), 
+            Move2DInt.right()
         );
         
         MLKAgent agent = mock(MLKAgent.class);
@@ -53,10 +53,10 @@ public class QValueBasedPolicyTest {
     public void givenQValues_whenTakeActionWithZeroEpsilon_thenBestActionSelected() {
         // Given
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(), 
-            Move2D.down(), 
-            Move2D.left(), 
-            Move2D.right()
+            Move2DInt.up(), 
+            Move2DInt.down(), 
+            Move2DInt.left(), 
+            Move2DInt.right()
         );
         
         MLKAgent agent = mock(MLKAgent.class);
@@ -73,11 +73,11 @@ public class QValueBasedPolicyTest {
         );
         
         // Set Q-values: make "up" the best action
-        Action bestAction = Move2D.up();
+        Action bestAction = Move2DInt.up();
         policy.getTable().setValue(new Pair<>(observation, bestAction), 10.0);
-        policy.getTable().setValue(new Pair<>(observation, Move2D.down()), 1.0);
-        policy.getTable().setValue(new Pair<>(observation, Move2D.left()), 2.0);
-        policy.getTable().setValue(new Pair<>(observation, Move2D.right()), 3.0);
+        policy.getTable().setValue(new Pair<>(observation, Move2DInt.down()), 1.0);
+        policy.getTable().setValue(new Pair<>(observation, Move2DInt.left()), 2.0);
+        policy.getTable().setValue(new Pair<>(observation, Move2DInt.right()), 3.0);
         
         // When
         Action selectedAction = policy.selectAction(observation);
@@ -89,7 +89,7 @@ public class QValueBasedPolicyTest {
     @Test
     public void givenDefaultQValue_whenGetQValue_thenDefaultReturned() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         double defaultValue = 5.0;
         
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, defaultValue);
@@ -99,7 +99,7 @@ public class QValueBasedPolicyTest {
         );
         
         // When
-        double qValue = policy.getTable().getValue(observation, Move2D.up());
+        double qValue = policy.getTable().getValue(observation, Move2DInt.up());
         
         // Then
         assertThat(qValue).isEqualTo(defaultValue);
@@ -108,14 +108,14 @@ public class QValueBasedPolicyTest {
     @Test
     public void givenPolicy_whenReset_thenQTableCleared() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet);
         
         ObservationPositionValue observation = new ObservationPositionValue(
             new Tuple(Arrays.asList(1.0, 2.0)), 1.0
         );
         
-        policy.getTable().setValue(new Pair<>(observation, Move2D.up()), 10.0);
+        policy.getTable().setValue(new Pair<>(observation, Move2DInt.up()), 10.0);
         assertThat(policy.getTable().size()).isEqualTo(1);
         
         // When
@@ -128,7 +128,7 @@ public class QValueBasedPolicyTest {
     @Test
     public void givenPolicy_whenInit_thenAgentSet() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet);
         MLKAgent agent = mock(MLKAgent.class);
         
@@ -142,7 +142,7 @@ public class QValueBasedPolicyTest {
     @Test
     public void givenExplorationStrategy_whenGetExplorationStrategy_thenCorrectStrategyReturned() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         EpsilonGreedyExponentialDecay strategy = new EpsilonGreedyExponentialDecay(0.1);
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, strategy);
         
@@ -154,10 +154,10 @@ public class QValueBasedPolicyTest {
     public void givenHighEpsilon_whenTakeActionMultipleTimes_thenExplorationOccurs() {
         // Given
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(), 
-            Move2D.down(), 
-            Move2D.left(), 
-            Move2D.right()
+            Move2DInt.up(), 
+            Move2DInt.down(), 
+            Move2DInt.left(), 
+            Move2DInt.right()
         );
         
         MLKAgent agent = mock(MLKAgent.class);
@@ -174,7 +174,7 @@ public class QValueBasedPolicyTest {
         );
         
         // Set one action as clearly best
-        policy.getTable().setValue(new Pair<>(observation, Move2D.up()), 100.0);
+        policy.getTable().setValue(new Pair<>(observation, Move2DInt.up()), 100.0);
         
         // When - take many actions
         int differentActionsCount = 0;

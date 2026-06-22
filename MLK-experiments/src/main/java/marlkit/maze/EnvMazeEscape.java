@@ -7,7 +7,7 @@ import java.util.Map;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.EnvironmentStandard;
 import environment.state.State2DGridInt;
 import marlkit.maze.events.MazeExitEvent;
@@ -80,7 +80,7 @@ public class EnvMazeEscape extends EnvironmentStandard {
 			if (terminalReached) {
 				continue;
 			}
-			Move2D action = (Move2D) actions.get(ag);
+			Move2DInt action = (Move2DInt) actions.get(ag);
 			Pair<Integer, Integer> newPosition = stateMoveAgent(ag, action);
 			events.add(new MazeStepEvent(rewardConfig.stepReward()));
 			handleCellEvents(newPosition, events);
@@ -88,7 +88,7 @@ public class EnvMazeEscape extends EnvironmentStandard {
 		return results;
 	}
 
-	protected Pair<Integer, Integer> stateMoveAgent(MLKAgent agent, Move2D action) {
+	protected Pair<Integer, Integer> stateMoveAgent(MLKAgent agent, Move2DInt action) {
 		Pair<Integer, Integer> currentPosition = state.getAgentPosition(agent).clone();
 		int nextX = Math.max(0, Math.min(getWidth() - 1, currentPosition.getFirst() + action.getValue().getFirst()));
 		int nextY = Math.max(0, Math.min(getHeight() - 1, currentPosition.getSecond() + action.getValue().getSecond()));

@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.observation.ObservationPositionValue;
 import learning.Batch;
 import learning.Experience;
@@ -29,7 +29,7 @@ public class SarsaTest {
     @Test
     public void givenSarsa_whenInit_thenAgentSet() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet);
         Sarsa sarsa = new Sarsa(policy);
         MLKAgent agent = mock(MLKAgent.class);
@@ -44,7 +44,7 @@ public class SarsaTest {
     @Test
     public void givenSarsa_whenGetPolicy_thenCorrectPolicyReturned() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet);
         Sarsa sarsa = new Sarsa(policy);
         
@@ -55,7 +55,7 @@ public class SarsaTest {
     @Test
     public void givenSarsa_whenGetLearningFrequency_thenReturnsOne() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet);
         Sarsa sarsa = new Sarsa(policy);
         
@@ -67,8 +67,8 @@ public class SarsaTest {
     public void givenBatchWithExperiences_whenLearnOnBatch_thenQValuesUpdated() {
         // Given
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(), 
-            Move2D.down()
+            Move2DInt.up(), 
+            Move2DInt.down()
         );
         
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.0));
@@ -87,8 +87,8 @@ public class SarsaTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(10.0)));
-        batch.addExperience(new Experience(obs2, Move2D.down(), new RewardStandard(0.0)));
+        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(10.0)));
+        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -96,7 +96,7 @@ public class SarsaTest {
         sarsa.learnOnBatch(batch, logger);
         
         // Then
-        double qValue = policy.getTable().getValue(obs1, Move2D.up());
+        double qValue = policy.getTable().getValue(obs1, Move2DInt.up());
         // Q = 0 + 0.1 * (10 + 0.95 * 0 - 0) = 1.0
         assertThat(qValue).isEqualTo(1.0);
     }
@@ -104,7 +104,7 @@ public class SarsaTest {
     @Test
     public void givenBatchWithExperiences_whenLearnOnBatch_thenBatchSizeReducedToOne() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet);
         Sarsa sarsa = new Sarsa(policy);
         
@@ -119,9 +119,9 @@ public class SarsaTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(1.0)));
-        batch.addExperience(new Experience(obs2, Move2D.down(), new RewardStandard(2.0)));
-        batch.addExperience(new Experience(obs3, Move2D.up(), new RewardStandard(3.0)));
+        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(2.0)));
+        batch.addExperience(new Experience(obs3, Move2DInt.up(), new RewardStandard(3.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -138,7 +138,7 @@ public class SarsaTest {
     @Test
     public void givenSarsa_whenEndEpisode_thenBatchCleared() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.1));
         Sarsa sarsa = new Sarsa(policy);
         
@@ -153,7 +153,7 @@ public class SarsaTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(1.0)));
+        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -167,7 +167,7 @@ public class SarsaTest {
     @Test
     public void givenSarsa_whenEndEpisode_thenEpsilonUpdated() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         EpsilonGreedyExponentialDecay epsilonGreedy = new EpsilonGreedyExponentialDecay(1.0, 0.1); // 10% decay
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, epsilonGreedy);
         Sarsa sarsa = new Sarsa(policy);
@@ -194,7 +194,7 @@ public class SarsaTest {
     @Test
     public void givenSarsa_whenEndEpisodeWithLastExperience_thenTerminalStateHandled() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.0));
         Sarsa sarsa = new Sarsa(policy, 1.0, 0.9); // alpha=1 for easier calculation
         
@@ -209,7 +209,7 @@ public class SarsaTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(5.0)));
+        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(5.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -217,14 +217,14 @@ public class SarsaTest {
         sarsa.endEpisode(batch, logger);
         
         // Then - Q(obs1, up) = 0 + 1.0 * (5 + 0.9 * 0 - 0) = 5.0 (terminal state has Q=0)
-        double qValue = policy.getTable().getValue(obs1, Move2D.up());
+        double qValue = policy.getTable().getValue(obs1, Move2DInt.up());
         assertThat(qValue).isEqualTo(5.0);
     }
     
     @Test
     public void givenSarsaWithNextActionQ_whenLearnOnBatch_thenUsesActualNextAction() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.0));
         Sarsa sarsa = new Sarsa(policy, 1.0, 0.9); // alpha=1 for easier calculation
         
@@ -242,12 +242,12 @@ public class SarsaTest {
         
         // Set Q-values for next state: up=5, down=10
         // SARSA should use down (the actual next action), not max
-        policy.getTable().setValue(new Pair<>(obs2, Move2D.up()), 5.0);
-        policy.getTable().setValue(new Pair<>(obs2, Move2D.down()), 10.0);
+        policy.getTable().setValue(new Pair<>(obs2, Move2DInt.up()), 5.0);
+        policy.getTable().setValue(new Pair<>(obs2, Move2DInt.down()), 10.0);
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(1.0)));
-        batch.addExperience(new Experience(obs2, Move2D.down(), new RewardStandard(0.0))); // next action is down
+        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0))); // next action is down
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -255,14 +255,14 @@ public class SarsaTest {
         sarsa.learnOnBatch(batch, logger);
         
         // Then - Q(obs1, up) = 0 + 1.0 * (1 + 0.9 * Q(obs2, down) - 0) = 1 + 0.9 * 10 = 10
-        double qValue = policy.getTable().getValue(obs1, Move2D.up());
+        double qValue = policy.getTable().getValue(obs1, Move2DInt.up());
         assertThat(qValue).isEqualTo(10.0);
     }
     
     @Test
     public void givenSarsaVsQLearning_whenDifferentNextAction_thenDifferentUpdates() {
         // Given - same setup for both algorithms
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         
         QValueBasedPolicy sarsaPolicy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.0));
         Sarsa sarsa = new Sarsa(sarsaPolicy, 1.0, 0.9);
@@ -284,28 +284,28 @@ public class SarsaTest {
         );
         
         // Set different Q-values for next state actions
-        sarsaPolicy.getTable().setValue(new Pair<>(obs2, Move2D.up()), 10.0);  // max
-        sarsaPolicy.getTable().setValue(new Pair<>(obs2, Move2D.down()), 2.0); // actual next action
+        sarsaPolicy.getTable().setValue(new Pair<>(obs2, Move2DInt.up()), 10.0);  // max
+        sarsaPolicy.getTable().setValue(new Pair<>(obs2, Move2DInt.down()), 2.0); // actual next action
         
-        qLearningPolicy.getTable().setValue(new Pair<>(obs2, Move2D.up()), 10.0);  // max
-        qLearningPolicy.getTable().setValue(new Pair<>(obs2, Move2D.down()), 2.0);
+        qLearningPolicy.getTable().setValue(new Pair<>(obs2, Move2DInt.up()), 10.0);  // max
+        qLearningPolicy.getTable().setValue(new Pair<>(obs2, Move2DInt.down()), 2.0);
         
         AgentLogger logger = mock(AgentLogger.class);
         
         // When - next action is "down" (not the max action)
         Batch sarsaBatch = new Batch();
-        sarsaBatch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(1.0)));
-        sarsaBatch.addExperience(new Experience(obs2, Move2D.down(), new RewardStandard(0.0)));
+        sarsaBatch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        sarsaBatch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
         sarsa.learnOnBatch(sarsaBatch, logger);
         
         Batch qLearningBatch = new Batch();
-        qLearningBatch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(1.0)));
-        qLearningBatch.addExperience(new Experience(obs2, Move2D.down(), new RewardStandard(0.0)));
+        qLearningBatch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        qLearningBatch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
         qLearning.learnOnBatch(qLearningBatch, logger);
         
         // Then - SARSA uses Q(obs2, down)=2, Q-Learning uses max=10
-        double sarsaQ = sarsaPolicy.getTable().getValue(obs1, Move2D.up());
-        double qLearningQ = qLearningPolicy.getTable().getValue(obs1, Move2D.up());
+        double sarsaQ = sarsaPolicy.getTable().getValue(obs1, Move2DInt.up());
+        double qLearningQ = qLearningPolicy.getTable().getValue(obs1, Move2DInt.up());
         
         // SARSA: Q = 0 + 1.0 * (1 + 0.9 * 2 - 0) = 2.8
         // Q-Learning: Q = 0 + 1.0 * (1 + 0.9 * 10 - 0) = 10.0

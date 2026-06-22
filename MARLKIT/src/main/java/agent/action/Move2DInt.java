@@ -7,7 +7,7 @@ import util.Pair;
 /**
  * An action representing a 2D movement with delta-x and delta-y components.
  */
-public class Move2D implements Action {
+public class Move2DInt implements Action {
 	protected Pair<Integer, Integer> value;
 
 	/**
@@ -15,7 +15,7 @@ public class Move2D implements Action {
 	 *
 	 * @param value a pair containing (delta-x, delta-y) movement values
 	 */
-	public Move2D(Pair<Integer, Integer> value) {
+	public Move2DInt(Pair<Integer, Integer> value) {
 		this.value = value;
 	}
 
@@ -64,7 +64,7 @@ public class Move2D implements Action {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj instanceof Move2D a) {
+		if (obj instanceof Move2DInt a) {
 			return this.getValue().equals(a.value);
 		}
 		return false;
@@ -75,7 +75,7 @@ public class Move2D implements Action {
 	 *
 	 * @param other the movement to add
 	 */
-	public void add(Move2D other) {
+	public void add(Move2DInt other) {
 		getValue().setFirst(getFirst() + other.getFirst());
 		getValue().setSecond(getSecond() + other.getSecond());
 	}
@@ -103,8 +103,8 @@ public class Move2D implements Action {
 	 * @param b the second movement
 	 * @return a new movement representing the sum
 	 */
-	public static Move2D add(Move2D a, Move2D b) {
-		return new Move2D(
+	public static Move2DInt add(Move2DInt a, Move2DInt b) {
+		return new Move2DInt(
 				new Pair<>(a.getFirst() + b.getFirst(), a.getSecond() + b.getSecond()));
 	}
 
@@ -113,8 +113,8 @@ public class Move2D implements Action {
 	 *
 	 * @return an upward movement action
 	 */
-	public static Move2D up() {
-        return new Move2D(new Pair<>(0, 1));
+	public static Move2DInt up() {
+        return new Move2DInt(new Pair<>(0, 1));
     }
 	
 	/**
@@ -122,8 +122,8 @@ public class Move2D implements Action {
 	 *
 	 * @return a downward movement action
 	 */
-	public static Move2D down() {
-		return new Move2D(new Pair<>(0, -1));
+	public static Move2DInt down() {
+		return new Move2DInt(new Pair<>(0, -1));
 	}
 	
 	/**
@@ -131,8 +131,8 @@ public class Move2D implements Action {
 	 *
 	 * @return a leftward movement action
 	 */
-	public static Move2D left() {
-		return new Move2D(new Pair<>(-1, 0));
+	public static Move2DInt left() {
+		return new Move2DInt(new Pair<>(-1, 0));
 	}
 	
 	/**
@@ -140,8 +140,8 @@ public class Move2D implements Action {
 	 *
 	 * @return a rightward movement action
 	 */
-	public static Move2D right() {
-		return new Move2D(new Pair<>(1, 0));
+	public static Move2DInt right() {
+		return new Move2DInt(new Pair<>(1, 0));
 	}
 	
 	/**
@@ -149,8 +149,8 @@ public class Move2D implements Action {
 	 *
 	 * @return an idle movement action
 	 */
-	public static Move2D idle() {
-		return new Move2D(new Pair<>(0, 0));
+	public static Move2DInt idle() {
+		return new Move2DInt(new Pair<>(0, 0));
 	}
 
 	/**
@@ -158,12 +158,16 @@ public class Move2D implements Action {
 	 *
 	 * @return list of four cardinal direction movements
 	 */
-	public static List<Action> getVonNeumannmove(){
+	public static List<Action> getVonNeumannMove(){
 		return List.of( up(), down(), left(), right() );
 	}
 	
 	@Override
-	public Move2D copy() {
-		return new Move2D(new Pair<>(getFirst(), getSecond()));
+	public Move2DInt copy() {
+		return new Move2DInt(new Pair<>(getFirst(), getSecond()));
+	}
+	
+	public Move2DDouble toMoveDouble() {
+		return new Move2DDouble(value.getFirst(), value.getSecond());
 	}
 }

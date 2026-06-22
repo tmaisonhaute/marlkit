@@ -181,8 +181,8 @@ public abstract class State2DSpacious implements State {
         double newY = position.getSecond() + move.getSecond();
         
         if(toroidal) {
-        	newX = newX % width;
-            newY = newY % height; 
+        	newX = ((newX % width) + width) % width;
+        	newY = ((newY % height) + height) % height;
         } else {
 	        newX = Math.clamp(newX, 0.0, width);
 	        newY = Math.clamp(newY, 0.0, height);
@@ -211,6 +211,10 @@ public abstract class State2DSpacious implements State {
     public double distance(Pair<Double, Double> p1, Pair<Double, Double> p2) {
         double dx = p1.getFirst() - p2.getFirst();
         double dy = p1.getSecond() - p2.getSecond();
+		if (toroidal) {
+			dx = Math.min(Math.abs(dx), width - Math.abs(dx));
+			dy = Math.min(Math.abs(dy), height - Math.abs(dy));
+		}
 
         return Math.sqrt(dx * dx + dy * dy);
     }

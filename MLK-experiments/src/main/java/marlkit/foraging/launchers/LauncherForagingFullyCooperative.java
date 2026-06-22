@@ -5,7 +5,7 @@ import java.util.List;
 
 import agent.AgentStandard;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import learning.algorithms.QLearning;
 import learning.explorationstrategies.EpsilonGreedyPowerDecay;
 import learning.policies.QValueBasedPolicy;
@@ -34,10 +34,10 @@ public class LauncherForagingFullyCooperative extends MLKLauncher {
 	
 	@Override
 	protected void onLaunchSimulatedAgents() {
-		Action goLeft = Move2D.left(); 
-		Action goRight = Move2D.right();
-		Action goUp = Move2D.up(); 
-		Action goDown = Move2D.down();
+		Action goLeft = Move2DInt.left(); 
+		Action goRight = Move2DInt.right();
+		Action goUp = Move2DInt.up(); 
+		Action goDown = Move2DInt.down();
 		List<Action> possibleActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
 		int nbAgents = 2;
 		

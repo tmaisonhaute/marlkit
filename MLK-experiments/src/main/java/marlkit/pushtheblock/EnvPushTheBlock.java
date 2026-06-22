@@ -8,7 +8,7 @@ import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.EnvironmentStandard;
 import environment.state.State;
 import environment.state.State2DGridInt;
@@ -77,7 +77,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		
 		for (MLKAgent ag : agents.getAgents()) {
 			List<ReactionEvent> events = new ArrayList<>();
-			Move2D action = (Move2D) actions.get(ag);
+			Move2DInt action = (Move2DInt) actions.get(ag);
 			
 			Pair<Integer, Integer> newPosition = stateMoveAgent(ag, action);
 			
@@ -88,12 +88,12 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		return results;
 	}
 	
-	protected Pair<Integer, Integer> stateMoveAgent(MLKAgent agent, Move2D action) {
+	protected Pair<Integer, Integer> stateMoveAgent(MLKAgent agent, Move2DInt action) {
 		state.moveAgent(agent, action.getValue());
 		return state.getAgentPosition(agent).clone();
 	}
 	
-	protected void checkIfPushBlock(List<ReactionEvent> events, Move2D action, Pair<Integer, Integer> position) {
+	protected void checkIfPushBlock(List<ReactionEvent> events, Move2DInt action, Pair<Integer, Integer> position) {
 		if (state.getValue(position) >= 1){
 			int nbBlocks = state.getValue(position);
 			Pair<Integer, Integer> newBlockPosition = newBlockPosition(position, action);
@@ -113,7 +113,7 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		}
 	}
 	
-	protected Pair<Integer, Integer> newBlockPosition(Pair<Integer, Integer> blockPosition, Move2D action) {
+	protected Pair<Integer, Integer> newBlockPosition(Pair<Integer, Integer> blockPosition, Move2DInt action) {
 		return new Pair<>(blockPosition.getFirst() + action.getValue().getFirst(),
 				blockPosition.getSecond() + action.getValue().getSecond());
 	}

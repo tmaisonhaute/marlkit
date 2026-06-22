@@ -7,7 +7,7 @@ import java.util.Map;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import marlkit.pushtheblock.EnvPushTheBlock;
 import marlkit.pushtheblock.events.BlockPushedEvent;
 import marlkit.pushtheblock.events.BlockPushedOutEvent;
@@ -17,7 +17,7 @@ import util.Pair;
 
 public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 	
-	protected Map<Pair<Integer, Integer>, List<Pair<MLKAgent, Move2D>>> agentsForcePush;
+	protected Map<Pair<Integer, Integer>, List<Pair<MLKAgent, Move2DInt>>> agentsForcePush;
 	protected Map<Pair<Integer, Integer>, Integer> numberOfBlocksPushed;
 	protected static final int FORCEPUSHEDTRESHOLD = 2;
 	
@@ -38,7 +38,7 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 		for (MLKAgent ag : agents.getAgents()) {
 			agentsEvents.put(ag, new ArrayList<>());
 			
-			Move2D action = (Move2D) actions.get(ag);
+			Move2DInt action = (Move2DInt) actions.get(ag);
 			
 			Pair<Integer, Integer> newPosition = stateMoveAgent(ag, action);
 			
@@ -56,7 +56,7 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 		return results;
 	}
 	
-	protected void checkIfPushBlockTogether(List<ReactionEvent> events, Move2D action, Pair<Integer, Integer> position, MLKAgent agent) {
+	protected void checkIfPushBlockTogether(List<ReactionEvent> events, Move2DInt action, Pair<Integer, Integer> position, MLKAgent agent) {
 		if (state.getValue(position) >= 1){
 			agentsForcePush.putIfAbsent(position, new ArrayList<>());
 			agentsForcePush.get(position).add(new Pair<>(agent, action));
@@ -70,12 +70,12 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 	protected void pushBlockForce(Map<MLKAgent, List<ReactionEvent>> agentsEvents) {
 		for (Pair<Integer, Integer> oldPosition : agentsForcePush.keySet()) {
 			int nbBlocks = numberOfBlocksPushed.get(oldPosition);
-			List<Pair<MLKAgent, Move2D>> actionsAgents = agentsForcePush.get(oldPosition);
+			List<Pair<MLKAgent, Move2DInt>> actionsAgents = agentsForcePush.get(oldPosition);
 			List<MLKAgent> agents = Pair.extractFirstsFromList(actionsAgents);
-			List<Move2D> actions = Pair.extractSecondsFromList(actionsAgents);
+			List<Move2DInt> actions = Pair.extractSecondsFromList(actionsAgents);
 			
-			Move2D globalAction = gatherActionsPush(actions);
-			if (!globalAction.equals(Move2D.idle())) {
+			Move2DInt globalAction = gatherActionsPush(actions);
+			if (!globalAction.equals(Move2DInt.idle())) {
 				Pair<Integer, Integer> newBlockPosition = newBlockPosition(oldPosition, globalAction);
 				boolean blockPushedOut = pushTheBlock(oldPosition, newBlockPosition, nbBlocks);
 				if (blockPushedOut) {
@@ -100,9 +100,9 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 		}
 	}
 	
-	protected Move2D gatherActionsPush(List<Move2D> actions) {
-		Move2D globalAction = Move2D.idle();
-		for (Move2D action : actions) {
+	protected Move2DInt gatherActionsPush(List<Move2DInt> actions) {
+		Move2DInt globalAction = Move2DInt.idle();
+		for (Move2DInt action : actions) {
 			globalAction.add(action);
 		}
 		

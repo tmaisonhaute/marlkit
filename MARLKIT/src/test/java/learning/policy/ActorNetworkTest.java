@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.observation.ObservationPositionValue;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
 import learning.policies.ActorNetwork;
@@ -24,7 +24,7 @@ public class ActorNetworkTest {
 
     @Test
     public void givenPolicy_whenInit_thenAgentSet() {
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
         ActorNetwork policy = new ActorNetwork(2, 8, wrapper, actionSet);
         MLKAgent agent = mock(MLKAgent.class);
@@ -39,10 +39,10 @@ public class ActorNetworkTest {
     @Test
     public void givenObservation_whenSelectAction_thenActionIsReturnedFromActionSet() {
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         ObservationPositionValue observation = new ObservationPositionValue(
@@ -68,10 +68,10 @@ public class ActorNetworkTest {
     @Test
     public void givenObservation_whenForwardLogits_thenOutputSizeMatchesActionSetSize() {
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         ObservationPositionValue observation = new ObservationPositionValue(
@@ -96,10 +96,10 @@ public class ActorNetworkTest {
     @Test
     public void givenBatchInputs_whenForwardLogits_thenBatchShapeIsCorrect() {
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         ObservationPositionValue firstObservation = new ObservationPositionValue(
@@ -133,7 +133,7 @@ public class ActorNetworkTest {
 
     @Test
     public void givenObservation_whenForwardLogits_thenWrapperIsUsed() {
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
 
         ObservationPositionValue observation = new ObservationPositionValue(
             new Tuple(Arrays.asList(1.0, 2.0)), 1.0
@@ -156,7 +156,7 @@ public class ActorNetworkTest {
 
     @Test
     public void givenLogits_whenSoftmax_thenProbabilitiesAreValid() {
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
         ActorNetwork policy = new ActorNetwork(2, 8, wrapper, actionSet);
 
@@ -171,7 +171,7 @@ public class ActorNetworkTest {
 
     @Test
     public void givenLargeLogits_whenSoftmax_thenProbabilitiesAreFinite() {
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
         ActorNetwork policy = new ActorNetwork(2, 8, wrapper, actionSet);
 
@@ -186,7 +186,7 @@ public class ActorNetworkTest {
 
     @Test
     public void givenBatchLogits_whenSoftmax_thenEachRowIsProbabilityDistribution() {
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
         ActorNetwork policy = new ActorNetwork(2, 8, wrapper, actionSet);
 
@@ -205,28 +205,28 @@ public class ActorNetworkTest {
     @Test
     public void givenAction_whenActionIndex_thenCorrectIndexReturned() {
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
         ActorNetwork policy = new ActorNetwork(2, 8, wrapper, actionSet);
 
-        assertThat(policy.actionIndex(Move2D.up())).isEqualTo(0);
-        assertThat(policy.actionIndex(Move2D.down())).isEqualTo(1);
-        assertThat(policy.actionIndex(Move2D.left())).isEqualTo(2);
-        assertThat(policy.actionIndex(Move2D.right())).isEqualTo(3);
+        assertThat(policy.actionIndex(Move2DInt.up())).isEqualTo(0);
+        assertThat(policy.actionIndex(Move2DInt.down())).isEqualTo(1);
+        assertThat(policy.actionIndex(Move2DInt.left())).isEqualTo(2);
+        assertThat(policy.actionIndex(Move2DInt.right())).isEqualTo(3);
     }
 
     @Test
     public void givenUnknownAction_whenActionIndex_thenThrows() {
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
         ActorNetwork policy = new ActorNetwork(2, 8, wrapper, actionSet);
 
-        assertThatThrownBy(() -> policy.actionIndex(Move2D.left()))
+        assertThatThrownBy(() -> policy.actionIndex(Move2DInt.left()))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Unknown action");
     }
@@ -234,10 +234,10 @@ public class ActorNetworkTest {
     @Test
     public void givenPolicy_whenGetActionSet_thenSameActionSetReturned() {
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
@@ -248,7 +248,7 @@ public class ActorNetworkTest {
 
     @Test
     public void givenPolicy_whenGetSoftmaxTemperature_thenOneReturned() {
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
         ActorNetwork policy = new ActorNetwork(2, 8, wrapper, actionSet);
 
@@ -258,10 +258,10 @@ public class ActorNetworkTest {
     @Test
     public void givenInputAndGradient_whenUpdateFromLogitsGradient_thenLogitsChange() {
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         ObservationPositionValue observation = new ObservationPositionValue(
@@ -294,10 +294,10 @@ public class ActorNetworkTest {
     @Test
     public void givenBatchInputsAndGradients_whenUpdateFromLogitsGradient_thenAtLeastOneLogitVectorChanges() {
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         ObservationPositionValue firstObservation = new ObservationPositionValue(
@@ -344,10 +344,10 @@ public class ActorNetworkTest {
     @Test
     public void givenSameSeed_whenTwoPoliciesInitialized_thenForwardLogitsAreIdentical() {
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         ObservationPositionValue observation = new ObservationPositionValue(
@@ -379,10 +379,10 @@ public class ActorNetworkTest {
     @Test
     public void givenDifferentInputs_whenForwardLogits_thenOutputsAreNotNecessarilyIdentical() {
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         );
 
         ObservationPositionValue firstObservation = new ObservationPositionValue(

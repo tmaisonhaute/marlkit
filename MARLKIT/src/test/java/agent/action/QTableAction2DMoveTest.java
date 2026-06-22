@@ -15,7 +15,7 @@ public class QTableAction2DMoveTest {
         // Given
         QTable qTable = new QTable(0.0);
 
-        Move2D action = new Move2D(new Pair<>(1, 0));
+        Move2DInt action = new Move2DInt(new Pair<>(1, 0));
         PolicyInput input = new DummyPolicyInput();
 
         Pair<PolicyInput, Action> key = new Pair<>(input, action);
@@ -33,7 +33,7 @@ public class QTableAction2DMoveTest {
         // Given
         QTable qTable = new QTable(0.0);
 
-        Move2D action = new Move2D(new Pair<>(1, 0));
+        Move2DInt action = new Move2DInt(new Pair<>(1, 0));
         PolicyInput input = new DummyPolicyInput();
 
         Pair<PolicyInput, Action> key = new Pair<>(input, action);
@@ -53,15 +53,15 @@ public class QTableAction2DMoveTest {
         // Given
         QTable qTable = new QTable(0.0);
 
-        Move2D action1 = Move2D.left();
-        Move2D action2 = Move2D.left();
+        Move2DInt action1 = Move2DInt.left();
+        Move2DInt action2 = Move2DInt.left();
         PolicyInput input = new DummyPolicyInput();
 
         Pair<PolicyInput, Action> key = new Pair<>(input, action1);
         Pair<PolicyInput, Action> key2 = new Pair<>(input, action2);
         
         qTable.setValue(key, 42.0);
-        action1.add(Move2D.right());
+        action1.add(Move2DInt.right());
 
         // When
         double value1 = qTable.getValue(key);

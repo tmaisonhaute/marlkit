@@ -1,7 +1,7 @@
 package agent.action.wrapperactionvector;
 
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import util.Pair;
 
 /**
@@ -17,7 +17,7 @@ public class WrapperAction2DMoveVector implements WrapperActionVector {
 	 */
 	@Override
 	public double[] transform(Action action) {
-		Move2D actionMove = (Move2D) action;
+		Move2DInt actionMove = (Move2DInt) action;
 		double[] vector = new double[2];
 		vector[0] = actionMove.getValue().getFirst();
 		vector[1] = actionMove.getValue().getSecond();
@@ -38,7 +38,7 @@ public class WrapperAction2DMoveVector implements WrapperActionVector {
 		}
 		double dx = vector[0];
 		double dy = vector[1];
-		return new Move2D(new Pair<>((int) dx, (int) dy));
+		return new Move2DInt(new Pair<>((int) dx, (int) dy));
 	}
 
 }

@@ -9,7 +9,7 @@ import java.util.Set;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.EnvironmentStandard;
 import environment.state.State2DGridInt;
 import marlkit.teamsurround.events.DeadPenaltyEvent;
@@ -170,7 +170,7 @@ public class EnvTeamSurround extends EnvironmentStandard {
 			}
 
 			Action action = actions.get(agent);
-			if (!(action instanceof Move2D moveAction)) {
+			if (!(action instanceof Move2DInt moveAction)) {
 				candidates.put(agent, current);
 				continue;
 			}

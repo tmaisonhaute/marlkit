@@ -1,4 +1,4 @@
-package marlkit.preyVsHunter.events;
+package marlkit.preyhunter.environment.events;
 
 import reward.ReactionEventDefault;
 

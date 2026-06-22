@@ -15,7 +15,7 @@ public class Move2DTest {
     @Test
     public void givenMove2D_whenGetFirstAndSecond_thenReturnComponents() {
         // Given
-        Move2D move = new Move2D(new Pair<>(3, -2));
+        Move2DInt move = new Move2DInt(new Pair<>(3, -2));
 
         // When
         int dx = move.getFirst();
@@ -28,7 +28,7 @@ public class Move2DTest {
     @Test
     public void givenMove2D_whenSetValue_thenReturnUpdatedComponents() {
         // Given
-        Move2D move = new Move2D(new Pair<>(0, 0));
+        Move2DInt move = new Move2DInt(new Pair<>(0, 0));
 
         // When
         move.setValue(new Pair<>(5, 6));
@@ -40,8 +40,8 @@ public class Move2DTest {
     @Test
     public void givenTwoEquivalentMove2D_whenEquals_thenReturnTrue() {
         // Given
-        Move2D move1 = new Move2D(new Pair<>(1, 2));
-        Move2D move2 = new Move2D(new Pair<>(1, 2));
+        Move2DInt move1 = new Move2DInt(new Pair<>(1, 2));
+        Move2DInt move2 = new Move2DInt(new Pair<>(1, 2));
 
         // When
         boolean isEqual = move1.equals(move2);
@@ -53,10 +53,10 @@ public class Move2DTest {
     @Test
     public void givenMove2D_whenAddOtherMove2D_thenMutateThisMove() {
         // Given
-        Move2D move = new Move2D(new Pair<>(1, 2));
+        Move2DInt move = new Move2DInt(new Pair<>(1, 2));
 
         // When
-        move.add(new Move2D(new Pair<>(3, 4)));
+        move.add(new Move2DInt(new Pair<>(3, 4)));
 
         // Then
         assertThat(move.getValue()).isEqualTo(new Pair<>(4, 6));
@@ -65,7 +65,7 @@ public class Move2DTest {
     @Test
     public void givenMove2D_whenAddPair_thenMutateThisMove() {
         // Given
-        Move2D move = new Move2D(new Pair<>(1, 2));
+        Move2DInt move = new Move2DInt(new Pair<>(1, 2));
 
         // When
         move.add(new Pair<>(-2, 5));
@@ -77,11 +77,11 @@ public class Move2DTest {
     @Test
     public void givenTwoMoves_whenStaticAdd_thenReturnNewMoveAndDoNotMutateInputs() {
         // Given
-        Move2D a = new Move2D(new Pair<>(1, 2));
-        Move2D b = new Move2D(new Pair<>(3, 4));
+        Move2DInt a = new Move2DInt(new Pair<>(1, 2));
+        Move2DInt b = new Move2DInt(new Pair<>(3, 4));
 
         // When
-        Move2D sum = Move2D.add(a, b);
+        Move2DInt sum = Move2DInt.add(a, b);
 
         // Then
         assertThat(List.of(a.getValue(), b.getValue(), sum.getValue()))
@@ -91,11 +91,11 @@ public class Move2DTest {
     @Test
     public void givenDirectionFactories_whenCreate_thenReturnExpectedMoves() {
         // Given
-        Move2D up = Move2D.up();
-        Move2D down = Move2D.down();
-        Move2D left = Move2D.left();
-        Move2D right = Move2D.right();
-        Move2D idle = Move2D.idle();
+        Move2DInt up = Move2DInt.up();
+        Move2DInt down = Move2DInt.down();
+        Move2DInt left = Move2DInt.left();
+        Move2DInt right = Move2DInt.right();
+        Move2DInt idle = Move2DInt.idle();
 
         // When
         List<Pair<Integer, Integer>> values = List.of(up.getValue(), down.getValue(), left.getValue(), right.getValue(), idle.getValue());
@@ -107,22 +107,22 @@ public class Move2DTest {
     @Test
     public void givenCallGetVonNeumannmove_whenInspect_thenReturnFourCardinalMoves() {
         // Given
-        List<Action> moves = Move2D.getVonNeumannmove();
+        List<Action> moves = Move2DInt.getVonNeumannMove();
 
         // When
         List<Action> snapshot = moves;
 
         // Then
-        assertThat(snapshot).containsExactly(Move2D.up(), Move2D.down(), Move2D.left(), Move2D.right());
+        assertThat(snapshot).containsExactly(Move2DInt.up(), Move2DInt.down(), Move2DInt.left(), Move2DInt.right());
     }
 
     @Test
     public void givenMove2D_whenCopy_thenReturnNewEquivalentInstance() {
         // Given
-        Move2D move = new Move2D(new Pair<>(3, -2));
+        Move2DInt move = new Move2DInt(new Pair<>(3, -2));
 
         // When
-        Move2D copy = (Move2D) move.copy();
+        Move2DInt copy = (Move2DInt) move.copy();
 
         // Then
         assertThat(copy).isEqualTo(move).isNotSameAs(move);
@@ -132,10 +132,10 @@ public class Move2DTest {
     @Test
     public void givenMoveAndItsCopy_whenUsedAsHashMapKey_thenBothAccessSameEntry() {
         // Given
-        Move2D a1 = new Move2D(new Pair<>(1, 2));
-        Move2D a2 = a1.copy();
+        Move2DInt a1 = new Move2DInt(new Pair<>(1, 2));
+        Move2DInt a2 = a1.copy();
 
-        Map<Move2D, String> map = new HashMap<>();
+        Map<Move2DInt, String> map = new HashMap<>();
         map.put(a1, "value");
 
         // Then
@@ -145,8 +145,8 @@ public class Move2DTest {
     @Test
     public void givenMoveUsedAsKey_whenMutated_thenItIsNoLongerFoundInHashMap() {
         // Given
-        Move2D move = new Move2D(new Pair<>(1, 2));
-        Map<Move2D, String> map = new HashMap<>();
+        Move2DInt move = new Move2DInt(new Pair<>(1, 2));
+        Map<Move2DInt, String> map = new HashMap<>();
         map.put(move, "value");
 
         // When
@@ -159,10 +159,10 @@ public class Move2DTest {
     @Test
     public void givenCopyStoredAsKey_whenOriginalMutates_thenCopyStillAccessesValue() {
         // Given
-        Move2D a1 = new Move2D(new Pair<>(1, 2));
-        Move2D a2 = a1.copy();
+        Move2DInt a1 = new Move2DInt(new Pair<>(1, 2));
+        Move2DInt a2 = a1.copy();
 
-        Map<Move2D, String> map = new HashMap<>();
+        Map<Move2DInt, String> map = new HashMap<>();
         map.put(a1.copy(), "value");
 
         // When
@@ -176,10 +176,10 @@ public class Move2DTest {
     @Test
     public void givenMutableOriginalStoredAsKey_whenOriginalMutates_thenNeitherOriginalNorCopyCanAccessValue() {
         // Given
-        Move2D a1 = new Move2D(new Pair<>(1, 2));
-        Move2D a2 = a1.copy();
+        Move2DInt a1 = new Move2DInt(new Pair<>(1, 2));
+        Move2DInt a2 = a1.copy();
 
-        Map<Move2D, String> map = new HashMap<>();
+        Map<Move2DInt, String> map = new HashMap<>();
         map.put(a1, "value");
 
         // When

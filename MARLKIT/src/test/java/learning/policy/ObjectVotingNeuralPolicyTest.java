@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.observation.ObservationPositionValue;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
 import learning.nn.NeuralNetwork;
@@ -178,10 +178,10 @@ public class ObjectVotingNeuralPolicyTest {
 
     @Test
     public void givenActionFromActionSet_whenActionIndex_thenCorrectIndexReturned() {
-        Action up = Move2D.up();
-        Action down = Move2D.down();
-        Action left = Move2D.left();
-        Action right = Move2D.right();
+        Action up = Move2DInt.up();
+        Action down = Move2DInt.down();
+        Action left = Move2DInt.left();
+        Action right = Move2DInt.right();
 
         Action[] actions = new Action[] {up, down, left, right};
         NeuralNetwork network = network(3, actions.length);
@@ -196,12 +196,12 @@ public class ObjectVotingNeuralPolicyTest {
 
     @Test
     public void givenUnknownAction_whenActionIndex_thenThrows() {
-        Action[] actions = new Action[] {Move2D.up(), Move2D.down()};
+        Action[] actions = new Action[] {Move2DInt.up(), Move2DInt.down()};
         NeuralNetwork network = network(3, actions.length);
         WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
         ObjectVotingNeuralPolicy policy = new ObjectVotingNeuralPolicy(network, wrapper, actions, 1.0, false);
 
-        assertThatThrownBy(() -> policy.actionIndex(Move2D.left()))
+        assertThatThrownBy(() -> policy.actionIndex(Move2DInt.left()))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Unknown action");
     }
@@ -338,10 +338,10 @@ public class ObjectVotingNeuralPolicyTest {
 
     private Action[] actions() {
         return new Action[] {
-            Move2D.up(),
-            Move2D.down(),
-            Move2D.left(),
-            Move2D.right()
+            Move2DInt.up(),
+            Move2DInt.down(),
+            Move2DInt.left(),
+            Move2DInt.right()
         };
     }
 

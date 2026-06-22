@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.Move2D;
+import agent.action.Move2DInt;
 import environment.observation.ObservationPositionValue;
 import learning.Batch;
 import learning.Experience;
@@ -29,7 +29,7 @@ public class QLearningTest {
     @Test
     public void givenQLearning_whenInit_thenAgentSet() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet);
         QLearning qLearning = new QLearning(policy, actionSet);
         MLKAgent agent = mock(MLKAgent.class);
@@ -44,7 +44,7 @@ public class QLearningTest {
     @Test
     public void givenQLearning_whenGetPolicy_thenCorrectPolicyReturned() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet);
         QLearning qLearning = new QLearning(policy, actionSet);
         
@@ -55,7 +55,7 @@ public class QLearningTest {
     @Test
     public void givenQLearning_whenGetLearningFrequency_thenReturnsOne() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet);
         QLearning qLearning = new QLearning(policy, actionSet);
         
@@ -67,8 +67,8 @@ public class QLearningTest {
     public void givenBatchWithExperiences_whenLearnOnBatch_thenQValuesUpdated() {
         // Given
         List<Action> actionSet = Arrays.asList(
-            Move2D.up(), 
-            Move2D.down()
+            Move2DInt.up(), 
+            Move2DInt.down()
         );
         
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.0));
@@ -87,8 +87,8 @@ public class QLearningTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(10.0)));
-        batch.addExperience(new Experience(obs2, Move2D.down(), new RewardStandard(0.0)));
+        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(10.0)));
+        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -96,7 +96,7 @@ public class QLearningTest {
         qLearning.learnOnBatch(batch, logger);
         
         // Then
-        double qValue = policy.getTable().getValue(obs1, Move2D.up());
+        double qValue = policy.getTable().getValue(obs1, Move2DInt.up());
         // Q = 0 + 0.1 * (10 + 0.95 * 0 - 0) = 1.0
         assertThat(qValue).isEqualTo(1.0);
     }
@@ -104,7 +104,7 @@ public class QLearningTest {
     @Test
     public void givenBatchWithExperiences_whenLearnOnBatch_thenBatchSizeReducedToOne() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet);
         QLearning qLearning = new QLearning(policy, actionSet);
         
@@ -119,9 +119,9 @@ public class QLearningTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(1.0)));
-        batch.addExperience(new Experience(obs2, Move2D.down(), new RewardStandard(2.0)));
-        batch.addExperience(new Experience(obs3, Move2D.up(), new RewardStandard(3.0)));
+        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(2.0)));
+        batch.addExperience(new Experience(obs3, Move2DInt.up(), new RewardStandard(3.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -138,7 +138,7 @@ public class QLearningTest {
     @Test
     public void givenQLearning_whenEndEpisode_thenBatchCleared() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.1));
         QLearning qLearning = new QLearning(policy, actionSet);
         
@@ -153,7 +153,7 @@ public class QLearningTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(1.0)));
+        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -167,7 +167,7 @@ public class QLearningTest {
     @Test
     public void givenQLearning_whenEndEpisode_thenEpsilonUpdated() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up());
         EpsilonGreedyExponentialDecay epsilonGreedy = new EpsilonGreedyExponentialDecay(1.0, 0.1); // 10% decay
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, epsilonGreedy);
         QLearning qLearning = new QLearning(policy, actionSet);
@@ -194,7 +194,7 @@ public class QLearningTest {
     @Test
     public void givenMultipleUpdates_whenLearnOnBatch_thenQValuesConverge() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.0));
         QLearning qLearning = new QLearning(policy, actionSet, 0.5, 0.9); // Higher learning rate
         
@@ -215,20 +215,20 @@ public class QLearningTest {
         // When - train multiple times
         for (int i = 0; i < 100; i++) {
             Batch batch = new Batch();
-            batch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(10.0)));
-            batch.addExperience(new Experience(obs2, Move2D.down(), new RewardStandard(0.0)));
+            batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(10.0)));
+            batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
             qLearning.learnOnBatch(batch, logger);
         }
         
         // Then - Q-value should converge towards the reward
-        double qValue = policy.getTable().getValue(obs1, Move2D.up());
+        double qValue = policy.getTable().getValue(obs1, Move2DInt.up());
         assertThat(qValue).isGreaterThan(9.0); // Should be close to 10
     }
     
     @Test
     public void givenQLearningWithMaxNextQ_whenLearnOnBatch_thenUsesMaxQValue() {
         // Given
-        List<Action> actionSet = Arrays.asList(Move2D.up(), Move2D.down());
+        List<Action> actionSet = Arrays.asList(Move2DInt.up(), Move2DInt.down());
         QValueBasedPolicy policy = new QValueBasedPolicy(actionSet, 0.0, new EpsilonGreedyExponentialDecay(0.0));
         QLearning qLearning = new QLearning(policy, actionSet, 1.0, 0.9); // alpha=1 for easier calculation
         
@@ -245,12 +245,12 @@ public class QLearningTest {
         );
         
         // Set Q-values for next state: up=5, down=10
-        policy.getTable().setValue(new Pair<>(obs2, Move2D.up()), 5.0);
-        policy.getTable().setValue(new Pair<>(obs2, Move2D.down()), 10.0);
+        policy.getTable().setValue(new Pair<>(obs2, Move2DInt.up()), 5.0);
+        policy.getTable().setValue(new Pair<>(obs2, Move2DInt.down()), 10.0);
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2D.up(), new RewardStandard(1.0)));
-        batch.addExperience(new Experience(obs2, Move2D.down(), new RewardStandard(0.0)));
+        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -258,7 +258,7 @@ public class QLearningTest {
         qLearning.learnOnBatch(batch, logger);
         
         // Then - Q(obs1, up) = 0 + 1.0 * (1 + 0.9 * max(5, 10) - 0) = 1 + 9 = 10
-        double qValue = policy.getTable().getValue(obs1, Move2D.up());
+        double qValue = policy.getTable().getValue(obs1, Move2DInt.up());
         assertThat(qValue).isEqualTo(10.0);
     }
 }
