@@ -4,10 +4,7 @@ import agent.communication.MLKAgentCommunicating;
 import communication.CommunicationModel;
 
 /**
- * Hunter agent for the continuous PreyHunter environment.
- *
- * By default, hunters use a PPO categorical policy over a fixed set of
- * directional Move2DDouble actions.
+ * Hunter agent for the continuous PreyHunter environment. This agent can communicate with other agents using a specified communication model.
  */
 public class HunterAgentCommunicating extends HunterAgent implements MLKAgentCommunicating {
 	protected CommunicationModel communicationModel;

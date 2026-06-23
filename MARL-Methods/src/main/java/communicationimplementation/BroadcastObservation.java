@@ -13,7 +13,7 @@ import madkit.simulation.SimuAgent;
 public class BroadcastObservation implements CommunicationModel {
 
 	@Override
-	public void communicate(MLKAgent agent) {
+	public void communicatePreInfluence(MLKAgent agent) {
 		if (agent instanceof SimuAgent simuAgent) {
 			Observation obs = agent.getObservation();
 			ObjectMessage<Observation> messageObservation = new ObjectMessage<>(obs);
@@ -26,7 +26,7 @@ public class BroadcastObservation implements CommunicationModel {
 	}
 	
 	@Override
-	public void handleCommunication(MLKAgent agent, Mailbox mailbox) {
+	public void handleCommunicationPreInfluence(MLKAgent agent, Mailbox mailbox) {
 		Observation obs = agent.getObservation();
 		List<ObjectMessage<Observation>> messagesObservations = mailbox.getAll(message -> message instanceof ObjectMessage<?> objectMessage && objectMessage.getContent() instanceof Observation);
 		Observation extendedObservation = obs;

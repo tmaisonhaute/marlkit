@@ -29,7 +29,7 @@ public class MLKAgentCommunicatingTest {
         DummyCommunicatingAgent agent = new DummyCommunicatingAgent(module);
 
         // When
-        agent.communicate();
+        agent.communicatePreInfluence();
 
         // Then
         assertThat(module.communicateCalls).containsExactly(agent);
@@ -43,7 +43,7 @@ public class MLKAgentCommunicatingTest {
         DummyCommunicatingAgent agent = new DummyCommunicatingAgent(module);
 
         // When
-        agent.handleCommunication();
+        agent.handleCommunicationPreInfluence();
 
         // Then
         assertThat(module.handleCommunicationCalls)
@@ -74,7 +74,7 @@ public class MLKAgentCommunicatingTest {
 
         // When
         agent.setCommunicationModel(newModule);
-        agent.communicate();
+        agent.communicatePreInfluence();
 
         // Then
         assertThat(oldModule.communicateCalls).isEmpty();
@@ -88,8 +88,8 @@ public class MLKAgentCommunicatingTest {
         DummyCommunicatingAgent agent = new DummyCommunicatingAgent(module);
 
         // When
-        agent.communicate();
-        agent.communicate();
+        agent.communicatePreInfluence();
+        agent.communicatePreInfluence();
 
         // Then
         assertThat(module.communicateCalls).containsExactly(agent, agent);
@@ -102,8 +102,8 @@ public class MLKAgentCommunicatingTest {
         DummyCommunicatingAgent agent = new DummyCommunicatingAgent(module);
 
         // When
-        agent.communicate();
-        agent.handleCommunication();
+        agent.communicatePreInfluence();
+        agent.handleCommunicationPreInfluence();
 
         // Then
         assertThat(module.communicateCalls).containsExactly(agent);
@@ -117,14 +117,22 @@ public class MLKAgentCommunicatingTest {
         private final List<HandleCommunicationCall> handleCommunicationCalls = new ArrayList<>();
 
         @Override
-        public void communicate(MLKAgent agent) {
+        public void communicatePreInfluence(MLKAgent agent) {
             communicateCalls.add(agent);
         }
 
         @Override
-        public void handleCommunication(MLKAgent agent, Mailbox mailbox) {
+        public void handleCommunicationPreInfluence(MLKAgent agent, Mailbox mailbox) {
             handleCommunicationCalls.add(new HandleCommunicationCall(agent, mailbox));
         }
+        
+		public void communicatePostReaction(MLKAgent agent) {
+			// Not needed for this test
+		}
+		
+		public void handleCommunicationPostReaction(MLKAgent agent, Mailbox mailbox) {
+			// Not needed for this test
+		}
     }
 
     private record HandleCommunicationCall(MLKAgent agent, Mailbox mailbox) {

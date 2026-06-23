@@ -4,7 +4,7 @@ package marlkit.preyhunter.launchers;
 import communicationimplementation.BroadcastRelativeObservationPositions;
 import marlkit.preyhunter.agent.HunterAgentCommunicating;
 
-public class LauncherPVHBroadcast extends LauncherPVH {
+public class LauncherPVHBroadcastObservation extends LauncherPVH {
 	
 	@Override
 	protected void launchHunters() {

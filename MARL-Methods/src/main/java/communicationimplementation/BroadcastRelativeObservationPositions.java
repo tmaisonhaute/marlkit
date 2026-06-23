@@ -18,7 +18,7 @@ import util.Tuple;
 public class BroadcastRelativeObservationPositions implements CommunicationModel {
 
     @Override
-    public void communicate(MLKAgent agent) {
+    public void communicatePreInfluence(MLKAgent agent) {
         if (!(agent instanceof SimuAgent simuAgent)) {
             throw new IllegalArgumentException("agent is not instance of SimuAgent");
         }
@@ -42,7 +42,7 @@ public class BroadcastRelativeObservationPositions implements CommunicationModel
     }
 
     @Override
-    public void handleCommunication(MLKAgent agent, Mailbox mailbox) {
+    public void handleCommunicationPreInfluence(MLKAgent agent, Mailbox mailbox) {
         if (!(agent.getObservation() instanceof ObservationPositionsValues ownObs)) {
             return;
         }

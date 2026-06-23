@@ -50,7 +50,7 @@ public class AgentStandardCommunicatingTest {
                 new AgentStandardCommunicating(null, null, module);
 
         // When
-        agent.communicate();
+        agent.communicatePreInfluence();
 
         // Then
         assertThat(module.lastCommunicatingAgent).isSameAs(agent);
@@ -63,14 +63,22 @@ public class AgentStandardCommunicatingTest {
         private Mailbox lastMailbox;
 
         @Override
-        public void communicate(MLKAgent agent) {
+        public void communicatePreInfluence(MLKAgent agent) {
             this.lastCommunicatingAgent = agent;
         }
 
         @Override
-        public void handleCommunication(MLKAgent agent, Mailbox mailbox) {
+        public void handleCommunicationPreInfluence(MLKAgent agent, Mailbox mailbox) {
             this.lastHandlingAgent = agent;
             this.lastMailbox = mailbox;
         }
+        
+		public void communicatePostReaction(MLKAgent agent) {
+			// Not needed for this test
+		}
+		
+		public void handleCommunicationPostReaction(MLKAgent agent, Mailbox mailbox) {
+			// Not needed for this test
+		}
     }
 }

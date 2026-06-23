@@ -40,9 +40,13 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private Activator agentsUpdatePolicy;
 	private Activator agentsEndEpisode;
 	
-	private Activator agentsCommunicate;
-	private Activator agentsHandleCommunication;
+	private Activator agentsPreInfluenceCommunicate;
+	private Activator agentsHandlePreInfluenceCommunication;
+	private Activator agentsPostReactionCommunicate;
+	private Activator agentsHandlePostReactionCommunication;
 	private Activator agentsUpdateModelsOfOtherAgents;
+	private Activator agentsEndEpisodeCommunicate;
+	private Activator agentsHandleEndEpisodeCommunication;
 
 	private MethodActivator viewers;
 	
@@ -82,10 +86,19 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		agentsEndEpisode = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "endEpisode");
 		addActivator(agentsEndEpisode);
 		
-		agentsCommunicate = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "communicate");
-		addActivator(agentsCommunicate);
-		agentsHandleCommunication = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "handleCommunication");
-		addActivator(agentsHandleCommunication);
+		agentsPreInfluenceCommunicate = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "communicatePreInfluence");
+		addActivator(agentsPreInfluenceCommunicate);
+		agentsHandlePreInfluenceCommunication = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "handleCommunicationPreInfluence");
+		addActivator(agentsHandlePreInfluenceCommunication);
+		agentsPostReactionCommunicate = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "communicatePostReaction");
+		addActivator(agentsPostReactionCommunicate);
+		agentsHandlePostReactionCommunication = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "handleCommunicationPostReaction");
+		addActivator(agentsHandlePostReactionCommunication);
+		agentsEndEpisodeCommunicate = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "communicateEndEpisode");
+		addActivator(agentsEndEpisodeCommunicate);
+		agentsHandleEndEpisodeCommunication = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "handleCommunicationEndEpisode");
+		addActivator(agentsHandleEndEpisodeCommunication);
+		
 		agentsUpdateModelsOfOtherAgents = new MethodActivator(getModelGroup(), MLKAgentModelingOthers.DEFAULT_AGENT_ROLE, "updateModelsOfOtherAgents");
 		addActivator(agentsUpdateModelsOfOtherAgents);
 		
@@ -140,17 +153,21 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		computeObservations();
 		
-		agentsCommunicate();
+		agentsPreInfluenceCommunicate();
 		
 		agentsMakeObservation();
 		
-		agentsHandleCommunication();
+		agentsHandlePreInfluenceCommunication();
 		
 		agentsAct();
 		
 		environmentReaction();
 		
 		agentsCollectExperience();
+		
+		agentsPostReactionCommunication();
+		
+		agentsPostReactionHandleCommunication();
 		
 		agentsUpdateModelsOfOtherAgents();
 		
@@ -184,8 +201,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	/**
 	 * Triggers the optional communication phase for communicating agents.
 	 */
-	protected void agentsCommunicate() {
-		agentsCommunicate.execute();
+	protected void agentsPreInfluenceCommunicate() {
+		agentsPreInfluenceCommunicate.execute();
 	}
 	
 	/**
@@ -198,8 +215,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	/**
 	 * Triggers the communication handling phase for communicating agents, allowing them to process incoming messages and update their internal state accordingly.
 	 */
-	protected void agentsHandleCommunication() {
-		agentsHandleCommunication.execute();
+	protected void agentsHandlePreInfluenceCommunication() {
+		agentsHandlePreInfluenceCommunication.execute();
 	}
 	
 	/**
@@ -221,6 +238,23 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 */
 	protected void agentsCollectExperience() {
 		agentsCollectExperience.execute();
+	}
+	
+	/**
+	 * Triggers the optional post-reaction communication phase for communicating
+	 * agents.
+	 */
+	protected void agentsPostReactionCommunication() {
+		agentsPostReactionCommunicate.execute();
+	}
+	
+	/**
+	 * Triggers the post-reaction communication handling phase for communicating
+	 * agents, allowing them to process incoming messages after actions have been
+	 * taken.
+	 */
+	protected void agentsPostReactionHandleCommunication() {
+		agentsHandlePostReactionCommunication.execute();
 	}
 	
 	/**
@@ -289,6 +323,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		updateOnEndEpisode(Optional.of(env.getState()));
 		envEndEpisode.execute();
 		agentsEndEpisode.execute();
+		
+		agentsEndEpisodeCommunicate.execute();
+		agentsHandleEndEpisodeCommunication.execute();
+		
 		reset.execute();
 		getCriteriaEndEpisode().reset();
 		getLogger().info("Episode ended");
