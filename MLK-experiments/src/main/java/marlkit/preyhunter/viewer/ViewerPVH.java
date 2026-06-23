@@ -149,7 +149,10 @@ public class ViewerPVH extends Viewer2D {
         Map<MLKAgent, Pair<Double, Double>> huntersPositions = state.getHuntersPositions();
 
         for (Map.Entry<MLKAgent, Pair<Double, Double>> entry : huntersPositions.entrySet()) {
-            drawAgent(entry.getValue(), HUNTER_SIZE, BLUE);
+        	Pair<Double, Double> position = entry.getValue();
+            drawAgent(position, HUNTER_SIZE, BLUE);
+            drawRange(position, getEnvironment().getHunterViewRange(), BLUE);
+            drawRange(position, getEnvironment().getCaptureRadius(), RED);
         }
     }
 
@@ -175,4 +178,17 @@ public class ViewerPVH extends Viewer2D {
         getGraphics().setLineWidth(1.0);
         getGraphics().strokeOval(x, y, size, size);
     }
+    
+	private void drawRange(Pair<Double, Double> position, double range, Color color) {
+		if (position == null) {
+			return;
+		}
+
+		double x = position.getFirst() * SCALE - range * SCALE;
+		double y = position.getSecond() * SCALE - range * SCALE;
+
+		getGraphics().setStroke(color);
+		getGraphics().setLineWidth(1.0);
+		getGraphics().strokeOval(x, y, range * 2 * SCALE, range * 2 * SCALE);
+	}
 }

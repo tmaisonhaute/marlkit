@@ -82,6 +82,30 @@ public class Tuple {
 	}
 	
 	/**
+	 * Converts a Pair<Double, Double> to a Tuple.
+	 * @param pair the pair to convert
+	 * @return a new tuple containing the pair's values
+	 */
+	public static Tuple fromPair(Pair<Double, Double> pair) {
+	    return new Tuple(List.of(pair.getFirst(), pair.getSecond()));
+	}
+
+	/**
+	 * Converts this Tuple to a Pair<Double, Double>.
+	 * The tuple must have exactly two elements; otherwise, an exception is thrown.
+	 * @return a new pair containing the two values of this tuple
+	 * @throws IllegalStateException if the tuple does not have exactly two elements
+	 */
+	public Pair<Double, Double> toPair2D() {
+	    if (getSize() != 2) {
+	        throw new IllegalStateException("Cannot convert Tuple of size " + getSize() + " to Pair<Double, Double>.");
+	    }
+
+	    return new Pair<>(getValue(0), getValue(1));
+	}
+
+	
+	/**
 	 * Creates a copy of this tuple.
 	 *
 	 * @return a new tuple with the same values

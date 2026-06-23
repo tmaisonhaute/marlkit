@@ -9,7 +9,7 @@ import reward.RewardStandard;
  */
 public class HunterPreyDistanceEvent extends ReactionEvent {
 
-    private static final double REWARD_DISTANCE_PENALTY_PREY_HUNTER = -2.0;
+    private static final double REWARD_DISTANCE_PENALTY_PREY_HUNTER = -0.4;
 
     private final double distance;
 

@@ -209,8 +209,8 @@ public abstract class State2DSpacious implements State {
      * @return Euclidean distance
      */
     public double distance(Pair<Double, Double> p1, Pair<Double, Double> p2) {
-        double dx = p1.getFirst() - p2.getFirst();
-        double dy = p1.getSecond() - p2.getSecond();
+        double dx = p2.getFirst() - p1.getFirst();
+        double dy = p2.getSecond() - p1.getSecond();
 		if (toroidal) {
 			dx = Math.min(Math.abs(dx), width - Math.abs(dx));
 			dy = Math.min(Math.abs(dy), height - Math.abs(dy));
@@ -218,6 +218,24 @@ public abstract class State2DSpacious implements State {
 
         return Math.sqrt(dx * dx + dy * dy);
     }
+    
+    /**
+     * Computes the relative position of p2 with respect to p1, considering toroidal wrapping if enabled.
+     * @param p1 p1 is the reference position
+     * @param p2 p2 is the target position
+     * @return the relative position of p2 with respect to p1
+     */
+	public Pair<Double, Double> relativePosition(Pair<Double, Double> p1, Pair<Double, Double> p2) {
+        double dx = p2.getFirst() - p1.getFirst();
+        double dy = p2.getSecond() - p1.getSecond();
+        
+		if (toroidal) {
+			dx = Math.min(Math.abs(dx), width - Math.abs(dx));
+			dy = Math.min(Math.abs(dy), height - Math.abs(dy));
+		}
+		
+		return new Pair<>(dx, dy);
+	}
 
     /**
      * Computes the Euclidean distance between two agents.
@@ -244,14 +262,18 @@ public abstract class State2DSpacious implements State {
      * @param position observed position
      * @return true if the position is visible
      */
-    public boolean isInViewRange(MLKAgent agent, Pair<Double, Double> position) {
+    public boolean isInViewRange(MLKAgent agent, Pair<Double, Double> position, double viewRange) {
         Pair<Double, Double> agentPosition = agentsPosition.get(agent);
 
         if (agentPosition == null) {
             throw new IllegalArgumentException("The agent is not registered in the state.");
         }
 
-        return distance(agentPosition, position) <= agentViewRange;
+        return distance(agentPosition, position) <= viewRange;
+    }
+    
+    public boolean isInViewRange(MLKAgent agent, Pair<Double, Double> position) {
+    	return isInViewRange(agent, position, agentViewRange);
     }
 
     /**
@@ -259,9 +281,10 @@ public abstract class State2DSpacious implements State {
      *
      * @param observer observing agent
      * @param observed observed agent
+     * @param viewRange maximal distance an agent can observe
      * @return true if observed is visible by observer
      */
-    public boolean isAgentInViewRange(MLKAgent observer, MLKAgent observed) {
+    public boolean isAgentInViewRange(MLKAgent observer, MLKAgent observed, double viewRange) {
         if (observer.equals(observed)) {
             return true;
         }
@@ -272,28 +295,56 @@ public abstract class State2DSpacious implements State {
             throw new IllegalArgumentException("The observed agent is not registered in the state.");
         }
 
-        return isInViewRange(observer, observedPosition);
+        return isInViewRange(observer, observedPosition, viewRange);
     }
     
-    public List<Pair<Double, Double>> getPointsInViewRange(MLKAgent agent, List<Pair<Double, Double>> points){
+    /**
+     * Returns whether one agent is in the view range of another using the default agent view range.
+     * @param observer observing agent
+     * @param observed observed agent
+     * @return true if observed is visible by observer
+     */
+	public boolean isAgentInViewRange(MLKAgent observer, MLKAgent observed) {
+		return isAgentInViewRange(observer, observed, agentViewRange);
+	}
+    
+    /**
+     * Returns whether one agent is in the view range of another using the default agent view range.
+     * @param agent observing agent
+     * @param points points to check
+     * @param viewRange maximal distance an agent can observe
+     * @return return the points that are visible by the agent
+     */
+    public List<Pair<Double, Double>> getPointsInViewRange(MLKAgent agent, List<Pair<Double, Double>> points, double viewRange){
     	List<Pair<Double, Double>> visiblePoints = new ArrayList<>();
     	
 		for (Pair<Double, Double> point : points) {
-			if (isInViewRange(agent, point)) {
+			if (isInViewRange(agent, point, viewRange)) {
 				visiblePoints.add(point.clone());
 			}
 		}
     	
     	return visiblePoints;
     }
+    
+    /**
+     * Returns all points visible by a given agent using the default agent view range.
+     * @param agent observing agent
+     * @param points points to check
+     * @return return the points that are visible by the agent
+     */
+	public List<Pair<Double, Double>> getPointsInViewRange(MLKAgent agent, List<Pair<Double, Double>> points) {
+		return getPointsInViewRange(agent, points, agentViewRange);
+	}
 
     /**
      * Returns all agents visible by a given agent.
      *
      * @param observer observing agent
+     * @param viewRange maximal distance an agent can observe
      * @return visible agents
      */
-    public Map<MLKAgent, Pair<Double, Double>> getAgentsInViewRange(MLKAgent observer) {
+    public Map<MLKAgent, Pair<Double, Double>> getAgentsInViewRange(MLKAgent observer, double viewRange) {
         Map<MLKAgent, Pair<Double, Double>> visibleAgents = new HashMap<>();
 
         for (Map.Entry<MLKAgent, Pair<Double, Double>> entry : agentsPosition.entrySet()) {
@@ -303,13 +354,22 @@ public abstract class State2DSpacious implements State {
                 continue;
             }
 
-            if (isAgentInViewRange(observer, otherAgent)) {
+            if (isAgentInViewRange(observer, otherAgent, viewRange)) {
                 visibleAgents.put(otherAgent, entry.getValue().clone());
             }
         }
 
         return visibleAgents;
     }
+    
+    /**
+     * Returns all agents visible by a given agent using the default agent view range.
+     * @param observer observing agent
+     * @return visible agents
+     */
+	public Map<MLKAgent, Pair<Double, Double>> getAgentsInViewRange(MLKAgent observer) {
+		return getAgentsInViewRange(observer, agentViewRange);
+	}
 
     /**
      * Checks whether a position is inside the continuous space.

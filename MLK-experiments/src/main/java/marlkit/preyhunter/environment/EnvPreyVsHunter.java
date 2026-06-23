@@ -27,31 +27,54 @@ import util.Pair;
  * Hunters try to catch preys in a continuous 2D space.
  * The state is represented by {@link StatePreyHunter2D}.
  */
+
 public class EnvPreyVsHunter extends EnvironmentStandard {
 
     protected StatePreyHunter2D state;
 
-    private static final double DEFAULT_AGENT_VIEW_RANGE = Double.POSITIVE_INFINITY;
-
-    private static final double CAPTURE_RADIUS = 1.0;
+    private final double captureRadius;
+    private final double hunterViewRange;
+    private final double preyViewRange;
 
     /**
-     * Creates a default PreyHunter environment.
+     * Default constructor required by some MadKit launch modes.
      */
     public EnvPreyVsHunter() {
-        this(10, 10, new MixedReward());
+        this(
+                10,
+                10,
+                1.0,
+                Double.POSITIVE_INFINITY,
+                2.0,
+                new MixedReward()
+        );
     }
 
-    /**
-     * Creates a PreyHunter environment.
-     *
-     * @param width environment width
-     * @param height environment height
-     * @param rewardModel reward model
-     */
-    public EnvPreyVsHunter(int width, int height, RewardModel rewardModel) {
+    public EnvPreyVsHunter(
+            int width,
+            int height,
+            double captureRadius,
+            double hunterViewRange,
+            double preyViewRange,
+            RewardModel rewardModel
+    ) {
         super(width, height, rewardModel);
+
+        if (captureRadius < 0.0) {
+            throw new IllegalArgumentException("captureRadius must be >= 0.");
+        }
+        if (hunterViewRange < 0.0) {
+            throw new IllegalArgumentException("hunterViewRange must be >= 0.");
+        }
+        if (preyViewRange < 0.0) {
+            throw new IllegalArgumentException("preyViewRange must be >= 0.");
+        }
+
+        this.captureRadius = captureRadius;
+        this.hunterViewRange = hunterViewRange;
+        this.preyViewRange = preyViewRange;
     }
+
 
     /**
      * Initializes the continuous state.
@@ -63,16 +86,21 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         
     }
     
+
     protected void initState() {
-    	this.state = new StatePreyHunter2D(
+        this.state = new StatePreyHunter2D(
                 getWidth(),
                 getHeight(),
-                DEFAULT_AGENT_VIEW_RANGE,
+                hunterViewRange,
                 false,
                 true,
-                false
+                false,
+                captureRadius
         );
+
+        this.state.setPreyViewRange(preyViewRange);
     }
+
 
     /**
      * Setup state.
@@ -206,7 +234,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
      * @param results event map to update
      */
     private void applyHunterPreyEvents(Map<MLKAgent, List<ReactionEvent>> results) {
-        boolean caught = false;
+//        boolean caught = false;
 
         for (HunterAgent hunter : state.getHunterAgents()) {
             for (PreyAgent prey : state.getPreyAgents()) {
@@ -216,16 +244,16 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
                         new HunterPreyDistanceEvent(distance)
                 );
 
-                if (state.isPreyCaught(hunter, prey, CAPTURE_RADIUS)) {
-                    caught = true;
+                if (state.isPreyCaught(hunter, prey)) {
+//                    caught = true;
                     results.get(hunter).add(new PreyCatchEvent());
                 }
             }
         }
 
-        if (caught) {
-            reset();
-        }
+//        if (caught) {
+//            reset();
+//        }
     }
 
     /**
@@ -296,4 +324,18 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     public State getState() {
         return state;
     }
+    
+
+    public double getCaptureRadius() {
+        return captureRadius;
+    }
+
+    public double getHunterViewRange() {
+        return hunterViewRange;
+    }
+
+    public double getPreyViewRange() {
+        return preyViewRange;
+    }
+
 }

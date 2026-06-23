@@ -1,5 +1,6 @@
 package agent.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import util.Pair;
@@ -88,6 +89,116 @@ public class Move2DDouble implements Action {
         }
         return false;
     }
+    
+    
+    /**
+     * Returns the Euclidean norm of this movement vector.
+     *
+     * @return vector norm
+     */
+    public double norm() {
+        return Math.sqrt(getFirst() * getFirst() + getSecond() * getSecond());
+    }
+
+    /**
+     * Normalizes this movement vector in place.
+     * If the norm is zero, the vector is left unchanged.
+     */
+    public void normalize() {
+        double norm = norm();
+
+        if (norm == 0.0) {
+            return;
+        }
+
+        value.setFirst(getFirst() / norm);
+        value.setSecond(getSecond() / norm);
+    }
+
+    /**
+     * Returns a normalized copy of this movement vector.
+     *
+     * @return normalized movement
+     */
+    public Move2DDouble normalized() {
+        Move2DDouble copy = copy();
+        copy.normalize();
+        return copy;
+    }
+
+    /**
+     * Creates a movement from an angle and a speed.
+     *
+     * @param angle angle in radians
+     * @param speed movement speed
+     * @return movement vector
+     */
+    public static Move2DDouble fromAngle(double angle, double speed) {
+        return new Move2DDouble(
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed
+        );
+    }
+
+    /**
+     * Creates a movement from a vector and normalizes it to the given speed.
+     *
+     * @param dx x component
+     * @param dy y component
+     * @param speed desired speed
+     * @return movement vector
+     */
+    public static Move2DDouble fromVector(double dx, double dy, double speed) {
+        Move2DDouble move = new Move2DDouble(dx, dy);
+
+        if (move.norm() == 0.0) {
+            return idle();
+        }
+
+        move.normalize();
+        move.multiply(speed);
+        return move;
+    }
+
+    /**
+     * Generates evenly distributed directional actions.
+     *
+     * @param numberOfDirections number of directions
+     * @param speed movement speed
+     * @return list of directional actions
+     */
+    public static List<Action> getDirectionalMoves(int numberOfDirections, double speed) {
+        if (numberOfDirections <= 0) {
+            throw new IllegalArgumentException("numberOfDirections must be strictly positive.");
+        }
+
+        ArrayList<Action> actions = new ArrayList<>();
+
+        for (int i = 0; i < numberOfDirections; i++) {
+            double angle = 2.0 * Math.PI * i / numberOfDirections;
+            actions.add(fromAngle(angle, speed));
+        }
+
+        return actions;
+    }
+
+    /**
+     * Generates evenly distributed directional actions with idle.
+     *
+     * @param numberOfDirections number of directions
+     * @param speed movement speed
+     * @return list of directional actions plus idle
+     */
+    public static List<Action> getDirectionalMovesWithIdle(int numberOfDirections, double speed) {
+        ArrayList<Action> actions = new ArrayList<>(
+                getDirectionalMoves(numberOfDirections, speed)
+        );
+
+        actions.add(idle());
+
+        return actions;
+    }
+    
 
     @Override
     public String toString() {

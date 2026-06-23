@@ -26,18 +26,22 @@ public class StatePreyHunter2D extends State2DSpacious {
     public static final double OBS_SELF = -1.0;
     public static final double OBS_PREY = 1.0;
     public static final double OBS_HUNTER = -2.0;
+    
+    protected double captureRadius;
 
     private final List<PreyAgent> preyAgents;
     private final List<HunterAgent> hunterAgents;
+    private double preyViewRange = 2.0;
 
-    /**
+
+	/**
      * Creates a PreyHunter continuous 2D state with infinite observation range.
      *
      * @param width environment width
      * @param height environment height
      */
     public StatePreyHunter2D(double width, double height) {
-        this(width, height, Double.POSITIVE_INFINITY, false, true, false);
+        this(width, height, Double.POSITIVE_INFINITY);
     }
 
     /**
@@ -52,7 +56,7 @@ public class StatePreyHunter2D extends State2DSpacious {
             double height,
             double agentViewRange
     ) {
-        this(width, height, agentViewRange, false, true, false);
+        this(width, height, agentViewRange, false, true, false, 1.0);
     }
 
     /**
@@ -72,12 +76,14 @@ public class StatePreyHunter2D extends State2DSpacious {
             double agentViewRange,
             boolean observeSelfPosition,
             boolean observeAgentsPositions,
-            boolean toroidal
+            boolean toroidal, 
+            double captureRadius
     ) {
         super(width, height, agentViewRange, observeSelfPosition, observeAgentsPositions, toroidal);
 
         this.preyAgents = new ArrayList<>();
         this.hunterAgents = new ArrayList<>();
+        setCaptureRadius(captureRadius);
 
     }
 
@@ -216,6 +222,15 @@ public class StatePreyHunter2D extends State2DSpacious {
                 )
         );
     }
+    
+    @Override
+    public boolean isInViewRange(MLKAgent agent, Pair<Double, Double> position) {
+		if (agent instanceof PreyAgent) {
+			return super.isInViewRange(agent, position, preyViewRange);
+		} else {
+			return super.isInViewRange(agent, position);
+		}
+    }
 
     /**
      * Computes the relative position of observed from observer.
@@ -231,11 +246,9 @@ public class StatePreyHunter2D extends State2DSpacious {
         if (observerPosition == null || observedPosition == null) {
             throw new IllegalArgumentException("Both agents must be registered in the state.");
         }
+        
+        return relativePosition(observerPosition, observedPosition);
 
-        return new Pair<>(
-                observedPosition.getFirst() - observerPosition.getFirst(),
-                observedPosition.getSecond() - observerPosition.getSecond()
-        );
     }
 
     /**
@@ -243,12 +256,27 @@ public class StatePreyHunter2D extends State2DSpacious {
      *
      * @param hunter hunter agent
      * @param prey prey agent
-     * @param captureRadius capture radius
      * @return true if prey is caught
      */
-    public boolean isPreyCaught(HunterAgent hunter, PreyAgent prey, double captureRadius) {
-        return distance(hunter, prey) <= captureRadius;
+    public boolean isPreyCaught(HunterAgent hunter, PreyAgent prey) {
+        return distance(hunter, prey) <= getCaptureRadius();
     }
+    
+    /**
+     * Returns true if any hunter has caught any prey.
+     * @return true if any hunter has caught any prey, false otherwise
+     */
+	public boolean hasCaughtPrey() {
+	    for (HunterAgent hunter : hunterAgents) {
+	        for (PreyAgent prey : preyAgents) {
+	            if (isPreyCaught(hunter, prey)) {
+	                return true;
+	            }
+	        }
+	    }
+	    return false;
+	}
+
 
     /**
      * Returns all hunter-prey distances.
@@ -302,6 +330,15 @@ public class StatePreyHunter2D extends State2DSpacious {
 
         return positions;
     }
+    
+    
+    public double getPreyViewRange() {
+		return preyViewRange;
+	}
+
+	public void setPreyViewRange(double preyViewRange) {
+		this.preyViewRange = preyViewRange;
+	}
 
     /**
      * Returns prey agents.
@@ -320,6 +357,22 @@ public class StatePreyHunter2D extends State2DSpacious {
     public List<HunterAgent> getHunterAgents() {
         return hunterAgents;
     }
+    
+    public double getCaptureRadius() {
+        return captureRadius;
+    }
+
+    /**
+     * Sets the capture radius for determining if a hunter catches a prey.
+     * @param captureRadius the capture radius to set (must be >= 0)
+     * @throws IllegalArgumentException if captureRadius is negative
+     */
+    public void setCaptureRadius(double captureRadius) {
+        if (captureRadius < 0.0) {
+            throw new IllegalArgumentException("captureRadius must be >= 0.");
+        }
+        this.captureRadius = captureRadius;
+    }
 
     /**
      * Converts a Pair<Double, Double> into a Tuple.
@@ -328,8 +381,9 @@ public class StatePreyHunter2D extends State2DSpacious {
      * @return tuple
      */
     private Tuple toTuple(Pair<Double, Double> position) {
-        return new Tuple(List.of(position.getFirst(), position.getSecond()));
+        return Tuple.fromPair(position);
     }
+
 
     /**
      * Prints current state.
