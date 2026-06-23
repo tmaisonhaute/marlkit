@@ -6,6 +6,7 @@ import marlkit.preyhunter.agent.HunterAgent;
 import marlkit.preyhunter.agent.PreyAgent;
 import marlkit.preyhunter.environment.EnvPreyVsHunter;
 import marlkit.preyhunter.scheduler.SchedulerPVH;
+import marlkit.preyhunter.systemevaluator.PreyHunterSystemEvaluator;
 import marlkit.preyhunter.viewer.ViewerPVH;
 import reward.RewardModel;
 import rewardmodelimplementation.MixedReward;
@@ -54,6 +55,8 @@ public class LauncherPVH extends MLKLauncher {
         EnvPreyVsHunter env = new EnvPreyVsHunter(ENV_WIDTH, ENV_HEIGHT, CAPTURE_RADIUS, HUNTER_VIEW_RANGE, PREY_VIEW_RANGE, rewardModel, REQUIRED_HUNTERS_TO_CATCH);
 
         launchAgent(env, Integer.MAX_VALUE);
+        
+        env.setSystemEvaluator(new PreyHunterSystemEvaluator(SchedulerPVH.EPISODE_DURATION));
         return (E) env;
     }
 

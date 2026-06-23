@@ -62,6 +62,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         this.hunterViewRange = hunterViewRange;
         this.preyViewRange = preyViewRange;
         this.requiredHuntersToCapture = requiredHuntersToCapture;
+        
     }
 
 

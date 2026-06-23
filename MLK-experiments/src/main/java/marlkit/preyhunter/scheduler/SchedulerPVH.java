@@ -12,7 +12,7 @@ public class SchedulerPVH extends MLKScheduler {
     public static final int VIEWER_UPDATE_DISPLAY_INTERVAL = 1000;
 	public static final int DISPLAYED_EPISODES = 1;
     public static final int PAUSE_VALUE = 50;
-	public static final int MAXIMUM_EPISODE_COUNT = 100_000;
+	public static final int MAXIMUM_EPISODE_COUNT = 50_000;
 
 	public SchedulerPVH() {
 		setCriteriaModule(new SchedulerPVHCriteria());

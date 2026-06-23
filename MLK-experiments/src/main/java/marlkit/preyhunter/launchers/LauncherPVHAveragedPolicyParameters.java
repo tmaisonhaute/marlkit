@@ -1,9 +1,11 @@
 package marlkit.preyhunter.launchers;
 
-import communicationimplementation.BroadcastExperience;
+import communicationimplementation.BroadcastAveragedPolicyParameters;
 import marlkit.preyhunter.agent.HunterAgentCommunicating;
 
-public class LauncherPVHBroadcastExperience extends LauncherPVH {
+public class LauncherPVHAveragedPolicyParameters extends LauncherPVH {
+
+    protected static final double RECEIVED_PARAMETERS_WEIGHT = 0.5;
 
     @Override
     protected void launchHunters() {
@@ -11,8 +13,7 @@ public class LauncherPVHBroadcastExperience extends LauncherPVH {
         int maxVisiblePreys = NB_PREY_AGENTS;
 
         for (int i = 0; i < NB_HUNTER_AGENTS; i++) {
-            HunterAgentCommunicating hunter = new HunterAgentCommunicating(maxVisibleHunters, maxVisiblePreys, NUMBER_OF_DIRECTIONS, HUNTER_SPEED, 
-            		new BroadcastExperience());
+            HunterAgentCommunicating hunter = new HunterAgentCommunicating(maxVisibleHunters, maxVisiblePreys, NUMBER_OF_DIRECTIONS, HUNTER_SPEED, new BroadcastAveragedPolicyParameters(RECEIVED_PARAMETERS_WEIGHT));
             launchAgent(hunter);
         }
     }

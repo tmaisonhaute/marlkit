@@ -110,6 +110,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	public void setCriteriaModule(SchedulerCriteria criteriaModule) {
 		this.criteriaModule = criteriaModule;
 	}
+	
+	public SchedulerCriteria getCriteriaModule() {
+		return criteriaModule;
+	}
 
 	public void setSystemEvaluator(SystemEvaluator systemEvaluator) {
 		this.systemEvaluator = systemEvaluator;
