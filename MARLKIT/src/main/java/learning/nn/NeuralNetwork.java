@@ -862,5 +862,69 @@ public class NeuralNetwork {
             };
         }
     }
+    
+
+    /**
+     * Returns the total number of trainable parameters in the network (weights + biases).
+     * @return total parameter count 
+     */
+	public int parametersCount() {
+	    int count = 0;
+	    for (int layer = 0; layer < weights.length; layer++) {
+	        count += weights[layer].length * weights[layer][0].length;
+	        count += biases[layer].length;
+	    }
+	    return count;
+	}
+	
+	/**
+	 * Returns a flat array of all trainable parameters (weights and biases) in the network.
+	 * @return array of parameters 
+	 */
+	public double[] getParameters() {
+	    double[] parameters = new double[parametersCount()];
+	    int index = 0;
+	
+	    for (int layer = 0; layer < weights.length; layer++) {
+	        for (int i = 0; i < weights[layer].length; i++) {
+	            for (int j = 0; j < weights[layer][i].length; j++) {
+	                parameters[index++] = weights[layer][i][j];
+	            }
+	        }
+	
+	        for (int i = 0; i < biases[layer].length; i++) {
+	            parameters[index++] = biases[layer][i];
+	        }
+	    }
+	
+	    return parameters;
+	}
+	
+	/**
+	 * Sets the network parameters from a flat array. The array must match the total parameter count.
+	 * @param parameters flat array of parameters (weights and biases)
+	 */
+	public void setParameters(double[] parameters) {
+	    Objects.requireNonNull(parameters, "parameters");
+	
+	    if (parameters.length != parametersCount()) {
+	        throw new IllegalArgumentException("Parameter count mismatch: expected " + parametersCount() + " but got " + parameters.length);
+	    }
+	
+	    int index = 0;
+	
+	    for (int layer = 0; layer < weights.length; layer++) {
+	        for (int i = 0; i < weights[layer].length; i++) {
+	            for (int j = 0; j < weights[layer][i].length; j++) {
+	                weights[layer][i][j] = parameters[index++];
+	            }
+	        }
+	
+	        for (int i = 0; i < biases[layer].length; i++) {
+	            biases[layer][i] = parameters[index++];
+	        }
+	    }
+}
+
 }
 

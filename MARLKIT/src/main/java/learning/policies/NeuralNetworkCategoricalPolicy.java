@@ -9,6 +9,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
 import learning.nn.NeuralNetwork;
+import util.VectorOperator;
 
 /**
  * Neural categorical policy for discrete action spaces.
@@ -16,7 +17,7 @@ import learning.nn.NeuralNetwork;
  * The network outputs one logit per action.
  * Actions are sampled from the softmax distribution over logits.
  */
-public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy {
+public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy, Parameterized {
 
     private final List<Action> actions;
     private final WrapperPolicyInputVector inputWrapper;
@@ -62,7 +63,7 @@ public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy {
     @Override
     public Action selectAction(PolicyInput input) {
         double[] logits = forwardLogits(input);
-        double[] probabilities = softmax(logits, softmaxTemperature);
+        double[] probabilities = VectorOperator.softmax(logits, softmaxTemperature);
         int actionIndex = sample(probabilities, prng());
 
         return actions.get(actionIndex).copy();
@@ -127,7 +128,7 @@ public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy {
 
     public double probability(PolicyInput input, Action action) {
         double[] logits = forwardLogits(input);
-        double[] probabilities = softmax(logits, softmaxTemperature);
+        double[] probabilities = VectorOperator.softmax(logits, softmaxTemperature);
         return probabilities[actionIndex(action)];
     }
 
@@ -135,6 +136,13 @@ public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy {
         return Math.log(probability(input, action) + 1e-12);
     }
 
+    /**
+     * Builds the architecture of the neural network given the input size, hidden layers, and output size.
+     * @param inputSize 
+     * @param hiddenLayers
+     * @param outputSize
+     * @return an array representing the architecture of the neural network
+     */
     private int[] buildArchitecture(int inputSize, int[] hiddenLayers, int outputSize) {
         int hiddenCount = hiddenLayers == null ? 0 : hiddenLayers.length;
         int[] architecture = new int[hiddenCount + 2];
@@ -150,6 +158,12 @@ public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy {
         return architecture;
     }
 
+    /**
+     * Samples an index from a categorical distribution defined by the given probabilities.
+     * @param probabilities the probabilities for each category (should sum to 1)
+     * @param random the random number generator
+     * @return the index of the sampled category
+     */
     private int sample(double[] probabilities, RandomGenerator random) {
         double r = random.nextDouble();
         double cumulative = 0.0;
@@ -165,34 +179,14 @@ public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy {
         return probabilities.length - 1;
     }
 
-    private double[] softmax(double[] logits, double temperature) {
-        if (temperature <= 0.0) {
-            throw new IllegalArgumentException("Softmax temperature must be strictly positive.");
-        }
+    @Override
+    public double[] getParameters() {
+        return network.getParameters();
+    }
 
-        double[] scaled = new double[logits.length];
-        double max = Double.NEGATIVE_INFINITY;
-
-        for (int i = 0; i < logits.length; i++) {
-            scaled[i] = logits[i] / temperature;
-            max = Math.max(max, scaled[i]);
-        }
-
-        double sum = 0.0;
-        double[] exp = new double[logits.length];
-
-        for (int i = 0; i < logits.length; i++) {
-            exp[i] = Math.exp(scaled[i] - max);
-            sum += exp[i];
-        }
-
-        double[] probabilities = new double[logits.length];
-
-        for (int i = 0; i < logits.length; i++) {
-            probabilities[i] = exp[i] / sum;
-        }
-
-        return probabilities;
+    @Override
+    public void setParameters(double[] parameters) {
+        network.setParameters(parameters);
     }
 
     @Override

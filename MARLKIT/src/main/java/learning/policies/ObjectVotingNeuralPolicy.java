@@ -15,7 +15,7 @@ import util.VectorOperator;
  * This policy is designed for environments where the observation can be represented as a vector of entities, and each entity contributes 
  * to the overall action logits. The logits are averaged across all entities before applying the softmax function to select an action.
  */
-public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy {
+public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy, Parameterized {
 
 
     private MLKAgent agent;
@@ -231,6 +231,14 @@ public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy {
 		return logits;
 	}
 
+	
+	public double[] getParameters() {
+	    return objectToActionNetwork.getParameters();
+	}
+
+	public void setParameters(double[] parameters) {
+		objectToActionNetwork.setParameters(parameters);
+	}
     
     
     
