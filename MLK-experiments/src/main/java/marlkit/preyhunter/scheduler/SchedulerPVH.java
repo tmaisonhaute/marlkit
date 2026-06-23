@@ -7,12 +7,12 @@ import util.criteria.ReachTimeCriterion;
 
 public class SchedulerPVH extends MLKScheduler {
 
-    public static final int EPISODE_DURATION = 200;
-    public static final int MINIMUM_EPISODES_BEFORE_VIEW = 1000;
+    public static final int EPISODE_DURATION = 100;
+    public static final int MINIMUM_EPISODES_BEFORE_VIEW = 100_1000;
     public static final int VIEWER_UPDATE_DISPLAY_INTERVAL = 1000;
 	public static final int DISPLAYED_EPISODES = 1;
     public static final int PAUSE_VALUE = 50;
-	public static final int MAXIMUM_EPISODE_COUNT = 10_000;
+	public static final int MAXIMUM_EPISODE_COUNT = 100_000;
 
 	public SchedulerPVH() {
 		setCriteriaModule(new SchedulerPVHCriteria());

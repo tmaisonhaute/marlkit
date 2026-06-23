@@ -3,6 +3,7 @@ package marlkit.preyhunter.viewer;
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.BLUE;
 import static javafx.scene.paint.Color.LIGHTGRAY;
+import static javafx.scene.paint.Color.ORANGE;
 import static javafx.scene.paint.Color.RED;
 import static javafx.scene.paint.Color.WHITE;
 import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
@@ -136,7 +137,8 @@ public class ViewerPVH extends Viewer2D {
         Map<MLKAgent, Pair<Double, Double>> preysPositions = state.getPreysPositions();
 
         for (Map.Entry<MLKAgent, Pair<Double, Double>> entry : preysPositions.entrySet()) {
-            drawAgent(entry.getValue(), PREY_SIZE, RED);
+            drawAgent(entry.getValue(), PREY_SIZE, BLUE);
+            drawRange(entry.getValue(), getEnvironment().getPreyViewRange(), BLUE);
         }
     }
 
@@ -150,9 +152,9 @@ public class ViewerPVH extends Viewer2D {
 
         for (Map.Entry<MLKAgent, Pair<Double, Double>> entry : huntersPositions.entrySet()) {
         	Pair<Double, Double> position = entry.getValue();
-            drawAgent(position, HUNTER_SIZE, BLUE);
-            drawRange(position, getEnvironment().getHunterViewRange(), BLUE);
-            drawRange(position, getEnvironment().getCaptureRadius(), RED);
+            drawAgent(position, HUNTER_SIZE, RED);
+            drawRange(position, getEnvironment().getHunterViewRange(), RED);
+            drawRange(position, getEnvironment().getCaptureRadius(), ORANGE);
         }
     }
 
@@ -180,7 +182,7 @@ public class ViewerPVH extends Viewer2D {
     }
     
 	private void drawRange(Pair<Double, Double> position, double range, Color color) {
-		if (position == null) {
+		if (position == null || range <= 0 || Double.isInfinite(range)) {
 			return;
 		}
 

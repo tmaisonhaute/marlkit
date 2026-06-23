@@ -163,19 +163,16 @@ public class StatePreyHunter2D extends State2DSpacious {
 
         if (observeSelfPosition) {
             observation.addObservationPosition(
-                    new ObservationPositionValue(
-                            toTuple(observerPosition),
-                            OBS_SELF
-                    )
+                    new ObservationPositionValue(toTuple(observerPosition), OBS_SELF)
             );
+        }
+        
+        for (PreyAgent prey : preyAgents) {
+        	addAgentObservationIfVisible(observer, prey, OBS_PREY, observation);
         }
 
         if (!observeAgentsPositions) {
             return observation;
-        }
-
-        for (PreyAgent prey : preyAgents) {
-            addAgentObservationIfVisible(observer, prey, OBS_PREY, observation);
         }
 
         for (HunterAgent hunter : hunterAgents) {
@@ -252,29 +249,40 @@ public class StatePreyHunter2D extends State2DSpacious {
     }
 
     /**
-     * Returns true if a hunter catches a prey according to a capture radius.
+     * Returns true if a prey is in the capture radius of a hunter.
      *
      * @param hunter hunter agent
      * @param prey prey agent
-     * @return true if prey is caught
+     * @return true if prey is in the capture radius of the hunter, false otherwise
      */
-    public boolean isPreyCaught(HunterAgent hunter, PreyAgent prey) {
+    public boolean isPreyInCaptureRange(HunterAgent hunter, PreyAgent prey) {
         return distance(hunter, prey) <= getCaptureRadius();
     }
     
     /**
-     * Returns true if any hunter has caught any prey.
-     * @return true if any hunter has caught any prey, false otherwise
+     * Returns true if any prey has been captured.
+     * @return true if at least one prey is captured, false otherwise
      */
-	public boolean hasCaughtPrey() {
-	    for (HunterAgent hunter : hunterAgents) {
-	        for (PreyAgent prey : preyAgents) {
-	            if (isPreyCaught(hunter, prey)) {
-	                return true;
-	            }
-	        }
-	    }
+	public boolean hasOnePreyCaptured() {
+	    for (PreyAgent prey : preyAgents) {
+	    	if (prey.isCaptured()) {
+                return true;
+	    	}
+        }
 	    return false;
+	}
+	
+	/**
+	 * Returns true if all preys have been captured.
+	 * @return true if all preys are captured, false otherwise
+	 */
+	public boolean areAllPreysCaptured() {
+        for (PreyAgent prey : preyAgents) {
+        	if (!prey.isCaptured()) {
+                return false;
+        	}
+        }
+        return true;
 	}
 
 

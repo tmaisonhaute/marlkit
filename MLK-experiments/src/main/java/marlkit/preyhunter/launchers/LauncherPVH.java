@@ -8,7 +8,7 @@ import marlkit.preyhunter.environment.EnvPreyVsHunter;
 import marlkit.preyhunter.scheduler.SchedulerPVH;
 import marlkit.preyhunter.viewer.ViewerPVH;
 import reward.RewardModel;
-import rewardmodelimplementation.SemiCooperativeReward;
+import rewardmodelimplementation.MixedReward;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
@@ -28,8 +28,8 @@ public class LauncherPVH extends MLKLauncher {
     protected static final int NB_HUNTER_AGENTS = 2;
     protected static final int NB_PREY_AGENTS = 1;
 
-    protected static final double CAPTURE_RADIUS = 0.8;
-    protected static final double HUNTER_VIEW_RANGE = 5.0;//Double.POSITIVE_INFINITY;
+    protected static final double CAPTURE_RADIUS = 1.2;
+    protected static final double HUNTER_VIEW_RANGE = 5.0;//Double.POSITIVE_INFINITY; //5;
     protected static final double PREY_VIEW_RANGE = 0.0;//2.0;
 
     protected static final boolean HUNTERS_OBSERVE_OTHER_HUNTERS = true;
@@ -38,7 +38,9 @@ public class LauncherPVH extends MLKLauncher {
     protected static final double HUNTER_SPEED = 0.2;
     protected static final double PREY_SPEED = 0.15;
 
-    protected final RewardModel rewardModel = new SemiCooperativeReward(0.5);//new FullyCooperativeReward();
+    protected final RewardModel rewardModel = new MixedReward();//new FullyCooperativeReward();
+    
+    protected static final int REQUIRED_HUNTERS_TO_CATCH = 2;
 
     /**
      * Create and launch the PreyHunter environment.
@@ -49,7 +51,7 @@ public class LauncherPVH extends MLKLauncher {
     @SuppressWarnings("unchecked")
     @Override
     protected <E extends SimuEnvironment> E onLaunchEnvironment() {
-        EnvPreyVsHunter env = new EnvPreyVsHunter(ENV_WIDTH, ENV_HEIGHT, CAPTURE_RADIUS, HUNTER_VIEW_RANGE, PREY_VIEW_RANGE, rewardModel);
+        EnvPreyVsHunter env = new EnvPreyVsHunter(ENV_WIDTH, ENV_HEIGHT, CAPTURE_RADIUS, HUNTER_VIEW_RANGE, PREY_VIEW_RANGE, rewardModel, REQUIRED_HUNTERS_TO_CATCH);
 
         launchAgent(env, Integer.MAX_VALUE);
         return (E) env;

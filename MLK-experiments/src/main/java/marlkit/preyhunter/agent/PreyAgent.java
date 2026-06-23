@@ -17,6 +17,7 @@ import marlkit.preyhunter.policies.PreyEscapePolicy;
 public class PreyAgent extends AgentStandard {
 
     private static final double DEFAULT_SPEED = 0.2;
+    protected boolean captured;
 
     /**
      * Creates a prey agent with default heuristic policy.
@@ -33,6 +34,7 @@ public class PreyAgent extends AgentStandard {
 
 		setPolicy(policy);
 		setAlgorithm(algorithm);
+		this.captured = false;
 	}
 
     /**
@@ -44,4 +46,13 @@ public class PreyAgent extends AgentStandard {
     public PreyAgent(Policy policy, Algorithm algorithm) {
         super(policy, algorithm);
     }
+    
+	public boolean isCaptured() {
+		return captured;
+	}
+	
+	public void setCaptured(boolean captured) {
+		this.captured = captured;
+	}
+
 }

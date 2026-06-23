@@ -35,29 +35,17 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     private final double captureRadius;
     private final double hunterViewRange;
     private final double preyViewRange;
+    protected final int requiredHuntersToCapture;
 
     /**
      * Default constructor required by some MadKit launch modes.
      */
     public EnvPreyVsHunter() {
-        this(
-                10,
-                10,
-                1.0,
-                Double.POSITIVE_INFINITY,
-                2.0,
-                new MixedReward()
-        );
+        this(10, 10, 1.0, Double.POSITIVE_INFINITY, 2.0, new MixedReward(), 1);
     }
 
-    public EnvPreyVsHunter(
-            int width,
-            int height,
-            double captureRadius,
-            double hunterViewRange,
-            double preyViewRange,
-            RewardModel rewardModel
-    ) {
+    public EnvPreyVsHunter(int width, int height, double captureRadius, double hunterViewRange, double preyViewRange,
+            RewardModel rewardModel, int requiredHuntersToCapture) {
         super(width, height, rewardModel);
 
         if (captureRadius < 0.0) {
@@ -73,6 +61,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         this.captureRadius = captureRadius;
         this.hunterViewRange = hunterViewRange;
         this.preyViewRange = preyViewRange;
+        this.requiredHuntersToCapture = requiredHuntersToCapture;
     }
 
 
@@ -88,15 +77,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     
 
     protected void initState() {
-        this.state = new StatePreyHunter2D(
-                getWidth(),
-                getHeight(),
-                hunterViewRange,
-                false,
-                true,
-                false,
-                captureRadius
-        );
+        this.state = new StatePreyHunter2D(getWidth(), getHeight(), hunterViewRange, false, false, false, captureRadius);
 
         this.state.setPreyViewRange(preyViewRange);
     }
@@ -126,6 +107,9 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
         for (MLKAgent agent : agents.getAgents()) {
             Pair<Double, Double> position = randomInitialPosition(agent, rg);
             state.addAgent(agent, position);
+			if (agent instanceof PreyAgent prey) {
+				prey.setCaptured(false);
+			}
         }
     }
 
@@ -234,26 +218,25 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
      * @param results event map to update
      */
     private void applyHunterPreyEvents(Map<MLKAgent, List<ReactionEvent>> results) {
-//        boolean caught = false;
-
-        for (HunterAgent hunter : state.getHunterAgents()) {
-            for (PreyAgent prey : state.getPreyAgents()) {
-                double distance = state.distance(hunter, prey);
-
-                results.get(hunter).add(
-                        new HunterPreyDistanceEvent(distance)
-                );
-
-                if (state.isPreyCaught(hunter, prey)) {
-//                    caught = true;
-                    results.get(hunter).add(new PreyCatchEvent());
-                }
-            }
-        }
-
-//        if (caught) {
-//            reset();
-//        }
+		for (PreyAgent prey : state.getPreyAgents()) {
+		        List<HunterAgent> huntersInCaptureRange = new ArrayList<>();
+		
+		        for (HunterAgent hunter : state.getHunterAgents()) {
+		            double distance = state.distance(hunter, prey);
+		            results.get(hunter).add(new HunterPreyDistanceEvent(distance));
+		
+		            if (state.isPreyInCaptureRange(hunter, prey)) {
+		                huntersInCaptureRange.add(hunter);
+		            }
+		        }
+		
+		        if (huntersInCaptureRange.size() >= this.requiredHuntersToCapture) {
+		            for (HunterAgent hunter : huntersInCaptureRange) {
+		                results.get(hunter).add(new PreyCatchEvent());
+		            }
+		            prey.setCaptured(true);
+		        }
+		    }
     }
 
     /**

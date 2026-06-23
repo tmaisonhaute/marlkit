@@ -1,7 +1,7 @@
 package marlkit.preyhunter.launchers;
 
 
-import communicationimplementation.BroadcastObservation;
+import communicationimplementation.BroadcastRelativeObservationPositions;
 import marlkit.preyhunter.agent.HunterAgentCommunicating;
 
 public class LauncherPVHBroadcast extends LauncherPVH {
@@ -14,10 +14,17 @@ public class LauncherPVHBroadcast extends LauncherPVH {
 
         for (int i = 0; i < NB_HUNTER_AGENTS; i++) {
             HunterAgentCommunicating hunter = new HunterAgentCommunicating(maxVisibleHunters, maxVisiblePreys, NUMBER_OF_DIRECTIONS, HUNTER_SPEED
-            		, new BroadcastObservation());
+            		, new BroadcastRelativeObservationPositions());
 
             launchAgent(hunter);
         }
+    }
+	
+	public static void main(String[] args) {
+        executeThisAgent(
+                "--agentLogLevel", "INFO",
+                "--start"
+        );
     }
 
 }

@@ -9,7 +9,10 @@ import reward.RewardStandard;
  */
 public class HunterPreyDistanceEvent extends ReactionEvent {
 
-    private static final double REWARD_DISTANCE_PENALTY_PREY_HUNTER = -0.4;
+    private static final double REWARD_DISTANCE_PENALTY_PREY_HUNTER = -0.5;
+    private static final double REWARD_MAXIMUM_BONUS_CLOSE = 2;
+    
+    private static final double RANGE_START_PENALTY = 2.0;
 
     private final double distance;
 
@@ -23,6 +26,9 @@ public class HunterPreyDistanceEvent extends ReactionEvent {
 
     @Override
     public Reward toReward() {
-        return new RewardStandard(distance * REWARD_DISTANCE_PENALTY_PREY_HUNTER);
+    	if (distance < RANGE_START_PENALTY) {
+    		return new RewardStandard((1 - distance/RANGE_START_PENALTY) * REWARD_MAXIMUM_BONUS_CLOSE);
+    	}
+        return new RewardStandard((distance - RANGE_START_PENALTY) * REWARD_DISTANCE_PENALTY_PREY_HUNTER);
     }
 }

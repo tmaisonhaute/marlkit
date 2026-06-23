@@ -22,7 +22,7 @@ public class PreyHunterTerminalCriterion implements Criterion {
         }
 
         StatePreyHunter2D preyHunterState = (StatePreyHunter2D) state.get();
-        met = preyHunterState.hasCaughtPrey();
+        met = preyHunterState.areAllPreysCaptured();
     }
 
     @Override
