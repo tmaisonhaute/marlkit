@@ -14,6 +14,7 @@ import util.Position;
 public class ScenarioSpatial5 extends ScenarioCollectingResource {
 
 	private static final double DISTANCE_PENALTY_PER_UNIT = 0.5;
+	private static final int NB_AGENTS = 3;
 
 	@Override
 	protected void configure(RandomGenerator prng, double width, double height) {
@@ -56,5 +57,9 @@ public class ScenarioSpatial5 extends ScenarioCollectingResource {
 	@Override
 	public double getDistancePenaltyPerUnit() {
 		return DISTANCE_PENALTY_PER_UNIT;
+	}
+	@Override
+	public int getNumberOfAgents() {
+		return NB_AGENTS;
 	}
 }

@@ -1,4 +1,7 @@
 package agent;
+import java.util.ArrayList;
+import java.util.List;
+
 import agent.action.Action;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
@@ -20,6 +23,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	protected Algorithm algorithm;
 	protected Batch pastExperiences;
 	protected Observation registeredObservation;
+	protected List<String> additionalRoles;
 	
 	/**
 	 * Creates a new standard agent with the specified policy and algorithm.
@@ -28,10 +32,9 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 * @param algorithm the learning algorithm for this agent
 	 */
 	public AgentStandard(Policy policy, Algorithm algorithm) {
-		super();
+		this();
 		this.policy = policy;
 		this.algorithm = algorithm;
-		pastExperiences = new Batch();
 	}
 
 
@@ -39,6 +42,17 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	public AgentStandard() {
 		super();
 		pastExperiences = new Batch();
+		additionalRoles = new ArrayList<>();
+	}
+	
+	@Override
+	public void addAdditionalRole(String role) {
+		additionalRoles.add(role);
+	}
+	
+	@Override
+	public List<String> getAdditionalRole() {
+		return additionalRoles;
 	}
 	
 	/**
@@ -50,6 +64,10 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		requestRole(getCommunity(), getModelGroup(), getRole());
         notifySelfToEnvironment();
 		initializeAll();
+		
+		for (String role : getAdditionalRole()) {
+			requestRole(getCommunity(), getModelGroup(), role);
+		}
 	}
 	
 	/**

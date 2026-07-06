@@ -55,4 +55,7 @@ open module marlkit.base {
     exports reward;
     exports communication;
 	exports evaluation;
+	exports experiment;
+	exports experiment.configuration;
+	exports experiment.configuration.agentspec;
 }

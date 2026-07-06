@@ -516,5 +516,14 @@ public class QLearningJALTest {
         public int hashCode() {
             return name.hashCode();
         }
+
+		@Override
+		public void addAdditionalRole(String role) {
+		}
+
+		@Override
+		public List<String> getAdditionalRole() {
+			return null;
+		}
     }
 }

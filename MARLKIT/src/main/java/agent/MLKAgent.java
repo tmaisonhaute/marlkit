@@ -1,5 +1,6 @@
 package agent;
 
+import java.util.List;
 import java.util.random.RandomGenerator;
 
 import agent.action.Action;
@@ -18,6 +19,19 @@ import reward.Reward;
  */
 public interface MLKAgent {
 	public static final String DEFAULT_AGENT_ROLE = "MLKAgent";
+	
+	/**
+	 * Adds an additional role to the agent's list of roles.
+	 * Must be called before the agent is activated in the simulation.
+	 * @param role the role to add
+	 */
+	public void addAdditionalRole(String role);
+	
+	/**
+	 * Returns a list of additional roles that this agent must have requested before activation.
+	 * @return the list of additional role names
+	 */
+	public List<String> getAdditionalRole();
 	
 	/**
 	 * Returns the policy used by this agent for decision making.

@@ -250,5 +250,15 @@ public class MLKAgentCommunicatingTest {
         public SimuAgent getSimuAgent() {
             return null;
         }
+
+		@Override
+		public void addAdditionalRole(String role) {
+			
+		}
+
+		@Override
+		public List<String> getAdditionalRole() {
+			return null;
+		}
     }
 }

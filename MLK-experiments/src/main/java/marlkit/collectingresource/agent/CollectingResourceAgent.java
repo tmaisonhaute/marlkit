@@ -5,6 +5,8 @@ import java.util.List;
 
 import agent.AgentStandard;
 import agent.action.Action;
+import learning.Algorithm;
+import learning.Policy;
 import learning.algorithms.QLearning;
 import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import learning.policies.QValueBasedPolicy;
@@ -18,6 +20,10 @@ import util.Position;
 public class CollectingResourceAgent extends AgentStandard {
 	private Position position;
 	List<Action> possibleActions;
+	
+	public CollectingResourceAgent(Policy policy, Algorithm algorithm) {
+		super(policy, algorithm);
+	}
 
 	public CollectingResourceAgent(List<UniteProductionSpatial> unites) {
 		super();

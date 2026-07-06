@@ -69,4 +69,15 @@ public class UniteConsumption extends Unite {
     public void setNeedValue(int needValue) {
         this.needValue = needValue;
     }
+
+	@Override
+	public void addAdditionalRole(String role) {
+		throw new UnsupportedOperationException("UniteConsumption does not support additional roles.");
+		
+	}
+
+	@Override
+	public List<String> getAdditionalRole() {
+		throw new UnsupportedOperationException("UniteConsumption does not support additional roles.");
+	}
 }

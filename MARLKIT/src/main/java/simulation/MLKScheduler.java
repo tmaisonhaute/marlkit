@@ -11,7 +11,9 @@ import agent.modelofotheragent.MLKAgentModelingOthers;
 import environment.MLKEnvironment;
 import environment.state.State;
 import evaluation.SystemEvaluator;
+import madkit.action.SchedulingAction;
 import madkit.kernel.Activator;
+import madkit.messages.SchedulingMessage;
 import madkit.simulation.SimuOrganization;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
@@ -185,7 +187,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		counter++;
 		getCriteriaEndEpisode().update(Optional.of(env.getState()));
 		
-		handleEndSimulation();
+		if(handleEndSimulation()) {
+			getLogger().info("Simulation has Ended");
+			receiveMessage(new SchedulingMessage(SchedulingAction.SHUTDOWN));
+		}
 	}
 
 	/**
@@ -309,11 +314,12 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	/**
 	 * Handles the logic for ending the simulation based on the criterion for ending the simulation.
 	 */
-	protected void handleEndSimulation() {
+	protected boolean handleEndSimulation() {
 		if (getCriteriaEndSimulation().isMet()) {
 			envEnd.execute();
-			onEnd();
+			return true;
 		}
+		return false;
 	}
 	
 	/**

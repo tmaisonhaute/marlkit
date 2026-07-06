@@ -111,6 +111,9 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
 			if (agent instanceof PreyAgent prey) {
 				prey.setCaptured(false);
 			}
+//			if (agent instanceof SimuAgent simuAgent) {
+//				simuAgent.getOrganization().isRole(getCommunity(), getEngineGroup(), "prey");
+//			}
         }
     }
 

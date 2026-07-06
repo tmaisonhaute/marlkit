@@ -50,7 +50,8 @@ public class EnvCollectingResource extends EnvironmentStandard {
 	protected void onActivation() {
 		super.onActivation();
 		this.scenario.setup(prng(), getWidth(), getHeight());
-		this.state = new StateUnites2D(agents.getAgents(), scenario.createUnites(prng()));
+		scenario.createUnites(prng());
+		this.state = new StateUnites2D(agents.getAgents(), scenario.getUnites());
 		setupState();
 	}
 
