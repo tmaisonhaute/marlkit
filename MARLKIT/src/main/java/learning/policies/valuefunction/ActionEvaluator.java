@@ -5,6 +5,13 @@ import agent.action.ActionSpace;
 import learning.policies.PolicyInput;
 import util.Pair;
 
+/**
+ * A component that evaluates the value of a given action in a given state (observation).
+ * 
+ * <p>This interface is used by algorithms or policies that need to assess the quality of actions based on the current state.
+ * </p>
+ * {@link QTable} is an example of a class that implements this interface
+ */
 public interface ActionEvaluator {
 
     public Double getValue(PolicyInput input, Action action);

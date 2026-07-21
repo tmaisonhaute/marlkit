@@ -10,7 +10,7 @@ public class SchedulerGoOrYield extends MLKScheduler {
 	public static final int UPDATE_DISPLAY_INTERVAL = 1;
 	public static final int DISPLAYED_EPISODES = 1;
 	public static final int PAUSE_VALUE = 0;
-	public static final int MAXIMUM_EPISODE_COUNT = 50_000;
+	public static final int MAXIMUM_EPISODE_COUNT = 80_000;
 
 	public SchedulerGoOrYield() {
 		setCriteriaModule(new SchedulerGoOrYieldCriteria());
