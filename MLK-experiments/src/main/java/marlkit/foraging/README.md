@@ -71,24 +71,19 @@ With the Fully Cooperative reward model, the agents collect different resources 
 
 ### Total Reward
 
-![Total reward — Fully Cooperative Reward](figures/foraging_totalreward_fc.png)
-
-![Total reward — Mixed Reward](figures/foraging_totalreward_indep.png)
+![Total reward — Fully Cooperative Reward](figures/foraging_totalReward.png)
 
 The Fully Cooperative reward model produces the highest total reward.
 
 ### Episode Duration
 
-![Episode duration — Fully Cooperative Reward](figures/foraging_episodeduration_fc.png)
-
-![Episode duration — Mixed Reward](figures/foraging_episodeduration_indep.png)
+![Episode duration — Fully Cooperative Reward](figures/foraging_episodeDuration.png)
 
 With the Fully Cooperative reward model, agents learn to collect all resources in fewer time steps.
 
 ### Lowest Agent Reward
 
-![Lowest agent reward — Fully Cooperative Reward](figures/foraging_lowestagentreward_fc.png)
+![Lowest agent reward — Fully Cooperative Reward](figures/foraging_lowestReward.png)
 
-![Lowest agent reward — Mixed Reward](figures/foraging_lowestagentreward_indep.png)
 
 The Mixed reward model leads to a more unbalanced outcome, as one agent collects all the resources while the other receives only time-step penalties. The Fully Cooperative reward model produces a better outcome for the worst-performing agent.
