@@ -5,7 +5,7 @@ import java.util.List;
 
 import agent.action.Action;
 import algorithm.TDActorCritic;
-import centralizedtraining.SchedulerCentralizedCritic;
+import centralizedtraining.CentralizedCriticTrainingExecutionStrategy;
 import environment.observation.wrapperobservationvector.WrapperVectorObservationPositionsValues;
 import learning.nn.StateValueCritic;
 import learning.policies.ActorNetwork;
@@ -29,6 +29,6 @@ public class AgentPTBTogetherTDActorCriticCentralized extends AgentPTB {
 	@Override
 	protected void onActivation() {
 		super.onActivation();
-		requestRole(getCommunity(), getModelGroup(), SchedulerCentralizedCritic.CENTRALIZED_CRITIC_AGENT_ROLE);
+		requestRole(getCommunity(), getModelGroup(), CentralizedCriticTrainingExecutionStrategy.CENTRALIZED_CRITIC_AGENT_ROLE);
 	}
 }
