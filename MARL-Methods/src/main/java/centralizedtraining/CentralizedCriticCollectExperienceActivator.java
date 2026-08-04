@@ -35,7 +35,7 @@ import madkit.kernel.Agent;
  * </p>
  */
 
-public class CentralizedCriticActivator extends Activator {
+public class CentralizedCriticCollectExperienceActivator extends Activator {
 	
 	/**
 	 * Creates an activator operating on the specified group and role.
@@ -43,7 +43,7 @@ public class CentralizedCriticActivator extends Activator {
 	 * @param group the model group
 	 * @param role the role of the agents to process
 	 */
-	public CentralizedCriticActivator(String group, String role) {
+	public CentralizedCriticCollectExperienceActivator(String group, String role) {
 		super(group, role);
 	}
 	

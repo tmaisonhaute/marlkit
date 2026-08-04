@@ -65,11 +65,7 @@ public class StateValueCritic implements Critic {
     public void enrichExperience(Experience originalExperience, Experience enrichedExperience) {
     	enrichedExperienceMap.put(originalExperience, enrichedExperience);
     }
-    
-    @Override
-	public void resetEnrichedExperiences() {
-		enrichedExperienceMap.clear();
-	}
+
     @Override
 	public Experience getEnrichedExperience(Experience originalExperience) {
     	return enrichedExperienceMap.get(originalExperience);

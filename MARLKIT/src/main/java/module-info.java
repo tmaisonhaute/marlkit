@@ -55,4 +55,5 @@ open module marlkit.base {
     exports reward;
     exports communication;
 	exports evaluation;
+	exports trainingexecutionstrategy;
 }
