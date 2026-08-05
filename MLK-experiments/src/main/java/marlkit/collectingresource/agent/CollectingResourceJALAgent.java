@@ -14,7 +14,7 @@ import agent.modelofotheragent.PredictionModelsManager;
 import agent.modelofotheragent.StandardGroupModelingPredictAction;
 import algorithm.QLearningJAL;
 import environment.observation.Observation;
-import learning.Experience;
+import experience.Experience;
 import learning.algorithms.QLearning;
 import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import marlkit.collectingresource.environment.UniteProductionSpatial;

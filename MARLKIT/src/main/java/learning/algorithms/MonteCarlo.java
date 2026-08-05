@@ -5,9 +5,9 @@ import java.util.Map;
 
 import agent.MLKAgent;
 import agent.action.Action;
+import experience.Experience;
 import learning.Algorithm;
 import learning.Batch;
-import learning.Experience;
 import learning.Policy;
 import learning.policies.PolicyInput;
 import learning.policies.QValueBasedPolicy;

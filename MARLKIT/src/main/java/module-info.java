@@ -56,4 +56,5 @@ open module marlkit.base {
     exports communication;
 	exports evaluation;
 	exports trainingexecutionstrategy;
+	exports experience;
 }

@@ -1,4 +1,4 @@
-package learning;
+package experience;
 
 import agent.action.Action;
 import learning.policies.PolicyInput;
@@ -59,5 +59,14 @@ public class Experience {
 	 */
 	public Double getRewardValue() {
 		return reward.getValue();
+	}
+	
+	/**
+	 * Returns a copy of this experiment but with a different action. 
+	 * @param newAction the new action to use
+	 * @return a new Experience object with the same input and reward but a different action
+	 */
+	public Experience withAction(Action newAction) {
+	    return new Experience(input, newAction, reward);
 	}
 }

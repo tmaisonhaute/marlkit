@@ -10,7 +10,7 @@ import java.util.Map;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.JointAction;
-import learning.Experience;
+import experience.Experience;
 import learning.algorithms.ActorCritic;
 import learning.policies.PolicyInput;
 import madkit.kernel.Activator;

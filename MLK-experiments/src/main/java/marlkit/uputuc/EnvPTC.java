@@ -10,7 +10,7 @@ import agent.action.Action;
 import environment.EnvironmentStandard;
 import environment.state.State;
 import environment.state.State2DGridInt;
-import learning.Experience;
+import experience.Experience;
 import marlkit.uputuc.unite.UniteConsumption;
 import marlkit.uputuc.unite.UniteProduction;
 import marlkit.uputuc.unite.UniteTransformation;

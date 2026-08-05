@@ -1,6 +1,7 @@
 package learning;
 
 import agent.MLKAgent;
+import experience.Experience;
 
 /**
  * Defines a critic used by an actor-critic learning algorithm.

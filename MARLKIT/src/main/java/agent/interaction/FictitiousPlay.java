@@ -8,7 +8,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.interaction.wrapper.WapperActionProbabilities;
 import environment.observation.Observation;
-import learning.Experience;
+import experience.Experience;
 
 /**
  * Implementation of Fictitious Play interaction model using the Predictions class.

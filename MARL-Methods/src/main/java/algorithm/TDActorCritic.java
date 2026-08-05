@@ -2,9 +2,9 @@ package algorithm;
 
 import agent.MLKAgent;
 import agent.action.Action;
+import experience.Experience;
 import learning.Batch;
 import learning.Critic;
-import learning.Experience;
 import learning.Policy;
 import learning.algorithms.ActorCritic;
 import learning.nn.StateValueCritic;

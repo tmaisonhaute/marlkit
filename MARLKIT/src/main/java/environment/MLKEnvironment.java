@@ -11,7 +11,8 @@ import agent.action.Action;
 import environment.observation.Observation;
 import environment.state.State;
 import evaluation.SystemEvaluator;
-import learning.Experience;
+import experience.Experience;
+import experience.ExperienceBuilder;
 import util.grafana.Extra;
 import util.grafana.LearningData;
 import util.grafana.StepData;
@@ -77,6 +78,19 @@ public interface MLKEnvironment {
 	 * @return the agent's experience
 	 */
 	public Experience getExperienceJointAction(MLKAgent agent);
+	
+	/**
+	 * Sets the experience builder used to construct experiences for agents.
+	 * The ExperienceBuilder implements the logic for creating experiences. Different builders define different types of experiences.
+	 * @param experienceBuilder the experience builder to use
+	 */
+	public void setExperienceBuilder(ExperienceBuilder experienceBuilder);
+	
+	/**
+	 * Returns the experience builder used to construct experiences for agents.
+	 * @return the current experience builder
+	 */
+	public ExperienceBuilder getExperienceBuilder();
 	
 	/**
 	 * Returns the last action (influence) performed by the given agent.

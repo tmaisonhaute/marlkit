@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import agent.MLKAgent;
-import learning.Experience;
+import experience.Experience;
 import util.Pair;
 
 public class LearningData {

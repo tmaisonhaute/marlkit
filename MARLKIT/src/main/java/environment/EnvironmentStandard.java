@@ -16,7 +16,8 @@ import environment.observation.Observation;
 import evaluation.Measure;
 import evaluation.NoSystemEvaluation;
 import evaluation.SystemEvaluator;
-import learning.Experience;
+import experience.Experience;
+import experience.ExperienceBuilder;
 import madkit.simulation.environment.Environment2D;
 import reward.ReactionEvent;
 import reward.Reward;
@@ -33,8 +34,9 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	protected AgentsGroup agents;
 	protected RewardModel rewardModel;
 	protected SystemEvaluator systemEvaluator;
+	protected ExperienceBuilder experienceBuilder;
 	private boolean logSetup = false;
-	private final int EPISODES_BEFORE_LOG = 1_000;
+	private static final int EPISODES_BEFORE_LOG = 1_000;
 	
 	/**
 	 * The learning data that can be collected during the simulation.
@@ -121,10 +123,10 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		systemEvaluator.evaluate(result);
 		
 		//Reward computation
-		Map<MLKAgent, Pair<Action, Reward>> rewards = rewardComputation(result);
+		Map<MLKAgent, Reward> rewards = rewardModel.rewardFunctions(result);
 		
 		//Store experiences for agents to collect
-		agentsExperiences = combineObsActReward(rewards, agentsObservations);
+		agentsExperiences = buildExperiences(rewards);
 		collectAndLogLearningData(agentsExperiences);
 	}
 	/**
@@ -143,38 +145,8 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	public void influence(MLKAgent agent, Action action) {
 		agentsActions.put(agent, action);
 	}
+
 	
-	/**
-	 * Computes rewards for all agents based on the dynamics result.
-	 * Applies the reward model to the reaction events and combines actions with rewards.
-	 *
-	 * @param result map of agents to their reaction events from dynamics
-	 * @return map of agents to their action and computed reward
-	 */
-	protected Map<MLKAgent, Pair<Action, Reward>> rewardComputation(Map<MLKAgent, List<ReactionEvent>> result) {
-		Map<MLKAgent, Reward> rewards = rewardModel.rewardFunctions(result);
-		
-		return combineActionReward(agentsActions, rewards);
-	}
-	
-	/**
-	 * Combines separate action and reward maps into a single map of action-reward pairs per agent.
-	 *
-	 * @param actions map of agents to their actions
-	 * @param rewards map of agents to their rewards
-	 * @return map of agents to their action-reward pairs
-	 */
-	private Map<MLKAgent, Pair<Action, Reward>> combineActionReward(Map<MLKAgent, Action> actions, 
-																	Map<MLKAgent, Reward> rewards) {
-		Map<MLKAgent, Pair<Action, Reward>> actionRewardMap = new HashMap<>();
-		for (Map.Entry<MLKAgent, Action> entry : actions.entrySet()) {
-			MLKAgent agent = entry.getKey();
-			Action action = entry.getValue();
-			Reward reward = rewards.get(agent);
-			actionRewardMap.put(agent, new Pair<>(action, reward));
-		}
-		return actionRewardMap;
-	}
 	
 	/**
 	 * Collects, processes and logs learning data from agent experiences.
@@ -204,10 +176,19 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	
 	@Override
 	public Experience getExperienceJointAction(MLKAgent agent) {
-		Experience originalExperience = agentsExperiences.get(agent);
-		Map<MLKAgent, Action> allMappedActions = getAgentsActions();
-		MappedJointAction jointAction = new MappedJointAction(allMappedActions);
-		return new Experience(originalExperience.getInput(), jointAction, originalExperience.getReward());
+	    Experience originalExperience = agentsExperiences.get(agent);
+	    MappedJointAction jointAction = new MappedJointAction(getAgentsActions());
+	    return originalExperience.withAction(jointAction);
+	}
+	
+	@Override
+	public void setExperienceBuilder(ExperienceBuilder experienceBuilder) {
+		this.experienceBuilder = experienceBuilder;
+	}
+	
+	@Override
+	public ExperienceBuilder getExperienceBuilder() {
+		return experienceBuilder;
 	}
 	
 	@Override
@@ -334,29 +315,26 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	public abstract Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions);
 
 
-
+	
 	/**
-	 * Combines observations, actions, and rewards into experiences for each agent.
-	 *
-	 * @param actionRewardMap map of agents to their action/reward pairs
-	 * @param observationMap map of agents to their observations
-	 * @return map of agents to their complete experiences
+	 * Combines actions and rewards into experiences for each agent using the experience builder.
+	 * 
+	 * The types of experiences created depend on the implementation of the {@link ExperienceBuilder} used.
+	 * 
+	 * @param rewards map of agents to their computed rewards
+	 * @return map of agents to their constructed experiences
 	 */
-	protected Map<MLKAgent, Experience> combineObsActReward(Map<MLKAgent, Pair<Action, Reward>> actionRewardMap,
-	        Map<MLKAgent, Observation> observationMap) {
-	    Map<MLKAgent, Experience> combinedMap = new HashMap<>();
-	
-	    for (Map.Entry<MLKAgent, Observation> entry : observationMap.entrySet()) {
+	protected Map<MLKAgent, Experience> buildExperiences(Map<MLKAgent, Reward> rewards) {
+	    Map<MLKAgent, Experience> experiences = new HashMap<>();
+
+	    for (Map.Entry<MLKAgent, Reward> entry : rewards.entrySet()) {
 	        MLKAgent agent = entry.getKey();
-	        Observation observation = entry.getValue();
-	        Pair<Action, Reward> actionRewardPair = actionRewardMap.get(agent);
-	
-	        if (actionRewardPair != null) {
-	            Experience experience = new Experience(observation, actionRewardPair.getFirst(), actionRewardPair.getSecond());
-	            combinedMap.put(agent, experience);
-	        }
+	        Reward reward = entry.getValue();
+	        Experience experience = experienceBuilder.buildExperience(this, agent, reward);
+	        experiences.put(agent, experience);
 	    }
-	    return combinedMap;
+
+	    return experiences;
 	}
 
 	/**

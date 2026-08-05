@@ -6,8 +6,8 @@ import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import experience.Experience;
 import learning.Critic;
-import learning.Experience;
 import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
 
