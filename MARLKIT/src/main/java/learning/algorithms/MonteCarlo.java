@@ -33,14 +33,6 @@ public class MonteCarlo implements Algorithm {
         this.gamma = gamma;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init(MLKAgent agent) {
-        setAgent(agent);
-    }
-
     @Override
     public void setPolicy(Policy policy) {
         if (policy instanceof QValueBasedPolicy qPolicy) {

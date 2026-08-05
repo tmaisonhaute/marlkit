@@ -49,10 +49,6 @@ public class PPOCategorical implements Algorithm {
         this(policy, 0.001, 0.95, 0.2, 4);
     }
 
-    @Override
-    public void init(MLKAgent agent) {
-        setAgent(agent);
-    }
 
     @Override
     public void setPolicy(Policy policy) {

@@ -59,12 +59,6 @@ public class QLearning implements Algorithm {
 
 
     @Override
-    public void init(MLKAgent agent) {
-        setAgent(agent);
-    }
-
-
-    @Override
     public void setPolicy(Policy policy) {
         if (policy instanceof QValueBasedPolicy qPolicy) {
             this.policy = qPolicy;

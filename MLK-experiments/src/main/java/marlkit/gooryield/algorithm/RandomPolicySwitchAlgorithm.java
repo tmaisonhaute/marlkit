@@ -25,11 +25,6 @@ public class RandomPolicySwitchAlgorithm implements Algorithm {
     }
 
     @Override
-    public void init(MLKAgent agent) {
-        this.agent = agent;
-    }
-
-    @Override
     public void setPolicy(Policy policy) {
         if (!(policy instanceof GoOrYieldSwitchingPolicy)) {
             throw new IllegalArgumentException("policy should be a GoOrYieldSwitchingPolicy.");

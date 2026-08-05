@@ -40,6 +40,9 @@ public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy, Par
         if (inputSize <= 0) {
             throw new IllegalArgumentException("Input size must be strictly positive.");
         }
+        if (softmaxTemperature <= 0.0) {
+        	throw new IllegalArgumentException("softmaxTemperature must be > 0.");
+        }
 
         this.actions = new ArrayList<>(actions);
         this.inputWrapper = inputWrapper;

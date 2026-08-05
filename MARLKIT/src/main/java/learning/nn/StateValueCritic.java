@@ -97,8 +97,9 @@ public class StateValueCritic implements Critic {
      * @return the estimated state value
      */
     public double getValue(double[] observationVector) {
-    	((SimuAgent) agent).getLogger().info("State value : " + network.predict(observationVector)[0]);
-        return network.predict(observationVector)[0];
+    	double value = network.predict(observationVector)[0];
+    	((SimuAgent) agent).getLogger().info("State value : " + value);
+        return value;
     }
 
     /**

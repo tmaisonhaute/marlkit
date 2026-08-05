@@ -57,11 +57,6 @@ public class Sarsa implements Algorithm {
     }
 
 
-    @Override
-    public void init(MLKAgent agent) {
-        setAgent(agent);
-    }
-
 
     @Override
     public void setPolicy(Policy policy) {

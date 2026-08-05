@@ -40,10 +40,6 @@ public class ReinforceWithBaseline implements Algorithm {
         validateParameters();
     }
 
-    @Override
-    public void init(MLKAgent agent) {
-        setAgent(agent);
-    }
 
     @Override
     public void setPolicy(Policy policy) {

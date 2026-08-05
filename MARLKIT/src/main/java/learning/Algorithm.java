@@ -9,10 +9,13 @@ public interface Algorithm {
 	
 	/**
 	 * Initializes the Algorithm with the agent that will use it.
+	 * Also initializes the policy associated with this algorithm.
 	 *
 	 * @param agent the agent using this algorithm
 	 */
-	public void init(MLKAgent agent);
+	public default void init(MLKAgent agent) {
+		setAgent(agent);
+	}
 
 	/**
 	 * Sets the policy used by this Algorithm.
