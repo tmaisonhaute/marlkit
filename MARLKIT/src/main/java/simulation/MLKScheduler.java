@@ -32,6 +32,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private Activator initEnvironment;
 	private Activator computeObservations;
 	private Activator envReaction;
+	private Activator buildExperiences;
 	private Activator reset;
 	private Activator clearPreviousStepVariables;
 	private Activator envEndEpisode;
@@ -70,6 +71,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		addActivator(computeObservations);
 		envReaction = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
 		addActivator(envReaction);
+		buildExperiences = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "buildExperiences");
+		addActivator(buildExperiences);
 		clearPreviousStepVariables = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "clearStepVariables");
 		addActivator(clearPreviousStepVariables);
 		reset = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "reset");
@@ -188,6 +191,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		environmentReaction();
 		
+		getCriteriaEndEpisode().update(Optional.of(env.getState()));
+		
+		buildExperiences();
+		
 		agentsCollectExperience();
 		
 		agentsPostReactionCommunication();
@@ -204,7 +211,6 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		displayViewers();
 		
 		counter++;
-		getCriteriaEndEpisode().update(Optional.of(env.getState()));
 		
 		handleEndSimulation();
 	}
@@ -256,6 +262,13 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 */
 	protected void environmentReaction() {
 		envReaction.execute();
+	}
+	
+	/**
+	 * Triggers the experience building phase for the environment, where it constructs experiences for all agents based on their actions, observations, and rewards.
+	 */
+	protected void buildExperiences() {
+		buildExperiences.execute(getCriteriaEndEpisode().isMet());
 	}
 
 	/**

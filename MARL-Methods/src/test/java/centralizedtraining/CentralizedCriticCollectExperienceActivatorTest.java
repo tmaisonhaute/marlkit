@@ -328,6 +328,7 @@ public class CentralizedCriticCollectExperienceActivatorTest {
 
         @Override
         public void init(MLKAgent agent) {
+        	// No-op for testing
         }
 
         @Override

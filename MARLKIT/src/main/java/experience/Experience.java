@@ -8,9 +8,9 @@ import reward.Reward;
  * Represents a single experience tuple (observation, action, reward) in reinforcement learning.
  */
 public class Experience {
-    private PolicyInput input;
-    private Action action;
-    private Reward reward;
+    protected PolicyInput input;
+    protected Action action;
+    protected Reward reward;
 
 	/**
 	 * Creates a new experience.

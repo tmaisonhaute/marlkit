@@ -112,6 +112,12 @@ public interface MLKEnvironment {
 	public abstract void step();
 	
 	/**
+	 * Builds experiences for all agents based on their actions, observations, and rewards.
+	 * @param terminal indicates whether the current step is terminal (end of episode) or not. 
+	 */
+	public void buildExperiences(boolean terminal);
+	
+	/**
 	 * Returns the current state of the environment.
 	 *
 	 * @return the environment state

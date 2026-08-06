@@ -48,6 +48,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	
 	private Map<MLKAgent, Observation> agentsObservations;
 	private Map<MLKAgent, Action> agentsActions;
+	private Map<MLKAgent, Reward> agentsRewards;
 	private Map<MLKAgent, Experience> agentsExperiences;
 	
 	/**
@@ -64,6 +65,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		this.evaluationMeasureNames = new ArrayList<>();
 		agentsObservations = new HashMap<>();
 		agentsActions = new HashMap<>();
+		agentsRewards = new HashMap<>();
 		agentsExperiences = new HashMap<>();
     }
 	
@@ -112,8 +114,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	
 	/**
 	 * Processes the environment reaction to agent influences.
-	 * Computes dynamics based on agent actions, calculates rewards, and stores the resulting
-	 * experiences for agents to collect via {@link #getExperience(MLKAgent)}.
+	 * Computes dynamics based on agent actions, calculates and stores rewards
 	 */
 	@Override
 	public void step(){
@@ -123,11 +124,8 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		systemEvaluator.evaluate(result);
 		
 		//Reward computation
-		Map<MLKAgent, Reward> rewards = rewardModel.rewardFunctions(result);
+		agentsRewards = rewardModel.rewardFunctions(result);
 		
-		//Store experiences for agents to collect
-		agentsExperiences = buildExperiences(rewards);
-		collectAndLogLearningData(agentsExperiences);
 	}
 	/**
 	 * {@inheritDoc}
@@ -166,6 +164,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	public void clearStepVariables() {
 		agentsObservations.clear();
 		agentsActions.clear();
+		agentsRewards.clear();
 		agentsExperiences.clear();
 	}
 	
@@ -317,24 +316,27 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 
 	
 	/**
+	 * {@inheritDoc}
+	 * 
 	 * Combines actions and rewards into experiences for each agent using the experience builder.
-	 * 
 	 * The types of experiences created depend on the implementation of the {@link ExperienceBuilder} used.
-	 * 
-	 * @param rewards map of agents to their computed rewards
-	 * @return map of agents to their constructed experiences
+	 * Stores the resulting experiences for agents to collect via {@link #getExperience(MLKAgent)}.
 	 */
-	protected Map<MLKAgent, Experience> buildExperiences(Map<MLKAgent, Reward> rewards) {
+	@Override
+	public void buildExperiences(boolean terminal) {
 	    Map<MLKAgent, Experience> experiences = new HashMap<>();
 
-	    for (Map.Entry<MLKAgent, Reward> entry : rewards.entrySet()) {
+	    for (Map.Entry<MLKAgent, Reward> entry : agentsRewards.entrySet()) {
 	        MLKAgent agent = entry.getKey();
 	        Reward reward = entry.getValue();
-	        Experience experience = experienceBuilder.buildExperience(this, agent, reward);
+	        Experience experience = experienceBuilder.buildExperience(this, agent, reward, terminal);
+
 	        experiences.put(agent, experience);
 	    }
 
-	    return experiences;
+	    agentsExperiences = experiences;
+	    collectAndLogLearningData(agentsExperiences);
+	    
 	}
 
 	/**
