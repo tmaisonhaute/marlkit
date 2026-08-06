@@ -16,6 +16,7 @@ import environment.observation.Observation;
 import evaluation.Measure;
 import evaluation.NoSystemEvaluation;
 import evaluation.SystemEvaluator;
+import experience.DefaultExperienceBuilder;
 import experience.Experience;
 import experience.ExperienceBuilder;
 import madkit.simulation.environment.Environment2D;
@@ -34,7 +35,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	protected AgentsGroup agents;
 	protected RewardModel rewardModel;
 	protected SystemEvaluator systemEvaluator;
-	protected ExperienceBuilder experienceBuilder;
+	protected ExperienceBuilder experienceBuilder = new DefaultExperienceBuilder();
 	private boolean logSetup = false;
 	private static final int EPISODES_BEFORE_LOG = 1_000;
 	
