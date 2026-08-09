@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.random.RandomGenerator;
@@ -19,7 +20,7 @@ import experience.Experience;
 import learning.Batch;
 import learning.Policy;
 import learning.nn.StateValueCritic;
-import learning.policies.ActorNetwork;
+import learning.policies.CategoricalPolicyGradient;
 import learning.policies.PolicyInput;
 import reward.RewardStandard;
 
@@ -28,7 +29,7 @@ public class TDActorCriticTest {
     @Test
     public void givenNonActorNetworkPolicy_whenSetPolicy_thenThrowIllegalArgumentException() {
         // Given
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
         TDActorCritic algorithm = new TDActorCritic(actor, critic);
         Policy invalidPolicy = new DummyPolicy();
@@ -43,13 +44,13 @@ public class TDActorCriticTest {
     @Test
     public void givenAgentIsSet_whenSetPolicyWithActorNetwork_thenInitNewActor() {
         // Given
-        RecordingActorNetwork actor1 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor1 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
         TDActorCritic algorithm = new TDActorCritic(actor1, critic);
         MLKAgent agent = agentWithPrng(new java.util.Random(0));
         algorithm.setAgent(agent);
 
-        RecordingActorNetwork actor2 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor2 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
 
         // When
         algorithm.setPolicy(actor2);
@@ -62,11 +63,11 @@ public class TDActorCriticTest {
     @Test
     public void givenAgentIsNull_whenSetPolicyWithActorNetwork_thenDoNotInitActor() {
         // Given
-        RecordingActorNetwork actor1 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor1 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
         TDActorCritic algorithm = new TDActorCritic(actor1, critic);
 
-        RecordingActorNetwork actor2 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor2 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
 
         // When
         algorithm.setPolicy(actor2);
@@ -80,7 +81,7 @@ public class TDActorCriticTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(action1, action2));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(action1, action2));
         actor.fixedProbs = new double[] { 0.25, 0.75 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -118,7 +119,7 @@ public class TDActorCriticTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(action1, action2));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(action1, action2));
         actor.fixedProbs = new double[] { 0.5, 0.5 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -149,7 +150,7 @@ public class TDActorCriticTest {
     @Test
     public void givenSelectedActionNotInActorActionSet_whenLearnOnBatch_thenThrowIllegalArgumentException() {
         // Given
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         actor.fixedProbs = new double[] { 0.5, 0.5 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -174,7 +175,7 @@ public class TDActorCriticTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(action1, action2));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(action1, action2));
         actor.fixedProbs = new double[] { 0.25, 0.75 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -200,7 +201,7 @@ public class TDActorCriticTest {
     @Test
     public void givenEmptyBatch_whenEndEpisode_thenOnlyClearCriticAndBatch() {
         // Given
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
         Batch batch = new Batch();
@@ -218,13 +219,13 @@ public class TDActorCriticTest {
     @Test
     public void givenTwoAlgorithms_whenLearnOnOne_thenOtherActorIsNotUpdated() {
         // Given
-        RecordingActorNetwork actor1 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor1 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         actor1.fixedProbs = new double[] { 0.25, 0.75 };
         RecordingStateValueCritic critic1 = new RecordingStateValueCritic();
         critic1.tdErrors.addLast(1.0);
         TDActorCritic algorithm1 = new TDActorCritic(actor1, critic1, 0.1, 0.2, 0.9);
 
-        RecordingActorNetwork actor2 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor2 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic2 = new RecordingStateValueCritic();
         TDActorCritic algorithm2 = new TDActorCritic(actor2, critic2, 0.1, 0.2, 0.9);
 
@@ -240,29 +241,13 @@ public class TDActorCriticTest {
         assertThat(actor2.updateCalls).isEmpty();
         assertThat(algorithm2.getActor()).isSameAs(actor2);
     }
-    
-    @Test
-    public void givenAlgorithm_whenInit_thenSetAgentAndInitActorAndCritic() {
-        // Given
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
-        RecordingStateValueCritic critic = new RecordingStateValueCritic();
-        TDActorCritic algorithm = new TDActorCritic(actor, critic);
-        MLKAgent agent = agentWithPrng(new java.util.Random(0));
 
-        // When
-        algorithm.init(agent);
-
-        // Then
-        assertThat(algorithm.getAgent()).isSameAs(agent);
-        assertThat(actor.initCallCount).isEqualTo(1);
-        assertThat(actor.lastInitAgent).isSameAs(agent);
-    }
     
     @Test
     public void givenTransition_whenLearnOnBatch_thenPassCorrectParametersToCritic() {
         // Given
         ActionInt action = new ActionInt(2);
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), action));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), action));
         actor.fixedProbs = new double[] { 0.5, 0.5 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -293,7 +278,7 @@ public class TDActorCriticTest {
     @Test
     public void givenBatchWithOneExperience_whenLearnOnBatch_thenDoNothing() {
         // Given
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
         TDActorCritic algorithm = new TDActorCritic(actor, critic);
 
@@ -314,7 +299,7 @@ public class TDActorCriticTest {
     public void givenCriticProvidesEnrichedExperience_whenEndEpisode_thenUseEnrichedInputInTerminalUpdate() {
         // Given
         ActionInt action = new ActionInt(2);
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), action));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), action));
         actor.fixedProbs = new double[] { 0.5, 0.5 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -343,7 +328,7 @@ public class TDActorCriticTest {
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
 
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(action1, action2));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(action1, action2));
         actor.fixedProbs = new double[] { 0.25, 0.75 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -418,7 +403,7 @@ public class TDActorCriticTest {
         }
     }
 
-    private static final class RecordingActorNetwork extends ActorNetwork {
+    private static final class RecordingPolicyGradientPolicy implements CategoricalPolicyGradient {
 
         private final List<Action> actionSet;
         private int initCallCount;
@@ -426,10 +411,9 @@ public class TDActorCriticTest {
         private double[] fixedProbs;
         private final List<ActorUpdateCall> updateCalls;
 
-        private RecordingActorNetwork(List<Action> actionSet) {
-            super(1, 1, new DummyWrapper(), actionSet);
+        private RecordingPolicyGradientPolicy(List<Action> actionSet) {
             this.actionSet = actionSet;
-            this.updateCalls = new java.util.ArrayList<>();
+            this.updateCalls = new ArrayList<>();
         }
 
         @Override
@@ -439,8 +423,29 @@ public class TDActorCriticTest {
         }
 
         @Override
+        public MLKAgent getAgent() {
+            return lastInitAgent;
+        }
+
+        @Override
+        public Action selectAction(PolicyInput input) {
+            return null;
+        }
+
+        @Override
         public double[] forwardLogits(PolicyInput input) {
             return new double[actionSet.size()];
+        }
+
+        @Override
+        public double[][] forwardLogits(PolicyInput[] inputs) {
+            double[][] logits = new double[inputs.length][];
+
+            for (int i = 0; i < inputs.length; i++) {
+                logits[i] = forwardLogits(inputs[i]);
+            }
+
+            return logits;
         }
 
         @Override
@@ -454,11 +459,29 @@ public class TDActorCriticTest {
         }
 
         @Override
-        public List<Action> getActionSet() {
-            return actionSet;
+        public void updateFromLogitsGradient(PolicyInput[] inputs, double[][] dLossDLogits, double learningRate) {
+            for (int i = 0; i < inputs.length; i++) {
+                updateFromLogitsGradient(inputs[i], dLossDLogits[i], learningRate);
+            }
+        }
+
+        @Override
+        public int actionIndex(Action action) {
+            int index = actionSet.indexOf(action);
+
+            if (index < 0) {
+                throw new IllegalArgumentException("Unknown action.");
+            }
+
+            return index;
+        }
+
+        @Override
+        public double getSoftmaxTemperature() {
+            return 1.0;
         }
     }
-
+    
     private record ActorUpdateCall(PolicyInput input, double[] gradient, double learningRate) {
     }
 

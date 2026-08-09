@@ -5,7 +5,7 @@ import agent.action.Action;
 import learning.Algorithm;
 import learning.Batch;
 import learning.Policy;
-import learning.policies.PolicyGradientPolicy;
+import learning.policies.CategoricalPolicyGradient;
 import learning.policies.PolicyInput;
 import madkit.kernel.AgentLogger;
 
@@ -21,7 +21,7 @@ import madkit.kernel.AgentLogger;
  */
 public class PPOCategorical implements Algorithm {
 
-    private PolicyGradientPolicy policy;
+    private CategoricalPolicyGradient policy;
     private MLKAgent agent;
 
     private final double learningRate;
@@ -30,7 +30,7 @@ public class PPOCategorical implements Algorithm {
     private final int epochs;
 
     public PPOCategorical(
-            PolicyGradientPolicy policy,
+            CategoricalPolicyGradient policy,
             double learningRate,
             double gamma,
             double clipEpsilon,
@@ -45,14 +45,14 @@ public class PPOCategorical implements Algorithm {
         validateParameters();
     }
 
-    public PPOCategorical(PolicyGradientPolicy policy) {
+    public PPOCategorical(CategoricalPolicyGradient policy) {
         this(policy, 0.001, 0.95, 0.2, 4);
     }
 
 
     @Override
     public void setPolicy(Policy policy) {
-        if (!(policy instanceof PolicyGradientPolicy pgPolicy)) {
+        if (!(policy instanceof CategoricalPolicyGradient pgPolicy)) {
             throw new IllegalArgumentException("PPOCategorical requires a PolicyGradientPolicy.");
         }
 
@@ -60,7 +60,7 @@ public class PPOCategorical implements Algorithm {
     }
 
     @Override
-    public PolicyGradientPolicy getPolicy() {
+    public CategoricalPolicyGradient getPolicy() {
         return policy;
     }
 

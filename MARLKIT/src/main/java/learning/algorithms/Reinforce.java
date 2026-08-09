@@ -7,18 +7,18 @@ import agent.action.Action;
 import learning.Algorithm;
 import learning.Batch;
 import learning.Policy;
-import learning.policies.PolicyGradientPolicy;
+import learning.policies.CategoricalPolicyGradient;
 import madkit.kernel.AgentLogger;
 
 public class Reinforce implements Algorithm {
 
-    private PolicyGradientPolicy policy;
+    private CategoricalPolicyGradient policy;
     private MLKAgent agent;
 
     private final double alpha;
     private final double gamma;
 
-    public Reinforce(PolicyGradientPolicy policy, double alpha, double gamma) {
+    public Reinforce(CategoricalPolicyGradient policy, double alpha, double gamma) {
         this.policy = Objects.requireNonNull(policy);
         this.alpha = alpha;
         this.gamma = gamma;
@@ -28,7 +28,7 @@ public class Reinforce implements Algorithm {
 
     @Override
     public void setPolicy(Policy policy) {
-        if (policy instanceof PolicyGradientPolicy pgPolicy) {
+        if (policy instanceof CategoricalPolicyGradient pgPolicy) {
             this.policy = pgPolicy;
         } else {
             throw new IllegalArgumentException("Reinforce requires a PolicyGradientPolicy.");

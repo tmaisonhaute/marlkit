@@ -8,7 +8,7 @@ import learning.Critic;
 import learning.Policy;
 import learning.algorithms.ActorCritic;
 import learning.nn.StateValueCritic;
-import learning.policies.ActorNetwork;
+import learning.policies.CategoricalPolicyGradient;
 import learning.policies.PolicyInput;
 import madkit.kernel.AgentLogger;
 
@@ -36,7 +36,7 @@ public class TDActorCritic implements ActorCritic {
     private final double criticLearningRate;
 
     private MLKAgent agent;
-    private ActorNetwork actor;
+    private CategoricalPolicyGradient actor;
     private final StateValueCritic critic;
     
 
@@ -49,7 +49,7 @@ public class TDActorCritic implements ActorCritic {
      * @param gamma the discount factor
      */
     public TDActorCritic(
-            ActorNetwork actor,
+    		CategoricalPolicyGradient actor,
             StateValueCritic critic,
             double actorLearningRate,
             double criticLearningRate,
@@ -67,21 +67,22 @@ public class TDActorCritic implements ActorCritic {
      * @param actor the policy network
      * @param critic the state-value critic V(s)
      */
-    public TDActorCritic(ActorNetwork actor, StateValueCritic critic) {
+    public TDActorCritic(CategoricalPolicyGradient actor, StateValueCritic critic) {
         this(actor, critic, 0.0001, 0.0001, 0.95);
     }
 
-	@Override
-	public void setPolicy(Policy policy) {
-        if (policy instanceof ActorNetwork actorNetwork) {
-            this.actor = actorNetwork;
-            if (agent != null) {
-                this.actor.init(agent);
-            }
-        } else {
-            throw new IllegalArgumentException("TDActorCritic requires an ActorNetwork as policy.");
+    @Override
+    public void setPolicy(Policy policy) {
+        if (!(policy instanceof CategoricalPolicyGradient policyGradientPolicy)) {
+            throw new IllegalArgumentException("TDActorCritic requires a PolicyGradientPolicy.");
         }
-	}
+
+        this.actor = policyGradientPolicy;
+
+        if (agent != null) {
+            this.actor.init(agent);
+        }
+    }
 
 	@Override
 	public Policy getPolicy() {
@@ -155,17 +156,15 @@ public class TDActorCritic implements ActorCritic {
      */
     private void updateActor(PolicyInput input, Action selectedAction, double tdError) {
         double[] logits = actor.forwardLogits(input);
-        double[] probs = actor.softmax(logits);
+        double[] probabilities = actor.softmax(logits);
+        int actionIndex = actor.actionIndex(selectedAction);
 
-        int actionIndex = actor.getActionSet().indexOf(selectedAction);
-        if (actionIndex < 0) {
-            throw new IllegalArgumentException("Selected action is not in actor action set.");
+        double[] dLossDLogits = new double[probabilities.length];
+
+        for (int i = 0; i < probabilities.length; i++) {
+            dLossDLogits[i] = tdError * probabilities[i];
         }
 
-        double[] dLossDLogits = new double[probs.length];
-        for (int i = 0; i < probs.length; i++) {
-            dLossDLogits[i] = tdError * probs[i];
-        }
         dLossDLogits[actionIndex] -= tdError;
 
         actor.updateFromLogitsGradient(input, dLossDLogits, getActorLearningRate());
@@ -212,7 +211,7 @@ public class TDActorCritic implements ActorCritic {
     }
 	
 	@Override
-	public ActorNetwork getActor() {
+	public CategoricalPolicyGradient getActor() {
 		return actor;
 	}
 	

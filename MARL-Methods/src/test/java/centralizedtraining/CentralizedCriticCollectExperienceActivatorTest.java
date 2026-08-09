@@ -22,7 +22,7 @@ import learning.Batch;
 import learning.Critic;
 import learning.Policy;
 import learning.algorithms.ActorCritic;
-import learning.policies.ActorNetwork;
+import learning.policies.CategoricalPolicyGradient;
 import learning.policies.PolicyInput;
 import madkit.kernel.AgentLogger;
 import madkit.simulation.SimuAgent;
@@ -369,7 +369,7 @@ public class CentralizedCriticCollectExperienceActivatorTest {
         }
 
         @Override
-        public ActorNetwork getActor() {
+        public CategoricalPolicyGradient getActor() {
             return null;
         }
 

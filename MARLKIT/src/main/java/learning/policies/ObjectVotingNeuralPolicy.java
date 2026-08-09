@@ -15,7 +15,7 @@ import util.VectorOperator;
  * This policy is designed for environments where the observation can be represented as a vector of entities, and each entity contributes 
  * to the overall action logits. The logits are averaged across all entities before applying the softmax function to select an action.
  */
-public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy, Parameterized {
+public class ObjectVotingNeuralPolicy implements CategoricalPolicyGradient, Parameterized {
 
 
     private MLKAgent agent;
@@ -69,17 +69,9 @@ public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy, Parameter
 
     @Override
     public Action selectAction(PolicyInput input) {
-        double[] vector = wrapper.transform(input);
-        
-        double[] logits;
-        if(vector.length == 0) {
-        	logits = defaultLogits();
-        } else {
-        	double[][] entities = VectorOperator.split(vector, this.inputSize);
-        	logits = computeLogits(entities);
-        }
+        double[] logits = forwardLogits(input);
         int actionIndex = sampleSoftmax(logits);
-        return actions[actionIndex];
+        return actions[actionIndex].copy();
     }
 
     /**
@@ -139,7 +131,18 @@ public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy, Parameter
         return probabilities.length - 1;
     }
     
-	
+    @Override
+    public double[] forwardLogits(PolicyInput input) {
+        double[] vector = wrapper.transform(input);
+
+        if (vector.length == 0) {
+            return defaultLogits();
+        }
+
+        double[][] entities = VectorOperator.split(vector, inputSize);
+        return computeLogits(entities);
+    }
+    
 	@Override
 	public double[][] forwardLogits(PolicyInput[] inputs) {
 	    double[][] logits = new double[inputs.length][];
@@ -152,15 +155,29 @@ public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy, Parameter
 	
 	    return logits;
 	}
+	
+	@Override
+	public void updateFromLogitsGradient(PolicyInput input, double[] dLossDLogits, double learningRate) {
+	    double[] vector = wrapper.transform(input);
+	    double[][] entities = VectorOperator.split(vector, inputSize);
 
+	    if (entities.length == 0) {
+	        return;
+	    }
+
+	    double[] entityGradient = scaledGradient(dLossDLogits, 1.0 / entities.length);
+
+	    for (double[] entity : entities) {
+	        objectToActionNetwork.applyOutputGradient(entity, entityGradient, learningRate);
+	    }
+	}
 
 	@Override
 	public void updateFromLogitsGradient(PolicyInput[] inputs, double[][] dLossDLogits, double learningRate) {
 	    for (int i = 0; i < inputs.length; i++) {
-	        updateOneInput(inputs[i], dLossDLogits[i], learningRate);
+	    	updateFromLogitsGradient(inputs[i], dLossDLogits[i], learningRate);
 	    }
 	}
-	
 
 	@Override
 	public int actionIndex(Action action) {
@@ -173,27 +190,6 @@ public class ObjectVotingNeuralPolicy implements PolicyGradientPolicy, Parameter
 	    throw new IllegalArgumentException("Unknown action.");
 	}
 	
-
-	/**
-	 * Updates the policy network for a single input using the provided gradient w.r.t logits.
-	 * @param input the policy input
-	 * @param dLossDLogits 	the gradient of the loss w.r.t the logits for this input
-	 * @param learningRate the learning rate for the update
-	 */
-	private void updateOneInput(PolicyInput input, double[] dLossDLogits, double learningRate) {
-	    double[] vector = wrapper.transform(input);
-	    double[][] entities = VectorOperator.split(vector, inputSize);
-	
-	    if (entities.length == 0) {
-	        return;
-	    }
-	
-	    double[] entityGradient = scaledGradient(dLossDLogits, 1.0 / entities.length);
-	
-	    for (double[] entity : entities) {
-	        objectToActionNetwork.applyOutputGradient(entity, entityGradient, learningRate);
-	    }
-	}
 	
 	/**
 	 * Scales the given gradient by the specified factor.

@@ -3,7 +3,7 @@ package learning.algorithms;
 import agent.MLKAgent;
 import learning.Algorithm;
 import learning.Critic;
-import learning.policies.ActorNetwork;
+import learning.Policy;
 
 /**
  * Defines an actor-critic learning algorithm composed of an actor and a critic.
@@ -29,7 +29,7 @@ public interface ActorCritic extends Algorithm {
      *
      * @return the actor used by this algorithm
      */
-    ActorNetwork getActor();
+	Policy getActor();
 
     /**
      * Returns the critic used to estimate values and provide a learning signal

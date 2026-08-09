@@ -17,7 +17,7 @@ import util.VectorOperator;
  * The network outputs one logit per action.
  * Actions are sampled from the softmax distribution over logits.
  */
-public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy, Parameterized {
+public class NeuralNetworkCategoricalPolicy implements CategoricalPolicyGradient, Parameterized {
 
     private final List<Action> actions;
     private final WrapperPolicyInputVector inputWrapper;
@@ -71,6 +71,12 @@ public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy, Par
 
         return actions.get(actionIndex).copy();
     }
+    
+    @Override
+    public double[] forwardLogits(PolicyInput input) {
+    	double[] vector = inputWrapper.transform(input);
+    	return network.forward(vector);
+    }
 
     @Override
     public double[][] forwardLogits(PolicyInput[] inputs) {
@@ -82,10 +88,11 @@ public class NeuralNetworkCategoricalPolicy implements PolicyGradientPolicy, Par
 
         return logits;
     }
-
-    public double[] forwardLogits(PolicyInput input) {
+    
+    @Override
+    public void updateFromLogitsGradient(PolicyInput input, double[] dLossDLogits, double learningRate) {
         double[] vector = inputWrapper.transform(input);
-        return network.forward(vector);
+        network.applyOutputGradient(vector, dLossDLogits, learningRate);
     }
 
     @Override

@@ -7,12 +7,12 @@ import agent.action.Action;
 import learning.Algorithm;
 import learning.Batch;
 import learning.Policy;
-import learning.policies.PolicyGradientPolicy;
+import learning.policies.CategoricalPolicyGradient;
 import madkit.kernel.AgentLogger;
 
 public class ReinforceWithBaseline implements Algorithm {
 
-    private PolicyGradientPolicy policy;
+    private CategoricalPolicyGradient policy;
     private MLKAgent agent;
 
     private final double alpha;
@@ -21,12 +21,12 @@ public class ReinforceWithBaseline implements Algorithm {
 
     private double baseline;
 
-    public ReinforceWithBaseline(PolicyGradientPolicy policy, double alpha, double gamma) {
+    public ReinforceWithBaseline(CategoricalPolicyGradient policy, double alpha, double gamma) {
         this(policy, alpha, gamma, 0.05, 0.0);
     }
 
     public ReinforceWithBaseline(
-            PolicyGradientPolicy policy,
+            CategoricalPolicyGradient policy,
             double alpha,
             double gamma,
             double baselineUpdateRate,
@@ -43,7 +43,7 @@ public class ReinforceWithBaseline implements Algorithm {
 
     @Override
     public void setPolicy(Policy policy) {
-        if (policy instanceof PolicyGradientPolicy pgPolicy) {
+        if (policy instanceof CategoricalPolicyGradient pgPolicy) {
             this.policy = pgPolicy;
         } else {
             throw new IllegalArgumentException("ReinforceWithBaseline requires a PolicyGradientPolicy.");
