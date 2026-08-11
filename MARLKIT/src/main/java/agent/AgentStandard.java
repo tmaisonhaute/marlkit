@@ -18,7 +18,7 @@ import reward.Reward;
 public class AgentStandard extends SimuAgent implements MLKAgent{
 	protected Policy policy;
 	protected Algorithm algorithm;
-	protected Batch pastExperiences;
+	protected Batch experienceBuffer;
 	protected Observation registeredObservation;
 	
 	/**
@@ -31,14 +31,14 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		super();
 		this.policy = policy;
 		this.algorithm = algorithm;
-		pastExperiences = new Batch();
+		experienceBuffer = new Batch();
 	}
 
 
 	
 	public AgentStandard() {
 		super();
-		pastExperiences = new Batch();
+		experienceBuffer = new Batch();
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void feedbackExperience(PolicyInput input, Action act, Reward rew) {
-		pastExperiences.addExperience(input, act, rew);
+		experienceBuffer.addExperience(input, act, rew);
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void feedbackExperience(Experience experience) {
-		pastExperiences.addExperience(experience);
+		experienceBuffer.addExperience(experience);
 	}
 	
 	/**
@@ -135,9 +135,9 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void updatePolicy(int timestep) {
-		if(getAlgorithm().getLearningFrequency() > 0 && timestep % getAlgorithm().getLearningFrequency() == 0) {
-			learnOnBatch();
-		}
+	    if (getAlgorithm().shouldLearn(timestep, experienceBuffer)) {
+	        learnOnBatch();
+	    }
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void learnOnBatch() {
-		getAlgorithm().learnOnBatch(pastExperiences, getLogger());
+		getAlgorithm().learnOnBatch(experienceBuffer, getLogger());
 	}
 	
 	/**
@@ -153,7 +153,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void endEpisode() {
-		getAlgorithm().endEpisode(pastExperiences, getLogger());
+		getAlgorithm().endEpisode(experienceBuffer, getLogger());
 	}
 
 	/**

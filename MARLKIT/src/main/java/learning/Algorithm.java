@@ -60,6 +60,23 @@ public interface Algorithm {
 	 */
 	public int getLearningFrequency();
 	
+	/**
+	 * Indicates whether the algorithm should learn from the currently accumulated
+	 * batch at the specified simulation step.
+	 *
+	 * <p>The default implementation uses the learning frequency returned by
+	 * {@link #getLearningFrequency()}. A non-positive frequency disables periodic
+	 * learning.</p>
+	 *
+	 * @param timestep the current simulation step
+	 * @param batch the batch of accumulated experiences
+	 * @return {@code true} if learning should occur
+	 */
+	default boolean shouldLearn(int timestep, Batch batch) {
+	    int frequency = getLearningFrequency();
+	    return frequency > 0 && (timestep + 1) % frequency == 0;
+	}
+	
 	
 	/**
 	 * Performs learning using a batch of experiences.

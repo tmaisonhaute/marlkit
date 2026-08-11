@@ -11,6 +11,11 @@ public class ActionContinuousVector implements Action {
 		this.values = Arrays.copyOf(values, values.length);
 	}
 	
+	public ActionContinuousVector(double[] values, double lowerBound, double upperBound) {
+		this.values = Arrays.copyOf(values, values.length);
+		setBounds(lowerBound, upperBound);
+	}
+	
 	public ActionContinuousVector(int size) {
 		this.values = new double[size];
 	}
