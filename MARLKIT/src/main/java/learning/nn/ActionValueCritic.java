@@ -154,6 +154,44 @@ public class ActionValueCritic implements Critic, Parameterized {
 
         return error;
     }
+    
+    /**
+     * Updates the critic toward target values for a batch of observation-action
+     * pairs.
+     *
+     * <p>A single gradient update is applied using the mean gradient over the
+     * complete batch.</p>
+     *
+     * @param observations the batch observations
+     * @param actions the batch continuous actions
+     * @param targetValues the target action values
+     * @param learningRate the critic learning rate
+     * @throws IllegalArgumentException if the batch dimensions are inconsistent or
+     *                                  the batch is empty
+     */
+    public void updateTowardTargets(PolicyInput[] observations, ActionContinuousVector[] actions, double[] targetValues, double learningRate) {
+        if (observations.length == 0) {
+            throw new IllegalArgumentException("The batch must not be empty.");
+        }
+
+        if (observations.length != actions.length || observations.length != targetValues.length) {
+            throw new IllegalArgumentException("Observations, actions and target values must have the same batch size.");
+        }
+
+        double[][] criticInputs = new double[observations.length][];
+        double[][] outputGradients = new double[observations.length][];
+
+        for (int i = 0; i < observations.length; i++) {
+            criticInputs[i] = buildCriticInput(observations[i], actions[i]);
+
+            double prediction = getValue(criticInputs[i]);
+            outputGradients[i] = new double[] { 2.0 * (prediction - targetValues[i]) };
+        }
+
+        network.applyOutputGradientBatch(criticInputs, outputGradients, learningRate);
+    }
+    
+    
 
     /**
      * Computes the gradient of {@code Q(o, a)} with respect to the action.

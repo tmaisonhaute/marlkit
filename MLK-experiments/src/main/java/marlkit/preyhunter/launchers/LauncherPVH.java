@@ -2,7 +2,6 @@ package marlkit.preyhunter.launchers;
 
 import madkit.simulation.EngineAgents;
 import madkit.simulation.SimuEnvironment;
-import marlkit.preyhunter.agent.HunterAgent;
 import marlkit.preyhunter.agent.PreyAgent;
 import marlkit.preyhunter.environment.EnvPreyVsHunter;
 import marlkit.preyhunter.scheduler.SchedulerPVH;
@@ -21,7 +20,7 @@ import simulation.MLKModel;
         model = MLKModel.class,
         viewers = { ViewerPVH.class }
 )
-public class LauncherPVH extends MLKLauncher {
+public abstract class LauncherPVH extends MLKLauncher {
 
     protected static final int ENV_WIDTH = 10;
     protected static final int ENV_HEIGHT = 10;
@@ -30,8 +29,8 @@ public class LauncherPVH extends MLKLauncher {
     protected static final int NB_PREY_AGENTS = 1;
 
     protected static final double CAPTURE_RADIUS = 1.2;
-    protected static final double HUNTER_VIEW_RANGE = 5.0;//Double.POSITIVE_INFINITY; //5;
-    protected static final double PREY_VIEW_RANGE = 0.0;//2.0;
+    protected static final double HUNTER_VIEW_RANGE = 5.0;
+    protected static final double PREY_VIEW_RANGE = 0.0;
 
     protected static final boolean HUNTERS_OBSERVE_OTHER_HUNTERS = true;
 
@@ -54,11 +53,16 @@ public class LauncherPVH extends MLKLauncher {
     protected <E extends SimuEnvironment> E onLaunchEnvironment() {
         EnvPreyVsHunter env = new EnvPreyVsHunter(ENV_WIDTH, ENV_HEIGHT, CAPTURE_RADIUS, HUNTER_VIEW_RANGE, PREY_VIEW_RANGE, rewardModel, REQUIRED_HUNTERS_TO_CATCH);
 
+        configureEnvironment(env);
+        
         launchAgent(env, Integer.MAX_VALUE);
         
-        env.setSystemEvaluator(new PreyHunterSystemEvaluator(SchedulerPVH.EPISODE_DURATION));
         return (E) env;
     }
+    
+	protected void configureEnvironment(EnvPreyVsHunter env) {
+		env.setSystemEvaluator(new PreyHunterSystemEvaluator(SchedulerPVH.EPISODE_DURATION));
+	}
 
     /**
      * Create and launch hunters and preys.
@@ -69,29 +73,13 @@ public class LauncherPVH extends MLKLauncher {
         launchPreys();
     }
 
-    protected void launchHunters() {
-        int maxVisibleHunters = HUNTERS_OBSERVE_OTHER_HUNTERS ? NB_HUNTER_AGENTS - 1 : 0;
+    protected abstract void launchHunters();
 
-        int maxVisiblePreys = NB_PREY_AGENTS;
-
-        for (int i = 0; i < NB_HUNTER_AGENTS; i++) {
-            HunterAgent hunter = new HunterAgent(maxVisibleHunters, maxVisiblePreys, NUMBER_OF_DIRECTIONS, HUNTER_SPEED);
-
-            launchAgent(hunter);
-        }
-    }
-
-   protected void launchPreys() {
+    protected void launchPreys() {
         for (int i = 0; i < NB_PREY_AGENTS; i++) {
             PreyAgent prey = new PreyAgent(PREY_SPEED);
             launchAgent(prey);
         }
     }
 
-    public static void main(String[] args) {
-        executeThisAgent(
-                "--agentLogLevel", "INFO",
-                "--start"
-        );
-    }
 }

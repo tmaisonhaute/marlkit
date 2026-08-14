@@ -1,6 +1,7 @@
 package learning.policies;
 
 import agent.action.ActionContinuousVector;
+import learning.ContinuousActionExplorationStrategy;
 import learning.Policy;
 
 /**
@@ -48,4 +49,21 @@ public interface DeterministicPolicyGradient extends Policy, Parameterized {
      * @param learningRate the policy learning rate
      */
     void updateFromActionGradient(PolicyInput[] inputs, double[][] dLossDActions, double learningRate);
+    
+    /**
+     * Updates the internal state of the exploration strategy, if one is defined.
+     */
+    void updateExplorationStrategy();
+    
+    /**
+     * Returns the exploration strategy used to explore the continuous action space.
+     * @return the exploration strategy, or null if none is defined
+     */
+    public ContinuousActionExplorationStrategy getExplorationStrategy();
+
+    /**
+     * Sets the exploration strategy used to explore the continuous action space.
+     * @param explorationStrategy
+     */
+    public void setExplorationStrategy(ContinuousActionExplorationStrategy explorationStrategy);
 }

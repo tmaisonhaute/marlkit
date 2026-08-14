@@ -6,6 +6,7 @@ import java.util.Objects;
 import agent.MLKAgent;
 import agent.action.ActionContinuousVector;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import learning.ContinuousActionExplorationStrategy;
 import learning.nn.NeuralNetwork;
 
 /**
@@ -25,6 +26,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
     private final int actionSize;
     private final double lowerBound;
     private final double upperBound;
+    private ContinuousActionExplorationStrategy explorationStrategy;
 
     private MLKAgent agent;
 
@@ -37,11 +39,13 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
      * @param actionSize the number of continuous action components
      * @param lowerBound the common lower bound of all action components
      * @param upperBound the common upper bound of all action components
+     * @param explorationStrategy the exploration strategy for continuous actions, or {@code null} if none is used
      * @throws NullPointerException if {@code inputWrapper} is {@code null}
      * @throws IllegalArgumentException if a size is invalid, a hidden layer is
      *                                  empty, or the action bounds are invalid
      */
-    public MLPDeterministicPolicy(WrapperPolicyInputVector inputWrapper, int inputSize, int[] hiddenLayers, int actionSize, double lowerBound, double upperBound) {
+    public MLPDeterministicPolicy(WrapperPolicyInputVector inputWrapper, int inputSize, int[] hiddenLayers, 
+    		int actionSize, double lowerBound, double upperBound, ContinuousActionExplorationStrategy explorationStrategy) {
         validateArguments(inputSize, hiddenLayers, actionSize, lowerBound, upperBound);
 
         this.inputWrapper = Objects.requireNonNull(inputWrapper, "inputWrapper");
@@ -51,6 +55,24 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
 
         int[] architecture = buildArchitecture(inputSize, hiddenLayers, actionSize);
         this.network = new NeuralNetwork(architecture, NeuralNetwork.Activations.relu(), NeuralNetwork.Activations.tanh());
+        this.explorationStrategy = explorationStrategy;
+    }
+    
+    /**
+     * Creates a deterministic neural policy without an exploration strategy.
+     * @param inputWrapper converts policy inputs to vectors
+     * @param inputSize the input vector size
+     * @param hiddenLayers the sizes of the hidden layers
+     * @param actionSize the number of continuous action components
+     * @param lowerBound the common lower bound of all action components
+     * @param upperBound the common upper bound of all action components
+     * @throws NullPointerException if {@code inputWrapper} is {@code null}
+     * @throws IllegalArgumentException if a size is invalid, a hidden layer is
+     *                                  empty, or the action bounds are invalid
+     */
+    public MLPDeterministicPolicy(WrapperPolicyInputVector inputWrapper, int inputSize, int[] hiddenLayers, 
+    		int actionSize, double lowerBound, double upperBound) {
+        this(inputWrapper, inputSize, hiddenLayers, actionSize, lowerBound, upperBound, null);
     }
 
     /**
@@ -77,14 +99,20 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
     }
 
     /**
-     * Selects the deterministic action associated with the specified input.
+     * Selects the action associated with the specified input. 
+     * 
+     * <p> If an exploration strategy is set, it is applied to the action produced by the policy.</p>
      *
      * @param input the policy input
      * @return the continuous action produced by the policy
      */
     @Override
     public ActionContinuousVector selectAction(PolicyInput input) {
-        return forwardAction(input);
+    	ActionContinuousVector action = forwardAction(input);
+    	if (explorationStrategy != null) {
+    		action = explorationStrategy.explore(action, agent.prng());
+    	}
+        return action;
     }
 
     /**
@@ -173,6 +201,14 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
 
         network.applyOutputGradientBatch(inputVectors, normalizedGradients, learningRate);
     }
+    
+
+    @Override
+    public void updateExplorationStrategy() {
+        if (explorationStrategy != null) {
+            explorationStrategy.update();
+        }
+    }
 
     /**
      * Returns a copy of the trainable neural-network parameters.
@@ -221,6 +257,17 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
         return upperBound;
     }
 
+    @Override
+    public ContinuousActionExplorationStrategy getExplorationStrategy() {
+        return explorationStrategy;
+    }
+
+    @Override
+    public void setExplorationStrategy(ContinuousActionExplorationStrategy explorationStrategy) {
+        this.explorationStrategy = explorationStrategy;
+    }
+    
+    
     /**
      * Rescales normalized action values from {@code [-1, 1]} to the configured
      * action interval.

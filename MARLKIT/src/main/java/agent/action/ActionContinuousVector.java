@@ -3,7 +3,7 @@ package agent.action;
 import java.util.Arrays;
 
 public class ActionContinuousVector implements Action {
-	protected double[] values;
+	private double[] values;
 	protected double lowerBound = Double.NEGATIVE_INFINITY;
 	protected double upperBound = Double.POSITIVE_INFINITY;
 	
@@ -27,6 +27,23 @@ public class ActionContinuousVector implements Action {
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
 		checkBounds();
+	}
+	
+	/**
+	 * Returns the lower bound for the action values.
+	 * @return the lower bound
+	 */
+	public double getLowerBound() {
+		return lowerBound;
+	}
+
+	/**
+	 * Returns the upper bound for the action values.
+	 * 
+	 * @return the upper bound
+	 */
+	public double getUpperBound() {
+		return upperBound;
 	}
 	
 	public void clearBounds() {
@@ -88,6 +105,22 @@ public class ActionContinuousVector implements Action {
 	    ActionContinuousVector copy = new ActionContinuousVector(values);
 	    copy.setBounds(lowerBound, upperBound);
 	    return copy;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return Arrays.hashCode(values);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+	    if (this == obj) {
+	        return true;
+	    }
+	    if (!(obj instanceof ActionContinuousVector other)) {
+	        return false;
+	    }
+	    return Arrays.equals(values, other.values);
 	}
 
 }

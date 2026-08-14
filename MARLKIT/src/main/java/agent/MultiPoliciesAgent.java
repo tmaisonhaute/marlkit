@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import agent.action.Action;
-import communication.CommunicationModel;
-import communication.NoCommunication;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
 import experience.Experience;
@@ -18,35 +16,35 @@ import madkit.simulation.SimuAgent;
 import reward.Reward;
 
 /**
- * An agent that supports multiple policies for different dimensions or aspects of learning.
- * Each policy is associated with a tag and maintains its own batch of experiences.
+ * An agent supporting multiple tagged policy-algorithm pairs.
+ *
+ * <p>Each pair maintains its own experience buffer. The associated algorithm
+ * determines whether the buffer is consumed, cleared, retained, or used as a
+ * replay buffer.</p>
  */
 public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 
 	protected Map<String, Policy> policies;
 	protected Map<String, Algorithm> algorithms;
-	protected Map<String, Batch> dimensionalBatches;
+	protected Map<String, Batch> experienceBuffers;
 	static final String DEFAULT_TAG = "default";
 	
 	protected Observation registeredObservation;
 	
-	
-	public MultiPoliciesAgent(Policy policy, Algorithm algorithm, CommunicationModel communicationModule){
-		super();
-		policies = new HashMap<>();
-		algorithms = new HashMap<>();
-		dimensionalBatches = new HashMap<>();
-		addPolicyAlgo(DEFAULT_TAG, policy, algorithm);
-	}
 	/**
 	 * Creates a new multi-dimensional agent with a default policy and algorithm.
 	 *
 	 * @param policy the default policy for this agent
 	 * @param algorithm the default algorithm for this agent
 	 */
-	public MultiPoliciesAgent(Policy policy, Algorithm algorithm) {
-		this(policy, algorithm, new NoCommunication());
+	protected MultiPoliciesAgent(Policy policy, Algorithm algorithm){
+		super();
+		policies = new HashMap<>();
+		algorithms = new HashMap<>();
+		experienceBuffers = new HashMap<>();
+		addPolicyAlgo(DEFAULT_TAG, policy, algorithm);
 	}
+
 	
 	/**
 	 * Called when the agent is activated in the simulation.
@@ -80,8 +78,8 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 		if (algorithm != null && policy != null) {
 			algorithm.setPolicy(policy);
 		}
-		if (!dimensionalBatches.containsKey(DEFAULT_TAG)) {
-			dimensionalBatches.put(DEFAULT_TAG, new Batch());
+		if (!experienceBuffers.containsKey(DEFAULT_TAG)) {
+			experienceBuffers.put(DEFAULT_TAG, new Batch());
 		}
     }
 	
@@ -96,8 +94,8 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 		if (algorithm != null && policy != null) {
 			algorithm.setPolicy(policy);
 		}
-		if (!dimensionalBatches.containsKey(DEFAULT_TAG)) {
-			dimensionalBatches.put(DEFAULT_TAG, new Batch());
+		if (!experienceBuffers.containsKey(DEFAULT_TAG)) {
+			experienceBuffers.put(DEFAULT_TAG, new Batch());
 		}
 	}
 
@@ -115,8 +113,8 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 		if (algorithm != null && policy != null) {
 			algorithm.setPolicy(policy);
 		}
-		if (!dimensionalBatches.containsKey(tag)) {
-			dimensionalBatches.put(tag, new Batch());
+		if (!experienceBuffers.containsKey(tag)) {
+			experienceBuffers.put(tag, new Batch());
 		}
     }
 	
@@ -291,12 +289,12 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 	 * @throws IllegalArgumentException if no batch exists for the tag
 	 */
 	public void feedbackExperience(String tag, Experience experience) {
-		Batch batch = dimensionalBatches.get(tag);
-		if (batch != null) {
-			batch.addExperience(experience);
-		} else {
-			throw new IllegalArgumentException("No batch found for tag: " + tag);
+		Batch buffer = experienceBuffers.get(tag);
+		if (buffer == null) {
+			throw new IllegalArgumentException("No experience buffer found for tag: " + tag);
 		}
+		
+		buffer.addExperience(experience);
 	}
 	
 	/**
@@ -318,13 +316,14 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 	 */
 	@Override
 	public void updatePolicy(int timestep) {
-		for (String key : policies.keySet()) {
-			Algorithm algorithm = algorithms.get(key);
-			if (algorithm != null && algorithm.getLearningFrequency() > 0
-					&& timestep % algorithm.getLearningFrequency() == 0) {
-                learnOnBatch(key);
-            }
-        }
+	    for (String tag : policies.keySet()) {
+	        Algorithm algorithm = algorithms.get(tag);
+	        Batch experienceBuffer = experienceBuffers.get(tag);
+
+	        if (algorithm != null && experienceBuffer != null && algorithm.shouldLearn(timestep, experienceBuffer)) {
+	            learnOnBatch(tag);
+	        }
+	    }
 	}
 
 	/**
@@ -343,12 +342,12 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 	 */
 	public void learnOnBatch(String tag) {
 		Algorithm algorithm = getAlgorithm(tag);
-		Batch batch = dimensionalBatches.get(tag);
-		if (algorithm != null && batch != null) {
-			algorithm.learnOnBatch(batch, getLogger());
-		} else {
-			throw new IllegalArgumentException("No policy or batch found for tag: " + tag);
+		Batch buffer = experienceBuffers.get(tag);
+		
+		if (algorithm == null || buffer == null)  {
+			throw new IllegalArgumentException("No algorithm or buffer found for tag: " + tag);
 		}
+		algorithm.learnOnBatch(buffer, getLogger());
 	}
 
 	/**
@@ -368,9 +367,10 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 	 */
 	public void endEpisode(String tag) {
         Algorithm algorithm = getAlgorithm(tag);
-        Batch batch = dimensionalBatches.get(tag);
-        if (algorithm != null && batch != null) {
-            algorithm.endEpisode(batch, getLogger());
+        Batch buffer = experienceBuffers.get(tag);
+        
+        if (algorithm != null && buffer != null) {
+            algorithm.endEpisode(buffer, getLogger());
         }
     }
 	@Override

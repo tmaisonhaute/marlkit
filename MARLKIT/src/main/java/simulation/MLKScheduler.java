@@ -39,10 +39,6 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private Activator envEnd;
 
 	private Activator agentsAct;
-//	private Activator agentsMakeObservation;
-//	private Activator agentsCollectExperience;
-//	private Activator agentsUpdatePolicy;
-//	private Activator agentsEndEpisode;
 	
 	private Activator agentsPreInfluenceCommunicate;
 	private Activator agentsHandlePreInfluenceCommunication;
@@ -81,17 +77,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		addActivator(envEndEpisode);
 		envEnd = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
 		addActivator(envEnd);
-		
-//		agentsMakeObservation = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "registerObservation");
-//		addActivator(agentsMakeObservation);
+
 		agentsAct = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "takeAction");
 		addActivator(agentsAct);
-//		agentsCollectExperience = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "collectExperience");
-//		addActivator(agentsCollectExperience);
-//		agentsUpdatePolicy = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "updatePolicy");
-//		addActivator(agentsUpdatePolicy);
-//		agentsEndEpisode = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "endEpisode");
-//		addActivator(agentsEndEpisode);
+
 		
 		trainingExecutionStrategy.activate(getModelGroup());
 		trainingExecutionStrategy.getActivators().forEach(this::addActivator);
@@ -206,6 +195,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		agentsUpdatePolicy(counter);
 		
 		handleEndEpisode();
+		
 		
 		handleDisplay();
 		displayViewers();
@@ -435,5 +425,6 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	protected int getPauseDisplayValue() {
 		return criteriaModule.getPauseDisplayValue();
 	}
+
 	
 }
