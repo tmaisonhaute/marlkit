@@ -10,6 +10,8 @@ import java.util.Map;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
+import environment.observation.JointObservation;
+import environment.observation.Observation;
 import experience.Experience;
 import learning.algorithms.ActorCritic;
 import learning.policies.PolicyInput;
@@ -28,7 +30,7 @@ import madkit.kernel.Agent;
  *
  * <p>Merging rule:
  * <ul>
- *   <li>Input: all PolicyInput objects are merged with {@code add(...)}.</li>
+ *   <li>Input: local observations are stored as ordered blocks in a {@link JointObservation}.</li>
  *   <li>Action: all individual actions are merged into one {@link MappedJointAction}.</li>
  *   <li>Reward: each agent keeps its own original reward.</li>
  * </ul>
@@ -69,7 +71,7 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
             return;
         }
 
-        PolicyInput mergedInput = mergeInputs(experiencesByAgent);
+        JointObservation mergedInput = mergeInputs(experiencesByAgent);
         MappedJointAction jointAction = mergeActions(experiencesByAgent);
 
         redistributeMergedExperiences(experiencesByAgent, mergedInput, jointAction);
@@ -143,25 +145,31 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
 		}
 	}
 
-   /**
-     * Merges all policy inputs into one common input.
-     *
-     * @param experiencesByAgent agent -> experience map
-     * @return merged input
-     */
-    protected PolicyInput mergeInputs(Map<MLKAgent, Experience> experiencesByAgent) {
-        PolicyInput mergedInput = null;
+	/**
+	 * Combines the agents' local observations into an ordered joint observation.
+	 *
+	 * <p>Each local observation remains a separate block. The iteration order of
+	 * {@code experiencesByAgent} defines the order of the observations in the
+	 * resulting joint observation.</p>
+	 *
+	 * @param experiencesByAgent the ordered map associating agents with their local experiences
+	 * @return the joint observation containing all local observations
+	 * @throws IllegalArgumentException if an experience input is not an observation
+	 */
+    protected JointObservation mergeInputs(Map<MLKAgent, Experience> experiencesByAgent) {
+        JointObservation jointObservation = new JointObservation();
 
         for (Experience experience : experiencesByAgent.values()) {
             PolicyInput input = experience.getInput();
-            if (mergedInput == null) {
-                mergedInput = input;
-            } else {
-                mergedInput = mergedInput.add(input);
+            
+            if (!(input instanceof Observation observation)) {
+                throw new IllegalArgumentException("Centralized critic training requires Observation inputs.");
             }
+            
+            jointObservation.addObservation(observation);
         }
 
-        return mergedInput;
+        return jointObservation;
     }
     
 
@@ -196,10 +204,10 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
       * @param mergedInput the centralized merged input
       * @param jointAction the centralized joint action
       */
-     protected void redistributeMergedExperiences(Map<MLKAgent, Experience> experiencesByAgent, PolicyInput mergedInput, MappedJointAction jointAction) {
+     protected void redistributeMergedExperiences(Map<MLKAgent, Experience> experiencesByAgent, JointObservation mergedInput, MappedJointAction jointAction) {
     	 
          for (Map.Entry<MLKAgent, Experience> entry : experiencesByAgent.entrySet()) {
-             MLKAgent agent = entry.getKey();
+        	 MLKAgent agent = entry.getKey();
              
              Experience originalExperience = entry.getValue();
              Experience centralizedExperience = originalExperience.withInputAction(mergedInput, jointAction);
@@ -208,10 +216,9 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
              
              if (agent.getAlgorithm() instanceof ActorCritic actorCritic) {
             	 actorCritic.getCritic().enrichExperience(originalExperience, centralizedExperience);
-				} else {
-					throw new IllegalStateException(
-							"CentralizedCriticActivator requires agents with ActorCritic algorithms.");
-				}
+             } else {
+				throw new IllegalStateException("CentralizedCriticActivator requires agents with ActorCritic algorithms.");
+             }
          }
      }
 

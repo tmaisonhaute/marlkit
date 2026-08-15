@@ -1,6 +1,7 @@
 package marlkit.preyhunter.agent;
 
 import centralizedtraining.CentralizedCriticTrainingExecutionStrategy;
+import environment.observation.wrapperobservationvector.WrapperJointObservation;
 import learning.ContinuousActionExplorationStrategy;
 import learning.actionexplorationstrategies.GaussianNoise;
 import learning.algorithms.DDPG;
@@ -16,7 +17,7 @@ public class HunterAgentDDPGCentralizedCritic extends HunterAgentDDPG {
 	 * @param maxVisiblePreys number of preys that can be observed by this agent
 	 * @param speed the speed of the hunter agent
 	 */
-	public HunterAgentDDPGCentralizedCritic(int maxVisibleHunters, int maxVisiblePreys, double speed) {
+	public HunterAgentDDPGCentralizedCritic(int maxVisibleHunters, int maxVisiblePreys, double speed, int nbHunterAgents) {
 		super();
 
         WrapperPreyHunterObservationVector wrapperActor = new WrapperPreyHunterObservationVector(maxVisibleHunters, maxVisiblePreys);
@@ -27,13 +28,15 @@ public class HunterAgentDDPGCentralizedCritic extends HunterAgentDDPG {
         MLPDeterministicPolicy actor = createActor(wrapperActor, observationSizeActor, speed, actionNoiseStrategy);
         MLPDeterministicPolicy targetActor = createActor(wrapperActor, observationSizeActor, speed);
         
-        WrapperPreyHunterObservationVector wrapperCritic = new WrapperPreyHunterObservationVector(maxVisibleHunters+1, maxVisiblePreys);
+        WrapperJointObservation wrapperCritic = new WrapperJointObservation(wrapperActor, observationSizeActor, nbHunterAgents);
         int observationSizeCritic = wrapperCritic.getVectorSize();
+        int actionSizeCritic = ACTION_SIZE * nbHunterAgents;
 
-        ActionValueCritic critic = new ActionValueCritic(observationSizeCritic, ACTION_SIZE, DEFAULT_CRITIC_HIDDEN_SIZE, wrapperCritic);
-        ActionValueCritic targetCritic = new ActionValueCritic(observationSizeCritic, ACTION_SIZE, DEFAULT_CRITIC_HIDDEN_SIZE, wrapperCritic);
-
-        DDPG algorithm = new DDPG(actor, targetActor, critic, targetCritic, DEFAULT_ACTOR_LEARNING_RATE, DEFAULT_CRITIC_LEARNING_RATE, DEFAULT_GAMMA, DEFAULT_TAU, DEFAULT_LEARNING_BATCH_SIZE, DEFAULT_REPLAY_BUFFER_CAPACITY);
+        ActionValueCritic critic = new ActionValueCritic(observationSizeCritic, actionSizeCritic, DEFAULT_CRITIC_HIDDEN_SIZE, wrapperCritic);
+        ActionValueCritic targetCritic = new ActionValueCritic(observationSizeCritic, actionSizeCritic, DEFAULT_CRITIC_HIDDEN_SIZE, wrapperCritic);
+        
+        DDPG algorithm = new DDPG(actor, targetActor, critic, targetCritic, DEFAULT_ACTOR_LEARNING_RATE, 
+        		DEFAULT_CRITIC_LEARNING_RATE, DEFAULT_GAMMA, DEFAULT_TAU, DEFAULT_LEARNING_BATCH_SIZE, DEFAULT_REPLAY_BUFFER_CAPACITY);
 
         setPolicy(actor);
         setAlgorithm(algorithm);

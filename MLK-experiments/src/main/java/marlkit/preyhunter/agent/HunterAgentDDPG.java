@@ -41,10 +41,10 @@ public class HunterAgentDDPG extends HunterAgent {
     protected static final int DEFAULT_REPLAY_BUFFER_CAPACITY = 100_000;
 
     /**
-     * Creates a DDPG hunter with the default observation capacity.
+     * Creates a DDPG hunter, but does not initialize the actor, critic, or algorithm.
      */
-    public HunterAgentDDPG() {
-        this(DEFAULT_MAX_VISIBLE_HUNTERS, DEFAULT_MAX_VISIBLE_PREYS);
+    protected HunterAgentDDPG() {
+        super();
     }
 
     /**

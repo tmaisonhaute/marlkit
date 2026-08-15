@@ -28,7 +28,7 @@ public class LauncherPVHDDPGCentralized extends LauncherPVH {
         int maxVisiblePreys = NB_PREY_AGENTS;
 
         for (int i = 0; i < NB_HUNTER_AGENTS; i++) {
-        	HunterAgentDDPGCentralizedCritic hunter = new HunterAgentDDPGCentralizedCritic(maxVisibleHunters, maxVisiblePreys, HUNTER_SPEED);
+        	HunterAgentDDPGCentralizedCritic hunter = new HunterAgentDDPGCentralizedCritic(maxVisibleHunters, maxVisiblePreys, HUNTER_SPEED, NB_HUNTER_AGENTS);
 
             launchAgent(hunter);
         }
