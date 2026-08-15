@@ -9,7 +9,7 @@ import java.util.Map;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import agent.action.JointAction;
+import agent.action.MappedJointAction;
 import experience.Experience;
 import learning.algorithms.ActorCritic;
 import learning.policies.PolicyInput;
@@ -29,7 +29,7 @@ import madkit.kernel.Agent;
  * <p>Merging rule:
  * <ul>
  *   <li>Input: all PolicyInput objects are merged with {@code add(...)}.</li>
- *   <li>Action: all individual actions are merged into one {@link JointAction}.</li>
+ *   <li>Action: all individual actions are merged into one {@link MappedJointAction}.</li>
  *   <li>Reward: each agent keeps its own original reward.</li>
  * </ul>
  * </p>
@@ -70,7 +70,7 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
         }
 
         PolicyInput mergedInput = mergeInputs(experiencesByAgent);
-        JointAction jointAction = mergeActions(experiencesByAgent);
+        MappedJointAction jointAction = mergeActions(experiencesByAgent);
 
         redistributeMergedExperiences(experiencesByAgent, mergedInput, jointAction);
     }
@@ -171,13 +171,13 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
       * @param experiencesByAgent agent -> experience map
       * @return the joint action
       */
-     protected JointAction mergeActions(Map<MLKAgent, Experience> experiencesByAgent) {
-         JointAction jointAction = new JointAction();
+     protected MappedJointAction mergeActions(Map<MLKAgent, Experience> experiencesByAgent) {
+         MappedJointAction jointAction = new MappedJointAction();
 
          for (Map.Entry<MLKAgent, Experience> entry : experiencesByAgent.entrySet()) {
              MLKAgent agent = entry.getKey();
              Action action = entry.getValue().getAction();
-             jointAction.addAction(action);
+             jointAction.addAction(agent, action);
          }
 
          return jointAction;
@@ -196,13 +196,13 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
       * @param mergedInput the centralized merged input
       * @param jointAction the centralized joint action
       */
-     protected void redistributeMergedExperiences(Map<MLKAgent, Experience> experiencesByAgent, PolicyInput mergedInput, JointAction jointAction) {
+     protected void redistributeMergedExperiences(Map<MLKAgent, Experience> experiencesByAgent, PolicyInput mergedInput, MappedJointAction jointAction) {
     	 
          for (Map.Entry<MLKAgent, Experience> entry : experiencesByAgent.entrySet()) {
              MLKAgent agent = entry.getKey();
              
              Experience originalExperience = entry.getValue();
-             Experience centralizedExperience = new Experience(mergedInput, jointAction, originalExperience.getReward());
+             Experience centralizedExperience = originalExperience.withInputAction(mergedInput, jointAction);
 
              agent.feedbackExperience(originalExperience);
              
@@ -214,7 +214,5 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
 				}
          }
      }
-
-
 
 }

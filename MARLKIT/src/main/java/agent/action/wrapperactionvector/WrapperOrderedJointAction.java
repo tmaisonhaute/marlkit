@@ -5,13 +5,14 @@ import java.util.List;
 
 import agent.action.Action;
 import agent.action.JointAction;
+import agent.action.OrderedJointAction;
 
-public class WrapperJointAction implements WrapperActionVector{
+public class WrapperOrderedJointAction implements WrapperActionVector{
 	
 	private final WrapperActionVector wrapperActionVector;
 	private int nbAgents;
 	
-	public WrapperJointAction(WrapperActionVector wrapperActionVector, int nbAgents) {
+	public WrapperOrderedJointAction(WrapperActionVector wrapperActionVector, int nbAgents) {
 		this.wrapperActionVector = wrapperActionVector;
 		this.nbAgents = nbAgents;
 	}
@@ -44,7 +45,7 @@ public class WrapperJointAction implements WrapperActionVector{
 		if (vector.length % nbAgents != 0) {
 			throw new IllegalArgumentException("Vector length must be divisible by the number of agents.");
 		}
-		JointAction jointAction = new JointAction();
+		OrderedJointAction jointAction = new OrderedJointAction();
 		int sizeIndividualAction = vector.length / nbAgents;
 		
 		for (int i = 0; i < nbAgents; i++) {

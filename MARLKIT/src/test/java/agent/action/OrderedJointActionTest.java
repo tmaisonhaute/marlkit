@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.testng.annotations.Test;
 
-public class JointActionTest {
+public class OrderedJointActionTest {
 
     @Test
     public void givenEmptyJointAction_whenAddAction_thenSizeIsOne() {
         // Given
-        JointAction jointAction = new JointAction();
+    	OrderedJointAction jointAction = new OrderedJointAction();
         Action action = new DummyAction("a");
 
         // When
@@ -24,7 +24,7 @@ public class JointActionTest {
         // Given
         Action action1 = new DummyAction("a1");
         Action action2 = new DummyAction("a2");
-        JointAction jointAction = JointAction.of(action1, action2);
+        OrderedJointAction jointAction = OrderedJointAction.of(action1, action2);
 
         // When
         Action actionAtIndex = jointAction.getActionAtIndex(1);
@@ -38,7 +38,7 @@ public class JointActionTest {
         // Given
         Action action1 = new DummyAction("a1");
         Action action2 = new DummyAction("a2");
-        JointAction jointAction = new JointAction();
+        OrderedJointAction jointAction = new OrderedJointAction();
         jointAction.addAction(action1);
         jointAction.addAction(action2);
 
@@ -55,10 +55,10 @@ public class JointActionTest {
         Action action1 = new DummyAction("a1");
         Action action2 = new DummyAction("a2");
         Action first = new DummyAction("first");
-        JointAction jointAction = JointAction.of(action1, action2);
+        OrderedJointAction jointAction = OrderedJointAction.of(action1, action2);
 
         // When
-        JointAction newJointAction = jointAction.withActionFirst(first);
+        OrderedJointAction newJointAction = jointAction.withActionFirst(first);
 
         // Then
         assertThat(newJointAction.getActions()).containsExactly(first, action1, action2);
@@ -70,10 +70,10 @@ public class JointActionTest {
         Action action1 = new DummyAction("a1");
         Action action2 = new DummyAction("a2");
         Action inserted = new DummyAction("inserted");
-        JointAction jointAction = JointAction.of(action1, action2);
+        OrderedJointAction jointAction = OrderedJointAction.of(action1, action2);
 
         // When
-        JointAction newJointAction = jointAction.withActionAtIndex(inserted, -1);
+        OrderedJointAction newJointAction = jointAction.withActionAtIndex(inserted, -1);
 
         // Then
         assertThat(newJointAction.getActions()).containsExactly(action1, action2);
@@ -85,10 +85,10 @@ public class JointActionTest {
         Action action1 = new DummyAction("a1");
         Action action2 = new DummyAction("a2");
         Action inserted = new DummyAction("inserted");
-        JointAction jointAction = JointAction.of(action1, action2);
+        OrderedJointAction jointAction = OrderedJointAction.of(action1, action2);
 
         // When
-        JointAction newJointAction = jointAction.withActionAtIndex(inserted, 1);
+        OrderedJointAction newJointAction = jointAction.withActionAtIndex(inserted, 1);
 
         // Then
         assertThat(newJointAction.getActions()).containsExactly(action1, inserted, action2);
@@ -100,10 +100,10 @@ public class JointActionTest {
         Action action1 = new DummyAction("a1");
         Action action2 = new DummyAction("a2");
         Action inserted = new DummyAction("inserted");
-        JointAction jointAction = JointAction.of(action1, action2);
+        OrderedJointAction jointAction = OrderedJointAction.of(action1, action2);
 
         // When
-        JointAction newJointAction = jointAction.withActionAtIndex(inserted, 5);
+        OrderedJointAction newJointAction = jointAction.withActionAtIndex(inserted, 5);
 
         // Then
         assertThat(newJointAction.getActions()).containsExactly(action1, action2, inserted);
@@ -114,8 +114,8 @@ public class JointActionTest {
         // Given
         Action action1 = new DummyAction("a1");
         Action action2 = new DummyAction("a2");
-        JointAction jointAction1 = JointAction.of(action1, action2);
-        JointAction jointAction2 = JointAction.of(new DummyAction("a1"), new DummyAction("a2"));
+        OrderedJointAction jointAction1 = OrderedJointAction.of(action1, action2);
+        OrderedJointAction jointAction2 = OrderedJointAction.of(new DummyAction("a1"), new DummyAction("a2"));
 
         // When
         boolean isEqual = jointAction1.equals(jointAction2);
@@ -129,10 +129,10 @@ public class JointActionTest {
         // Given
         DummyAction action1 = new DummyAction("a1");
         DummyAction action2 = new DummyAction("a2");
-        JointAction jointAction = JointAction.of(action1, action2);
+        OrderedJointAction jointAction = OrderedJointAction.of(action1, action2);
 
         // When
-        JointAction copy = (JointAction) jointAction.copy();
+        OrderedJointAction copy = (OrderedJointAction) jointAction.copy();
 
         // Then
         assertThat(copy.getActions()).containsExactly(new DummyAction("a1"), new DummyAction("a2"));

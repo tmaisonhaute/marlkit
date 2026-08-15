@@ -4,7 +4,10 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import agent.MLKAgent;
+import agent.action.Action;
 import agent.action.ActionContinuousVector;
+import agent.action.JointAction;
+import agent.action.MappedJointAction;
 import experience.Experience;
 import experience.TransitionExperience;
 import learning.Batch;
@@ -265,33 +268,53 @@ public class DDPG implements ActorCritic {
 
         int batchSize = sampledBatch.size();
 
-        PolicyInput[] observations = new PolicyInput[batchSize];
-        ActionContinuousVector[] sampledActions = new ActionContinuousVector[batchSize];
+        PolicyInput[] actorObservations = new PolicyInput[batchSize];
+        
+        PolicyInput[] criticObservations = new PolicyInput[batchSize];
+        Action[] criticSourceActions = new Action[batchSize];
+        ActionContinuousVector[] criticActions = new ActionContinuousVector[batchSize];
         double[] targetValues = new double[batchSize];
 
         int index = 0;
 
         for (Experience experience : sampledBatch.getExperiences()) {
-            TransitionExperience transition = requireTransition(experience);
+        	TransitionExperience actorTransition = requireTransition(experience);
+        	
+        	Experience criticExperience = getCritic().getEnrichedExperience(experience);
+            TransitionExperience criticTransition = requireTransition(criticExperience);
 
-            observations[index] = transition.getInput();
-            sampledActions[index] = requireContinuousAction(transition);
-            targetValues[index] = computeTargetValue(transition, transition.getNextObservation());
+            actorObservations[index] = actorTransition.getInput();
+            
+            criticObservations[index] = criticTransition.getInput();
+            criticSourceActions[index] = criticTransition.getAction();
+            criticActions[index] = requireContinuousAction(criticTransition);
+            targetValues[index] = computeTargetValue(criticTransition, criticTransition.getNextObservation());
 
             index++;
         }
 
-        critic.updateTowardTargets(observations, sampledActions, targetValues, criticLearningRate);
-        ActionContinuousVector[] actorActions = actor.forwardActions(observations);
-
+        critic.updateTowardTargets(criticObservations, criticActions, targetValues, criticLearningRate);
+        ActionContinuousVector[] actorActions = actor.forwardActions(actorObservations);
+        
         double[][] actorLossGradients = new double[batchSize][];
 
         for (int i = 0; i < batchSize; i++) {
-            double[] actionGradient = critic.actionGradient(observations[i], actorActions[i]);
-            actorLossGradients[i] = negate(actionGradient);
+        	Action criticSourceAction = criticSourceActions[i];
+        	
+        	if (criticSourceAction instanceof MappedJointAction mappedJointAction) {
+                MappedJointAction actorJointAction = mappedJointAction.withAction(getAgent(), actorActions[i]);
+                double[] localActionGradient = critic.actionGradient(criticObservations[i], actorJointAction, getAgent());
+                actorLossGradients[i] = negate(localActionGradient);
+            } else if (criticSourceAction instanceof ActionContinuousVector) {
+                double[] localActionGradient = critic.actionGradient(criticObservations[i], actorActions[i]);
+                actorLossGradients[i] = negate(localActionGradient);
+            } else {
+                throw new IllegalArgumentException("DDPG requires ActionContinuousVector or MappedJointAction actions.");
+            }
+        	
         }
 
-        actor.updateFromActionGradient(observations, actorLossGradients, actorLearningRate);
+        actor.updateFromActionGradient(actorObservations, actorLossGradients, actorLearningRate);
 
         softUpdateTargetNetworks();
         
@@ -341,11 +364,20 @@ public class DDPG implements ActorCritic {
      * @throws IllegalArgumentException if the action is not continuous
      */
     private ActionContinuousVector requireContinuousAction(TransitionExperience transition) {
-        if (!(transition.getAction() instanceof ActionContinuousVector action)) {
-            throw new IllegalArgumentException("DDPG requires ActionContinuousVector actions.");
-        }
+    	Action action = transition.getAction();
+	    if (action instanceof JointAction jointAction) {
+	    	try {
+	    		action = ActionContinuousVector.fromJointAction(jointAction);
+	    	} catch (IllegalArgumentException e) {
+	    		throw new IllegalArgumentException("DDPG requires non-empty JointAction that contain only ActionContinuousVector actions.");
+	    	}	
+    	}
+        if (action instanceof ActionContinuousVector actionContinuousVector) {
+        	return actionContinuousVector;
+		} 
+        throw new IllegalArgumentException("DDPG requires ActionContinuousVector actions or continuous JointAction actions.");
 
-        return action;
+
     }
 
     /**

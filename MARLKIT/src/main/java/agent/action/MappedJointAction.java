@@ -1,12 +1,13 @@
 package agent.action;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import agent.MLKAgent;
 
-public class MappedJointAction implements Action {
+public class MappedJointAction implements JointAction {
 
     protected Map<MLKAgent, Action> agentActions;
 
@@ -53,7 +54,7 @@ public class MappedJointAction implements Action {
      *
      * @return the map associating each agent with its action
      */
-    public Map<MLKAgent, Action> getActions() {
+    public Map<MLKAgent, Action> getMappedActions() {
         return agentActions;
     }
 
@@ -133,4 +134,9 @@ public class MappedJointAction implements Action {
 
         return copy;
     }
+
+	@Override
+	public List<Action> getActions() {
+		return List.copyOf(agentActions.values());
+	}
 }

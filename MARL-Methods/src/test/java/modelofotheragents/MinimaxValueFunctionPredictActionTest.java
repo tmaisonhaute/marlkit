@@ -14,8 +14,8 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.ActionInt;
 import agent.action.ActionSpace;
-import agent.action.JointAction;
 import agent.action.MappedJointAction;
+import agent.action.OrderedJointAction;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
 import experience.Experience;
@@ -113,7 +113,7 @@ public class MinimaxValueFunctionPredictActionTest {
         MappedJointAction predicted = model.predictAction(new DummyPolicyInput(), own);
 
         // Then
-		assertThat(predicted.getActions()).isEmpty();
+		assertThat(predicted.getMappedActions()).isEmpty();
     }
 
     @Test
@@ -214,7 +214,7 @@ public class MinimaxValueFunctionPredictActionTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        JointAction jointAction = JointAction.of(action1, action2);
+        OrderedJointAction jointAction = OrderedJointAction.of(action1, action2);
 
         // When
         jointAction.removeActionAtIndex(0);

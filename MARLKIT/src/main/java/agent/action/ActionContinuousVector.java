@@ -1,6 +1,8 @@
 package agent.action;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ActionContinuousVector implements Action {
 	private double[] values;
@@ -121,6 +123,37 @@ public class ActionContinuousVector implements Action {
 	        return false;
 	    }
 	    return Arrays.equals(values, other.values);
+	}
+	
+	/**
+	 * Creates a new ActionContinuousVector by merging all individual actions in the given JointAction.
+	 * @param jointAction the joint action containing individual ActionContinuousVector actions
+	 * @return a new ActionContinuousVector containing all values from the individual actions
+	 */
+	public static ActionContinuousVector fromJointAction(JointAction jointAction) {
+		if (jointAction.size() == 0) {
+		    throw new IllegalArgumentException("Joint action must not be empty.");
+		}
+		
+		List<Double> allValues = new ArrayList<>();
+		double lowerBound = Double.POSITIVE_INFINITY;
+		double upperBound = Double.NEGATIVE_INFINITY;
+		
+		for(Action action : jointAction.getActions()) {
+            if (action instanceof ActionContinuousVector acv) {
+                for (double value : acv.getValues()) {
+                	allValues.add(value);
+                }
+                lowerBound = Math.min(lowerBound, acv.getLowerBound());
+                upperBound = Math.max(upperBound, acv.getUpperBound());
+            } else {
+                throw new IllegalArgumentException("All actions in the joint action must be of type ActionContinuousVector.");
+            }
+        }
+		
+		double[] jointValues = allValues.stream().mapToDouble(Double::doubleValue).toArray();
+		
+		return new ActionContinuousVector(jointValues, lowerBound, upperBound);
 	}
 
 }

@@ -17,7 +17,7 @@ public class QTableJointActionMutationTest {
         Action a1 = new DummyAction();
         PolicyInput input = new DummyPolicyInput();
 
-        JointAction ja = new JointAction();
+        OrderedJointAction ja = new OrderedJointAction();
         ja.addAction(a1);
 
         Pair<PolicyInput, Action> key = new Pair<>(input, ja);
@@ -39,7 +39,7 @@ public class QTableJointActionMutationTest {
         Action a2 = new DummyAction();
         PolicyInput input = new DummyPolicyInput();
 
-        JointAction ja = new JointAction();
+        OrderedJointAction ja = new OrderedJointAction();
         ja.addAction(a1); 
 
         Pair<PolicyInput, Action> key = new Pair<>(input, ja);
@@ -63,7 +63,7 @@ public class QTableJointActionMutationTest {
         Action a2 = new DummyAction();
         PolicyInput input = new DummyPolicyInput();
 
-        JointAction ja = new JointAction();
+        OrderedJointAction ja = new OrderedJointAction();
         ja.addAction(a1); 
 
         Pair<PolicyInput, Action> key = new Pair<>(input, ja);
@@ -71,7 +71,7 @@ public class QTableJointActionMutationTest {
 
         ja.addAction(a2); 	
 
-        JointAction ja2 = new JointAction();
+        OrderedJointAction ja2 = new OrderedJointAction();
         ja2.addAction(a1);
 
         Pair<PolicyInput, Action> key2 = new Pair<>(input, ja2);

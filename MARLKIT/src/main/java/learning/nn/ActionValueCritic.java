@@ -7,7 +7,9 @@ import java.util.Objects;
 import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
+import agent.action.Action;
 import agent.action.ActionContinuousVector;
+import agent.action.MappedJointAction;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
 import experience.Experience;
 import learning.Critic;
@@ -213,6 +215,38 @@ public class ActionValueCritic implements Critic, Parameterized {
         double[] inputGradient = network.inputGradient(criticInput, new double[] { 1.0 });
 
         return Arrays.copyOfRange(inputGradient, observationSize, observationSize + actionSize);
+    }
+    
+    /**
+     * Computes the gradient of the estimated action value with respect to the
+     * action associated with the specified agent.
+     *
+     * @param observation the centralized observation
+     * @param jointAction the joint action at which the gradient is evaluated
+     * @param agent the agent whose action gradient must be returned
+     * @return the gradient with respect to the specified agent's action
+     * @throws IllegalArgumentException if the agent is absent or if the joint
+     *                                  action contains a non-continuous action
+     */
+    public double[] actionGradient(PolicyInput observation, MappedJointAction jointAction, MLKAgent agent) {
+        ActionContinuousVector jointActionVector = ActionContinuousVector.fromJointAction(jointAction);
+        double[] jointGradient = actionGradient(observation, jointActionVector);
+
+        int offset = 0;
+
+        for (Map.Entry<MLKAgent, Action> entry : jointAction.getMappedActions().entrySet()) {
+            if (!(entry.getValue() instanceof ActionContinuousVector action)) {
+                throw new IllegalArgumentException("The joint action must contain only continuous actions.");
+            }
+
+            if (entry.getKey().equals(agent)) {
+                return Arrays.copyOfRange(jointGradient, offset, offset + action.getSize());
+            }
+
+            offset += action.getSize();
+        }
+
+        throw new IllegalArgumentException("The specified agent is absent from the joint action.");
     }
 
     /**

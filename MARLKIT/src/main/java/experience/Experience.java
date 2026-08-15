@@ -69,4 +69,14 @@ public class Experience {
 	public Experience withAction(Action newAction) {
 	    return new Experience(input, newAction, reward);
 	}
+	
+	/**
+	 * Returns a copy of this experiment but with a different input and action.
+	 * @param newInput the new input to use
+	 * @param newAction the new action to use
+	 * @return
+	 */
+	public Experience withInputAction(PolicyInput newInput, Action newAction) {
+		return new Experience(newInput, newAction, reward);
+	}
 }

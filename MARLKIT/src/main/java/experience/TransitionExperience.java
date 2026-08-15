@@ -27,5 +27,10 @@ public class TransitionExperience extends Experience {
 	public TransitionExperience withAction(Action newAction) {
 		return new TransitionExperience(this.input, newAction, this.reward, this.nextInput, this.isTerminal);
 	}
+	
+	@Override
+	public TransitionExperience withInputAction(PolicyInput newInput, Action newAction) {
+		return new TransitionExperience(newInput, newAction, this.reward, this.nextInput, this.isTerminal);
+	}
 
 }
