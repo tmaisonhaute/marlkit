@@ -373,7 +373,7 @@ public class QLearningJALTest {
         }
 
 		@Override
-        public MappedJointAction getLastPredictedJointAction() {
+        public MappedJointAction getLastPredictedAction() {
             return (MappedJointAction) fixedPrediction.copy();
 		}
     }
@@ -452,10 +452,6 @@ public class QLearningJALTest {
 
         @Override
         public void initializeAll() {
-        }
-
-        @Override
-        public void feedbackExperience(PolicyInput input, Action act, reward.Reward rew) {
         }
 
         @Override

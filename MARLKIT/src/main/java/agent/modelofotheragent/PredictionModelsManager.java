@@ -40,7 +40,7 @@ public class PredictionModelsManager implements ModelsManager {
 	 * @return last predicted joint action.
 	 */
 	public Action getLastPredictedAction() {
-		return groupModelPredictAction.getLastPredictedJointAction();
+		return groupModelPredictAction.getLastPredictedAction();
 	}
 	
 	

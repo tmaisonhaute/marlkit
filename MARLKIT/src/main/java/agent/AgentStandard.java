@@ -9,7 +9,6 @@ import learning.Policy;
 import learning.policies.PolicyInput;
 import madkit.kernel.Mailbox;
 import madkit.simulation.SimuAgent;
-import reward.Reward;
 
 /**
  * Standard implementation of an agent in the multi-agent reinforcement learning system.
@@ -106,17 +105,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		this.algorithm.init(this);
 	}
 	
-	/**
-	 * Records an experience composed of observation, action, and reward.
-	 *
-	 * @param input the PolicyInput received
-	 * @param act the action taken
-	 * @param rew the reward received
-	 */
-	@Override
-	public void feedbackExperience(PolicyInput input, Action act, Reward rew) {
-		experienceBuffer.addExperience(input, act, rew);
-	}
+
 	
 	/**
 	 * Records a complete experience object.

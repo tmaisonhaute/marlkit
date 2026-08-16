@@ -517,10 +517,6 @@ public class CentralizedCriticCollectExperienceActivatorTest {
         }
 
         @Override
-        public void feedbackExperience(PolicyInput input, Action action, reward.Reward reward) {
-        }
-
-        @Override
         public Action selectAction(PolicyInput input) {
             return null;
         }

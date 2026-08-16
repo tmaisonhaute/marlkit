@@ -59,9 +59,6 @@ public interface Experience {
 	/**
 	 * Creates a centralized experience from an ordered map of agent experiences.
 	 *
-	 * <p>The centralized experience contains a joint observation, a mapped joint
-	 * action and the specified reward.</p>
-	 *
 	 * @param experiencesByAgent the ordered map associating each agent with its experience
 	 * @param centralReward the reward assigned to the centralized experience
 	 * @return the centralized experience

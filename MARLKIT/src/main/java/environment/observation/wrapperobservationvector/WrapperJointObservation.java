@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import environment.observation.JointObservation;
+import environment.observation.MappedJointObservation;
 import environment.observation.Observation;
 import learning.policies.PolicyInput;
 
@@ -56,18 +57,14 @@ public class WrapperJointObservation implements WrapperPolicyInputVector {
      * @param input the joint observation to transform
      * @return the concatenated observation vector
      * @throws IllegalArgumentException if {@code input} is not a
-     *                                  {@link JointObservation}, if it does not
+     *                                  {@link JointObservation} or a {@link MappedJointObservation}, if it does not
      *                                  contain the expected number of local
      *                                  observations, or if a local vector has
      *                                  an unexpected size
      */
     @Override
     public double[] transform(PolicyInput input) {
-        if (!(input instanceof JointObservation jointObservation)) {
-            throw new IllegalArgumentException("Expected a JointObservation.");
-        }
-
-        List<Observation> observations = jointObservation.getObservations();
+        List<Observation> observations = getObservations(input);
 
         if (observations.size() != numberOfObservations) {
             throw new IllegalArgumentException("Expected " + numberOfObservations + " local observations but got " + observations.size() + ".");
@@ -86,6 +83,18 @@ public class WrapperJointObservation implements WrapperPolicyInputVector {
         }
 
         return jointVector;
+    }
+    
+    private List<Observation> getObservations(PolicyInput input) {
+        if (input instanceof MappedJointObservation mappedJointObservation) {
+            return mappedJointObservation.getObservations();
+        }
+
+        if (input instanceof JointObservation jointObservation) {
+            return jointObservation.getObservations();
+        }
+
+        throw new IllegalArgumentException("Expected JointObservation or MappedJointObservation.");
     }
 
     /**

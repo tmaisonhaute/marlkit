@@ -345,10 +345,6 @@ public class MinimaxValueFunctionPredictActionTest {
         }
 
         @Override
-        public void feedbackExperience(PolicyInput input, Action act, reward.Reward rew) {
-        }
-
-        @Override
         public void feedbackExperience(Experience experience) {
         }
 

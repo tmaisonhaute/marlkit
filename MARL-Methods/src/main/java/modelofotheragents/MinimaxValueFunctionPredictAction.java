@@ -121,7 +121,7 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 	}
 
 	@Override
-	public MappedJointAction getLastPredictedJointAction() {
+	public MappedJointAction getLastPredictedAction() {
 		return lastPredictedJointAction;
 	}
 	

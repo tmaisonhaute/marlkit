@@ -6,6 +6,7 @@ import java.util.Map;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
+import environment.observation.MappedJointObservation;
 import learning.policies.PolicyInput;
 
 public class StandardGroupModelingPredictAction implements GroupModelPredictAction {
@@ -41,32 +42,59 @@ public class StandardGroupModelingPredictAction implements GroupModelPredictActi
 
 	@Override
 	public MappedJointAction predictAction(PolicyInput observation) {
-		MappedJointAction predictedJointAction = new MappedJointAction();
-		for (Map.Entry<MLKAgent, ModelPredictAction> entry : modelPredictActionsByAgent.entrySet()) {
-			MLKAgent agent = entry.getKey();
-			ModelPredictAction modelPredictAction = entry.getValue();
-			Action predicted = modelPredictAction.predictAction(observation);
-			predictedJointAction.addAction(agent, predicted);
-		}
-		this.lastPredictedActions = predictedJointAction.copy();
-		return predictedJointAction;
+	    return predictActions(observation, null);
 	}
 
 	@Override
 	public MappedJointAction predictAction(PolicyInput observation, Action action) {
-		MappedJointAction predictedJointAction = new MappedJointAction();
-		for (Map.Entry<MLKAgent, ModelPredictAction> entry : modelPredictActionsByAgent.entrySet()) {
-			MLKAgent agent = entry.getKey();
-			ModelPredictAction modelPredictAction = entry.getValue();
-			Action predicted = modelPredictAction.predictAction(observation, action);
-			predictedJointAction.addAction(agent, predicted);
-		}
-		this.lastPredictedActions = (MappedJointAction) predictedJointAction.copy();
-		return predictedJointAction;
+	    return predictActions(observation, action);
+	}
+	
+	@Override
+	public MappedJointAction predictActionFromMappedObservation(MappedJointObservation observation) {
+		return predictActions(observation, null);
 	}
 
 	@Override
-	public MappedJointAction getLastPredictedJointAction() {
+	public MappedJointAction predictActionFromMappedObservation(MappedJointObservation observation, Action action) {
+	    return predictActions(observation, action);
+	}
+	
+	private MappedJointAction predictActions(PolicyInput observation, Action action) {
+	    MappedJointAction predictedJointAction = new MappedJointAction();
+
+	    for (Map.Entry<MLKAgent, ModelPredictAction> entry : modelPredictActionsByAgent.entrySet()) {
+	        MLKAgent agent = entry.getKey();
+	        ModelPredictAction model = entry.getValue();
+	        PolicyInput modelObservation;
+
+	        if (observation instanceof MappedJointObservation mappedObservation) {
+	            modelObservation = mappedObservation.getObservation(agent);
+
+	            if (modelObservation == null) {
+	                throw new IllegalArgumentException("No observation found for agent: " + agent);
+	            }
+	        } else {
+	        	modelObservation = observation;
+	        }
+
+	        Action predictedAction;
+
+	        if (action == null) {
+	            predictedAction = model.predictAction(modelObservation);
+	        } else {
+	            predictedAction = model.predictAction(modelObservation, action);
+	        }
+
+	        predictedJointAction.addAction(agent, predictedAction);
+	    }
+
+	    lastPredictedActions = predictedJointAction.copy();
+	    return predictedJointAction;
+	}
+
+	@Override
+	public MappedJointAction getLastPredictedAction() {
 		return lastPredictedActions;
 	}
 

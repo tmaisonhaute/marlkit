@@ -6,7 +6,7 @@ import java.util.Objects;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
-import environment.observation.JointObservation;
+import environment.observation.MappedJointObservation;
 import environment.observation.Observation;
 import learning.policies.PolicyInput;
 import reward.Reward;
@@ -75,8 +75,8 @@ public class TransitionExperience implements Experience {
 	    Objects.requireNonNull(experiencesByAgent, "experiencesByAgent");
 	    Objects.requireNonNull(centralReward, "centralReward");
 
-	    JointObservation jointObservation = new JointObservation();
-	    JointObservation jointNextObservation = new JointObservation();
+	    MappedJointObservation jointObservation = new MappedJointObservation();
+	    MappedJointObservation jointNextObservation = new MappedJointObservation();
 	    MappedJointAction jointAction = new MappedJointAction();
 
 	    for (Map.Entry<MLKAgent, Experience> entry : experiencesByAgent.entrySet()) {
@@ -95,8 +95,8 @@ public class TransitionExperience implements Experience {
 	            throw new IllegalArgumentException("Centralized transitions require Observation next inputs.");
 	        }
 
-	        jointObservation.addObservation(observation);
-	        jointNextObservation.addObservation(nextObservation);
+	        jointObservation.addObservation(agent, observation);
+	        jointNextObservation.addObservation(agent, nextObservation);
 	        jointAction.addAction(agent, transition.getAction());
 	    }
 

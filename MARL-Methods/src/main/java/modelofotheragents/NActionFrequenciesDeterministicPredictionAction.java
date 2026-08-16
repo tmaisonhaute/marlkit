@@ -57,7 +57,7 @@ public class NActionFrequenciesDeterministicPredictionAction implements ModelPre
 	}
 
 	@Override
-	public Action getLastPredictedJointAction() {
+	public Action getLastPredictedAction() {
 		return lastPredictedAction;
 	}
 }

@@ -8,35 +8,21 @@ import java.util.List;
 import java.util.Map;
 
 import agent.MLKAgent;
-import agent.action.Action;
-import agent.action.MappedJointAction;
-import environment.observation.JointObservation;
-import environment.observation.Observation;
 import experience.Experience;
 import learning.algorithms.ActorCritic;
-import learning.policies.PolicyInput;
 import madkit.kernel.Activator;
 import madkit.kernel.Agent;
 
 
 
 /**
- * Activator that centralizes all agents' experiences into one common
- * state-action description, then redistributes a personalized experience
- * to each agent.
+ * Activator that collects the agents' experiences and delegates the creation
+ * of centralized experiences to their concrete experience implementations.
  *
- * <p>The redistributed experience is identical for all agents except for the reward,
- * which remains the original reward of each recipient agent.</p>
- *
- * <p>Merging rule:
- * <ul>
- *   <li>Input: local observations are stored as ordered blocks in a {@link JointObservation}.</li>
- *   <li>Action: all individual actions are merged into one {@link MappedJointAction}.</li>
- *   <li>Reward: each agent keeps its own original reward.</li>
- * </ul>
- * </p>
+ * <p>The experiences are stored in an ordered map so that centralized
+ * observations and actions can preserve a stable and consistent agent
+ * ordering.</p>
  */
-
 public class CentralizedCriticCollectExperienceActivator extends Activator {
 	
 	/**
@@ -71,10 +57,7 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
             return;
         }
 
-        JointObservation mergedInput = mergeInputs(experiencesByAgent);
-        MappedJointAction jointAction = mergeActions(experiencesByAgent);
-
-        redistributeMergedExperiences(experiencesByAgent, mergedInput, jointAction);
+        redistributeCentralizedExperiences(experiencesByAgent);
     }
 
     /**
@@ -145,72 +128,21 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
 		}
 	}
 
+
 	/**
-	 * Combines the agents' local observations into an ordered joint observation.
+	 * Records each agent's original experience and associates it with a
+	 * centralized experience created by its concrete experience implementation.
 	 *
-	 * <p>Each local observation remains a separate block. The iteration order of
-	 * {@code experiencesByAgent} defines the order of the observations in the
-	 * resulting joint observation.</p>
-	 *
-	 * @param experiencesByAgent the ordered map associating agents with their local experiences
-	 * @return the joint observation containing all local observations
-	 * @throws IllegalArgumentException if an experience input is not an observation
+	 * @param experiencesByAgent the ordered map associating each agent with its
+	 *                           original experience
 	 */
-    protected JointObservation mergeInputs(Map<MLKAgent, Experience> experiencesByAgent) {
-        JointObservation jointObservation = new JointObservation();
-
-        for (Experience experience : experiencesByAgent.values()) {
-            PolicyInput input = experience.getInput();
-            
-            if (!(input instanceof Observation observation)) {
-                throw new IllegalArgumentException("Centralized critic training requires Observation inputs.");
-            }
-            
-            jointObservation.addObservation(observation);
-        }
-
-        return jointObservation;
-    }
-    
-
-    /**
-      * Merges all individual actions into one joint action.
-      *
-      * @param experiencesByAgent agent -> experience map
-      * @return the joint action
-      */
-     protected MappedJointAction mergeActions(Map<MLKAgent, Experience> experiencesByAgent) {
-         MappedJointAction jointAction = new MappedJointAction();
-
-         for (Map.Entry<MLKAgent, Experience> entry : experiencesByAgent.entrySet()) {
-             MLKAgent agent = entry.getKey();
-             Action action = entry.getValue().getAction();
-             jointAction.addAction(agent, action);
-         }
-
-         return jointAction;
-     }
-
-
-     /**
-      * Sends each agent a centralized experience:
-      * <ul>
-      *   <li>same merged input for everyone</li>
-      *   <li>same joint action for everyone</li>
-      *   <li>individual original reward for each recipient</li>
-      * </ul>
-      *
-      * @param experiencesByAgent agent -> original experience
-      * @param mergedInput the centralized merged input
-      * @param jointAction the centralized joint action
-      */
-     protected void redistributeMergedExperiences(Map<MLKAgent, Experience> experiencesByAgent, JointObservation mergedInput, MappedJointAction jointAction) {
+     protected void redistributeCentralizedExperiences(Map<MLKAgent, Experience> experiencesByAgent) {
     	 
          for (Map.Entry<MLKAgent, Experience> entry : experiencesByAgent.entrySet()) {
         	 MLKAgent agent = entry.getKey();
              
              Experience originalExperience = entry.getValue();
-             Experience centralizedExperience = originalExperience.withInputAction(mergedInput, jointAction);
+             Experience centralizedExperience = originalExperience.createCentralizedExperience(experiencesByAgent, originalExperience.getReward());
 
              agent.feedbackExperience(originalExperience);
              

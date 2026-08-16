@@ -13,7 +13,6 @@ import learning.Batch;
 import learning.Policy;
 import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
-import reward.Reward;
 
 /**
  * An agent supporting multiple tagged policy-algorithm pairs.
@@ -259,17 +258,6 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 		return ((MLKEnvironment) getEnvironment());
 	}
 
-	/**
-	 * Records an experience using the default policy.
-	 *
-	 * @param input the PolicyInput received
-	 * @param act the action taken
-	 * @param rew the reward received
-	 */
-	@Override
-	public void feedbackExperience(PolicyInput input, Action act, Reward rew) {
-		feedbackExperience(DEFAULT_TAG, input, act, rew);
-	}
 
 	/**
 	 * Records a complete experience using the default policy.
@@ -296,18 +284,7 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 		
 		buffer.addExperience(experience);
 	}
-	
-	/**
-	 * Records an experience for the policy associated with the given tag.
-	 *
-	 * @param tag the policy identifier
-	 * @param input the PolicyInput received
-	 * @param act the action taken
-	 * @param rew the reward received
-	 */
-	public void feedbackExperience(String tag, PolicyInput input, Action act, Reward rew) {
-		feedbackExperience(tag, new Experience(input, act, rew));
-	}
+
 
 	/**
 	 * Updates all policies at the given timestep based on their learning frequencies.

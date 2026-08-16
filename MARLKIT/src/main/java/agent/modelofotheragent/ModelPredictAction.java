@@ -23,7 +23,7 @@ public interface ModelPredictAction {
 	Action predictAction(PolicyInput observation);
 
 	/**
-	 * Predict an action from an observation and an action.
+	 * Predict an action from an observation and an action made by the predicting agent.
 	 *
 	 * @param observation observation used as input.
 	 * @param action action of the predicting agent.
@@ -45,5 +45,5 @@ public interface ModelPredictAction {
 	 *
 	 * @return last predicted action.
 	 */
-	Action getLastPredictedJointAction();
+	Action getLastPredictedAction();
 }

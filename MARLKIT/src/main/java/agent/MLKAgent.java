@@ -10,7 +10,6 @@ import learning.Algorithm;
 import learning.Policy;
 import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
-import reward.Reward;
 
 /**
  * Core interface for agents in the MARLKIT framework.
@@ -90,15 +89,6 @@ public interface MLKAgent {
 	 * Initializes the agent's policy and algorithm with necessary parameters.
 	 */
 	public void initializeAll();
-	
-	/**
-	 * Records an experience composed of observation, action, and reward.
-	 *
-	 * @param input the PolicyInput received
-	 * @param act the action taken
-	 * @param rew the reward received
-	 */
-	public abstract void feedbackExperience(PolicyInput input, Action act, Reward rew);
 	
 	/**
 	 * Records a complete experience object.

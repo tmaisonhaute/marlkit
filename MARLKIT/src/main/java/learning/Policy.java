@@ -36,7 +36,7 @@ public interface Policy {
 	}
 
 	/**
-     * Takes an action based on a single input (usually Observation).
+     * Selects an action based on a single input (usually Observation).
      * 
      * @param input based on which the action is taken
      * @return the action taken

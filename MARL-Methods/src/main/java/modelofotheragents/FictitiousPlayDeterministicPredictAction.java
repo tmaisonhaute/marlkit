@@ -55,7 +55,7 @@ public class FictitiousPlayDeterministicPredictAction implements ModelPredictAct
 	}
 
 	@Override
-	public Action getLastPredictedJointAction() {
+	public Action getLastPredictedAction() {
 		return lastPredictedAction;
 	}
 	

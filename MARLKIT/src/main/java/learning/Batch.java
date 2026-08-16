@@ -150,20 +150,26 @@ public class Batch {
     }
     
     /**
-     * Removes the oldest experiences until this batch does not exceed the specified
-     * maximum size.
+     * Retains only the most recent experiences and returns the removed ones.
      *
      * @param maximumSize the maximum number of experiences to retain
+     * @return the experiences removed from the buffer
      */
-    public void retainLatest(int maximumSize) {
-    	int count = experiences.size() - maximumSize;
-    	if (count <= 0) {
-            return; 
+    public List<Experience> retainLatest(int maximumSize) {
+        if (maximumSize < 0) {
+            throw new IllegalArgumentException("maximumSize must be non-negative.");
         }
-    	for (int i = 0; i < count; i++) {
-    		experiences.removeFirst();
-    	}
+
+        int count = experiences.size() - maximumSize;
+        List<Experience> removedExperiences = new ArrayList<>(Math.max(count, 0));
+
+        for (int i = 0; i < count; i++) {
+            removedExperiences.add(experiences.removeFirst());
+        }
+
+        return removedExperiences;
     }
+    
 	
 }
 

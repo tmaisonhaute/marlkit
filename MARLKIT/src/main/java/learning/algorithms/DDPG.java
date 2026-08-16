@@ -1,13 +1,12 @@
 package learning.algorithms;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.ActionContinuousVector;
-import agent.action.JointAction;
-import agent.action.MappedJointAction;
 import experience.Experience;
 import experience.TransitionExperience;
 import learning.Batch;
@@ -15,24 +14,17 @@ import learning.Critic;
 import learning.Policy;
 import learning.nn.ActionValueCritic;
 import learning.policies.DeterministicPolicyGradient;
+import learning.policies.Parameterized;
 import learning.policies.PolicyInput;
 import madkit.kernel.AgentLogger;
 
 /**
- * Implements the Deep Deterministic Policy Gradient algorithm for continuous
- * action spaces.
+ * Implements Deep Deterministic Policy Gradient with an independent
+ * action-value critic.
  *
- * <p>DDPG combines a deterministic actor with an action-value critic. The
- * critic learns {@code Q(o, a)} from transition experiences, while the actor
- * learns to produce actions that maximize the value estimated by the critic.</p>
- *
- * <p>Target copies of the actor and critic are used to compute stable temporal
- * difference targets. Their parameters are updated through soft updates after
- * each learning batch.</p>
- *
- * <p>This class does not manage the replay buffer itself. The supplied
- * {@link Batch} is expected to contain transition experiences sampled from a
- * replay buffer.</p>
+ * <p>The actor and critic use local observations and local continuous actions.
+ * Multi-agent centralized-critic behavior is implemented separately by
+ * {@link MADDPG}.</p>
  */
 public class DDPG implements ActorCritic {
 
@@ -55,18 +47,15 @@ public class DDPG implements ActorCritic {
      * Creates a DDPG algorithm.
      *
      * @param actor the deterministic actor to train
-     * @param targetActor the target copy of the actor
+     * @param targetActor the target actor
      * @param critic the action-value critic to train
-     * @param targetCritic the target copy of the critic
+     * @param targetCritic the target action-value critic
      * @param actorLearningRate the actor learning rate
      * @param criticLearningRate the critic learning rate
      * @param gamma the reward discount factor
      * @param tau the target-network soft-update coefficient
-     * @throws NullPointerException if an actor or critic is {@code null}
-     * @throws IllegalArgumentException if a learning rate is not positive, if
-     *                                  {@code gamma} is outside {@code [0, 1]},
-     *                                  or if {@code tau} is outside
-     *                                  {@code (0, 1]}
+     * @param learningBatchSize the sampled mini-batch size
+     * @param replayBufferCapacity the maximum replay-buffer capacity
      */
     public DDPG(DeterministicPolicyGradient actor, DeterministicPolicyGradient targetActor, 
     		ActionValueCritic critic, ActionValueCritic targetCritic, 
@@ -79,35 +68,22 @@ public class DDPG implements ActorCritic {
         this.criticLearningRate = criticLearningRate;
         this.gamma = gamma;
         this.tau = tau;
-
-        if (replayBufferCapacity < learningBatchSize) {
-            throw new IllegalArgumentException("replayBufferCapacity must be greater than or equal to learningBatchSize.");
-        }
         this.learningBatchSize = learningBatchSize;
         this.replayBufferCapacity = replayBufferCapacity;
-        
-        
+
         validateParameters();
     }
 
     /**
      * Creates a DDPG algorithm with default hyperparameters.
      *
-     * <p>The default values are:</p>
-     * <ul>
-     *   <li>actor learning rate: {@code 0.0001}</li>
-     *   <li>critic learning rate: {@code 0.001}</li>
-     *   <li>discount factor: {@code 0.99}</li>
-     *   <li>soft-update coefficient: {@code 0.005}</li>
-     * </ul>
-     *
      * @param actor the deterministic actor to train
-     * @param targetActor the target copy of the actor
+     * @param targetActor the target actor
      * @param critic the action-value critic to train
-     * @param targetCritic the target copy of the critic
+     * @param targetCritic the target action-value critic
      */
     public DDPG(DeterministicPolicyGradient actor, DeterministicPolicyGradient targetActor, ActionValueCritic critic, ActionValueCritic targetCritic) {
-        this(actor, targetActor, critic, targetCritic, 0.0001, 0.001, 0.99, 0.005, 64, 100000);
+        this(actor, targetActor, critic, targetCritic, 0.0001, 0.001, 0.99, 0.005, 64, 100_000);
     }
 
     /**
@@ -122,11 +98,9 @@ public class DDPG implements ActorCritic {
     @Override
     public void init(MLKAgent agent) {
         setAgent(agent);
-
         critic.init(agent);
         targetActor.init(agent);
         targetCritic.init(agent);
-
         copyMainNetworksToTargets();
     }
 
@@ -151,51 +125,62 @@ public class DDPG implements ActorCritic {
         }
     }
 
-    /**
-     * Returns the actor used by the algorithm.
-     *
-     * @return the deterministic actor
-     */
     @Override
     public DeterministicPolicyGradient getPolicy() {
         return actor;
     }
 
-    /**
-     * Returns the actor used by the algorithm.
-     *
-     * @return the deterministic actor
-     */
     @Override
     public DeterministicPolicyGradient getActor() {
         return actor;
     }
 
-    /**
-     * Returns the action-value critic used by the algorithm.
-     *
-     * @return the action-value critic
-     */
     @Override
     public Critic getCritic() {
         return critic;
     }
 
     /**
-     * Associates this algorithm with an agent.
+     * Returns the action-value critic used by DDPG.
      *
-     * @param agent the agent using this algorithm
+     * @return the action-value critic
      */
+    protected ActionValueCritic getActionValueCritic() {
+        return critic;
+    }
+
+    /**
+     * Returns the target action-value critic.
+     *
+     * @return the target critic
+     */
+    protected ActionValueCritic getTargetCritic() {
+        return targetCritic;
+    }
+
+    /**
+     * Returns the target deterministic actor.
+     *
+     * @return the target actor
+     */
+    protected DeterministicPolicyGradient getTargetActor() {
+        return targetActor;
+    }
+
+    /**
+     * Returns the reward discount factor.
+     *
+     * @return the reward discount factor
+     */
+    protected double getGamma() {
+        return gamma;
+    }
+
     @Override
     public void setAgent(MLKAgent agent) {
         this.agent = Objects.requireNonNull(agent, "agent");
     }
 
-    /**
-     * Returns the agent using this algorithm.
-     *
-     * @return the associated agent
-     */
     @Override
     public MLKAgent getAgent() {
         return agent;
@@ -204,24 +189,24 @@ public class DDPG implements ActorCritic {
     /**
      * Returns the learning frequency.
      *
-     * @return A {@code 10} indicating that learning may occur every {@code 10} steps
+     * @return a value {@code X} indicating that learning may occur every {@code X} steps
      */
     @Override
     public int getLearningFrequency() {
         return 4;
     }
-    
+
     /**
-     * Indicates whether enough experiences have been accumulated to perform a DDPG
-     * update.
+     * Indicates whether enough experiences have been accumulated and whether the
+     * current timestep permits a DDPG update.
      *
      * @param timestep the current simulation step
      * @param batch the batch of accumulated transition experiences
-     * @return {@code true} when the batch contains enough transitions
-     */
+     * @return {@code true} when the batch contains enough transitions and the learning frequency condition is satisfied
+    **/
     @Override
     public boolean shouldLearn(int timestep, Batch batch) {
-        return batch.size() >= learningBatchSize && (timestep % getLearningFrequency() == 0);
+        return batch.size() >= learningBatchSize && timestep % getLearningFrequency() == 0;
     }
 
     /**
@@ -246,7 +231,11 @@ public class DDPG implements ActorCritic {
      */
     @Override
     public void learnOnBatch(Batch batch, AgentLogger logger) {
-        batch.retainLatest(replayBufferCapacity);
+        List<Experience> removedExperiences = batch.retainLatest(replayBufferCapacity);
+
+        for (Experience removedExperience : removedExperiences) {
+            critic.removeEnrichedExperience(removedExperience);
+        }
 
         if (batch.size() < learningBatchSize) {
             return;
@@ -254,22 +243,18 @@ public class DDPG implements ActorCritic {
 
         Batch sampledBatch = batch.sample(learningBatchSize, pnrg());
         learnOnSample(sampledBatch, logger);
-
     }
-    
+
     /**
-     * Computes all critic and actor gradients for a sampled mini-batch, then
-     * performs one batch update of the critic and one batch update of the actor.
+     * Performs one critic batch update and one actor batch update.
      *
      * @param sampledBatch the mini-batch sampled from the replay buffer
-     * @param logger the agent logger used for profiling information
+     * @param logger the agent logger
      */
-    private void learnOnSample(Batch sampledBatch, AgentLogger logger) {
-
+    protected void learnOnSample(Batch sampledBatch, AgentLogger logger) {
         int batchSize = sampledBatch.size();
 
         PolicyInput[] actorObservations = new PolicyInput[batchSize];
-        
         PolicyInput[] criticObservations = new PolicyInput[batchSize];
         Action[] criticSourceActions = new Action[batchSize];
         ActionContinuousVector[] criticActions = new ActionContinuousVector[batchSize];
@@ -278,77 +263,85 @@ public class DDPG implements ActorCritic {
         int index = 0;
 
         for (Experience experience : sampledBatch.getExperiences()) {
-        	TransitionExperience actorTransition = requireTransition(experience);
-        	
-        	Experience criticExperience = getCritic().getEnrichedExperience(experience);
-            TransitionExperience criticTransition = requireTransition(criticExperience);
+            TransitionExperience actorTransition = requireTransition(experience);
+            TransitionExperience criticTransition = requireTransition(getCriticExperience(experience));
 
             actorObservations[index] = actorTransition.getInput();
-            
             criticObservations[index] = criticTransition.getInput();
             criticSourceActions[index] = criticTransition.getAction();
-            criticActions[index] = requireContinuousAction(criticTransition);
-            targetValues[index] = computeTargetValue(criticTransition, criticTransition.getNextObservation());
+            criticActions[index] = requireContinuousAction(criticTransition.getAction());
+            targetValues[index] = computeTargetValue(actorTransition, criticTransition);
 
             index++;
         }
 
         critic.updateTowardTargets(criticObservations, criticActions, targetValues, criticLearningRate);
+
         ActionContinuousVector[] actorActions = actor.forwardActions(actorObservations);
-        
         double[][] actorLossGradients = new double[batchSize][];
 
         for (int i = 0; i < batchSize; i++) {
-        	Action criticSourceAction = criticSourceActions[i];
-        	
-        	if (criticSourceAction instanceof MappedJointAction mappedJointAction) {
-                MappedJointAction actorJointAction = mappedJointAction.withAction(getAgent(), actorActions[i]);
-                double[] localActionGradient = critic.actionGradient(criticObservations[i], actorJointAction, getAgent());
-                actorLossGradients[i] = negate(localActionGradient);
-            } else if (criticSourceAction instanceof ActionContinuousVector) {
-                double[] localActionGradient = critic.actionGradient(criticObservations[i], actorActions[i]);
-                actorLossGradients[i] = negate(localActionGradient);
-            } else {
-                throw new IllegalArgumentException("DDPG requires ActionContinuousVector or MappedJointAction actions.");
-            }
-        	
+            actorLossGradients[i] = computeActorLossGradient(actorObservations[i], criticObservations[i], criticSourceActions[i], actorActions[i]);
         }
 
         actor.updateFromActionGradient(actorObservations, actorLossGradients, actorLearningRate);
-
         softUpdateTargetNetworks();
-        
     }
 
+    /**
+     * Returns the critic-specific experience associated with an original
+     * experience.
+     *
+     * <p>An independent critic normally returns the original experience.</p>
+     *
+     * @param originalExperience the original local experience
+     * @return the experience used by the critic
+     */
+    protected Experience getCriticExperience(Experience originalExperience) {
+        return critic.getEnrichedExperience(originalExperience);
+    }
 
     /**
-     * Computes the temporal-difference target for one transition.
+     * Computes the TD target for an independent critic.
      *
-     * @param transition the current transition
-     * @param nextObservation the next observation
-     * @return the temporal-difference target
+     * @param actorTransition the local transition used by the actor
+     * @param criticTransition the transition used by the critic
+     * @return the TD target
      */
-    private double computeTargetValue(TransitionExperience transition, PolicyInput nextObservation) {
-        double reward = transition.getRewardValue();
+    protected double computeTargetValue(TransitionExperience actorTransition, TransitionExperience criticTransition) {
+        double reward = criticTransition.getRewardValue();
 
-        if (transition.isTerminal()) {
+        if (criticTransition.isTerminal()) {
             return reward;
         }
 
-        ActionContinuousVector nextAction = targetActor.forwardAction(nextObservation);
-        double nextValue = targetCritic.getValue(nextObservation, nextAction);
+        ActionContinuousVector nextAction = targetActor.forwardAction(actorTransition.getNextObservation());
+        double nextValue = targetCritic.getValue(criticTransition.getNextObservation(), nextAction);
 
         return reward + gamma * nextValue;
     }
 
     /**
-     * Converts an experience to a transition experience.
+     * Computes the loss gradient used to update the independent actor.
+     *
+     * @param actorObservation the local actor observation
+     * @param criticObservation the observation used by the critic
+     * @param criticSourceAction the historical action stored for the critic
+     * @param actorAction the current action produced by the actor
+     * @return the actor loss gradient with respect to its action
+     */
+    protected double[] computeActorLossGradient(PolicyInput actorObservation, PolicyInput criticObservation, Action criticSourceAction, ActionContinuousVector actorAction) {
+        double[] actionGradient = critic.actionGradient(criticObservation, actorAction);
+        return negate(actionGradient);
+    }
+
+    /**
+     * Converts an experience into a transition experience.
      *
      * @param experience the experience to validate
-     * @return the validated transition experience
-     * @throws IllegalArgumentException if the experience is not a transition
+     * @return the validated transition
      */
-    private TransitionExperience requireTransition(Experience experience) {
+    protected TransitionExperience requireTransition(Experience experience) {
         if (!(experience instanceof TransitionExperience transition)) {
             throw new IllegalArgumentException("DDPG requires TransitionExperience instances.");
         }
@@ -357,75 +350,53 @@ public class DDPG implements ActorCritic {
     }
 
     /**
-     * Returns the continuous action stored in a transition.
+     * Converts an action into a continuous action vector.
      *
-     * @param transition the transition containing the action
-     * @return the continuous action
-     * @throws IllegalArgumentException if the action is not continuous
+     * @param action the action to convert
+     * @return the continuous action vector
      */
-    private ActionContinuousVector requireContinuousAction(TransitionExperience transition) {
-    	Action action = transition.getAction();
-	    if (action instanceof JointAction jointAction) {
-	    	try {
-	    		action = ActionContinuousVector.fromJointAction(jointAction);
-	    	} catch (IllegalArgumentException e) {
-	    		throw new IllegalArgumentException("DDPG requires non-empty JointAction that contain only ActionContinuousVector actions.");
-	    	}	
-    	}
+    protected ActionContinuousVector requireContinuousAction(Action action) {
         if (action instanceof ActionContinuousVector actionContinuousVector) {
-        	return actionContinuousVector;
-		} 
-        throw new IllegalArgumentException("DDPG requires ActionContinuousVector actions or continuous JointAction actions.");
+            return actionContinuousVector;
+        }
 
-
+        throw new IllegalArgumentException("DDPG requires ActionContinuousVector actions.");
     }
 
     /**
-     * Negates every component of a gradient vector.
-     *
-     * <p>DDPG maximizes the critic value, while the neural network applies
-     * gradient descent. Consequently, the negative action-value gradient is
-     * used as the actor loss gradient.</p>
+     * Negates every component of a gradient.
      *
      * @param gradient the gradient to negate
      * @return the negated gradient
      */
-    private double[] negate(double[] gradient) {
+    protected double[] negate(double[] gradient) {
         return Arrays.stream(gradient).map(value -> -value).toArray();
     }
 
     /**
-     * Copies the main actor and critic parameters to their target networks.
+     * Copies the main network parameters into their target networks.
      */
-    private void copyMainNetworksToTargets() {
+    protected void copyMainNetworksToTargets() {
         targetActor.setParameters(actor.getParameters());
         targetCritic.setParameters(critic.getParameters());
     }
 
     /**
-     * Applies a soft update to both target networks.
-     *
-     * <p>Each target parameter is updated according to:</p>
-     *
-     * <pre>
-     * target = tau * source + (1 - tau) * target
-     * </pre>
+     * Applies a soft update to the actor and critic target networks.
      */
-    private void softUpdateTargetNetworks() {
+    protected void softUpdateTargetNetworks() {
         softUpdate(actor.getParameters(), targetActor.getParameters(), targetActor);
         softUpdate(critic.getParameters(), targetCritic.getParameters(), targetCritic);
     }
 
     /**
-     * Computes and assigns the soft-updated parameters of a target component.
+     * Softly updates one target component.
      *
-     * @param sourceParameters the trainable component parameters
-     * @param targetParameters the current target component parameters
-     * @param target the target component receiving the updated parameters
-     * @throws IllegalArgumentException if the parameter arrays have different
-     *                                  sizes
+     * @param sourceParameters the main component parameters
+     * @param targetParameters the current target parameters
+     * @param target the target component to update
      */
-    private void softUpdate(double[] sourceParameters, double[] targetParameters, learning.policies.Parameterized target) {
+    protected void softUpdate(double[] sourceParameters, double[] targetParameters, Parameterized target) {
         if (sourceParameters.length != targetParameters.length) {
             throw new IllegalArgumentException("Source and target parameter sizes must match.");
         }
@@ -439,23 +410,13 @@ public class DDPG implements ActorCritic {
         target.setParameters(updatedParameters);
     }
 
-    /**
-     * Performs no episode-specific learning.
-     *
-     * <p>DDPG is an off-policy algorithm and normally learns from replay-buffer
-     * samples during the episode. The supplied batch is therefore not cleared
-     * by this method.</p>
-     *
-     * @param batch the current batch
-     * @param logger the agent logger
-     */
     @Override
     public void endEpisode(Batch batch, AgentLogger logger) {
-    	actor.updateExplorationStrategy();
+        actor.updateExplorationStrategy();
     }
 
     /**
-     * Validates the algorithm hyperparameters.
+     * Validates the DDPG hyperparameters.
      */
     private void validateParameters() {
         if (actorLearningRate <= 0.0) {
@@ -469,6 +430,12 @@ public class DDPG implements ActorCritic {
         }
         if (tau <= 0.0 || tau > 1.0) {
             throw new IllegalArgumentException("tau must be in (0, 1].");
+        }
+        if (learningBatchSize <= 0) {
+            throw new IllegalArgumentException("learningBatchSize must be strictly positive.");
+        }
+        if (replayBufferCapacity < learningBatchSize) {
+            throw new IllegalArgumentException("replayBufferCapacity must be greater than or equal to learningBatchSize.");
         }
     }
 }

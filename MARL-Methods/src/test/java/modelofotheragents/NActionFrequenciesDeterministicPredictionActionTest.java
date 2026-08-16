@@ -104,8 +104,8 @@ public class NActionFrequenciesDeterministicPredictionActionTest {
         Action predicted = model.predictAction(observation);
 
         // Then
-        assertThat(model.getLastPredictedJointAction()).isEqualTo(predicted);
-        assertThat(model.getLastPredictedJointAction()).isNotSameAs(predicted);
+        assertThat(model.getLastPredictedAction()).isEqualTo(predicted);
+        assertThat(model.getLastPredictedAction()).isNotSameAs(predicted);
     }
 
     @Test
