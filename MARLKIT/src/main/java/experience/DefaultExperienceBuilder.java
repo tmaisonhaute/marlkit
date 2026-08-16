@@ -12,7 +12,7 @@ public class DefaultExperienceBuilder implements ExperienceBuilder {
 	public Experience buildExperience(MLKEnvironment environment, MLKAgent agent, Reward reward, boolean isTerminal) {
 		Observation obs = environment.getObservation(agent);
 		Action act = environment.getAction(agent);
-		return new Experience(obs, act, reward);
+		return new DefaultExperience(obs, act, reward);
 	}
 
 }

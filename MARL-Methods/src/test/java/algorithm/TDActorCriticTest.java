@@ -16,6 +16,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.ActionInt;
 import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import experience.DefaultExperience;
 import experience.Experience;
 import learning.Batch;
 import learning.Policy;
@@ -94,9 +95,9 @@ public class TDActorCriticTest {
         DummyPolicyInput input2 = new DummyPolicyInput("s2");
         DummyPolicyInput input3 = new DummyPolicyInput("s3");
 
-        Experience exp1 = new Experience(input1, action2, new RewardStandard(5));
-        Experience exp2 = new Experience(input2, action2, new RewardStandard(6));
-        Experience exp3 = new Experience(input3, action2, new RewardStandard(7));
+        Experience exp1 = new DefaultExperience(input1, action2, new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(input2, action2, new RewardStandard(6));
+        Experience exp3 = new DefaultExperience(input3, action2, new RewardStandard(7));
 
         Batch batch = new Batch(List.of(exp1, exp2, exp3));
 
@@ -132,12 +133,12 @@ public class TDActorCriticTest {
         DummyPolicyInput enriched1 = new DummyPolicyInput("e1");
         DummyPolicyInput enriched2 = new DummyPolicyInput("e2");
 
-        Experience exp1 = new Experience(original1, action2, new RewardStandard(5));
-        Experience exp2 = new Experience(original2, action2, new RewardStandard(6));
+        Experience exp1 = new DefaultExperience(original1, action2, new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(original2, action2, new RewardStandard(6));
         Batch batch = new Batch(List.of(exp1, exp2));
 
-        critic.enrichedExperience1 = new Experience(enriched1, action2, new RewardStandard(5));
-        critic.enrichedExperience2 = new Experience(enriched2, action2, new RewardStandard(6));
+        critic.enrichedExperience1 = new DefaultExperience(enriched1, action2, new RewardStandard(5));
+        critic.enrichedExperience2 = new DefaultExperience(enriched2, action2, new RewardStandard(6));
 
         // When
         algorithm.learnOnBatch(batch, null);
@@ -159,8 +160,8 @@ public class TDActorCriticTest {
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
         Action notInSet = new ActionInt(999);
-        Experience exp1 = new Experience(new DummyPolicyInput("s1"), notInSet, new RewardStandard(5));
-        Experience exp2 = new Experience(new DummyPolicyInput("s2"), notInSet, new RewardStandard(6));
+        Experience exp1 = new DefaultExperience(new DummyPolicyInput("s1"), notInSet, new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(new DummyPolicyInput("s2"), notInSet, new RewardStandard(6));
         Batch batch = new Batch(List.of(exp1, exp2));
 
         // When
@@ -183,7 +184,7 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        Experience exp1 = new Experience(new DummyPolicyInput("s1"), action2, new RewardStandard(5));
+        Experience exp1 = new DefaultExperience(new DummyPolicyInput("s1"), action2, new RewardStandard(5));
         Batch batch = new Batch(List.of(exp1));
 
         // When
@@ -229,8 +230,8 @@ public class TDActorCriticTest {
         RecordingStateValueCritic critic2 = new RecordingStateValueCritic();
         TDActorCritic algorithm2 = new TDActorCritic(actor2, critic2, 0.1, 0.2, 0.9);
 
-        Experience exp1 = new Experience(new DummyPolicyInput("s1"), new ActionInt(2), new RewardStandard(5));
-        Experience exp2 = new Experience(new DummyPolicyInput("s2"), new ActionInt(2), new RewardStandard(6));
+        Experience exp1 = new DefaultExperience(new DummyPolicyInput("s1"), new ActionInt(2), new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(new DummyPolicyInput("s2"), new ActionInt(2), new RewardStandard(6));
         Batch batch = new Batch(List.of(exp1, exp2));
 
         // When
@@ -258,8 +259,8 @@ public class TDActorCriticTest {
         DummyPolicyInput input1 = new DummyPolicyInput("s1");
         DummyPolicyInput input2 = new DummyPolicyInput("s2");
 
-        Experience exp1 = new Experience(input1, action, new RewardStandard(5));
-        Experience exp2 = new Experience(input2, action, new RewardStandard(6));
+        Experience exp1 = new DefaultExperience(input1, action, new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(input2, action, new RewardStandard(6));
         Batch batch = new Batch(List.of(exp1, exp2));
 
         // When
@@ -283,7 +284,7 @@ public class TDActorCriticTest {
         TDActorCritic algorithm = new TDActorCritic(actor, critic);
 
         Batch batch = new Batch(List.of(
-                new Experience(new DummyPolicyInput("s1"), new ActionInt(1), new RewardStandard(5))
+                new DefaultExperience(new DummyPolicyInput("s1"), new ActionInt(1), new RewardStandard(5))
         ));
 
         // When
@@ -310,8 +311,8 @@ public class TDActorCriticTest {
         DummyPolicyInput original = new DummyPolicyInput("original");
         DummyPolicyInput enriched = new DummyPolicyInput("enriched");
 
-        Experience exp = new Experience(original, action, new RewardStandard(5));
-        critic.enrichedExperience1 = new Experience(enriched, action, new RewardStandard(5));
+        Experience exp = new DefaultExperience(original, action, new RewardStandard(5));
+        critic.enrichedExperience1 = new DefaultExperience(enriched, action, new RewardStandard(5));
 
         Batch batch = new Batch(List.of(exp));
 
@@ -337,8 +338,8 @@ public class TDActorCriticTest {
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
         Batch batch = new Batch(List.of(
-                new Experience(new DummyPolicyInput("s1"), action2, new RewardStandard(5)),
-                new Experience(new DummyPolicyInput("s2"), action2, new RewardStandard(6))
+                new DefaultExperience(new DummyPolicyInput("s1"), action2, new RewardStandard(5)),
+                new DefaultExperience(new DummyPolicyInput("s2"), action2, new RewardStandard(6))
         ));
 
         // When

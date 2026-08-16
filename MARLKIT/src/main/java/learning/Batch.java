@@ -42,16 +42,6 @@ public class Batch {
 		return experiences;
 	}
 	
-	/**
-     * Adds an experience to the batch.
-     *
-     * @param input the PolicyInput to add
-     * @param act the action to add
-     * @param rew the reward to add
-     */
-    public void addExperience(PolicyInput input, Action act, Reward rew) {
-        experiences.add(new Experience(input, act, rew));
-    }
     /**
      * Adds an experience to the batch.
      *

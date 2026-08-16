@@ -16,6 +16,7 @@ import agent.action.ActionInt;
 import agent.action.JointAction;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
+import experience.DefaultExperience;
 import experience.Experience;
 import learning.Algorithm;
 import learning.Batch;
@@ -71,8 +72,8 @@ public class CentralizedCriticCollectExperienceActivatorTest {
         DummyPolicyInput input1 = new DummyPolicyInput(List.of("o1"));
         DummyPolicyInput input2 = new DummyPolicyInput(List.of("o2"));
 
-        Experience experience1 = new Experience(input1, new ActionInt(1), new RewardStandard(10));
-        Experience experience2 = new Experience(input2, new ActionInt(2), new RewardStandard(20));
+        Experience experience1 = new DefaultExperience(input1, new ActionInt(1), new RewardStandard(10));
+        Experience experience2 = new DefaultExperience(input2, new ActionInt(2), new RewardStandard(20));
 
         RecordingCritic critic1 = new RecordingCritic();
         RecordingCritic critic2 = new RecordingCritic();
@@ -100,8 +101,8 @@ public class CentralizedCriticCollectExperienceActivatorTest {
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
 
-        Experience experience1 = new Experience(new DummyPolicyInput(List.of("o1")), action1, new RewardStandard(10));
-        Experience experience2 = new Experience(new DummyPolicyInput(List.of("o2")), action2, new RewardStandard(20));
+        Experience experience1 = new DefaultExperience(new DummyPolicyInput(List.of("o1")), action1, new RewardStandard(10));
+        Experience experience2 = new DefaultExperience(new DummyPolicyInput(List.of("o2")), action2, new RewardStandard(20));
 
         RecordingCritic critic1 = new RecordingCritic();
         RecordingCritic critic2 = new RecordingCritic();
@@ -126,12 +127,12 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     @Test
     public void givenTwoAgentsWithDifferentRewards_whenExecute_thenEachEnrichedExperienceKeepsOriginalReward() {
         // Given
-        Experience experience1 = new Experience(
+        Experience experience1 = new DefaultExperience(
                 new DummyPolicyInput(List.of("o1")),
                 new ActionInt(1),
                 new RewardStandard(10)
         );
-        Experience experience2 = new Experience(
+        Experience experience2 = new DefaultExperience(
                 new DummyPolicyInput(List.of("o2")),
                 new ActionInt(2),
                 new RewardStandard(20)
@@ -160,12 +161,12 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     @Test
     public void givenTwoAgents_whenExecute_thenFeedbackOriginalExperienceToEachAgent() {
         // Given
-        Experience experience1 = new Experience(
+        Experience experience1 = new DefaultExperience(
                 new DummyPolicyInput(List.of("o1")),
                 new ActionInt(1),
                 new RewardStandard(10)
         );
-        Experience experience2 = new Experience(
+        Experience experience2 = new DefaultExperience(
                 new DummyPolicyInput(List.of("o2")),
                 new ActionInt(2),
                 new RewardStandard(20)
@@ -188,12 +189,12 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     @Test
     public void givenTwoAgents_whenExecute_thenAssociateOriginalAndEnrichedExperiencesWithEachCritic() {
         // Given
-        Experience experience1 = new Experience(
+        Experience experience1 = new DefaultExperience(
                 new DummyPolicyInput(List.of("o1")),
                 new ActionInt(1),
                 new RewardStandard(10)
         );
-        Experience experience2 = new Experience(
+        Experience experience2 = new DefaultExperience(
                 new DummyPolicyInput(List.of("o2")),
                 new ActionInt(2),
                 new RewardStandard(20)
@@ -222,7 +223,7 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     @Test
     public void givenAgentWithoutActorCriticAlgorithm_whenExecute_thenThrowIllegalStateException() {
         // Given
-        Experience experience = new Experience(
+        Experience experience = new DefaultExperience(
                 new DummyPolicyInput(List.of("o1")),
                 new ActionInt(1),
                 new RewardStandard(10)
@@ -242,7 +243,7 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     @Test
     public void givenOneAgentWithoutExperience_whenExecute_thenCentralizeOnlyAvailableExperiences() {
         // Given
-        Experience experience = new Experience(
+        Experience experience = new DefaultExperience(
                 new DummyPolicyInput(List.of("o1")),
                 new ActionInt(1),
                 new RewardStandard(10)
