@@ -15,6 +15,7 @@ import agent.action.ActionInt;
 import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
 import environment.MLKEnvironment;
+import environment.observation.MappedJointObservation;
 import environment.observation.Observation;
 import experience.Experience;
 import learning.Algorithm;
@@ -375,6 +376,18 @@ public class QLearningJALTest {
 		@Override
         public MappedJointAction getLastPredictedAction() {
             return (MappedJointAction) fixedPrediction.copy();
+		}
+
+		@Override
+		public MappedJointAction predictActionFromMappedObservation(MappedJointObservation observation) {
+			predictCalls.add(new PredictCall(observation, null));
+			return fixedPrediction;
+		}
+
+		@Override
+		public MappedJointAction predictActionFromMappedObservation(MappedJointObservation observation, Action action) {
+			predictCalls.add(new PredictCall(observation, action));
+			return fixedPrediction;
 		}
     }
 

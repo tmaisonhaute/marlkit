@@ -5,11 +5,25 @@ import agent.action.ActionSpace;
 import learning.policies.PolicyInput;
 import util.Pair;
 
+/**
+ * An interface for evaluating the value of actions given a specific policy input (observation).
+ */
 public interface ActionEvaluator {
 
+	/**
+	 * Returns the value of the specified action given the provided policy input (observation).
+	 * @param input the policy input (observation) for which the action's value is to be evaluated
+	 * @param action the action whose value is to be evaluated
+	 * @return the value of the action given the policy input
+	 */
     public Double getValue(PolicyInput input, Action action);
 
 
+    /**
+     * Returns the value of the specified action given the provided policy input (observation) as a Pair.
+     * @param key a Pair containing the policy input (observation) and the action whose value is to be evaluated
+     * @return the value of the action given the policy input
+     */
     public default Double getValue(Pair<PolicyInput, Action> key) {
         return getValue(key.getFirst(), key.getSecond());
     }
@@ -17,7 +31,7 @@ public interface ActionEvaluator {
     /**
      * Returns a copy of the ActionSpace containing all actions that have been associated with the given observation in the value function.
      * @param observation
-     * @return
+     * @return a copy of the ActionSpace containing all actions associated with the given observation
      */
     public ActionSpace getActionSpace(PolicyInput observation);
 }

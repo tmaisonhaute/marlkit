@@ -5,9 +5,13 @@ import agent.action.Action;
 import agent.action.ActionSpace;
 import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
+import environment.observation.MappedJointObservation;
 import learning.policies.PolicyInput;
 import learning.policies.valuefunction.ActionEvaluator;
 
+/**
+ * This class implements a model of other agents that predicts their actions using a minimax approach based on a given action evaluator.
+ */
 public class MinimaxValueFunctionPredictAction implements GroupModelPredictAction {
 	protected ActionEvaluator evaluator;
 	protected MLKAgent predictingAgent;
@@ -123,6 +127,14 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 	@Override
 	public MappedJointAction getLastPredictedAction() {
 		return lastPredictedJointAction;
+	}
+	@Override
+	public MappedJointAction predictActionFromMappedObservation(MappedJointObservation observation) {
+		throw new UnsupportedOperationException("This method should not be used. Minimax prediction requires the own action as input to filter the possible joint actions.");
+	}
+	@Override
+	public MappedJointAction predictActionFromMappedObservation(MappedJointObservation observation, Action action) {
+		throw new UnsupportedOperationException("This MOA does not implement individual observation prediction. Use predictAction(PolicyInput observation, Action action) instead.");
 	}
 	
 	
