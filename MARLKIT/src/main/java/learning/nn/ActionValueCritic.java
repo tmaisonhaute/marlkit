@@ -96,7 +96,7 @@ public class ActionValueCritic implements Critic, Parameterized {
 
     @Override
     public Experience getEnrichedExperience(Experience originalExperience) {
-        return enrichedExperienceMap.get(originalExperience);
+    	return enrichedExperienceMap.getOrDefault(originalExperience, originalExperience);
     }
 
     @Override
