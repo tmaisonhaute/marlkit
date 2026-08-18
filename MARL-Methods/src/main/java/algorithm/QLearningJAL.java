@@ -7,7 +7,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 import learning.policies.QValueBasedPolicy;
 
 public class QLearningJAL extends QValueBasedPolicy {
@@ -35,7 +35,7 @@ public class QLearningJAL extends QValueBasedPolicy {
 	}
 
 	@Override
-	public Action selectAction(PolicyInput input) {
+	public Action selectAction(Observation input) {
 		Optional<Action> exploratoryAction = getExplorationStrategy().getExploratoryAction(actionsSet, prng());
 		if (!exploratoryAction.isEmpty()) {
 			return exploratoryAction.get();

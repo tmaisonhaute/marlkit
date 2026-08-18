@@ -5,7 +5,8 @@ import java.util.Objects;
 
 import agent.MLKAgent;
 import agent.action.ActionContinuousVector;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.Observation;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import learning.ContinuousActionExplorationStrategy;
 import learning.nn.NeuralNetwork;
 
@@ -21,7 +22,7 @@ import learning.nn.NeuralNetwork;
  */
 public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
 
-    private final WrapperPolicyInputVector inputWrapper;
+    private final WrapperObservationVector inputWrapper;
     private final NeuralNetwork network;
     private final int actionSize;
     private final double lowerBound;
@@ -33,7 +34,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
     /**
      * Creates a deterministic neural policy.
      *
-     * @param inputWrapper converts policy inputs to vectors
+     * @param inputWrapper converts observations to vectors
      * @param inputSize the input vector size
      * @param hiddenLayers the sizes of the hidden layers
      * @param actionSize the number of continuous action components
@@ -44,7 +45,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
      * @throws IllegalArgumentException if a size is invalid, a hidden layer is
      *                                  empty, or the action bounds are invalid
      */
-    public MLPDeterministicPolicy(WrapperPolicyInputVector inputWrapper, int inputSize, int[] hiddenLayers, 
+    public MLPDeterministicPolicy(WrapperObservationVector inputWrapper, int inputSize, int[] hiddenLayers, 
     		int actionSize, double lowerBound, double upperBound, ContinuousActionExplorationStrategy explorationStrategy) {
         validateArguments(inputSize, hiddenLayers, actionSize, lowerBound, upperBound);
 
@@ -60,7 +61,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
     
     /**
      * Creates a deterministic neural policy without an exploration strategy.
-     * @param inputWrapper converts policy inputs to vectors
+     * @param inputWrapper converts observations to vectors
      * @param inputSize the input vector size
      * @param hiddenLayers the sizes of the hidden layers
      * @param actionSize the number of continuous action components
@@ -70,7 +71,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
      * @throws IllegalArgumentException if a size is invalid, a hidden layer is
      *                                  empty, or the action bounds are invalid
      */
-    public MLPDeterministicPolicy(WrapperPolicyInputVector inputWrapper, int inputSize, int[] hiddenLayers, 
+    public MLPDeterministicPolicy(WrapperObservationVector inputWrapper, int inputSize, int[] hiddenLayers, 
     		int actionSize, double lowerBound, double upperBound) {
         this(inputWrapper, inputSize, hiddenLayers, actionSize, lowerBound, upperBound, null);
     }
@@ -103,11 +104,11 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
      * 
      * <p> If an exploration strategy is set, it is applied to the action produced by the policy.</p>
      *
-     * @param input the policy input
+     * @param input the observation
      * @return the continuous action produced by the policy
      */
     @Override
-    public ActionContinuousVector selectAction(PolicyInput input) {
+    public ActionContinuousVector selectAction(Observation input) {
     	ActionContinuousVector action = forwardAction(input);
     	if (explorationStrategy != null) {
     		action = explorationStrategy.explore(action, agent.prng());
@@ -121,11 +122,11 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
      * <p>The raw network output is in {@code [-1, 1]} and is rescaled to
      * {@code [lowerBound, upperBound]}.</p>
      *
-     * @param input the policy input
+     * @param input the observation
      * @return the bounded continuous action
      */
     @Override
-    public ActionContinuousVector forwardAction(PolicyInput input) {
+    public ActionContinuousVector forwardAction(Observation input) {
         double[] inputVector = inputWrapper.transform(input);
         double[] normalizedAction = network.forward(inputVector);
         double[] actionValues = rescaleAction(normalizedAction);
@@ -136,11 +137,11 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
     /**
      * Computes continuous actions for a batch of inputs.
      *
-     * @param inputs the policy inputs
+     * @param inputs the observations
      * @return one continuous action for each input
      */
     @Override
-    public ActionContinuousVector[] forwardActions(PolicyInput[] inputs) {
+    public ActionContinuousVector[] forwardActions(Observation[] inputs) {
         ActionContinuousVector[] actions = new ActionContinuousVector[inputs.length];
 
         for (int i = 0; i < inputs.length; i++) {
@@ -156,7 +157,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
      * <p>The provided gradient is converted from action space to normalized
      * network-output space before being backpropagated through the network.</p>
      *
-     * @param input the policy input
+     * @param input the observation
      * @param dLossDAction the loss gradient with respect to each bounded action
      *                     component
      * @param learningRate the policy learning rate
@@ -164,7 +165,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
      *                                  the action size
      */
     @Override
-    public void updateFromActionGradient(PolicyInput input, double[] dLossDAction, double learningRate) {
+    public void updateFromActionGradient(Observation input, double[] dLossDAction, double learningRate) {
         validateActionGradient(dLossDAction);
 
         double[] inputVector = inputWrapper.transform(input);
@@ -177,7 +178,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
      * Updates the policy from a batch of loss gradients with respect to bounded
      * continuous actions.
      *
-     * @param inputs the policy inputs
+     * @param inputs the observations
      * @param dLossDActions the loss gradients with respect to the bounded action
      *                       vectors
      * @param learningRate the policy learning rate
@@ -185,7 +186,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
      *                                  are inconsistent
      */
     @Override
-    public void updateFromActionGradient(PolicyInput[] inputs, double[][] dLossDActions, double learningRate) {
+    public void updateFromActionGradient(Observation[] inputs, double[][] dLossDActions, double learningRate) {
         if (inputs.length != dLossDActions.length) {
             throw new IllegalArgumentException("Batch size mismatch between inputs and action gradients.");
         }

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 import reward.Reward;
 
 /**
@@ -15,11 +15,11 @@ public interface Experience {
 
 
 	/**
-	 * Returns the input receive during this experience.
+	 * Returns the observation received during this experience.
 	 *
-	 * @return the input
+	 * @return the observation
 	 */
-    public PolicyInput getInput();
+    public Observation getObservation();
 
 	/**
 	 * Returns the action from this experience.
@@ -44,17 +44,17 @@ public interface Experience {
 	/**
 	 * Returns a copy of this experiment but with a different action. 
 	 * @param newAction the new action to use
-	 * @return a new Experience object with the same input and reward but a different action
+	 * @return a new Experience object with the same observation and reward but a different action
 	 */
 	public Experience withAction(Action newAction);
 	
 	/**
-	 * Returns a copy of this experiment but with a different input and action.
-	 * @param newInput the new input to use
+	 * Returns a copy of this experiment but with a different observation and action.
+	 * @param newObservation the new observation to use
 	 * @param newAction the new action to use
-	 * @return
+	 * @return a new Experience object with the same reward but a different observation and action
 	 */
-	public Experience withInputAction(PolicyInput newInput, Action newAction);
+	public Experience withObservationAction(Observation newObservation, Action newAction);
 	
 	/**
 	 * Creates a centralized experience from an ordered map of agent experiences.

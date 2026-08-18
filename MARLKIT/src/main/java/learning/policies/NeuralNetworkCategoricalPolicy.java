@@ -7,7 +7,8 @@ import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.Observation;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import learning.nn.NeuralNetwork;
 import util.VectorOperator;
 
@@ -20,7 +21,7 @@ import util.VectorOperator;
 public class NeuralNetworkCategoricalPolicy implements CategoricalPolicyGradient, Parameterized {
 
     private final List<Action> actions;
-    private final WrapperPolicyInputVector inputWrapper;
+    private final WrapperObservationVector inputWrapper;
     private final NeuralNetwork network;
     private final double softmaxTemperature;
 
@@ -28,7 +29,7 @@ public class NeuralNetworkCategoricalPolicy implements CategoricalPolicyGradient
 
     public NeuralNetworkCategoricalPolicy(
             List<Action> actions,
-            WrapperPolicyInputVector inputWrapper,
+            WrapperObservationVector inputWrapper,
             int inputSize,
             int[] hiddenLayers,
             double softmaxTemperature
@@ -64,7 +65,7 @@ public class NeuralNetworkCategoricalPolicy implements CategoricalPolicyGradient
     }
 
     @Override
-    public Action selectAction(PolicyInput input) {
+    public Action selectAction(Observation input) {
         double[] logits = forwardLogits(input);
         double[] probabilities = VectorOperator.softmax(logits, softmaxTemperature);
         int actionIndex = sample(probabilities, prng());
@@ -73,13 +74,13 @@ public class NeuralNetworkCategoricalPolicy implements CategoricalPolicyGradient
     }
     
     @Override
-    public double[] forwardLogits(PolicyInput input) {
+    public double[] forwardLogits(Observation input) {
     	double[] vector = inputWrapper.transform(input);
     	return network.forward(vector);
     }
 
     @Override
-    public double[][] forwardLogits(PolicyInput[] inputs) {
+    public double[][] forwardLogits(Observation[] inputs) {
         double[][] logits = new double[inputs.length][];
 
         for (int i = 0; i < inputs.length; i++) {
@@ -90,14 +91,14 @@ public class NeuralNetworkCategoricalPolicy implements CategoricalPolicyGradient
     }
     
     @Override
-    public void updateFromLogitsGradient(PolicyInput input, double[] dLossDLogits, double learningRate) {
+    public void updateFromLogitsGradient(Observation input, double[] dLossDLogits, double learningRate) {
         double[] vector = inputWrapper.transform(input);
         network.applyOutputGradient(vector, dLossDLogits, learningRate);
     }
 
     @Override
     public void updateFromLogitsGradient(
-            PolicyInput[] inputs,
+    		Observation[] inputs,
             double[][] dLossDLogits,
             double learningRate
     ) {
@@ -136,13 +137,13 @@ public class NeuralNetworkCategoricalPolicy implements CategoricalPolicyGradient
         return copies;
     }
 
-    public double probability(PolicyInput input, Action action) {
+    public double probability(Observation input, Action action) {
         double[] logits = forwardLogits(input);
         double[] probabilities = VectorOperator.softmax(logits, softmaxTemperature);
         return probabilities[actionIndex(action)];
     }
 
-    public double logProbability(PolicyInput input, Action action) {
+    public double logProbability(Observation input, Action action) {
         return Math.log(probability(input, action) + 1e-12);
     }
 

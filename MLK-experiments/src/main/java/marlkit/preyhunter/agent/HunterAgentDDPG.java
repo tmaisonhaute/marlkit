@@ -3,12 +3,12 @@ package marlkit.preyhunter.agent;
 import agent.action.Action;
 import agent.action.ActionContinuousVector;
 import agent.action.Move2DDouble;
+import environment.observation.Observation;
 import learning.ContinuousActionExplorationStrategy;
 import learning.actionexplorationstrategies.GaussianNoise;
 import learning.algorithms.DDPG;
 import learning.nn.ActionValueCritic;
 import learning.policies.MLPDeterministicPolicy;
-import learning.policies.PolicyInput;
 import marlkit.preyhunter.environment.WrapperPreyHunterObservationVector;
 
 /**
@@ -123,13 +123,13 @@ public class HunterAgentDDPG extends HunterAgent {
      * <p>The conversion preserves both continuous action components without
      * rounding or normalization.</p>
      *
-     * @param input the current policy input
+     * @param input the current observation from the environment
      * @return the corresponding continuous two-dimensional movement
      * @throws IllegalStateException if the policy does not return an
      *                               {@link ActionContinuousVector}
      */
     @Override
-    public Action selectAction(PolicyInput input) {
+    public Action selectAction(Observation input) {
         Action action = super.selectAction(input);
 
         if (!(action instanceof ActionContinuousVector vector)) {

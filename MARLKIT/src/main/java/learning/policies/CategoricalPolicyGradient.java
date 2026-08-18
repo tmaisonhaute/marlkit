@@ -1,6 +1,7 @@
 package learning.policies;
 
 import agent.action.Action;
+import environment.observation.Observation;
 import learning.Policy;
 import util.VectorOperator;
 
@@ -11,39 +12,39 @@ import util.VectorOperator;
 public interface CategoricalPolicyGradient extends Policy {
 
 	/**
-	* Computes the action logits for one policy input.
+	* Computes the action logits for one observation.
 	*
-	* @param input the policy input
+	* @param observation the observation
 	* @return one logit for each available action
 	*/
-	double[] forwardLogits(PolicyInput input);
+	double[] forwardLogits(Observation observation);
 	
 	/**
-	 * Computes raw action logits for a batch of inputs.
+	 * Computes raw action logits for a batch of observations.
 	 *
-	 * @param inputs the policy inputs
+	 * @param observations the observations
 	 * @return batch logits
 	 */
-    double[][] forwardLogits(PolicyInput[] inputs);
+    double[][] forwardLogits(Observation[] observations);
 
     /**
     * Updates the policy from a gradient with respect to the logits produced for
-    * one input.
+    * one observation.
     *
-    * @param input the policy input
+    * @param observation the observation
     * @param dLossDLogits the loss gradient with respect to the logits
     * @param learningRate the learning rate
     */
-    void updateFromLogitsGradient(PolicyInput input, double[] dLossDLogits, double learningRate);
+    void updateFromLogitsGradient(Observation observation, double[] dLossDLogits, double learningRate);
     
     /**
 	 * Updates the policy network from a batch of user-provided gradients w.r.t logits.
 	 *
-	 * @param inputs the policy inputs
-	 * @param dLossDLogits dL/dLogits for each input
+	 * @param observations the observations
+	 * @param dLossDLogits dL/dLogits for each observation
 	 * @param learningRate the learning rate
 	 */
-    void updateFromLogitsGradient(PolicyInput[] inputs, double[][] dLossDLogits, double learningRate);
+    void updateFromLogitsGradient(Observation[] observations, double[][] dLossDLogits, double learningRate);
     
     /**
     * Computes the softmax probabilities associated with one logit vector.

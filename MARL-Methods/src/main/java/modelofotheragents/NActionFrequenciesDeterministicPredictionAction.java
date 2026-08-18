@@ -7,13 +7,13 @@ import java.util.Map;
 
 import agent.action.Action;
 import agent.modelofotheragent.ModelPredictAction;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 
 /**
  * Deterministic prediction based on the last N actions per state.
  */
 public class NActionFrequenciesDeterministicPredictionAction implements ModelPredictAction {
-	protected Map<PolicyInput, ActionsWindow> actionsByInput;
+	protected Map<Observation, ActionsWindow> actionsByInput;
 	protected Action defaultAction;
 	protected Action lastPredictedAction;
 	protected int windowSize;
@@ -28,7 +28,7 @@ public class NActionFrequenciesDeterministicPredictionAction implements ModelPre
 	}
 
 	@Override
-	public Action predictAction(PolicyInput observation) {
+	public Action predictAction(Observation observation) {
 		ActionsWindow window = this.actionsByInput.get(observation);
 		if (window == null) {
 			return defaultAction.copy();
@@ -42,12 +42,12 @@ public class NActionFrequenciesDeterministicPredictionAction implements ModelPre
 	}
 
 	@Override
-	public Action predictAction(PolicyInput observation, Action action) {
+	public Action predictAction(Observation observation, Action action) {
 		return predictAction(observation);
 	}
 
 	@Override
-	public void updateModel(PolicyInput observation, Action predictedAction, Action actualAction) {
+	public void updateModel(Observation observation, Action predictedAction, Action actualAction) {
 		ActionsWindow window = this.actionsByInput.get(observation);
 		if (window == null) {
 			window = new ActionsWindow(windowSize);

@@ -1,6 +1,7 @@
 package learning.policies;
 
 import agent.action.ActionContinuousVector;
+import environment.observation.Observation;
 import learning.ContinuousActionExplorationStrategy;
 import learning.Policy;
 
@@ -17,38 +18,38 @@ public interface DeterministicPolicyGradient extends Policy, Parameterized {
     /**
      * Computes the continuous action produced by the policy for an input.
      *
-     * @param input the policy input
+     * @param input the observation
      * @return the continuous action produced by the policy
      */
-    ActionContinuousVector forwardAction(PolicyInput input);
+    ActionContinuousVector forwardAction(Observation input);
 
     /**
      * Computes the continuous actions produced for a batch of inputs.
      *
-     * @param inputs the policy inputs
+     * @param inputs the observations
      * @return the continuous actions produced for each input
      */
-    ActionContinuousVector[] forwardActions(PolicyInput[] inputs);
+    ActionContinuousVector[] forwardActions(Observation[] inputs);
 
     /**
      * Updates the policy from a loss gradient with respect to the continuous
      * action produced for one input.
      *
-     * @param input the policy input
+     * @param input the observation
      * @param dLossDAction the loss gradient with respect to each action component
      * @param learningRate the policy learning rate
      */
-    void updateFromActionGradient(PolicyInput input, double[] dLossDAction, double learningRate);
+    void updateFromActionGradient(Observation input, double[] dLossDAction, double learningRate);
 
     /**
      * Updates the policy from loss gradients with respect to the continuous
      * actions produced for a batch of inputs.
      *
-     * @param inputs the policy inputs
+     * @param inputs the observations
      * @param dLossDActions the loss gradients with respect to the action vectors
      * @param learningRate the policy learning rate
      */
-    void updateFromActionGradient(PolicyInput[] inputs, double[][] dLossDActions, double learningRate);
+    void updateFromActionGradient(Observation[] inputs, double[][] dLossDActions, double learningRate);
     
     /**
      * Updates the internal state of the exploration strategy, if one is defined.

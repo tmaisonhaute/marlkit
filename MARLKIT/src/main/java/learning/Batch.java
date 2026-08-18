@@ -6,8 +6,8 @@ import java.util.Random;
 import java.util.random.RandomGenerator;
 
 import agent.action.Action;
+import environment.observation.Observation;
 import experience.Experience;
-import learning.policies.PolicyInput;
 import reward.Reward;
 
 /**
@@ -67,13 +67,13 @@ public class Batch {
 	}
 	
 	/**
-	 * Returns an array of all inputs in the batch.
-	 * @return an array of all inputs
+	 * Returns an array of all observations in the batch.
+	 * @return an array of all observations
 	 */
-	public PolicyInput[] getAllInputs() {
-		PolicyInput[] inputs = new PolicyInput[experiences.size()];
+	public Observation[] getAllObservations() {
+		Observation[] inputs = new Observation[experiences.size()];
 		for (int i = 0; i < experiences.size(); i++) {
-			inputs[i] = experiences.get(i).getInput();
+			inputs[i] = experiences.get(i).getObservation();
 		}
 		return inputs;
 	}

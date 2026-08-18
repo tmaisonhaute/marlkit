@@ -6,7 +6,6 @@ import experience.Experience;
 import learning.Algorithm;
 import learning.Batch;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import madkit.kernel.Mailbox;
 import madkit.simulation.SimuAgent;
 
@@ -66,7 +65,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 * @return the selected action
 	 */
 	@Override
-	public Action selectAction(PolicyInput input) {
+	public Action selectAction(Observation input) {
 		return policy.selectAction(input);
 	}
 

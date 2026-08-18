@@ -8,37 +8,36 @@ import agent.action.Action;
 import agent.action.MappedJointAction;
 import environment.observation.MappedJointObservation;
 import environment.observation.Observation;
-import learning.policies.PolicyInput;
 import reward.Reward;
 
 /**
  * Represents a single experience tuple (observation, action, reward) in reinforcement learning.
  */
 public class DefaultExperience implements Experience{
-    protected PolicyInput input;
+    protected Observation observation;
     protected Action action;
     protected Reward reward;
 
 	/**
 	 * Creates a new experience.
 	 *
-	 * @param input the PolicyInput received
+	 * @param observation the Observation received
 	 * @param action the action taken
 	 * @param reward the reward received
 	 */
-    public DefaultExperience(PolicyInput input, Action action, Reward reward) {
-        this.input = input;
+    public DefaultExperience(Observation observation, Action action, Reward reward) {
+        this.observation = observation;
         this.action = action;
         this.reward = reward;
     }
 
 	/**
-	 * Returns the input receive during this experience.
+	 * Returns the observation received during this experience.
 	 *
-	 * @return the input
+	 * @return the observation
 	 */
-    public PolicyInput getInput() {
-        return input;
+    public Observation getObservation() {
+        return observation;
     }
 
 	/**
@@ -71,28 +70,27 @@ public class DefaultExperience implements Experience{
 	/**
 	 * Returns a copy of this experiment but with a different action. 
 	 * @param newAction the new action to use
-	 * @return a new Experience object with the same input and reward but a different action
+	 * @return a new Experience object with the same observation and reward but a different action
 	 */
 	@Override
 	public DefaultExperience withAction(Action newAction) {
-	    return new DefaultExperience(input, newAction, reward);
+	    return new DefaultExperience(observation, newAction, reward);
 	}
 	
 	/**
-	 * Returns a copy of this experiment but with a different input and action.
-	 * @param newInput the new input to use
+	 * Returns a copy of this experiment but with a different observation and action.
+	 * @param newObservation the new observation to use
 	 * @param newAction the new action to use
-	 * @return
+	 * @return 
 	 */
 	@Override
-	public DefaultExperience withInputAction(PolicyInput newInput, Action newAction) {
-		return new DefaultExperience(newInput, newAction, reward);
+	public DefaultExperience withObservationAction(Observation newObservation, Action newAction) {
+		return new DefaultExperience(newObservation, newAction, reward);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * @throws NullPointerException if an argument is {@code null}
-	 * @throws IllegalArgumentException if an experience input is not an observation
 	 */
 	@Override
 	public DefaultExperience createCentralizedExperience(Map<MLKAgent, Experience> experiencesByAgent, Reward centralReward) {
@@ -105,10 +103,6 @@ public class DefaultExperience implements Experience{
 	    for (Map.Entry<MLKAgent, Experience> entry : experiencesByAgent.entrySet()) {
 	        MLKAgent agent = entry.getKey();
 	        Experience experience = entry.getValue();
-
-	        if (!(experience.getInput() instanceof Observation observation)) {
-	            throw new IllegalArgumentException("Centralized experiences require Observation inputs.");
-	        }
 
 	        jointObservation.addObservation(agent, observation);
 	        jointAction.addAction(agent, experience.getAction());

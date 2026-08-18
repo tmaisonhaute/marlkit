@@ -2,11 +2,11 @@ package learning.algorithms;
 
 import agent.MLKAgent;
 import agent.action.Action;
+import environment.observation.Observation;
 import learning.Algorithm;
 import learning.Batch;
 import learning.Policy;
 import learning.policies.CategoricalPolicyGradient;
-import learning.policies.PolicyInput;
 import madkit.kernel.AgentLogger;
 
 /**
@@ -88,7 +88,7 @@ public class PPOCategorical implements Algorithm {
             return;
         }
 
-        PolicyInput[] inputs = batch.getAllInputs();
+        Observation[] inputs = batch.getAllObservations();
         Action[] actions = batch.getAllActions();
 
         int[] actionIndices = toActionIndices(actions);

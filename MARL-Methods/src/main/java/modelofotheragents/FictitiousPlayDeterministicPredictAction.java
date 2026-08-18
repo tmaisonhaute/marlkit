@@ -5,11 +5,11 @@ import java.util.Map;
 
 import agent.action.Action;
 import agent.modelofotheragent.ModelPredictAction;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 import madkit.kernel.AgentLogger;
 
 public class FictitiousPlayDeterministicPredictAction implements ModelPredictAction {
-	protected Map<PolicyInput, ActionsFrequencies> actionsFrequenciesByInput;
+	protected Map<Observation, ActionsFrequencies> actionsFrequenciesByInput;
 	protected Action defaultAction;
 	protected Action lastPredictedAction;
 	private AgentLogger logger;
@@ -21,7 +21,7 @@ public class FictitiousPlayDeterministicPredictAction implements ModelPredictAct
 	}
 
 	@Override
-	public Action predictAction(PolicyInput observation) {
+	public Action predictAction(Observation observation) {
 		ActionsFrequencies frequencies = this.actionsFrequenciesByInput.get(observation);
 		if (frequencies == null) {
 			return defaultAction.copy();
@@ -35,12 +35,12 @@ public class FictitiousPlayDeterministicPredictAction implements ModelPredictAct
 	}
 
 	@Override
-	public Action predictAction(PolicyInput observation, Action action) {
+	public Action predictAction(Observation observation, Action action) {
 		return predictAction(observation);
 	}
 
 	@Override
-	public void updateModel(PolicyInput observation, Action predictedAction, Action actualAction) {
+	public void updateModel(Observation observation, Action predictedAction, Action actualAction) {
 		ActionsFrequencies frequencies = this.actionsFrequenciesByInput.get(observation);
 		if (frequencies == null) {
 			frequencies = new ActionsFrequencies();

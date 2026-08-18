@@ -4,11 +4,11 @@ import java.util.List;
 
 import agent.MLKAgent;
 import agent.action.Action;
+import environment.observation.Observation;
 import experience.Experience;
 import learning.Algorithm;
 import learning.Batch;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import learning.policies.QValueBasedPolicy;
 import madkit.kernel.AgentLogger;
 import util.Pair;
@@ -121,8 +121,8 @@ public class QLearning implements Algorithm {
         Experience next = (batch.getExperiences().size() > 1) ? batch.getExperiences().get(1) : null;
         
 
-        Pair<PolicyInput, Action> stateAction = new Pair<>(current.getInput(), current.getAction());
-        PolicyInput nextInput = (next == null) ? null : next.getInput();
+        Pair<Observation, Action> stateAction = new Pair<>(current.getObservation(), current.getAction());
+        Observation nextInput = (next == null) ? null : next.getObservation();
         double reward = current.getRewardValue();
 
         updateQ(stateAction, reward, nextInput);
@@ -131,19 +131,19 @@ public class QLearning implements Algorithm {
     }
 
     /**
-     * Computes the maximum Q-value over all actions for a given PolicyInput.
+     * Computes the maximum Q-value over all actions for a given Observation.
      * <p>
      * This implements the "max" operator in the Q-learning update formula:
      * max_a' Q(s', a')
      * </p>
      *
-     * @param nextInput the next PolicyInput (Observation) (state s')
+     * @param nextObservation the next Observation (state s')
      * @return the maximum Q-value, or 0.0 if no actions are available
      */
-    private double getMaxNextQ(PolicyInput nextInput) {
+    private double getMaxNextQ(Observation nextObservation) {
         double maxNextQ = Double.NEGATIVE_INFINITY;
         for (Action act : actionsSet) {
-            double qVal = policy.getTable().getValue(nextInput, act);
+            double qVal = policy.getTable().getValue(nextObservation, act);
             if (qVal > maxNextQ) {
                 maxNextQ = qVal;
             }
@@ -162,11 +162,11 @@ public class QLearning implements Algorithm {
      *
      * @param stateAction the state-action pair (s, a)
      * @param reward      the received reward r
-     * @param nextInput   the next input (state s')
+     * @param nextObservation   the next observation (state s')
      */
-    private void updateQ(Pair<PolicyInput, Action> stateAction, double reward, PolicyInput nextInput) {
+    private void updateQ(Pair<Observation, Action> stateAction, double reward, Observation nextObservation) {
         double prevQ = policy.getTable().getValue(stateAction);
-        double maxNextQ = (nextInput != null) ? getMaxNextQ(nextInput) : 0;
+        double maxNextQ = (nextObservation != null) ? getMaxNextQ(nextObservation) : 0;
         double updatedQ = prevQ + alpha * (reward + gamma * maxNextQ - prevQ);
         policy.getTable().setValue(stateAction, updatedQ);
     }

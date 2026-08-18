@@ -1,8 +1,5 @@
 package algorithm;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import java.lang.reflect.Proxy;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -10,19 +7,21 @@ import java.util.Deque;
 import java.util.List;
 import java.util.random.RandomGenerator;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.ActionInt;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.Observation;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import experience.DefaultExperience;
 import experience.Experience;
 import learning.Batch;
 import learning.Policy;
 import learning.nn.StateValueCritic;
 import learning.policies.CategoricalPolicyGradient;
-import learning.policies.PolicyInput;
 import reward.RewardStandard;
 
 public class TDActorCriticTest {
@@ -91,9 +90,9 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        DummyPolicyInput input1 = new DummyPolicyInput("s1");
-        DummyPolicyInput input2 = new DummyPolicyInput("s2");
-        DummyPolicyInput input3 = new DummyPolicyInput("s3");
+        DummyObservation input1 = new DummyObservation("s1");
+        DummyObservation input2 = new DummyObservation("s2");
+        DummyObservation input3 = new DummyObservation("s3");
 
         Experience exp1 = new DefaultExperience(input1, action2, new RewardStandard(5));
         Experience exp2 = new DefaultExperience(input2, action2, new RewardStandard(6));
@@ -128,10 +127,10 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        DummyPolicyInput original1 = new DummyPolicyInput("o1");
-        DummyPolicyInput original2 = new DummyPolicyInput("o2");
-        DummyPolicyInput enriched1 = new DummyPolicyInput("e1");
-        DummyPolicyInput enriched2 = new DummyPolicyInput("e2");
+        DummyObservation original1 = new DummyObservation("o1");
+        DummyObservation original2 = new DummyObservation("o2");
+        DummyObservation enriched1 = new DummyObservation("e1");
+        DummyObservation enriched2 = new DummyObservation("e2");
 
         Experience exp1 = new DefaultExperience(original1, action2, new RewardStandard(5));
         Experience exp2 = new DefaultExperience(original2, action2, new RewardStandard(6));
@@ -160,8 +159,8 @@ public class TDActorCriticTest {
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
         Action notInSet = new ActionInt(999);
-        Experience exp1 = new DefaultExperience(new DummyPolicyInput("s1"), notInSet, new RewardStandard(5));
-        Experience exp2 = new DefaultExperience(new DummyPolicyInput("s2"), notInSet, new RewardStandard(6));
+        Experience exp1 = new DefaultExperience(new DummyObservation("s1"), notInSet, new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(new DummyObservation("s2"), notInSet, new RewardStandard(6));
         Batch batch = new Batch(List.of(exp1, exp2));
 
         // When
@@ -184,7 +183,7 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        Experience exp1 = new DefaultExperience(new DummyPolicyInput("s1"), action2, new RewardStandard(5));
+        Experience exp1 = new DefaultExperience(new DummyObservation("s1"), action2, new RewardStandard(5));
         Batch batch = new Batch(List.of(exp1));
 
         // When
@@ -230,8 +229,8 @@ public class TDActorCriticTest {
         RecordingStateValueCritic critic2 = new RecordingStateValueCritic();
         TDActorCritic algorithm2 = new TDActorCritic(actor2, critic2, 0.1, 0.2, 0.9);
 
-        Experience exp1 = new DefaultExperience(new DummyPolicyInput("s1"), new ActionInt(2), new RewardStandard(5));
-        Experience exp2 = new DefaultExperience(new DummyPolicyInput("s2"), new ActionInt(2), new RewardStandard(6));
+        Experience exp1 = new DefaultExperience(new DummyObservation("s1"), new ActionInt(2), new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(new DummyObservation("s2"), new ActionInt(2), new RewardStandard(6));
         Batch batch = new Batch(List.of(exp1, exp2));
 
         // When
@@ -256,8 +255,8 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        DummyPolicyInput input1 = new DummyPolicyInput("s1");
-        DummyPolicyInput input2 = new DummyPolicyInput("s2");
+        DummyObservation input1 = new DummyObservation("s1");
+        DummyObservation input2 = new DummyObservation("s2");
 
         Experience exp1 = new DefaultExperience(input1, action, new RewardStandard(5));
         Experience exp2 = new DefaultExperience(input2, action, new RewardStandard(6));
@@ -284,7 +283,7 @@ public class TDActorCriticTest {
         TDActorCritic algorithm = new TDActorCritic(actor, critic);
 
         Batch batch = new Batch(List.of(
-                new DefaultExperience(new DummyPolicyInput("s1"), new ActionInt(1), new RewardStandard(5))
+                new DefaultExperience(new DummyObservation("s1"), new ActionInt(1), new RewardStandard(5))
         ));
 
         // When
@@ -308,8 +307,8 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        DummyPolicyInput original = new DummyPolicyInput("original");
-        DummyPolicyInput enriched = new DummyPolicyInput("enriched");
+        DummyObservation original = new DummyObservation("original");
+        DummyObservation enriched = new DummyObservation("enriched");
 
         Experience exp = new DefaultExperience(original, action, new RewardStandard(5));
         critic.enrichedExperience1 = new DefaultExperience(enriched, action, new RewardStandard(5));
@@ -338,8 +337,8 @@ public class TDActorCriticTest {
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
         Batch batch = new Batch(List.of(
-                new DefaultExperience(new DummyPolicyInput("s1"), action2, new RewardStandard(5)),
-                new DefaultExperience(new DummyPolicyInput("s2"), action2, new RewardStandard(6))
+                new DefaultExperience(new DummyObservation("s1"), action2, new RewardStandard(5)),
+                new DefaultExperience(new DummyObservation("s2"), action2, new RewardStandard(6))
         ));
 
         // When
@@ -386,21 +385,21 @@ public class TDActorCriticTest {
         }
 
         @Override
-        public Action selectAction(PolicyInput input) {
+        public Action selectAction(Observation input) {
             return null;
         }
     }
 
-    private static final class DummyWrapper implements WrapperPolicyInputVector {
+    private static final class DummyWrapper implements WrapperObservationVector {
 
         @Override
-        public double[] transform(PolicyInput observation) {
+        public double[] transform(Observation observation) {
             return new double[] { 0.0 };
         }
 
         @Override
-        public PolicyInput transform(double[] vector) {
-            return new DummyPolicyInput("v");
+        public Observation transform(double[] vector) {
+            return new DummyObservation("v");
         }
     }
 
@@ -429,17 +428,17 @@ public class TDActorCriticTest {
         }
 
         @Override
-        public Action selectAction(PolicyInput input) {
+        public Action selectAction(Observation input) {
             return null;
         }
 
         @Override
-        public double[] forwardLogits(PolicyInput input) {
+        public double[] forwardLogits(Observation input) {
             return new double[actionSet.size()];
         }
 
         @Override
-        public double[][] forwardLogits(PolicyInput[] inputs) {
+        public double[][] forwardLogits(Observation[] inputs) {
             double[][] logits = new double[inputs.length][];
 
             for (int i = 0; i < inputs.length; i++) {
@@ -455,12 +454,12 @@ public class TDActorCriticTest {
         }
 
         @Override
-        public void updateFromLogitsGradient(PolicyInput input, double[] dLossDLogits, double learningRate) {
+        public void updateFromLogitsGradient(Observation input, double[] dLossDLogits, double learningRate) {
             updateCalls.add(new ActorUpdateCall(input, dLossDLogits, learningRate));
         }
 
         @Override
-        public void updateFromLogitsGradient(PolicyInput[] inputs, double[][] dLossDLogits, double learningRate) {
+        public void updateFromLogitsGradient(Observation[] inputs, double[][] dLossDLogits, double learningRate) {
             for (int i = 0; i < inputs.length; i++) {
                 updateFromLogitsGradient(inputs[i], dLossDLogits[i], learningRate);
             }
@@ -483,7 +482,7 @@ public class TDActorCriticTest {
         }
     }
     
-    private record ActorUpdateCall(PolicyInput input, double[] gradient, double learningRate) {
+    private record ActorUpdateCall(Observation input, double[] gradient, double learningRate) {
     }
 
     private static final class RecordingStateValueCritic extends StateValueCritic {
@@ -528,32 +527,32 @@ public class TDActorCriticTest {
         }
 
         @Override
-        public double updateFromTransition(PolicyInput observation, double reward, PolicyInput nextObservation, boolean terminal, double gamma, double learningRate) {
+        public double updateFromTransition(Observation observation, double reward, Observation nextObservation, boolean terminal, double gamma, double learningRate) {
             updateCalls.add(new CriticUpdateCall(observation, reward, nextObservation, terminal, gamma, learningRate));
             return tdErrors.removeFirst();
         }
     }
 
-    private record CriticUpdateCall(PolicyInput observation, double reward, PolicyInput nextObservation, boolean terminal, double gamma,
+    private record CriticUpdateCall(Observation observation, double reward, Observation nextObservation, boolean terminal, double gamma,
             double learningRate) {
     }
 
-    private static final class DummyPolicyInput implements PolicyInput {
+    private static final class DummyObservation implements Observation {
 
         private final String id;
 
-        private DummyPolicyInput(String id) {
+        private DummyObservation(String id) {
             this.id = id;
         }
 
         @Override
-        public PolicyInput add(PolicyInput other) {
+        public Observation add(Observation other) {
             return this;
         }
 
         @Override
-        public PolicyInput copy() {
-            return new DummyPolicyInput(id);
+        public Observation copy() {
+            return new DummyObservation(id);
         }
 
         @Override
@@ -561,7 +560,7 @@ public class TDActorCriticTest {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof DummyPolicyInput other)) {
+            if (!(obj instanceof DummyObservation other)) {
                 return false;
             }
             return id.equals(other.id);

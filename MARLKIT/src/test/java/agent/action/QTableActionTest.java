@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.testng.annotations.Test;
 
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 import learning.policies.valuefunction.QTable;
 import util.Pair;
 
@@ -16,9 +16,9 @@ public class QTableActionTest {
         QTable qTable = new QTable(0.0);
 
         Action action = new DummyAction();
-        PolicyInput input = new DummyPolicyInput();
+        Observation input = new DummyObservation();
 
-        Pair<PolicyInput, Action> key = new Pair<>(input, action);
+        Pair<Observation, Action> key = new Pair<>(input, action);
         qTable.setValue(key, 42.0);
 
         // When
@@ -35,12 +35,12 @@ public class QTableActionTest {
 
         Action action1 = new DummyAction("a1");
         Action action2 = new DummyAction("a1");
-        PolicyInput input = new DummyPolicyInput();
+        Observation input = new DummyObservation();
 
-        Pair<PolicyInput, Action> key1 = new Pair<>(input, action1);
+        Pair<Observation, Action> key1 = new Pair<>(input, action1);
         qTable.setValue(key1, 42.0);
 
-        Pair<PolicyInput, Action> key2 = new Pair<>(input, action2);
+        Pair<Observation, Action> key2 = new Pair<>(input, action2);
 
         // When
         double value = qTable.getValue(key2);
@@ -56,12 +56,12 @@ public class QTableActionTest {
 
         Action action1 = new DummyAction("a1");
         Action action2 = new DummyAction("a2");
-        PolicyInput input = new DummyPolicyInput();
+        Observation input = new DummyObservation();
 
-        Pair<PolicyInput, Action> key1 = new Pair<>(input, action1);
+        Pair<Observation, Action> key1 = new Pair<>(input, action1);
         qTable.setValue(key1, 42.0);
 
-        Pair<PolicyInput, Action> key2 = new Pair<>(input, action2);
+        Pair<Observation, Action> key2 = new Pair<>(input, action2);
 
         // When
         double value = qTable.getValue(key2);
@@ -102,9 +102,9 @@ public class QTableActionTest {
 		}
     }
 
-    private static class DummyPolicyInput implements PolicyInput {
+    private static class DummyObservation implements Observation {
         @Override
-        public PolicyInput add(PolicyInput other) {
+        public Observation add(Observation other) {
             return null;
         }
         
@@ -117,8 +117,8 @@ public class QTableActionTest {
         }
 
 		@Override
-		public PolicyInput copy() {
-			return new DummyPolicyInput();
+		public Observation copy() {
+			return new DummyObservation();
 		}
     }
 }

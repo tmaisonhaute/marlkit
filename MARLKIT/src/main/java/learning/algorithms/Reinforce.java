@@ -61,13 +61,13 @@ public class Reinforce implements Algorithm {
             return;
         }
 
-        double[][] logitsBatch = policy.forwardLogits(batch.getAllInputs());
+        double[][] logitsBatch = policy.forwardLogits(batch.getAllObservations());
         double[][] probsBatch = policy.softmax(logitsBatch);
         int[] actionIndices = toActionIndices(batch.getAllActions());
         double[] returns = batch.computeCumulativeRewards(gamma);
         double[][] gradients = computePolicyGradientSignal(probsBatch, actionIndices, returns);
 
-        policy.updateFromLogitsGradient(batch.getAllInputs(), gradients, alpha);
+        policy.updateFromLogitsGradient(batch.getAllObservations(), gradients, alpha);
 
         logger.info("Total rewards: " + batch.totalRewards());
     }

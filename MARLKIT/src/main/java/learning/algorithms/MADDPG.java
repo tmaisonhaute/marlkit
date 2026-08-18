@@ -5,10 +5,10 @@ import agent.action.ActionContinuousVector;
 import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
 import environment.observation.MappedJointObservation;
+import environment.observation.Observation;
 import experience.TransitionExperience;
 import learning.nn.ActionValueCritic;
 import learning.policies.DeterministicPolicyGradient;
-import learning.policies.PolicyInput;
 
 /**
  * Implements the multi-agent extension of DDPG with decentralized actors and a
@@ -135,7 +135,7 @@ public class MADDPG extends DDPG {
      * @return the local actor loss gradient
      */
     @Override
-    protected double[] computeActorLossGradient(PolicyInput actorObservation, PolicyInput criticObservation, Action criticSourceAction, ActionContinuousVector actorAction) {
+    protected double[] computeActorLossGradient(Observation actorObservation, Observation criticObservation, Action criticSourceAction, ActionContinuousVector actorAction) {
         if (!(criticSourceAction instanceof MappedJointAction mappedJointAction)) {
             throw new IllegalArgumentException("MADDPG requires MappedJointAction critic actions.");
         }
@@ -160,7 +160,7 @@ public class MADDPG extends DDPG {
      * @return the joint target action
      * @throws IllegalArgumentException if the centralized transition does not contain a mapped joint action
      */
-    protected MappedJointAction buildJointTargetAction(TransitionExperience criticTransition, MappedJointObservation jointNextObservation, PolicyInput actorNextObservation) {
+    protected MappedJointAction buildJointTargetAction(TransitionExperience criticTransition, MappedJointObservation jointNextObservation, Observation actorNextObservation) {
         MappedJointAction jointTargetAction;
 
         if (actionsPredictor != null) {

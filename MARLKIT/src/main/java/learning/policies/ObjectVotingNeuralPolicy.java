@@ -5,7 +5,8 @@ import java.util.Objects;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.Observation;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import learning.nn.NeuralNetwork;
 import util.VectorOperator;
 
@@ -21,7 +22,7 @@ public class ObjectVotingNeuralPolicy implements CategoricalPolicyGradient, Para
     private MLKAgent agent;
 
     private final NeuralNetwork objectToActionNetwork;
-    private final WrapperPolicyInputVector wrapper;
+    private final WrapperObservationVector wrapper;
     private final Action[] actions;
     private final double temperature;
     private final boolean initializeOnInit;
@@ -29,7 +30,7 @@ public class ObjectVotingNeuralPolicy implements CategoricalPolicyGradient, Para
 
     public ObjectVotingNeuralPolicy(
             NeuralNetwork objectToActionNetwork,
-            WrapperPolicyInputVector wrapper,
+            WrapperObservationVector wrapper,
             Action[] actions,
             double temperature,
             boolean initializeOnInit
@@ -68,7 +69,7 @@ public class ObjectVotingNeuralPolicy implements CategoricalPolicyGradient, Para
     }
 
     @Override
-    public Action selectAction(PolicyInput input) {
+    public Action selectAction(Observation input) {
         double[] logits = forwardLogits(input);
         int actionIndex = sampleSoftmax(logits);
         return actions[actionIndex].copy();
@@ -132,7 +133,7 @@ public class ObjectVotingNeuralPolicy implements CategoricalPolicyGradient, Para
     }
     
     @Override
-    public double[] forwardLogits(PolicyInput input) {
+    public double[] forwardLogits(Observation input) {
         double[] vector = wrapper.transform(input);
 
         if (vector.length == 0) {
@@ -144,7 +145,7 @@ public class ObjectVotingNeuralPolicy implements CategoricalPolicyGradient, Para
     }
     
 	@Override
-	public double[][] forwardLogits(PolicyInput[] inputs) {
+	public double[][] forwardLogits(Observation[] inputs) {
 	    double[][] logits = new double[inputs.length][];
 	
 	    for (int i = 0; i < inputs.length; i++) {
@@ -157,7 +158,7 @@ public class ObjectVotingNeuralPolicy implements CategoricalPolicyGradient, Para
 	}
 	
 	@Override
-	public void updateFromLogitsGradient(PolicyInput input, double[] dLossDLogits, double learningRate) {
+	public void updateFromLogitsGradient(Observation input, double[] dLossDLogits, double learningRate) {
 	    double[] vector = wrapper.transform(input);
 	    double[][] entities = VectorOperator.split(vector, inputSize);
 
@@ -173,7 +174,7 @@ public class ObjectVotingNeuralPolicy implements CategoricalPolicyGradient, Para
 	}
 
 	@Override
-	public void updateFromLogitsGradient(PolicyInput[] inputs, double[][] dLossDLogits, double learningRate) {
+	public void updateFromLogitsGradient(Observation[] inputs, double[][] dLossDLogits, double learningRate) {
 	    for (int i = 0; i < inputs.length; i++) {
 	    	updateFromLogitsGradient(inputs[i], dLossDLogits[i], learningRate);
 	    }

@@ -7,7 +7,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
 import environment.observation.MappedJointObservation;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 
 public class StandardGroupModelingPredictAction implements GroupModelPredictAction {
 	protected Map<MLKAgent, ModelPredictAction> modelPredictActionsByAgent;
@@ -26,7 +26,7 @@ public class StandardGroupModelingPredictAction implements GroupModelPredictActi
 	}
 
 	@Override
-	public void updateModel(PolicyInput observation, Action predictedAction, Action actualAction) {
+	public void updateModel(Observation observation, Action predictedAction, Action actualAction) {
 		MappedJointAction predictedMapped = predictedAction instanceof MappedJointAction m ? m : new MappedJointAction();
 		if (!(actualAction instanceof MappedJointAction actualMapped)) {
 			throw new IllegalArgumentException("Actual action must be an instance of MappedJointAction.");
@@ -41,12 +41,12 @@ public class StandardGroupModelingPredictAction implements GroupModelPredictActi
 	}
 
 	@Override
-	public MappedJointAction predictAction(PolicyInput observation) {
+	public MappedJointAction predictAction(Observation observation) {
 	    return predictActions(observation, null);
 	}
 
 	@Override
-	public MappedJointAction predictAction(PolicyInput observation, Action action) {
+	public MappedJointAction predictAction(Observation observation, Action action) {
 	    return predictActions(observation, action);
 	}
 	
@@ -60,13 +60,19 @@ public class StandardGroupModelingPredictAction implements GroupModelPredictActi
 	    return predictActions(observation, action);
 	}
 	
-	private MappedJointAction predictActions(PolicyInput observation, Action action) {
+	/**
+	 * 
+	 * @param observation
+	 * @param action
+	 * @return
+	 */
+	private MappedJointAction predictActions(Observation observation, Action action) {
 	    MappedJointAction predictedJointAction = new MappedJointAction();
 
 	    for (Map.Entry<MLKAgent, ModelPredictAction> entry : modelPredictActionsByAgent.entrySet()) {
 	        MLKAgent agent = entry.getKey();
 	        ModelPredictAction model = entry.getValue();
-	        PolicyInput modelObservation;
+	        Observation modelObservation;
 
 	        if (observation instanceof MappedJointObservation mappedObservation) {
 	            modelObservation = mappedObservation.getObservation(agent);

@@ -3,10 +3,10 @@ package marlkit.preyhunter.policies;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Move2DDouble;
+import environment.observation.Observation;
 import environment.observation.ObservationPositionValue;
 import environment.observation.ObservationPositionsValues;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import marlkit.preyhunter.environment.StatePreyHunter2D;
 import util.Pair;
 
@@ -36,7 +36,7 @@ public class PreyEscapePolicy implements Policy {
     }
 
     @Override
-    public Action selectAction(PolicyInput input) {
+    public Action selectAction(Observation input) {
         if (!(input instanceof ObservationPositionsValues observation)) {
             return randomMove();
         }

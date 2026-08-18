@@ -6,7 +6,6 @@ import java.util.Objects;
 import environment.observation.JointObservation;
 import environment.observation.MappedJointObservation;
 import environment.observation.Observation;
-import learning.policies.PolicyInput;
 
 /**
  * Converts a {@link JointObservation} into a fixed-size vector by transforming
@@ -19,9 +18,9 @@ import learning.policies.PolicyInput;
  * <p>All local observations are transformed with the same local observation
  * wrapper and must produce vectors of the same size.</p>
  */
-public class WrapperJointObservation implements WrapperPolicyInputVector {
+public class WrapperJointObservation implements WrapperObservationVector {
 
-    private final WrapperPolicyInputVector localObservationWrapper;
+    private final WrapperObservationVector localObservationWrapper;
     private final int localObservationVectorSize;
     private final int numberOfObservations;
 
@@ -35,7 +34,7 @@ public class WrapperJointObservation implements WrapperPolicyInputVector {
      * @throws IllegalArgumentException if {@code localObservationVectorSize} or
      *                                  {@code numberOfObservations} is not strictly positive
      */
-    public WrapperJointObservation(WrapperPolicyInputVector localObservationWrapper, int localObservationVectorSize, int numberOfObservations) {
+    public WrapperJointObservation(WrapperObservationVector localObservationWrapper, int localObservationVectorSize, int numberOfObservations) {
         this.localObservationWrapper = Objects.requireNonNull(localObservationWrapper, "localObservationWrapper");
 
         if (localObservationVectorSize <= 0) {
@@ -54,17 +53,17 @@ public class WrapperJointObservation implements WrapperPolicyInputVector {
      * Transforms a joint observation into a vector by concatenating the vector
      * representation of each local observation.
      *
-     * @param input the joint observation to transform
+     * @param observation the joint observation to transform
      * @return the concatenated observation vector
-     * @throws IllegalArgumentException if {@code input} is not a
+     * @throws IllegalArgumentException if {@code observation} is not a
      *                                  {@link JointObservation} or a {@link MappedJointObservation}, if it does not
      *                                  contain the expected number of local
      *                                  observations, or if a local vector has
      *                                  an unexpected size
      */
     @Override
-    public double[] transform(PolicyInput input) {
-        List<Observation> observations = getObservations(input);
+    public double[] transform(Observation observation) {
+        List<Observation> observations = getObservations(observation);
 
         if (observations.size() != numberOfObservations) {
             throw new IllegalArgumentException("Expected " + numberOfObservations + " local observations but got " + observations.size() + ".");
@@ -85,12 +84,12 @@ public class WrapperJointObservation implements WrapperPolicyInputVector {
         return jointVector;
     }
     
-    private List<Observation> getObservations(PolicyInput input) {
-        if (input instanceof MappedJointObservation mappedJointObservation) {
+    private List<Observation> getObservations(Observation observation) {
+        if (observation instanceof MappedJointObservation mappedJointObservation) {
             return mappedJointObservation.getObservations();
         }
 
-        if (input instanceof JointObservation jointObservation) {
+        if (observation instanceof JointObservation jointObservation) {
             return jointObservation.getObservations();
         }
 
@@ -124,7 +123,7 @@ public class WrapperJointObservation implements WrapperPolicyInputVector {
             double[] localVector = new double[localObservationVectorSize];
             System.arraycopy(vector, i * localObservationVectorSize, localVector, 0, localObservationVectorSize);
 
-            PolicyInput localInput = localObservationWrapper.transform(localVector);
+            Observation localInput = localObservationWrapper.transform(localVector);
 
             if (!(localInput instanceof Observation observation)) {
                 throw new IllegalArgumentException("The local wrapper must reconstruct an Observation.");
@@ -169,7 +168,7 @@ public class WrapperJointObservation implements WrapperPolicyInputVector {
      *
      * @return the local observation wrapper
      */
-    public WrapperPolicyInputVector getLocalObservationWrapper() {
+    public WrapperObservationVector getLocalObservationWrapper() {
         return localObservationWrapper;
     }
 }

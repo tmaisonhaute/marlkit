@@ -21,7 +21,6 @@ import environment.observation.Observation;
 import experience.Experience;
 import learning.Algorithm;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import learning.policies.valuefunction.ActionEvaluator;
 import madkit.simulation.SimuAgent;
 
@@ -39,7 +38,7 @@ public class MinimaxValueFunctionPredictActionTest {
         model.setPredictingAgent(SELF);
 
         // When / Then
-        assertThatThrownBy(() -> model.predictAction(new DummyPolicyInput()))
+        assertThatThrownBy(() -> model.predictAction(new DummyObservation()))
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
@@ -64,7 +63,7 @@ public class MinimaxValueFunctionPredictActionTest {
         model.setPredictingAgent(SELF);
 
         // When
-        MappedJointAction predicted = model.predictAction(new DummyPolicyInput(), own);
+        MappedJointAction predicted = model.predictAction(new DummyObservation(), own);
 
         // Then
 		assertThat(predicted.getAction(OTHER1)).isEqualTo(other2);
@@ -90,7 +89,7 @@ public class MinimaxValueFunctionPredictActionTest {
         model.setPredictingAgent(SELF);
 
         // When
-        MappedJointAction predicted = model.predictAction(new DummyPolicyInput(), own);
+        MappedJointAction predicted = model.predictAction(new DummyObservation(), own);
 
         // Then
 		assertThat(predicted.getAction(OTHER1)).isEqualTo(other);
@@ -110,7 +109,7 @@ public class MinimaxValueFunctionPredictActionTest {
         model.setPredictingAgent(SELF);
 
         // When
-        MappedJointAction predicted = model.predictAction(new DummyPolicyInput(), own);
+        MappedJointAction predicted = model.predictAction(new DummyObservation(), own);
 
         // Then
 		assertThat(predicted.getMappedActions()).isEmpty();
@@ -136,7 +135,7 @@ public class MinimaxValueFunctionPredictActionTest {
         model.setPredictingAgent(SELF);
 
         // When
-        MappedJointAction predicted = model.predictAction(new DummyPolicyInput(), own);
+        MappedJointAction predicted = model.predictAction(new DummyObservation(), own);
 
         // Then
 		assertThat(predicted.getAction(OTHER1)).isEqualTo(other1);
@@ -153,12 +152,12 @@ public class MinimaxValueFunctionPredictActionTest {
 
         ActionEvaluator evaluator = new ActionEvaluator() {
             @Override
-            public Double getValue(PolicyInput input, Action action) {
+            public Double getValue(Observation input, Action action) {
                 return 0.0;
             }
 
             @Override
-            public ActionSpace getActionSpace(PolicyInput observation) {
+            public ActionSpace getActionSpace(Observation observation) {
                 return space;
             }
         };
@@ -168,7 +167,7 @@ public class MinimaxValueFunctionPredictActionTest {
         model.setPredictingAgent(SELF);
 
         // When / Then
-        assertThatThrownBy(() -> model.predictAction(new DummyPolicyInput(), own))
+        assertThatThrownBy(() -> model.predictAction(new DummyObservation(), own))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -189,7 +188,7 @@ public class MinimaxValueFunctionPredictActionTest {
         model.setPredictingAgent(SELF);
 
         // When
-        MappedJointAction predicted = model.predictAction(new DummyPolicyInput(), own);
+        MappedJointAction predicted = model.predictAction(new DummyObservation(), own);
         predicted.addAction(OTHER2, new ActionInt(999));
 
         // Then
@@ -239,7 +238,7 @@ public class MinimaxValueFunctionPredictActionTest {
         model.setPredictingAgent(SELF);
 
         // When
-        MappedJointAction predicted = model.predictAction(new DummyPolicyInput(), own);
+        MappedJointAction predicted = model.predictAction(new DummyObservation(), own);
 
         // Then
 		assertThat(predicted.getAction(OTHER1)).isEqualTo(other);
@@ -258,25 +257,25 @@ public class MinimaxValueFunctionPredictActionTest {
         }
 
         @Override
-        public Double getValue(PolicyInput input, Action action) {
+        public Double getValue(Observation input, Action action) {
             return values.getOrDefault(action, 0.0);
         }
 
         @Override
-        public ActionSpace getActionSpace(PolicyInput observation) {
+        public ActionSpace getActionSpace(Observation observation) {
             return space;
         }
     }
 
-    private static final class DummyPolicyInput implements PolicyInput {
+    private static final class DummyObservation implements Observation {
 
         @Override
-        public PolicyInput add(PolicyInput other) {
+        public Observation add(Observation other) {
             return this;
         }
 
         @Override
-        public PolicyInput copy() {
+        public Observation copy() {
             return this;
         }
     }
@@ -284,12 +283,12 @@ public class MinimaxValueFunctionPredictActionTest {
     private static final class DummyEvaluator implements ActionEvaluator {
 
         @Override
-        public Double getValue(PolicyInput input, Action action) {
+        public Double getValue(Observation input, Action action) {
             return 0.0;
         }
 
         @Override
-        public ActionSpace getActionSpace(PolicyInput observation) {
+        public ActionSpace getActionSpace(Observation observation) {
             return new ActionSpace();
         }
     }
@@ -349,7 +348,7 @@ public class MinimaxValueFunctionPredictActionTest {
         }
 
         @Override
-        public Action selectAction(PolicyInput input) {
+        public Action selectAction(Observation input) {
             return null;
         }
 

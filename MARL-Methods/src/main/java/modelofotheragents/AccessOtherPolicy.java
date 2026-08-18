@@ -2,8 +2,8 @@ package modelofotheragents;
 
 import agent.action.Action;
 import agent.modelofotheragent.ModelPredictAction;
+import environment.observation.Observation;
 import learning.Policy;
-import learning.policies.PolicyInput;
 
 public class AccessOtherPolicy implements ModelPredictAction {
 	protected Policy policy;
@@ -14,19 +14,19 @@ public class AccessOtherPolicy implements ModelPredictAction {
 	}
 
 	@Override
-	public Action predictAction(PolicyInput observation) {
+	public Action predictAction(Observation observation) {
 		Action predictedAction = policy.selectAction(observation);
 		lastPredictedAction = predictedAction.copy(); 
 		return predictedAction;
 	}
 
 	@Override
-	public Action predictAction(PolicyInput observation, Action action) {
+	public Action predictAction(Observation observation, Action action) {
 		return predictAction(observation);
 	}
 
 	@Override
-	public void updateModel(PolicyInput observation, Action predictedAction, Action actualAction) {
+	public void updateModel(Observation observation, Action predictedAction, Action actualAction) {
 		// No update needed for accessing policies directly
 	}
 

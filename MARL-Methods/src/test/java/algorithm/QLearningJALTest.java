@@ -21,7 +21,6 @@ import experience.Experience;
 import learning.Algorithm;
 import learning.ExplorationStrategy;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
 import util.Pair;
 
@@ -358,19 +357,19 @@ public class QLearningJALTest {
         }
 
         @Override
-        public MappedJointAction predictAction(PolicyInput observation) {
+        public MappedJointAction predictAction(Observation observation) {
             predictCalls.add(new PredictCall(observation, null));
             return fixedPrediction;
         }
 
         @Override
-        public MappedJointAction predictAction(PolicyInput observation, Action action) {
+        public MappedJointAction predictAction(Observation observation, Action action) {
             predictCalls.add(new PredictCall(observation, action));
             return fixedPrediction;
         }
 
         @Override
-        public void updateModel(PolicyInput observation, Action predictedAction, Action actualAction) {
+        public void updateModel(Observation observation, Action predictedAction, Action actualAction) {
         }
 
 		@Override
@@ -391,18 +390,18 @@ public class QLearningJALTest {
 		}
     }
 
-    private record PredictCall(PolicyInput observation, Action action) {
+    private record PredictCall(Observation observation, Action action) {
     }
 
-    private static final class DummyPolicyInput implements PolicyInput {
+    private static final class DummyPolicyInput implements Observation {
 
         @Override
-        public PolicyInput add(PolicyInput other) {
+        public Observation add(Observation other) {
             return this;
         }
 
         @Override
-        public PolicyInput copy() {
+        public Observation copy() {
             return new DummyPolicyInput();
         }
 
@@ -472,7 +471,7 @@ public class QLearningJALTest {
         }
 
         @Override
-        public Action selectAction(PolicyInput input) {
+        public Action selectAction(Observation input) {
             return null;
         }
 

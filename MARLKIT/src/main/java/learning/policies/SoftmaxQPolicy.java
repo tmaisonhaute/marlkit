@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import agent.action.Action;
+import environment.observation.Observation;
 import learning.ExplorationStrategy;
 import learning.explorationstrategies.NoExploration;
 import util.Pair;
@@ -33,7 +34,7 @@ public class SoftmaxQPolicy extends QValueBasedPolicy {
 	}
 
 	@Override
-	public Action selectAction(PolicyInput input) {
+	public Action selectAction(Observation input) {
 		Optional<Action> exploratoryAction = getExplorationStrategy().getExploratoryAction(actionsSet, prng());
 		if (exploratoryAction.isPresent()) {
 			return exploratoryAction.get();
@@ -50,10 +51,10 @@ public class SoftmaxQPolicy extends QValueBasedPolicy {
 	/**
 	 * Collect Q-values for each available action.
 	 *
-	 * @param input Policy input for the current state.
+	 * @param input the observation for the current state.
 	 * @return Array of Q-values in action order.
 	 */
-	protected double[] collectQValues(PolicyInput input) {
+	protected double[] collectQValues(Observation input) {
 		double[] values = new double[actionsSet.size()];
 		for (int i = 0; i < actionsSet.size(); i++) {
 			Action act = actionsSet.get(i);

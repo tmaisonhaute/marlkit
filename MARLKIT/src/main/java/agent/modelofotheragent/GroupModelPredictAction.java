@@ -4,7 +4,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
 import environment.observation.MappedJointObservation;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 
 /**
  * Prediction model that returns a joint action for a group of agents.
@@ -37,13 +37,13 @@ public interface GroupModelPredictAction extends ModelPredictAction {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public MappedJointAction predictAction(PolicyInput observation);
+	public MappedJointAction predictAction(Observation observation);
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public MappedJointAction predictAction(PolicyInput observation, Action action);
+	public MappedJointAction predictAction(Observation observation, Action action);
 	
 	/**
 	 * Predict a joint action from a mapped joint observation.

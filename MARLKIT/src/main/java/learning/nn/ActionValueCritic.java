@@ -10,11 +10,11 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.ActionContinuousVector;
 import agent.action.MappedJointAction;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.Observation;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import experience.Experience;
 import learning.Critic;
 import learning.policies.Parameterized;
-import learning.policies.PolicyInput;
 
 /**
  * Action-value critic used by deterministic actor-critic algorithms.
@@ -31,7 +31,7 @@ import learning.policies.PolicyInput;
 public class ActionValueCritic implements Critic, Parameterized {
 
     private final NeuralNetwork network;
-    private final WrapperPolicyInputVector observationWrapper;
+    private final WrapperObservationVector observationWrapper;
     private final int observationSize;
     private final int actionSize;
 
@@ -49,7 +49,7 @@ public class ActionValueCritic implements Critic, Parameterized {
      * @throws IllegalArgumentException if one of the specified sizes is not
      *                                  strictly positive
      */
-    public ActionValueCritic(int observationSize, int actionSize, int hiddenSize, WrapperPolicyInputVector observationWrapper) {
+    public ActionValueCritic(int observationSize, int actionSize, int hiddenSize, WrapperObservationVector observationWrapper) {
         if (observationSize <= 0) {
             throw new IllegalArgumentException("observationSize must be strictly positive.");
         }
@@ -116,7 +116,7 @@ public class ActionValueCritic implements Critic, Parameterized {
      * @param action the continuous action
      * @return the estimated action value
      */
-    public double getValue(PolicyInput observation, ActionContinuousVector action) {
+    public double getValue(Observation observation, ActionContinuousVector action) {
         double[] criticInput = buildCriticInput(observation, action);
         return getValue(criticInput);
     }
@@ -146,7 +146,7 @@ public class ActionValueCritic implements Critic, Parameterized {
      * @param learningRate the critic learning rate
      * @return the prediction error {@code targetValue - Q(o, a)}
      */
-    public double updateTowardTarget(PolicyInput observation, ActionContinuousVector action, double targetValue, double learningRate) {
+    public double updateTowardTarget(Observation observation, ActionContinuousVector action, double targetValue, double learningRate) {
         double[] criticInput = buildCriticInput(observation, action);
         double prediction = getValue(criticInput);
         double error = targetValue - prediction;
@@ -171,7 +171,7 @@ public class ActionValueCritic implements Critic, Parameterized {
      * @throws IllegalArgumentException if the batch dimensions are inconsistent or
      *                                  the batch is empty
      */
-    public void updateTowardTargets(PolicyInput[] observations, ActionContinuousVector[] actions, double[] targetValues, double learningRate) {
+    public void updateTowardTargets(Observation[] observations, ActionContinuousVector[] actions, double[] targetValues, double learningRate) {
         if (observations.length == 0) {
             throw new IllegalArgumentException("The batch must not be empty.");
         }
@@ -210,7 +210,7 @@ public class ActionValueCritic implements Critic, Parameterized {
      * @param action the continuous action at which the gradient is evaluated
      * @return the gradient of the estimated value with respect to the action
      */
-    public double[] actionGradient(PolicyInput observation, ActionContinuousVector action) {
+    public double[] actionGradient(Observation observation, ActionContinuousVector action) {
         double[] criticInput = buildCriticInput(observation, action);
         double[] inputGradient = network.inputGradient(criticInput, new double[] { 1.0 });
 
@@ -228,7 +228,7 @@ public class ActionValueCritic implements Critic, Parameterized {
      * @throws IllegalArgumentException if the agent is absent or if the joint
      *                                  action contains a non-continuous action
      */
-    public double[] actionGradient(PolicyInput observation, MappedJointAction jointAction, MLKAgent agent) {
+    public double[] actionGradient(Observation observation, MappedJointAction jointAction, MLKAgent agent) {
         ActionContinuousVector jointActionVector = ActionContinuousVector.fromJointAction(jointAction);
         double[] jointGradient = actionGradient(observation, jointActionVector);
 
@@ -259,7 +259,7 @@ public class ActionValueCritic implements Critic, Parameterized {
      * @throws IllegalArgumentException if the observation or action dimension
      *                                  does not match the critic configuration
      */
-    protected double[] buildCriticInput(PolicyInput observation, ActionContinuousVector action) {
+    protected double[] buildCriticInput(Observation observation, ActionContinuousVector action) {
         Objects.requireNonNull(observation, "observation");
         Objects.requireNonNull(action, "action");
 

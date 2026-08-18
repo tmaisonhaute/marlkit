@@ -6,8 +6,8 @@ import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
+import environment.observation.Observation;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import learning.policies.StochasticFixedPolicy;
 
 public class GoOrYieldSwitchingPolicy implements Policy {
@@ -41,7 +41,7 @@ public class GoOrYieldSwitchingPolicy implements Policy {
     }
 
     @Override
-    public Action selectAction(PolicyInput input) {
+    public Action selectAction(Observation input) {
         return currentPolicy.selectAction(input);
     }
 

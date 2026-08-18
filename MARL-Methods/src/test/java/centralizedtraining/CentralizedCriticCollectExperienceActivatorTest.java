@@ -24,7 +24,6 @@ import learning.Critic;
 import learning.Policy;
 import learning.algorithms.ActorCritic;
 import learning.policies.CategoricalPolicyGradient;
-import learning.policies.PolicyInput;
 import madkit.kernel.AgentLogger;
 import madkit.simulation.SimuAgent;
 import reward.RewardStandard;
@@ -69,8 +68,8 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     @Test
     public void givenTwoAgents_whenExecute_thenMergeInputsInAgentOrder() {
         // Given
-        DummyPolicyInput input1 = new DummyPolicyInput(List.of("o1"));
-        DummyPolicyInput input2 = new DummyPolicyInput(List.of("o2"));
+        DummyObservation input1 = new DummyObservation(List.of("o1"));
+        DummyObservation input2 = new DummyObservation(List.of("o2"));
 
         Experience experience1 = new DefaultExperience(input1, new ActionInt(1), new RewardStandard(10));
         Experience experience2 = new DefaultExperience(input2, new ActionInt(2), new RewardStandard(20));
@@ -91,8 +90,8 @@ public class CentralizedCriticCollectExperienceActivatorTest {
         Experience enrichedExperience1 = critic1.enrichmentCalls.get(0).enrichedExperience();
         Experience enrichedExperience2 = critic2.enrichmentCalls.get(0).enrichedExperience();
 
-        assertThat(enrichedExperience1.getInput()).isEqualTo(new DummyPolicyInput(List.of("o1", "o2")));
-        assertThat(enrichedExperience2.getInput()).isEqualTo(new DummyPolicyInput(List.of("o1", "o2")));
+        assertThat(enrichedExperience1.getObservation()).isEqualTo(new DummyObservation(List.of("o1", "o2")));
+        assertThat(enrichedExperience2.getObservation()).isEqualTo(new DummyObservation(List.of("o1", "o2")));
     }
 
     @Test
@@ -101,8 +100,8 @@ public class CentralizedCriticCollectExperienceActivatorTest {
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
 
-        Experience experience1 = new DefaultExperience(new DummyPolicyInput(List.of("o1")), action1, new RewardStandard(10));
-        Experience experience2 = new DefaultExperience(new DummyPolicyInput(List.of("o2")), action2, new RewardStandard(20));
+        Experience experience1 = new DefaultExperience(new DummyObservation(List.of("o1")), action1, new RewardStandard(10));
+        Experience experience2 = new DefaultExperience(new DummyObservation(List.of("o2")), action2, new RewardStandard(20));
 
         RecordingCritic critic1 = new RecordingCritic();
         RecordingCritic critic2 = new RecordingCritic();
@@ -128,12 +127,12 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     public void givenTwoAgentsWithDifferentRewards_whenExecute_thenEachEnrichedExperienceKeepsOriginalReward() {
         // Given
         Experience experience1 = new DefaultExperience(
-                new DummyPolicyInput(List.of("o1")),
+                new DummyObservation(List.of("o1")),
                 new ActionInt(1),
                 new RewardStandard(10)
         );
         Experience experience2 = new DefaultExperience(
-                new DummyPolicyInput(List.of("o2")),
+                new DummyObservation(List.of("o2")),
                 new ActionInt(2),
                 new RewardStandard(20)
         );
@@ -162,12 +161,12 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     public void givenTwoAgents_whenExecute_thenFeedbackOriginalExperienceToEachAgent() {
         // Given
         Experience experience1 = new DefaultExperience(
-                new DummyPolicyInput(List.of("o1")),
+                new DummyObservation(List.of("o1")),
                 new ActionInt(1),
                 new RewardStandard(10)
         );
         Experience experience2 = new DefaultExperience(
-                new DummyPolicyInput(List.of("o2")),
+                new DummyObservation(List.of("o2")),
                 new ActionInt(2),
                 new RewardStandard(20)
         );
@@ -190,12 +189,12 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     public void givenTwoAgents_whenExecute_thenAssociateOriginalAndEnrichedExperiencesWithEachCritic() {
         // Given
         Experience experience1 = new DefaultExperience(
-                new DummyPolicyInput(List.of("o1")),
+                new DummyObservation(List.of("o1")),
                 new ActionInt(1),
                 new RewardStandard(10)
         );
         Experience experience2 = new DefaultExperience(
-                new DummyPolicyInput(List.of("o2")),
+                new DummyObservation(List.of("o2")),
                 new ActionInt(2),
                 new RewardStandard(20)
         );
@@ -224,7 +223,7 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     public void givenAgentWithoutActorCriticAlgorithm_whenExecute_thenThrowIllegalStateException() {
         // Given
         Experience experience = new DefaultExperience(
-                new DummyPolicyInput(List.of("o1")),
+                new DummyObservation(List.of("o1")),
                 new ActionInt(1),
                 new RewardStandard(10)
         );
@@ -244,7 +243,7 @@ public class CentralizedCriticCollectExperienceActivatorTest {
     public void givenOneAgentWithoutExperience_whenExecute_thenCentralizeOnlyAvailableExperiences() {
         // Given
         Experience experience = new DefaultExperience(
-                new DummyPolicyInput(List.of("o1")),
+                new DummyObservation(List.of("o1")),
                 new ActionInt(1),
                 new RewardStandard(10)
         );
@@ -291,30 +290,30 @@ public class CentralizedCriticCollectExperienceActivatorTest {
         }
     }
 
-    private static final class DummyPolicyInput implements PolicyInput {
+    private static final class DummyObservation implements Observation {
 
         private final List<String> values;
 
-        private DummyPolicyInput(List<String> values) {
+        private DummyObservation(List<String> values) {
             this.values = List.copyOf(values);
         }
 
         @Override
-        public PolicyInput add(PolicyInput other) {
-            DummyPolicyInput otherInput = (DummyPolicyInput) other;
+        public Observation add(Observation other) {
+            DummyObservation otherInput = (DummyObservation) other;
             List<String> mergedValues = new ArrayList<>(values);
             mergedValues.addAll(otherInput.values);
-            return new DummyPolicyInput(mergedValues);
+            return new DummyObservation(mergedValues);
         }
 
         @Override
-        public PolicyInput copy() {
-            return new DummyPolicyInput(values);
+        public Observation copy() {
+            return new DummyObservation(values);
         }
 
         @Override
         public boolean equals(Object obj) {
-            return this == obj || (obj instanceof DummyPolicyInput other && values.equals(other.values));
+            return this == obj || (obj instanceof DummyObservation other && values.equals(other.values));
         }
 
         @Override
@@ -517,7 +516,7 @@ public class CentralizedCriticCollectExperienceActivatorTest {
         }
 
         @Override
-        public Action selectAction(PolicyInput input) {
+        public Action selectAction(Observation input) {
             return null;
         }
 

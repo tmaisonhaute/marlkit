@@ -8,28 +8,27 @@ import agent.action.Action;
 import agent.action.MappedJointAction;
 import environment.observation.MappedJointObservation;
 import environment.observation.Observation;
-import learning.policies.PolicyInput;
 import reward.Reward;
 
 public class TransitionExperience implements Experience {
-	protected PolicyInput input;
+	protected Observation observation;
     protected Action action;
     protected Reward reward;
-	protected PolicyInput nextInput;
+	protected Observation nextObservation;
 	protected boolean isTerminal;
 
-	public TransitionExperience(PolicyInput input, Action action, Reward reward, PolicyInput nextInput, boolean isTerminal) {
-		this.input = input;
+	public TransitionExperience(Observation observation, Action action, Reward reward, Observation nextObservation, boolean isTerminal) {
+		this.observation = observation;
 		this.action = action;
 		this.reward = reward;
-		this.nextInput = nextInput;
+		this.nextObservation = nextObservation;
 		this.isTerminal = isTerminal;
 	}
 	
 
 	@Override
-	public PolicyInput getInput() {
-		return input;
+	public Observation getObservation() {
+		return observation;
 	}
 
 	@Override
@@ -47,8 +46,8 @@ public class TransitionExperience implements Experience {
 		return reward.getValue();
 	}
 	
-    public PolicyInput getNextObservation() {
-        return nextInput;
+    public Observation getNextObservation() {
+        return nextObservation;
     }
 
     public boolean isTerminal() {
@@ -57,19 +56,19 @@ public class TransitionExperience implements Experience {
     
 	@Override
 	public TransitionExperience withAction(Action newAction) {
-		return new TransitionExperience(this.input, newAction, this.reward, this.nextInput, this.isTerminal);
+		return new TransitionExperience(this.observation, newAction, this.reward, this.nextObservation, this.isTerminal);
 	}
 	
 	@Override
-	public TransitionExperience withInputAction(PolicyInput newInput, Action newAction) {
-		return new TransitionExperience(newInput, newAction, this.reward, this.nextInput, this.isTerminal);
+	public TransitionExperience withObservationAction(Observation newObservation, Action newAction) {
+		return new TransitionExperience(newObservation, newAction, this.reward, this.nextObservation, this.isTerminal);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * 
 	 * @throws NullPointerException if an argument is {@code null}
-	 * @throws IllegalArgumentException if an experience is not a transition or if a current or next input is not an observation
+	 * @throws IllegalArgumentException if an experience is not a transition
 	 */
 	public TransitionExperience createCentralizedExperience(Map<MLKAgent, Experience> experiencesByAgent, Reward centralReward) {
 	    Objects.requireNonNull(experiencesByAgent, "experiencesByAgent");
@@ -85,14 +84,6 @@ public class TransitionExperience implements Experience {
 
 	        if (!(experience instanceof TransitionExperience transition)) {
 	            throw new IllegalArgumentException("Centralized transitions require only TransitionExperience instances.");
-	        }
-
-	        if (!(transition.getInput() instanceof Observation observation)) {
-	            throw new IllegalArgumentException("Centralized transitions require Observation inputs.");
-	        }
-
-	        if (!(transition.getNextObservation() instanceof Observation nextObservation)) {
-	            throw new IllegalArgumentException("Centralized transitions require Observation next inputs.");
 	        }
 
 	        jointObservation.addObservation(agent, observation);

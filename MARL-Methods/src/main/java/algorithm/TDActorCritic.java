@@ -2,6 +2,7 @@ package algorithm;
 
 import agent.MLKAgent;
 import agent.action.Action;
+import environment.observation.Observation;
 import experience.Experience;
 import learning.Batch;
 import learning.Critic;
@@ -9,7 +10,6 @@ import learning.Policy;
 import learning.algorithms.ActorCritic;
 import learning.nn.StateValueCritic;
 import learning.policies.CategoricalPolicyGradient;
-import learning.policies.PolicyInput;
 import madkit.kernel.AgentLogger;
 
 
@@ -125,14 +125,14 @@ public class TDActorCritic implements ActorCritic {
         criticCurrentExperience = criticCurrentExperience != null ? criticCurrentExperience : currentExperience;
         criticNextExperience = criticNextExperience != null ? criticNextExperience : nextExperience;
 
-        PolicyInput currentInput = currentExperience.getInput();
+        Observation currentInput = currentExperience.getObservation();
         Action selectedAction = currentExperience.getAction();
         double reward = currentExperience.getRewardValue();
 
         double tdError = critic.updateFromTransition(
-        		criticCurrentExperience.getInput(),
+        		criticCurrentExperience.getObservation(),
                 reward,
-                criticNextExperience.getInput(),
+                criticNextExperience.getObservation(),
                 false,
                 gamma, 
                 getCriticLearningRate()
@@ -154,7 +154,7 @@ public class TDActorCritic implements ActorCritic {
      * Therefore:
      *     dL/dlogits = tdError * (probs - oneHot(action))
      */
-    private void updateActor(PolicyInput input, Action selectedAction, double tdError) {
+    private void updateActor(Observation input, Action selectedAction, double tdError) {
         double[] logits = actor.forwardLogits(input);
         double[] probabilities = actor.softmax(logits);
         int actionIndex = actor.actionIndex(selectedAction);
@@ -181,13 +181,13 @@ public class TDActorCritic implements ActorCritic {
             Experience criticLastExperience = critic.getEnrichedExperience(last);
             criticLastExperience = criticLastExperience != null ? criticLastExperience : last;
 
-            PolicyInput currentInput = last.getInput();
+            Observation currentInput = last.getObservation();
             Action selectedAction = last.getAction();
             double reward = last.getRewardValue();
 
             
             double tdError = critic.updateFromTransition(
-            		criticLastExperience.getInput(),
+            		criticLastExperience.getObservation(),
                     reward,
                     null,
                     true,

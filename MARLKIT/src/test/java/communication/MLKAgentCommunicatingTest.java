@@ -16,7 +16,6 @@ import environment.observation.Observation;
 import experience.Experience;
 import learning.Algorithm;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import madkit.kernel.Mailbox;
 import madkit.simulation.SimuAgent;
 
@@ -208,7 +207,7 @@ public class MLKAgentCommunicatingTest {
         }
 
         @Override
-        public Action selectAction(PolicyInput input) {
+        public Action selectAction(Observation input) {
             return null;
         }
 

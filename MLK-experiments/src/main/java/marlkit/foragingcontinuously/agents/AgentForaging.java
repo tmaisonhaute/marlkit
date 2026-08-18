@@ -6,7 +6,7 @@ import java.util.List;
 import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Move2DInt;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import environment.observation.wrapperobservationvector.WrapperVectorObservationPositionsValues;
 import learning.algorithms.Reinforce;
 import learning.nn.NeuralNetwork;
@@ -22,7 +22,7 @@ public class AgentForaging extends AgentStandard {
 //    	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.995);
     	
 
-    	WrapperPolicyInputVector wrapper = new WrapperVectorObservationPositionsValues(true);
+    	WrapperObservationVector wrapper = new WrapperVectorObservationPositionsValues(true);
 
         NeuralNetwork network = NeuralNetwork.reluIdentity(new int[] {
             3,

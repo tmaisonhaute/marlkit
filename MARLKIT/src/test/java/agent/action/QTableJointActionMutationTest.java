@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.testng.annotations.Test;
 
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 import learning.policies.valuefunction.QTable;
 import util.Pair;
 
@@ -15,12 +15,12 @@ public class QTableJointActionMutationTest {
         QTable qTable = new QTable(0.0);
 
         Action a1 = new DummyAction();
-        PolicyInput input = new DummyPolicyInput();
+        Observation input = new DummyObservation();
 
         OrderedJointAction ja = new OrderedJointAction();
         ja.addAction(a1);
 
-        Pair<PolicyInput, Action> key = new Pair<>(input, ja);
+        Pair<Observation, Action> key = new Pair<>(input, ja);
         qTable.setValue(key, 42.0);
 
         // When
@@ -37,12 +37,12 @@ public class QTableJointActionMutationTest {
 
         Action a1 = new DummyAction();
         Action a2 = new DummyAction();
-        PolicyInput input = new DummyPolicyInput();
+        Observation input = new DummyObservation();
 
         OrderedJointAction ja = new OrderedJointAction();
         ja.addAction(a1); 
 
-        Pair<PolicyInput, Action> key = new Pair<>(input, ja);
+        Pair<Observation, Action> key = new Pair<>(input, ja);
         qTable.setValue(key, 42.0);
 
         ja.addAction(a2);
@@ -61,12 +61,12 @@ public class QTableJointActionMutationTest {
 
         Action a1 = new DummyAction();
         Action a2 = new DummyAction();
-        PolicyInput input = new DummyPolicyInput();
+        Observation input = new DummyObservation();
 
         OrderedJointAction ja = new OrderedJointAction();
         ja.addAction(a1); 
 
-        Pair<PolicyInput, Action> key = new Pair<>(input, ja);
+        Pair<Observation, Action> key = new Pair<>(input, ja);
         qTable.setValue(key, 42.0);
 
         ja.addAction(a2); 	
@@ -74,7 +74,7 @@ public class QTableJointActionMutationTest {
         OrderedJointAction ja2 = new OrderedJointAction();
         ja2.addAction(a1);
 
-        Pair<PolicyInput, Action> key2 = new Pair<>(input, ja2);
+        Pair<Observation, Action> key2 = new Pair<>(input, ja2);
 
         // When
         double value = qTable.getValue(key2);
@@ -117,9 +117,9 @@ public class QTableJointActionMutationTest {
     }
 
 
-    private static class DummyPolicyInput implements PolicyInput {
+    private static class DummyObservation implements Observation {
         @Override
-        public PolicyInput add(PolicyInput other) {
+        public Observation add(Observation other) {
             return null;
         }
         
@@ -132,8 +132,8 @@ public class QTableJointActionMutationTest {
         }
 
 		@Override
-		public PolicyInput copy() {
-			return new DummyPolicyInput();
+		public Observation copy() {
+			return new DummyObservation();
 		}
     }
 }

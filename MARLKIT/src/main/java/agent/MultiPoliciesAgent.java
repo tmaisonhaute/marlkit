@@ -11,7 +11,6 @@ import experience.Experience;
 import learning.Algorithm;
 import learning.Batch;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -187,10 +186,10 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 	/**
 	 * Selects an action using the default policy based on the given observation.
 	 *
-	 * @param input the PolicyInput to act upon
+	 * @param input the Observation to act upon
 	 * @return the selected action
 	 */
-	public Action selectAction(PolicyInput input) {
+	public Action selectAction(Observation input) {
 		return selectAction(DEFAULT_TAG, input);
 	}
 	
@@ -198,11 +197,11 @@ public abstract class MultiPoliciesAgent extends SimuAgent implements MLKAgent {
 	 * Selects an action using the policy associated with the given tag.
 	 *
 	 * @param tag the policy identifier
-	 * @param input the PolicyInput to act upon
+	 * @param input the Observation to act upon
 	 * @return the selected action
 	 * @throws IllegalArgumentException if no policy exists for the tag
 	 */
-	protected Action selectAction(String tag, PolicyInput input) {
+	protected Action selectAction(String tag, Observation input) {
         Policy policy = getPolicy(tag);
 		if (policy != null) {
 			return policy.selectAction(input);

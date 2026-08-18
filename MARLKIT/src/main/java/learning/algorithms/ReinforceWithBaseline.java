@@ -79,12 +79,12 @@ public class ReinforceWithBaseline implements Algorithm {
         double[] returns = batch.computeCumulativeRewards(gamma);
         double[] advantages = computeAdvantages(returns);
 
-        double[][] logitsBatch = policy.forwardLogits(batch.getAllInputs());
+        double[][] logitsBatch = policy.forwardLogits(batch.getAllObservations());
         double[][] probsBatch = policy.softmax(logitsBatch);
         int[] actionIndices = toActionIndices(batch.getAllActions());
         double[][] gradients = computePolicyGradientSignal(probsBatch, actionIndices, advantages);
 
-        policy.updateFromLogitsGradient(batch.getAllInputs(), gradients, alpha);
+        policy.updateFromLogitsGradient(batch.getAllObservations(), gradients, alpha);
         updateBaseline(returns);
 
         logger.info("Total rewards: " + batch.totalRewards());

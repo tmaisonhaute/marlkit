@@ -8,7 +8,6 @@ import environment.observation.Observation;
 import experience.Experience;
 import learning.Algorithm;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -101,11 +100,11 @@ public interface MLKAgent {
 
 	
 	/**
-	 * Selects an action based on the given policy input.
-	 * @param input the policy input to use for action selection
+	 * Selects an action based on the given observation.
+	 * @param input the observation to use for action selection
 	 * @return the selected action
 	 */
-	public Action selectAction(PolicyInput input);
+	public Action selectAction(Observation input);
 	
 	/**
 	 * Observes the environment, selects an action, and sends it as an influence to the environment.

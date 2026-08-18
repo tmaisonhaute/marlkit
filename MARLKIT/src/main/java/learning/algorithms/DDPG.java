@@ -7,6 +7,7 @@ import java.util.Objects;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.ActionContinuousVector;
+import environment.observation.Observation;
 import experience.Experience;
 import experience.TransitionExperience;
 import learning.Batch;
@@ -15,7 +16,6 @@ import learning.Policy;
 import learning.nn.ActionValueCritic;
 import learning.policies.DeterministicPolicyGradient;
 import learning.policies.Parameterized;
-import learning.policies.PolicyInput;
 import madkit.kernel.AgentLogger;
 
 /**
@@ -254,8 +254,8 @@ public class DDPG implements ActorCritic {
     protected void learnOnSample(Batch sampledBatch, AgentLogger logger) {
         int batchSize = sampledBatch.size();
 
-        PolicyInput[] actorObservations = new PolicyInput[batchSize];
-        PolicyInput[] criticObservations = new PolicyInput[batchSize];
+        Observation[] actorObservations = new Observation[batchSize];
+        Observation[] criticObservations = new Observation[batchSize];
         Action[] criticSourceActions = new Action[batchSize];
         ActionContinuousVector[] criticActions = new ActionContinuousVector[batchSize];
         double[] targetValues = new double[batchSize];
@@ -266,8 +266,8 @@ public class DDPG implements ActorCritic {
             TransitionExperience actorTransition = requireTransition(experience);
             TransitionExperience criticTransition = requireTransition(getCriticExperience(experience));
 
-            actorObservations[index] = actorTransition.getInput();
-            criticObservations[index] = criticTransition.getInput();
+            actorObservations[index] = actorTransition.getObservation();
+            criticObservations[index] = criticTransition.getObservation();
             criticSourceActions[index] = criticTransition.getAction();
             criticActions[index] = requireContinuousAction(criticTransition.getAction());
             targetValues[index] = computeTargetValue(actorTransition, criticTransition);
@@ -330,7 +330,7 @@ public class DDPG implements ActorCritic {
      * @param actorAction the current action produced by the actor
      * @return the actor loss gradient with respect to its action
      */
-    protected double[] computeActorLossGradient(PolicyInput actorObservation, PolicyInput criticObservation, Action criticSourceAction, ActionContinuousVector actorAction) {
+    protected double[] computeActorLossGradient(Observation actorObservation, Observation criticObservation, Action criticSourceAction, ActionContinuousVector actorAction) {
         double[] actionGradient = critic.actionGradient(criticObservation, actorAction);
         return negate(actionGradient);
     }
