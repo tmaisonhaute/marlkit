@@ -38,7 +38,7 @@ public class CentralizedCriticCollectExperienceActivator extends Activator {
 
     /**
      * Collects experience from each alive agent, merges them into a common
-     * centralized input and joint action, then redistributes one personalized
+     * centralized observation and joint action, then redistributes one personalized
      * experience per agent.
      *
      * <p>The only personalized part is the reward.</p>

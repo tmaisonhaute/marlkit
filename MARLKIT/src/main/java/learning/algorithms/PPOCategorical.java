@@ -88,12 +88,12 @@ public class PPOCategorical implements Algorithm {
             return;
         }
 
-        Observation[] inputs = batch.getAllObservations();
+        Observation[] observations = batch.getAllObservations();
         Action[] actions = batch.getAllActions();
 
         int[] actionIndices = toActionIndices(actions);
 
-        double[][] oldLogits = policy.forwardLogits(inputs);
+        double[][] oldLogits = policy.forwardLogits(observations);
         double[][] oldProbs = policy.softmax(oldLogits);
         double[] oldActionProbs = extractActionProbabilities(oldProbs, actionIndices);
 
@@ -101,7 +101,7 @@ public class PPOCategorical implements Algorithm {
         double[] advantages = normalize(returns);
 
         for (int epoch = 0; epoch < epochs; epoch++) {
-            double[][] currentLogits = policy.forwardLogits(inputs);
+            double[][] currentLogits = policy.forwardLogits(observations);
             double[][] currentProbs = policy.softmax(currentLogits);
 
             double[][] gradients = computeClippedPolicyGradients(
@@ -111,7 +111,7 @@ public class PPOCategorical implements Algorithm {
                     advantages
             );
 
-            policy.updateFromLogitsGradient(inputs, gradients, learningRate);
+            policy.updateFromLogitsGradient(observations, gradients, learningRate);
         }
 
         logger.info("PPOCategorical total rewards: " + batch.totalRewards());

@@ -71,11 +71,11 @@ public class Batch {
 	 * @return an array of all observations
 	 */
 	public Observation[] getAllObservations() {
-		Observation[] inputs = new Observation[experiences.size()];
+		Observation[] observations = new Observation[experiences.size()];
 		for (int i = 0; i < experiences.size(); i++) {
-			inputs[i] = experiences.get(i).getObservation();
+			observations[i] = experiences.get(i).getObservation();
 		}
-		return inputs;
+		return observations;
 	}
 	/**
 	 * Returns an array of all actions in the batch.

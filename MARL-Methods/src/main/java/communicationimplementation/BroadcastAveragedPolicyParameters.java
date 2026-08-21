@@ -72,6 +72,7 @@ public class BroadcastAveragedPolicyParameters implements CommunicationModel {
         }
 
         if (!(agent.getPolicy() instanceof Parameterized parameterizedPolicy)) {
+        	simuAgent.getLogger().warning(simuAgent.getName() + " policy does not implement Parameterized. No parameters will be broadcast.");
             return;
         }
 

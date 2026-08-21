@@ -24,6 +24,7 @@ import reward.ReactionEvent;
 import reward.Reward;
 import reward.RewardModel;
 import util.Pair;
+import util.criteria.ReadOnlyCriterion;
 import util.grafana.LearningData;
 
 /**
@@ -35,6 +36,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	protected AgentsGroup agents;
 	protected RewardModel rewardModel;
 	protected SystemEvaluator systemEvaluator;
+	protected ReadOnlyCriterion evaluationCriterion;
 	protected ExperienceBuilder experienceBuilder = new DefaultExperienceBuilder();
 	private boolean logSetup = false;
 	private static final int EPISODES_BEFORE_LOG = 1_000;
@@ -122,7 +124,10 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		
 		//Reaction
 		Map<MLKAgent, List<ReactionEvent>> result = dynamics(agentsActions);
-		systemEvaluator.evaluate(result);
+		
+		if (evaluationCriterion.isMet()) {
+			systemEvaluator.evaluate(result);
+		}
 		
 		//Reward computation
 		agentsRewards = rewardModel.rewardFunctions(result);
@@ -193,17 +198,20 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	
 	@Override
 	public void onEpisodeEnd() {
-		systemEvaluator.onEpisodeEnd();
-		List<Measure> measures = systemEvaluator.getEpisodeMeasures();
-		collectEpisodeData(measures);
-		
-		finalizeEpisodeData();
-		
-		int epCount = learningData.getAverageEpisodesCount();
-		if (epCount > 0 && epCount % EPISODES_BEFORE_LOG == 0) {
-			String logMessage = generateLogCSV(learningData.getAverageEpisodesReward());
-			saveLogCSV(logMessage);
-			learningData.clearEpisodes();
+		if (evaluationCriterion.isMet()) {
+			systemEvaluator.onEpisodeEnd();
+			List<Measure> measures = systemEvaluator.getEpisodeMeasures();
+			collectEpisodeData(measures);
+			
+			finalizeEpisodeData();
+			
+			int epCount = learningData.getAverageEpisodesCount();
+			if (epCount > 0 && epCount % EPISODES_BEFORE_LOG == 0) {
+				String logMessage = generateLogCSV(learningData.getAverageEpisodesReward());
+				saveLogCSV(logMessage);
+				learningData.clearEpisodes();
+			}
+			
 		}
 		
 		systemEvaluator.reset();
@@ -336,7 +344,9 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	    }
 
 	    agentsExperiences = experiences;
-	    collectAndLogLearningData(agentsExperiences);
+		if (evaluationCriterion.isMet()) {
+			collectAndLogLearningData(agentsExperiences);
+		}
 	    
 	}
 
@@ -451,5 +461,9 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		return systemEvaluator;
 	}
 
+	@Override
+	public void setEvaluationCriterion(ReadOnlyCriterion evaluationCriterion) {
+	    this.evaluationCriterion = evaluationCriterion;
+	}
 	
 }

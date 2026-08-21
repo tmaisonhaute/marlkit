@@ -13,6 +13,7 @@ import learning.nn.ActionValueCritic;
 import learning.policies.MLPDeterministicPolicy;
 import marlkit.preyhunter.environment.WrapperPreyHunterObservationVector;
 import modelofotheragents.AccessOtherPolicy;
+import util.criteria.ReadOnlyCriterion;
 
 /**
  * Hunter agent using MADDPG with a decentralized deterministic actor and a
@@ -39,7 +40,7 @@ public class HunterAgentMADDPG extends HunterAgentDDPG {
      * @param numberOfHunters the number of hunters represented in centralized
      *                        observations and actions
      */
-    public HunterAgentMADDPG(int maxVisibleHunters, int maxVisiblePreys, double speed, int numberOfHunters) {
+    public HunterAgentMADDPG(int maxVisibleHunters, int maxVisiblePreys, double speed, int numberOfHunters, ReadOnlyCriterion readOnlyEvaluationCriterion) {
         super();
 
         if (numberOfHunters <= 0) {
@@ -63,6 +64,9 @@ public class HunterAgentMADDPG extends HunterAgentDDPG {
 
         MADDPG maddpg = new MADDPG(actor, targetActor, critic, targetCritic, DEFAULT_ACTOR_LEARNING_RATE, DEFAULT_CRITIC_LEARNING_RATE, DEFAULT_GAMMA, DEFAULT_TAU, DEFAULT_LEARNING_BATCH_SIZE, DEFAULT_REPLAY_BUFFER_CAPACITY);
 
+        actor.setEvaluationCriterion(readOnlyEvaluationCriterion);
+        maddpg.setEvaluationCriterion(readOnlyEvaluationCriterion);
+        
         setPolicy(actor);
         setAlgorithm(maddpg);
     }
@@ -80,7 +84,6 @@ public class HunterAgentMADDPG extends HunterAgentDDPG {
      *
      * @param hunters the ordered list of MADDPG hunters
      * @throws NullPointerException if the list or one of its hunters is null
-     * @throws IllegalArgumentException if the current hunter is absent
      */
     public void setOtherAgents(List<? extends HunterAgentMADDPG> hunters) {
         Objects.requireNonNull(hunters, "hunters");

@@ -9,6 +9,8 @@ import environment.observation.Observation;
 import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import learning.ContinuousActionExplorationStrategy;
 import learning.nn.NeuralNetwork;
+import util.criteria.EvaluationAware;
+import util.criteria.ReadOnlyCriterion;
 
 /**
  * Neural deterministic policy for continuous action spaces.
@@ -20,7 +22,7 @@ import learning.nn.NeuralNetwork;
  *
  * <p>All action dimensions use the same lower and upper bounds.</p>
  */
-public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
+public class MLPDeterministicPolicy implements DeterministicPolicyGradient, EvaluationAware {
 
     private final WrapperObservationVector inputWrapper;
     private final NeuralNetwork network;
@@ -28,6 +30,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
     private final double lowerBound;
     private final double upperBound;
     private ContinuousActionExplorationStrategy explorationStrategy;
+    protected ReadOnlyCriterion evaluationCriterion;
 
     private MLKAgent agent;
 
@@ -110,7 +113,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
     @Override
     public ActionContinuousVector selectAction(Observation input) {
     	ActionContinuousVector action = forwardAction(input);
-    	if (explorationStrategy != null) {
+    	if (explorationStrategy != null && !isEvaluated()) {
     		action = explorationStrategy.explore(action, agent.prng());
     	}
         return action;
@@ -206,7 +209,7 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
 
     @Override
     public void updateExplorationStrategy() {
-        if (explorationStrategy != null) {
+        if (explorationStrategy != null && !isEvaluated()) {
             explorationStrategy.update();
         }
     }
@@ -374,4 +377,14 @@ public class MLPDeterministicPolicy implements DeterministicPolicyGradient {
             throw new IllegalArgumentException("Action gradient size mismatch: expected " + actionSize + " but got " + gradient.length + ".");
         }
     }
+
+	@Override
+	public void setEvaluationCriterion(ReadOnlyCriterion evaluationCriterion) {
+		this.evaluationCriterion = evaluationCriterion;
+	}
+
+	@Override
+	public ReadOnlyCriterion getEvaluationCriterion() {
+		return evaluationCriterion;
+	}
 }

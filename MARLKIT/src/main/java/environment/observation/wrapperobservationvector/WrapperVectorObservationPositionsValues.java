@@ -19,8 +19,8 @@ public class WrapperVectorObservationPositionsValues implements WrapperObservati
 	}
 	
 	@Override
-	public double[] transform(Observation input) {
-		ObservationPositionsValues obs = (ObservationPositionsValues) input;
+	public double[] transform(Observation observation) {
+		ObservationPositionsValues obs = (ObservationPositionsValues) observation;
 		
 		if (obs.getListObs().isEmpty()) {
 	        return new double[0];

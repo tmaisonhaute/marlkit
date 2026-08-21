@@ -45,7 +45,7 @@ public class QLearningJALTest {
         policy.init(SELF);
 
         // When
-        Action selected = policy.selectAction(new DummyPolicyInput());
+        Action selected = policy.selectAction(new DummyObservation());
 
         // Then
         assertThat(selected).isEqualTo(exploratoryAction);
@@ -57,7 +57,7 @@ public class QLearningJALTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        DummyPolicyInput input = new DummyPolicyInput();
+        DummyObservation input = new DummyObservation();
 
         RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(fixedPrediction());
         QLearningJAL policy = new TestableQLearningJAL(List.of(action1, action2), model);
@@ -89,7 +89,7 @@ public class QLearningJALTest {
         policy.init(SELF);
 
         // When
-        Action selected = policy.selectAction(new DummyPolicyInput());
+        Action selected = policy.selectAction(new DummyObservation());
 
         // Then
         assertThat(selected).isEqualTo(exploratoryAction);
@@ -104,7 +104,7 @@ public class QLearningJALTest {
         policy.init(SELF);
 
         // When
-        Action selected = policy.selectAction(new DummyPolicyInput());
+        Action selected = policy.selectAction(new DummyObservation());
 
         // Then
         assertThat(selected).isNull();
@@ -116,7 +116,7 @@ public class QLearningJALTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        DummyPolicyInput input = new DummyPolicyInput();
+        DummyObservation input = new DummyObservation();
         RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(fixedPrediction());
 
         QLearningJAL policy1 = new TestableQLearningJAL(List.of(action1, action2), model);
@@ -150,7 +150,7 @@ public class QLearningJALTest {
         policy.init(SELF);
 
         // When / Then
-        policy.selectAction(new DummyPolicyInput());
+        policy.selectAction(new DummyObservation());
     }
     
     @Test
@@ -158,7 +158,7 @@ public class QLearningJALTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        DummyPolicyInput input = new DummyPolicyInput();
+        DummyObservation input = new DummyObservation();
 
         RecordingGroupModelPredictAction model =
             new RecordingGroupModelPredictAction(fixedPrediction());
@@ -194,7 +194,7 @@ public class QLearningJALTest {
         policy.init(SELF);
 
         // When
-        Action selected = policy.selectAction(new DummyPolicyInput());
+        Action selected = policy.selectAction(new DummyObservation());
 
         // Then
         assertThat(selected).isEqualTo(action1);
@@ -205,7 +205,7 @@ public class QLearningJALTest {
         // Given
         ActionInt ownAction = new ActionInt(1);
         ActionInt otherAction = new ActionInt(42);
-        DummyPolicyInput input = new DummyPolicyInput();
+        DummyObservation input = new DummyObservation();
 
         MappedJointAction predicted = new MappedJointAction();
         predicted.addAction(OTHER, otherAction);
@@ -231,7 +231,7 @@ public class QLearningJALTest {
         // Given
         ActionInt ownAction = new ActionInt(5);
         ActionInt otherAction = new ActionInt(8);
-        DummyPolicyInput input = new DummyPolicyInput();
+        DummyObservation input = new DummyObservation();
 
         MappedJointAction predicted = new MappedJointAction();
         predicted.addAction(OTHER, otherAction);
@@ -273,7 +273,7 @@ public class QLearningJALTest {
         actions.add(action2);
 
         // When
-        policy.selectAction(new DummyPolicyInput());
+        policy.selectAction(new DummyObservation());
 
         // Then
         assertThat(model.predictCalls).extracting(PredictCall::action)
@@ -285,7 +285,7 @@ public class QLearningJALTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        DummyPolicyInput input = new DummyPolicyInput();
+        DummyObservation input = new DummyObservation();
 
         MappedJointAction sharedPrediction = fixedPrediction();
         RecordingGroupModelPredictAction model =
@@ -393,7 +393,7 @@ public class QLearningJALTest {
     private record PredictCall(Observation observation, Action action) {
     }
 
-    private static final class DummyPolicyInput implements Observation {
+    private static final class DummyObservation implements Observation {
 
         @Override
         public Observation add(Observation other) {
@@ -402,7 +402,7 @@ public class QLearningJALTest {
 
         @Override
         public Observation copy() {
-            return new DummyPolicyInput();
+            return new DummyObservation();
         }
 
         @Override

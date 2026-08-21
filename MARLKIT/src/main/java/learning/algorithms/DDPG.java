@@ -17,6 +17,8 @@ import learning.nn.ActionValueCritic;
 import learning.policies.DeterministicPolicyGradient;
 import learning.policies.Parameterized;
 import madkit.kernel.AgentLogger;
+import util.criteria.EvaluationAware;
+import util.criteria.ReadOnlyCriterion;
 
 /**
  * Implements Deep Deterministic Policy Gradient with an independent
@@ -26,7 +28,7 @@ import madkit.kernel.AgentLogger;
  * Multi-agent centralized-critic behavior is implemented separately by
  * {@link MADDPG}.</p>
  */
-public class DDPG implements ActorCritic {
+public class DDPG implements ActorCritic, EvaluationAware {
 
     private final double gamma;
     private final double tau;
@@ -42,6 +44,8 @@ public class DDPG implements ActorCritic {
 
     private final ActionValueCritic critic;
     private final ActionValueCritic targetCritic;
+    
+    protected ReadOnlyCriterion evaluationCriterion;
 
     /**
      * Creates a DDPG algorithm.
@@ -206,7 +210,7 @@ public class DDPG implements ActorCritic {
     **/
     @Override
     public boolean shouldLearn(int timestep, Batch batch) {
-        return batch.size() >= learningBatchSize && timestep % getLearningFrequency() == 0;
+        return !isEvaluated() && batch.size() >= learningBatchSize && timestep % getLearningFrequency() == 0;
     }
 
     /**
@@ -412,7 +416,9 @@ public class DDPG implements ActorCritic {
 
     @Override
     public void endEpisode(Batch batch, AgentLogger logger) {
-        actor.updateExplorationStrategy();
+    	if (!isEvaluated()) {
+    		actor.updateExplorationStrategy();
+    	}
     }
 
     /**
@@ -438,4 +444,23 @@ public class DDPG implements ActorCritic {
             throw new IllegalArgumentException("replayBufferCapacity must be greater than or equal to learningBatchSize.");
         }
     }
+
+    /**
+     * Indicates whether the agent is currently being evaluated.
+     * <p>
+     * When the given criteria is met, this algorithm does not perform learning or exploration updates.
+     * Therefore, if the agent is always evaluation, better not set the evaluation criterion.
+     * <p>
+     * 
+     */
+	@Override
+	public void setEvaluationCriterion(ReadOnlyCriterion evaluationCriterion) {
+		this.evaluationCriterion = evaluationCriterion;
+	}
+
+	@Override
+	public ReadOnlyCriterion getEvaluationCriterion() {
+		return evaluationCriterion;
+	}
+
 }

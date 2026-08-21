@@ -22,6 +22,7 @@ public class SchedulerGoOrYield extends MLKScheduler {
 			initStartDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_EPISODES_BEFORE_VIEW);
 			initEndDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_EPISODES_BEFORE_VIEW, DISPLAYED_EPISODES);
 			initEndSimulation(MAXIMUM_EPISODE_COUNT);
+			initEvaluationCriterion();
 			setPauseDisplayValue(PAUSE_VALUE);
 		}
 	}

@@ -10,6 +10,8 @@ import marlkit.preyhunter.environment.EnvPreyVsHunter;
 import marlkit.preyhunter.scheduler.SchedulerPVHCentralizedCritic;
 import marlkit.preyhunter.viewer.ViewerPVH;
 import simulation.MLKModel;
+import simulation.MLKScheduler;
+import util.criteria.ReadOnlyCriterion;
 
 @EngineAgents(
         scheduler = SchedulerPVHCentralizedCritic.class,
@@ -30,9 +32,10 @@ public class LauncherPVHMADDPG extends LauncherPVH {
         int maxVisiblePreys = NB_PREY_AGENTS;
         
         List<HunterAgentMADDPG> hunters = new ArrayList<>();
+        ReadOnlyCriterion readOnlyEvaluationCriterion = ((MLKScheduler) getScheduler()).getReadOnlyEvaluationCriterion();
 
         for (int i = 0; i < NB_HUNTER_AGENTS; i++) {
-        	HunterAgentMADDPG hunter = new HunterAgentMADDPG(maxVisibleHunters, maxVisiblePreys, HUNTER_SPEED, NB_HUNTER_AGENTS);
+        	HunterAgentMADDPG hunter = new HunterAgentMADDPG(maxVisibleHunters, maxVisiblePreys, HUNTER_SPEED, NB_HUNTER_AGENTS, readOnlyEvaluationCriterion);
         	hunters.add(hunter);
 
         }

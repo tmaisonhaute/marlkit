@@ -13,6 +13,7 @@ import environment.state.State;
 import evaluation.SystemEvaluator;
 import experience.Experience;
 import experience.ExperienceBuilder;
+import util.criteria.ReadOnlyCriterion;
 import util.grafana.Extra;
 import util.grafana.LearningData;
 import util.grafana.StepData;
@@ -193,6 +194,13 @@ public interface MLKEnvironment {
 	 * @return the current system evaluator
 	 */
 	public SystemEvaluator getSystemEvaluator();
+	
+	/**
+	 * Sets the evaluation criterion used to determine whether the environment's objectives have been met.
+	 * 
+	 * @param evaluationCriterion the Read Only evaluation criterion to set
+	 */
+	void setEvaluationCriterion(ReadOnlyCriterion evaluationCriterion);
 
 	/**
 	 * Initializes the log file with the specified lines.

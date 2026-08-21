@@ -69,6 +69,7 @@ public abstract class LauncherPVH extends MLKLauncher {
      */
     @Override
     protected void onLaunchSimulatedAgents() {
+    	getLogger().talk("Launching hunters and preys...");
         launchHunters();
         launchPreys();
     }

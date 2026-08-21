@@ -9,6 +9,7 @@ import environment.observation.Observation;
 import experience.TransitionExperience;
 import learning.nn.ActionValueCritic;
 import learning.policies.DeterministicPolicyGradient;
+import madkit.simulation.SimuAgent;
 
 /**
  * Implements the multi-agent extension of DDPG with decentralized actors and a
@@ -164,10 +165,10 @@ public class MADDPG extends DDPG {
         MappedJointAction jointTargetAction;
 
         if (actionsPredictor != null) {
-
             jointTargetAction = actionsPredictor.predictActionFromMappedObservation(jointNextObservation);
         }
         else {
+        	((SimuAgent) getAgent()).getLogger().warning("No action predictor configured for MADDPG. Using historical joint actions as an approximation.");
             if (!(criticTransition.getAction() instanceof MappedJointAction historicalJointAction)) {
                 throw new IllegalArgumentException("MADDPG requires a MappedJointAction in the centralized transition.");
             }

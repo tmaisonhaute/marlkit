@@ -1,5 +1,6 @@
 package simulation;
 
+import util.criteria.AlwaysMet;
 import util.criteria.Criterion;
 
 /**
@@ -34,6 +35,16 @@ public interface SchedulerCriteria {
 	 * @return simulation end criterion
 	 */
 	Criterion getCriteriaEndSimulation();
+	
+	/**
+	 * Returns the criterion for evaluating the performance of the agents.
+	 * 
+	 * <p> By default, this method returns an instance of {@link AlwaysMet}, indicating that the evaluation criterion is always met. 
+	 * Implementations can override this method to provide a specific evaluation criterion based on the simulation's requirements.</p>
+	 * 
+	 * @return the evaluation criterion
+	 */
+	Criterion getCriteriaEvaluation();
 
 	
 	public int getPauseDisplayValue();

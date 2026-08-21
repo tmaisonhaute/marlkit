@@ -10,6 +10,7 @@ import learning.algorithms.DDPG;
 import learning.nn.ActionValueCritic;
 import learning.policies.MLPDeterministicPolicy;
 import marlkit.preyhunter.environment.WrapperPreyHunterObservationVector;
+import util.criteria.ReadOnlyCriterion;
 
 /**
  * Hunter agent using Deep Deterministic Policy Gradient with a continuous
@@ -56,7 +57,7 @@ public class HunterAgentDDPG extends HunterAgent {
      *                        observation
      */
     public HunterAgentDDPG(int maxVisibleHunters, int maxVisiblePreys) {
-        this(maxVisibleHunters, maxVisiblePreys, DEFAULT_SPEED);
+        this(maxVisibleHunters, maxVisiblePreys, DEFAULT_SPEED, null);
     }
     
     /**
@@ -65,7 +66,7 @@ public class HunterAgentDDPG extends HunterAgent {
      * @param maxVisiblePreys the maximum number of preys represented in an observation
      * @param speed the maximum speed of the hunter
      */
-    public HunterAgentDDPG(int maxVisibleHunters, int maxVisiblePreys, double speed) {
+    public HunterAgentDDPG(int maxVisibleHunters, int maxVisiblePreys, double speed, ReadOnlyCriterion evaluationCriterion) {
         super();
 
         WrapperPreyHunterObservationVector wrapper = new WrapperPreyHunterObservationVector(maxVisibleHunters, maxVisiblePreys);
@@ -81,6 +82,9 @@ public class HunterAgentDDPG extends HunterAgent {
 
         DDPG algorithm = new DDPG(actor, targetActor, critic, targetCritic, DEFAULT_ACTOR_LEARNING_RATE, DEFAULT_CRITIC_LEARNING_RATE, DEFAULT_GAMMA, DEFAULT_TAU, DEFAULT_LEARNING_BATCH_SIZE, DEFAULT_REPLAY_BUFFER_CAPACITY);
 
+        actor.setEvaluationCriterion(evaluationCriterion);
+        algorithm.setEvaluationCriterion(evaluationCriterion);
+        
         setPolicy(actor);
         setAlgorithm(algorithm);
     }

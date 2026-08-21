@@ -18,6 +18,7 @@ import madkit.simulation.scheduler.TickBasedScheduler;
 import trainingexecutionstrategy.DecentralizedTrainingExecutionStrategy;
 import trainingexecutionstrategy.TrainingExecutionStrategy;
 import util.criteria.Criterion;
+import util.criteria.ReadOnlyCriterion;
 
 /**
  * Scheduler for MARLKIT simulations that coordinates agent-environment interactions.
@@ -26,8 +27,9 @@ import util.criteria.Criterion;
 public abstract class MLKScheduler extends TickBasedScheduler {
 	protected MLKEnvironment env;
 	protected SchedulerCriteria criteriaModule;
+	protected ReadOnlyCriterion readOnlyEvaluationCriterion;
 	private SystemEvaluator systemEvaluator;
-	private TrainingExecutionStrategy trainingExecutionStrategy = new DecentralizedTrainingExecutionStrategy();
+	protected TrainingExecutionStrategy trainingExecutionStrategy = new DecentralizedTrainingExecutionStrategy();
 	
 	private Activator initEnvironment;
 	private Activator computeObservations;
@@ -109,7 +111,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	}
 
 	public void setCriteriaModule(SchedulerCriteria criteriaModule) {
-		this.criteriaModule = criteriaModule;
+	    this.criteriaModule = criteriaModule;
+	    this.readOnlyEvaluationCriterion = null;
 	}
 	
 	public SchedulerCriteria getCriteriaModule() {
@@ -146,6 +149,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		if (systemEvaluator != null) {
 			env.setSystemEvaluator(systemEvaluator);
 		}
+
+		env.setEvaluationCriterion(getReadOnlyEvaluationCriterion());
 		reset.execute(); //TODO Useful only because SimulationStart is called multiple times (madkit related issue).
 	}
 
@@ -298,7 +303,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 * @param simulationStep current simulation step index
 	 */
 	protected void agentsUpdatePolicy(int simulationStep) {
-		trainingExecutionStrategy.agentsUpdatePolicy(simulationStep);
+		trainingExecutionStrategy.agentsUpdatePolicy(simulationStep);			
 	}
 
 	/**
@@ -348,12 +353,13 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 * </p>
 	 */
 	protected void episodeEnded() {
-		updateOnEndEpisode(Optional.of(env.getState()));
 		envEndEpisode.execute();
 		trainingExecutionStrategy.agentsEndEpisode();
 		
 		agentsEndEpisodeCommunicate.execute();
 		agentsHandleEndEpisodeCommunication.execute();
+		
+		updateOnEndEpisode(Optional.of(env.getState()));
 		
 		reset.execute();
 		getCriteriaEndEpisode().reset();
@@ -370,6 +376,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		getCriteriaEndSimulation().update(state);
 		getCriteriaStartDisplay().update(state);
 		getCriteriaEndDisplay().update(state);
+		getCriteriaEvaluation().update(state);
 	}
 	
 	/**
@@ -380,6 +387,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		getCriteriaStartDisplay().reset();
 		getCriteriaEndDisplay().reset();
 		getCriteriaEndSimulation().reset();
+		getCriteriaEvaluation().reset();
 	}
 	/**
 	 * Returns the criterion for ending an episode.
@@ -415,6 +423,22 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 */
 	public Criterion getCriteriaEndSimulation(){
 		return criteriaModule.getCriteriaEndSimulation();
+	}
+	
+	/**
+	 * Returns the evaluation criterion used for assessing the performance of the system.
+	 * @return The evaluation criterion.
+	 */
+	public Criterion getCriteriaEvaluation() {
+		return criteriaModule.getCriteriaEvaluation();
+	}
+	
+	public ReadOnlyCriterion getReadOnlyEvaluationCriterion() {
+		if (readOnlyEvaluationCriterion == null) {
+			readOnlyEvaluationCriterion = new ReadOnlyCriterion(getCriteriaEvaluation());
+		}
+		
+		return readOnlyEvaluationCriterion;
 	}
 
 	/**
