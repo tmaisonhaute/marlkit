@@ -5,7 +5,6 @@ import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import java.util.Optional;
 import java.util.logging.Level;
 
-import agent.MLKAgent;
 import agent.communication.MLKAgentCommunicating;
 import agent.modelofotheragent.MLKAgentModelingOthers;
 import environment.MLKEnvironment;
@@ -39,8 +38,6 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private Activator clearPreviousStepVariables;
 	private Activator envEndEpisode;
 	private Activator envEnd;
-
-	private Activator agentsAct;
 	
 	private Activator agentsPreInfluenceCommunicate;
 	private Activator agentsHandlePreInfluenceCommunication;
@@ -79,10 +76,6 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		addActivator(envEndEpisode);
 		envEnd = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
 		addActivator(envEnd);
-
-		agentsAct = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "takeAction");
-		addActivator(agentsAct);
-
 		
 		trainingExecutionStrategy.activate(getModelGroup());
 		trainingExecutionStrategy.getActivators().forEach(this::addActivator);
@@ -249,7 +242,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 * Triggers the action selection and action sending phase for all agents.
 	 */
 	protected void agentsAct() {
-		agentsAct.execute();
+		trainingExecutionStrategy.agentsAct();
 	}
 
 	/**

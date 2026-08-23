@@ -36,6 +36,11 @@ public interface TrainingExecutionStrategy {
      * this strategy.
      */
     void agentsMakeObservation();
+    
+	/**
+	 * Performs the action execution phase for the agents managed by this strategy.
+	 */
+    void agentsAct();
 
     /**
      * Performs the experience collection phase for the agents managed by this

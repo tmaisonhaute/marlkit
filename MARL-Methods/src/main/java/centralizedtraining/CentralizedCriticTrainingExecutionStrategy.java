@@ -31,6 +31,7 @@ public class CentralizedCriticTrainingExecutionStrategy implements TrainingExecu
 	private Activator agentsMakeObservation;
     private Activator agentsUpdatePolicy;
     private Activator agentsEndEpisode;
+    private Activator agentsAct;
 
 	@Override
 	public void activate(String modelGroup) {
@@ -39,12 +40,18 @@ public class CentralizedCriticTrainingExecutionStrategy implements TrainingExecu
 		agentsMakeObservation = new MethodActivator(modelGroup, MLKAgent.DEFAULT_AGENT_ROLE, "registerObservation");
     	agentsUpdatePolicy = new MethodActivator(modelGroup, MLKAgent.DEFAULT_AGENT_ROLE, "updatePolicy");
     	agentsEndEpisode = new MethodActivator(modelGroup, MLKAgent.DEFAULT_AGENT_ROLE, "endEpisode");
+    	agentsAct = new MethodActivator(modelGroup, MLKAgent.DEFAULT_AGENT_ROLE, "takeAction");
 
 	}
 
 	@Override
 	public void agentsMakeObservation() {
 		agentsMakeObservation.execute();
+	}
+	
+	@Override
+	public void agentsAct() {
+		agentsAct.execute();
 	}
 
 	@Override
@@ -64,7 +71,7 @@ public class CentralizedCriticTrainingExecutionStrategy implements TrainingExecu
 
 	@Override
 	public Collection<Activator> getActivators() {
-		return List.of(agentsMakeObservation, centralizedCriticCollectExperience, agentsUpdatePolicy, agentsEndEpisode);
+		return List.of(agentsMakeObservation, agentsAct, centralizedCriticCollectExperience, agentsUpdatePolicy, agentsEndEpisode);
 	}
 
 }

@@ -13,6 +13,7 @@ public class DecentralizedTrainingExecutionStrategy implements TrainingExecution
     private Activator agentsCollectExperience;
     private Activator agentsUpdatePolicy;
     private Activator agentsEndEpisode;
+    private Activator agentsAct;
 
     @Override
     public void activate(String modelGroup) {
@@ -20,12 +21,18 @@ public class DecentralizedTrainingExecutionStrategy implements TrainingExecution
     	agentsCollectExperience = new MethodActivator(modelGroup, MLKAgent.DEFAULT_AGENT_ROLE, "collectExperience");
     	agentsUpdatePolicy = new MethodActivator(modelGroup, MLKAgent.DEFAULT_AGENT_ROLE, "updatePolicy");
     	agentsEndEpisode = new MethodActivator(modelGroup, MLKAgent.DEFAULT_AGENT_ROLE, "endEpisode");
+    	agentsAct = new MethodActivator(modelGroup, MLKAgent.DEFAULT_AGENT_ROLE, "takeAction");
     }
 
     @Override
     public void agentsMakeObservation() {
         agentsMakeObservation.execute();
     }
+    
+    @Override
+	public void agentsAct() {
+		agentsAct.execute();
+	}
 
     @Override
     public void agentsCollectExperience() {
@@ -44,7 +51,7 @@ public class DecentralizedTrainingExecutionStrategy implements TrainingExecution
 
 	@Override
 	public Collection<Activator> getActivators() {
-		return List.of(agentsMakeObservation, agentsCollectExperience, agentsUpdatePolicy, agentsEndEpisode);
+		return List.of(agentsMakeObservation, agentsAct, agentsCollectExperience, agentsUpdatePolicy, agentsEndEpisode);
 	}
 
 }
