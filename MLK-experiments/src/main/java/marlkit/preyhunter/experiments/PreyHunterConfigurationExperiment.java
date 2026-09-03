@@ -8,7 +8,7 @@ import agent.action.Move2DDouble;
 import agent.communication.AgentStandardCommunicating;
 import communication.NoCommunication;
 import communicationimplementation.BroadcastRelativeObservationPositions;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import evaluation.NoSystemEvaluation;
 import experiment.ConfigurationRunner;
 import experiment.configuration.AgentGroupConfiguration;
@@ -128,7 +128,7 @@ public class PreyHunterConfigurationExperiment {
     private static class HunterAgentSpec implements AgentSpecInputSize, AgentSpecInputWrapper {
 
         private final List<Action> possibleActions;
-        private final WrapperPolicyInputVector inputWrapper;
+        private final WrapperObservationVector inputWrapper;
         private final int inputSize;
 
         private HunterAgentSpec(List<Action> possibleActions, WrapperPreyHunterObservationVector inputWrapper) {
@@ -148,7 +148,7 @@ public class PreyHunterConfigurationExperiment {
         }
 
         @Override
-        public WrapperPolicyInputVector getInputWrapper() {
+        public WrapperObservationVector getInputWrapper() {
             return inputWrapper;
         }
 

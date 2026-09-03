@@ -1,9 +1,10 @@
 package util.criteria;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.Optional;
+
 import org.testng.annotations.Test;
 
 public class ModuloTimeGreaterThanCriterionTest {

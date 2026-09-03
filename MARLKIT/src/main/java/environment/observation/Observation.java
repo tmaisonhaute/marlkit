@@ -1,11 +1,10 @@
 package environment.observation;
 
-import learning.policies.PolicyInput;
-
 /**
- * Represents an observation of the state environment.
+ * Represents an observation in the environment. Observations can be combined with other observations to create a new observation.
+ * Observation are also meant to be used as input to policies and critics.
  */
-public interface Observation extends PolicyInput{
+public interface Observation{
 	/**
 	 * Combines this observation with another observation.
 	 *
@@ -13,14 +12,6 @@ public interface Observation extends PolicyInput{
 	 * @return the combined observation
 	 */
 	Observation add(Observation other);
-
-	@Override
-    default PolicyInput add(PolicyInput other) {
-        if (other instanceof Observation obs) {
-            return add(obs);
-        }
-        throw new IllegalArgumentException("Can only combine observations with other observations");
-    }
 	
 	/**
      * Implementations must override equals() to provide meaningful equality comparison.

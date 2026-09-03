@@ -9,7 +9,6 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.interaction.wrapper.WapperActionProbabilities;
 import environment.observation.Observation;
-import learning.policies.PolicyInput;
 
 /**
  * Manages predictions about multiple agents' behaviors.
@@ -44,10 +43,10 @@ public class Predictions {
      * Records an observation-action pair for an agent.
      * 
      * @param agent the agent that performed the action
-     * @param PolicyInput the input the agent received
+     * @param Observation the input the agent received
      * @param action the action the agent took in response
      */
-    public void recordObservationAction(MLKAgent agent, PolicyInput input, Action action) {
+    public void recordObservationAction(MLKAgent agent, Observation input, Action action) {
         addAgent(agent); // Ensure the agent exists in our predictions
         Prediction prediction = agentPredictions.get(agent);
         prediction.recordObservationAction(input, action);

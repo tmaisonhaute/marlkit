@@ -6,12 +6,10 @@ import java.util.random.RandomGenerator;
 import agent.action.Action;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
+import experience.Experience;
 import learning.Algorithm;
-import learning.Experience;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
-import reward.Reward;
 
 /**
  * Core interface for agents in the MARLKIT framework.
@@ -106,15 +104,6 @@ public interface MLKAgent {
 	public void initializeAll();
 	
 	/**
-	 * Records an experience composed of observation, action, and reward.
-	 *
-	 * @param input the PolicyInput received
-	 * @param act the action taken
-	 * @param rew the reward received
-	 */
-	public abstract void feedbackExperience(PolicyInput input, Action act, Reward rew);
-	
-	/**
 	 * Records a complete experience object.
 	 *
 	 * @param experience the experience to record
@@ -125,11 +114,11 @@ public interface MLKAgent {
 
 	
 	/**
-	 * Selects an action based on the given policy input.
-	 * @param input the policy input to use for action selection
+	 * Selects an action based on the given observation.
+	 * @param input the observation to use for action selection
 	 * @return the selected action
 	 */
-	public Action selectAction(PolicyInput input);
+	public Action selectAction(Observation input);
 	
 	/**
 	 * Observes the environment, selects an action, and sends it as an influence to the environment.

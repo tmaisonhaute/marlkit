@@ -1,26 +1,27 @@
 package algorithm;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import java.lang.reflect.Proxy;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.random.RandomGenerator;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.ActionInt;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.Observation;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
+import experience.DefaultExperience;
+import experience.Experience;
 import learning.Batch;
-import learning.Experience;
 import learning.Policy;
 import learning.nn.StateValueCritic;
-import learning.policies.ActorNetwork;
-import learning.policies.PolicyInput;
+import learning.policies.CategoricalPolicyGradient;
 import reward.RewardStandard;
 
 public class TDActorCriticTest {
@@ -28,7 +29,7 @@ public class TDActorCriticTest {
     @Test
     public void givenNonActorNetworkPolicy_whenSetPolicy_thenThrowIllegalArgumentException() {
         // Given
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
         TDActorCritic algorithm = new TDActorCritic(actor, critic);
         Policy invalidPolicy = new DummyPolicy();
@@ -43,13 +44,13 @@ public class TDActorCriticTest {
     @Test
     public void givenAgentIsSet_whenSetPolicyWithActorNetwork_thenInitNewActor() {
         // Given
-        RecordingActorNetwork actor1 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor1 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
         TDActorCritic algorithm = new TDActorCritic(actor1, critic);
         MLKAgent agent = agentWithPrng(new java.util.Random(0));
         algorithm.setAgent(agent);
 
-        RecordingActorNetwork actor2 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor2 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
 
         // When
         algorithm.setPolicy(actor2);
@@ -62,11 +63,11 @@ public class TDActorCriticTest {
     @Test
     public void givenAgentIsNull_whenSetPolicyWithActorNetwork_thenDoNotInitActor() {
         // Given
-        RecordingActorNetwork actor1 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor1 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
         TDActorCritic algorithm = new TDActorCritic(actor1, critic);
 
-        RecordingActorNetwork actor2 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor2 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
 
         // When
         algorithm.setPolicy(actor2);
@@ -80,7 +81,7 @@ public class TDActorCriticTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(action1, action2));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(action1, action2));
         actor.fixedProbs = new double[] { 0.25, 0.75 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -89,13 +90,13 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        DummyPolicyInput input1 = new DummyPolicyInput("s1");
-        DummyPolicyInput input2 = new DummyPolicyInput("s2");
-        DummyPolicyInput input3 = new DummyPolicyInput("s3");
+        DummyObservation input1 = new DummyObservation("s1");
+        DummyObservation input2 = new DummyObservation("s2");
+        DummyObservation input3 = new DummyObservation("s3");
 
-        Experience exp1 = new Experience(input1, action2, new RewardStandard(5));
-        Experience exp2 = new Experience(input2, action2, new RewardStandard(6));
-        Experience exp3 = new Experience(input3, action2, new RewardStandard(7));
+        Experience exp1 = new DefaultExperience(input1, action2, new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(input2, action2, new RewardStandard(6));
+        Experience exp3 = new DefaultExperience(input3, action2, new RewardStandard(7));
 
         Batch batch = new Batch(List.of(exp1, exp2, exp3));
 
@@ -118,7 +119,7 @@ public class TDActorCriticTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(action1, action2));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(action1, action2));
         actor.fixedProbs = new double[] { 0.5, 0.5 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -126,17 +127,17 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        DummyPolicyInput original1 = new DummyPolicyInput("o1");
-        DummyPolicyInput original2 = new DummyPolicyInput("o2");
-        DummyPolicyInput enriched1 = new DummyPolicyInput("e1");
-        DummyPolicyInput enriched2 = new DummyPolicyInput("e2");
+        DummyObservation original1 = new DummyObservation("o1");
+        DummyObservation original2 = new DummyObservation("o2");
+        DummyObservation enriched1 = new DummyObservation("e1");
+        DummyObservation enriched2 = new DummyObservation("e2");
 
-        Experience exp1 = new Experience(original1, action2, new RewardStandard(5));
-        Experience exp2 = new Experience(original2, action2, new RewardStandard(6));
+        Experience exp1 = new DefaultExperience(original1, action2, new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(original2, action2, new RewardStandard(6));
         Batch batch = new Batch(List.of(exp1, exp2));
 
-        critic.enrichedExperience1 = new Experience(enriched1, action2, new RewardStandard(5));
-        critic.enrichedExperience2 = new Experience(enriched2, action2, new RewardStandard(6));
+        critic.enrichedExperience1 = new DefaultExperience(enriched1, action2, new RewardStandard(5));
+        critic.enrichedExperience2 = new DefaultExperience(enriched2, action2, new RewardStandard(6));
 
         // When
         algorithm.learnOnBatch(batch, null);
@@ -149,7 +150,7 @@ public class TDActorCriticTest {
     @Test
     public void givenSelectedActionNotInActorActionSet_whenLearnOnBatch_thenThrowIllegalArgumentException() {
         // Given
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         actor.fixedProbs = new double[] { 0.5, 0.5 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -158,8 +159,8 @@ public class TDActorCriticTest {
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
         Action notInSet = new ActionInt(999);
-        Experience exp1 = new Experience(new DummyPolicyInput("s1"), notInSet, new RewardStandard(5));
-        Experience exp2 = new Experience(new DummyPolicyInput("s2"), notInSet, new RewardStandard(6));
+        Experience exp1 = new DefaultExperience(new DummyObservation("s1"), notInSet, new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(new DummyObservation("s2"), notInSet, new RewardStandard(6));
         Batch batch = new Batch(List.of(exp1, exp2));
 
         // When
@@ -174,7 +175,7 @@ public class TDActorCriticTest {
         // Given
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(action1, action2));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(action1, action2));
         actor.fixedProbs = new double[] { 0.25, 0.75 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -182,7 +183,7 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        Experience exp1 = new Experience(new DummyPolicyInput("s1"), action2, new RewardStandard(5));
+        Experience exp1 = new DefaultExperience(new DummyObservation("s1"), action2, new RewardStandard(5));
         Batch batch = new Batch(List.of(exp1));
 
         // When
@@ -200,7 +201,7 @@ public class TDActorCriticTest {
     @Test
     public void givenEmptyBatch_whenEndEpisode_thenOnlyClearCriticAndBatch() {
         // Given
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
         Batch batch = new Batch();
@@ -218,18 +219,18 @@ public class TDActorCriticTest {
     @Test
     public void givenTwoAlgorithms_whenLearnOnOne_thenOtherActorIsNotUpdated() {
         // Given
-        RecordingActorNetwork actor1 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor1 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         actor1.fixedProbs = new double[] { 0.25, 0.75 };
         RecordingStateValueCritic critic1 = new RecordingStateValueCritic();
         critic1.tdErrors.addLast(1.0);
         TDActorCritic algorithm1 = new TDActorCritic(actor1, critic1, 0.1, 0.2, 0.9);
 
-        RecordingActorNetwork actor2 = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor2 = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic2 = new RecordingStateValueCritic();
         TDActorCritic algorithm2 = new TDActorCritic(actor2, critic2, 0.1, 0.2, 0.9);
 
-        Experience exp1 = new Experience(new DummyPolicyInput("s1"), new ActionInt(2), new RewardStandard(5));
-        Experience exp2 = new Experience(new DummyPolicyInput("s2"), new ActionInt(2), new RewardStandard(6));
+        Experience exp1 = new DefaultExperience(new DummyObservation("s1"), new ActionInt(2), new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(new DummyObservation("s2"), new ActionInt(2), new RewardStandard(6));
         Batch batch = new Batch(List.of(exp1, exp2));
 
         // When
@@ -240,29 +241,13 @@ public class TDActorCriticTest {
         assertThat(actor2.updateCalls).isEmpty();
         assertThat(algorithm2.getActor()).isSameAs(actor2);
     }
-    
-    @Test
-    public void givenAlgorithm_whenInit_thenSetAgentAndInitActorAndCritic() {
-        // Given
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
-        RecordingStateValueCritic critic = new RecordingStateValueCritic();
-        TDActorCritic algorithm = new TDActorCritic(actor, critic);
-        MLKAgent agent = agentWithPrng(new java.util.Random(0));
 
-        // When
-        algorithm.init(agent);
-
-        // Then
-        assertThat(algorithm.getAgent()).isSameAs(agent);
-        assertThat(actor.initCallCount).isEqualTo(1);
-        assertThat(actor.lastInitAgent).isSameAs(agent);
-    }
     
     @Test
     public void givenTransition_whenLearnOnBatch_thenPassCorrectParametersToCritic() {
         // Given
         ActionInt action = new ActionInt(2);
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), action));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), action));
         actor.fixedProbs = new double[] { 0.5, 0.5 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -270,11 +255,11 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        DummyPolicyInput input1 = new DummyPolicyInput("s1");
-        DummyPolicyInput input2 = new DummyPolicyInput("s2");
+        DummyObservation input1 = new DummyObservation("s1");
+        DummyObservation input2 = new DummyObservation("s2");
 
-        Experience exp1 = new Experience(input1, action, new RewardStandard(5));
-        Experience exp2 = new Experience(input2, action, new RewardStandard(6));
+        Experience exp1 = new DefaultExperience(input1, action, new RewardStandard(5));
+        Experience exp2 = new DefaultExperience(input2, action, new RewardStandard(6));
         Batch batch = new Batch(List.of(exp1, exp2));
 
         // When
@@ -293,12 +278,12 @@ public class TDActorCriticTest {
     @Test
     public void givenBatchWithOneExperience_whenLearnOnBatch_thenDoNothing() {
         // Given
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), new ActionInt(2)));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), new ActionInt(2)));
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
         TDActorCritic algorithm = new TDActorCritic(actor, critic);
 
         Batch batch = new Batch(List.of(
-                new Experience(new DummyPolicyInput("s1"), new ActionInt(1), new RewardStandard(5))
+                new DefaultExperience(new DummyObservation("s1"), new ActionInt(1), new RewardStandard(5))
         ));
 
         // When
@@ -314,7 +299,7 @@ public class TDActorCriticTest {
     public void givenCriticProvidesEnrichedExperience_whenEndEpisode_thenUseEnrichedInputInTerminalUpdate() {
         // Given
         ActionInt action = new ActionInt(2);
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(new ActionInt(1), action));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(new ActionInt(1), action));
         actor.fixedProbs = new double[] { 0.5, 0.5 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -322,11 +307,11 @@ public class TDActorCriticTest {
 
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
-        DummyPolicyInput original = new DummyPolicyInput("original");
-        DummyPolicyInput enriched = new DummyPolicyInput("enriched");
+        DummyObservation original = new DummyObservation("original");
+        DummyObservation enriched = new DummyObservation("enriched");
 
-        Experience exp = new Experience(original, action, new RewardStandard(5));
-        critic.enrichedExperience1 = new Experience(enriched, action, new RewardStandard(5));
+        Experience exp = new DefaultExperience(original, action, new RewardStandard(5));
+        critic.enrichedExperience1 = new DefaultExperience(enriched, action, new RewardStandard(5));
 
         Batch batch = new Batch(List.of(exp));
 
@@ -343,7 +328,7 @@ public class TDActorCriticTest {
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
 
-        RecordingActorNetwork actor = new RecordingActorNetwork(List.of(action1, action2));
+        RecordingPolicyGradientPolicy actor = new RecordingPolicyGradientPolicy(List.of(action1, action2));
         actor.fixedProbs = new double[] { 0.25, 0.75 };
 
         RecordingStateValueCritic critic = new RecordingStateValueCritic();
@@ -352,8 +337,8 @@ public class TDActorCriticTest {
         TDActorCritic algorithm = new TDActorCritic(actor, critic, 0.1, 0.2, 0.9);
 
         Batch batch = new Batch(List.of(
-                new Experience(new DummyPolicyInput("s1"), action2, new RewardStandard(5)),
-                new Experience(new DummyPolicyInput("s2"), action2, new RewardStandard(6))
+                new DefaultExperience(new DummyObservation("s1"), action2, new RewardStandard(5)),
+                new DefaultExperience(new DummyObservation("s2"), action2, new RewardStandard(6))
         ));
 
         // When
@@ -400,25 +385,25 @@ public class TDActorCriticTest {
         }
 
         @Override
-        public Action selectAction(PolicyInput input) {
+        public Action selectAction(Observation input) {
             return null;
         }
     }
 
-    private static final class DummyWrapper implements WrapperPolicyInputVector {
+    private static final class DummyWrapper implements WrapperObservationVector {
 
         @Override
-        public double[] transform(PolicyInput observation) {
+        public double[] transform(Observation observation) {
             return new double[] { 0.0 };
         }
 
         @Override
-        public PolicyInput transform(double[] vector) {
-            return new DummyPolicyInput("v");
+        public Observation transform(double[] vector) {
+            return new DummyObservation("v");
         }
     }
 
-    private static final class RecordingActorNetwork extends ActorNetwork {
+    private static final class RecordingPolicyGradientPolicy implements CategoricalPolicyGradient {
 
         private final List<Action> actionSet;
         private int initCallCount;
@@ -426,10 +411,9 @@ public class TDActorCriticTest {
         private double[] fixedProbs;
         private final List<ActorUpdateCall> updateCalls;
 
-        private RecordingActorNetwork(List<Action> actionSet) {
-            super(1, 1, new DummyWrapper(), actionSet);
+        private RecordingPolicyGradientPolicy(List<Action> actionSet) {
             this.actionSet = actionSet;
-            this.updateCalls = new java.util.ArrayList<>();
+            this.updateCalls = new ArrayList<>();
         }
 
         @Override
@@ -439,8 +423,29 @@ public class TDActorCriticTest {
         }
 
         @Override
-        public double[] forwardLogits(PolicyInput input) {
+        public MLKAgent getAgent() {
+            return lastInitAgent;
+        }
+
+        @Override
+        public Action selectAction(Observation input) {
+            return null;
+        }
+
+        @Override
+        public double[] forwardLogits(Observation input) {
             return new double[actionSet.size()];
+        }
+
+        @Override
+        public double[][] forwardLogits(Observation[] inputs) {
+            double[][] logits = new double[inputs.length][];
+
+            for (int i = 0; i < inputs.length; i++) {
+                logits[i] = forwardLogits(inputs[i]);
+            }
+
+            return logits;
         }
 
         @Override
@@ -449,17 +454,35 @@ public class TDActorCriticTest {
         }
 
         @Override
-        public void updateFromLogitsGradient(PolicyInput input, double[] dLossDLogits, double learningRate) {
+        public void updateFromLogitsGradient(Observation input, double[] dLossDLogits, double learningRate) {
             updateCalls.add(new ActorUpdateCall(input, dLossDLogits, learningRate));
         }
 
         @Override
-        public List<Action> getActionSet() {
-            return actionSet;
+        public void updateFromLogitsGradient(Observation[] inputs, double[][] dLossDLogits, double learningRate) {
+            for (int i = 0; i < inputs.length; i++) {
+                updateFromLogitsGradient(inputs[i], dLossDLogits[i], learningRate);
+            }
+        }
+
+        @Override
+        public int actionIndex(Action action) {
+            int index = actionSet.indexOf(action);
+
+            if (index < 0) {
+                throw new IllegalArgumentException("Unknown action.");
+            }
+
+            return index;
+        }
+
+        @Override
+        public double getSoftmaxTemperature() {
+            return 1.0;
         }
     }
-
-    private record ActorUpdateCall(PolicyInput input, double[] gradient, double learningRate) {
+    
+    private record ActorUpdateCall(Observation input, double[] gradient, double learningRate) {
     }
 
     private static final class RecordingStateValueCritic extends StateValueCritic {
@@ -504,32 +527,32 @@ public class TDActorCriticTest {
         }
 
         @Override
-        public double updateFromTransition(PolicyInput observation, double reward, PolicyInput nextObservation, boolean terminal, double gamma, double learningRate) {
+        public double updateFromTransition(Observation observation, double reward, Observation nextObservation, boolean terminal, double gamma, double learningRate) {
             updateCalls.add(new CriticUpdateCall(observation, reward, nextObservation, terminal, gamma, learningRate));
             return tdErrors.removeFirst();
         }
     }
 
-    private record CriticUpdateCall(PolicyInput observation, double reward, PolicyInput nextObservation, boolean terminal, double gamma,
+    private record CriticUpdateCall(Observation observation, double reward, Observation nextObservation, boolean terminal, double gamma,
             double learningRate) {
     }
 
-    private static final class DummyPolicyInput implements PolicyInput {
+    private static final class DummyObservation implements Observation {
 
         private final String id;
 
-        private DummyPolicyInput(String id) {
+        private DummyObservation(String id) {
             this.id = id;
         }
 
         @Override
-        public PolicyInput add(PolicyInput other) {
+        public Observation add(Observation other) {
             return this;
         }
 
         @Override
-        public PolicyInput copy() {
-            return new DummyPolicyInput(id);
+        public Observation copy() {
+            return new DummyObservation(id);
         }
 
         @Override
@@ -537,7 +560,7 @@ public class TDActorCriticTest {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof DummyPolicyInput other)) {
+            if (!(obj instanceof DummyObservation other)) {
                 return false;
             }
             return id.equals(other.id);

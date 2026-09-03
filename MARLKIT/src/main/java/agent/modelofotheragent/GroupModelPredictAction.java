@@ -3,7 +3,8 @@ package agent.modelofotheragent;
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.MappedJointAction;
-import learning.policies.PolicyInput;
+import environment.observation.MappedJointObservation;
+import environment.observation.Observation;
 
 /**
  * Prediction model that returns a joint action for a group of agents.
@@ -12,7 +13,7 @@ import learning.policies.PolicyInput;
  * that can include actions for multiple agents. Implementations may optionally be informed of
  * the predicting (self) agent via {@link #setPredictingAgent(MLKAgent)} to filter or adjust
  * predictions. The last predicted joint action is available via
- * {@link #getLastPredictedJointAction()} and is typically consumed by learning algorithms
+ * {@link #getLastPredictedAction()} and is typically consumed by learning algorithms
  * that model other agents.</p>
  */
 public interface GroupModelPredictAction extends ModelPredictAction {
@@ -33,23 +34,33 @@ public interface GroupModelPredictAction extends ModelPredictAction {
 	}
 	
 	/**
-	 * Predict a joint action from an observation.
-	 *
-	 * @param observation observation used as input.
-	 * @return predicted joint action.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public MappedJointAction predictAction(PolicyInput observation);
+	public MappedJointAction predictAction(Observation observation);
 	
 	/**
-	 * Predict a joint action from an observation and an action.
-	 *
-	 * @param observation observation used as input.
-	 * @param action action of the predicting agent.
-	 * @return predicted joint action.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public MappedJointAction predictAction(PolicyInput observation, Action action);
+	public MappedJointAction predictAction(Observation observation, Action action);
+	
+	/**
+	 * Predict a joint action from a mapped joint observation.
+	 * 
+	 * <p> Each agent's observation is used to predict its action, and the resulting actions are combined into a mapped joint action.<p>
+	 * @param observation mapped joint observation used as input.
+	 * @return predicted joint action.
+	 */
+	public MappedJointAction predictActionFromMappedObservation(MappedJointObservation observation);
+	
+	/**
+	 * Predict a joint action from a mapped joint observation and the action of the predicting agent.
+	 * @param observation mapped joint observation used as input.
+	 * @param action action of the predicting agent used as input.
+	 * @return predicted joint action.
+	 */
+	public MappedJointAction predictActionFromMappedObservation(MappedJointObservation observation, Action action);
 	
 	/**
 	 * Return the last predicted joint action.
@@ -57,6 +68,6 @@ public interface GroupModelPredictAction extends ModelPredictAction {
 	 * @return last predicted joint action.
 	 */
 	@Override
-	public MappedJointAction getLastPredictedJointAction();
+	public MappedJointAction getLastPredictedAction();
 
 }

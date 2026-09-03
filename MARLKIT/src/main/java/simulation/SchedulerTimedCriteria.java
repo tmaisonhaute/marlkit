@@ -1,5 +1,6 @@
 package simulation;
 
+import util.criteria.AlwaysMet;
 import util.criteria.Criteria;
 import util.criteria.Criterion;
 import util.criteria.ModuloTimeCriterion;
@@ -13,6 +14,7 @@ public abstract class SchedulerTimedCriteria implements SchedulerCriteria {
 	private Criterion criteriaStartDisplay;
 	private Criterion criteriaEndDisplay;
 	private Criterion criteriaEndSimulation;
+	protected Criterion criteriaEvaluation;
 
 	public void initEpisodeDuration(int episodeDuration) {
 		criteriaEndEpisode = new ReachTimeCriterion(episodeDuration);
@@ -30,6 +32,10 @@ public abstract class SchedulerTimedCriteria implements SchedulerCriteria {
 
 	public void initEndSimulation(int maximumEpisodeCount) {
 		criteriaEndSimulation = new ReachTimeCriterion(maximumEpisodeCount);
+	}
+	
+	public void initEvaluationCriterion(){
+		criteriaEvaluation = new AlwaysMet();
 	}
 
 	public void setCriteriaEndEpisode(Criterion criteriaEndEpisode) {
@@ -67,6 +73,11 @@ public abstract class SchedulerTimedCriteria implements SchedulerCriteria {
 	@Override
 	public Criterion getCriteriaEndSimulation() {
 		return criteriaEndSimulation;
+	}
+	
+	@Override
+	public Criterion getCriteriaEvaluation() {
+		return criteriaEvaluation;
 	}
 
 	@Override

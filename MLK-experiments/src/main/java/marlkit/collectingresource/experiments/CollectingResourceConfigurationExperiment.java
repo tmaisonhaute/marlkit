@@ -18,6 +18,7 @@ import marlkit.collectingresource.scheduler.SchedulerCollectingResource;
 import marlkit.collectingresource.systemevaluator.CollectingResourceEnvEvaluator;
 import rewardmodelimplementation.FullyCooperativeReward;
 import rewardmodelimplementation.MixedReward;
+import trainingexecutionstrategy.DecentralizedTrainingExecutionStrategy;
 
 public class CollectingResourceConfigurationExperiment {
 
@@ -63,7 +64,7 @@ public class CollectingResourceConfigurationExperiment {
                 ExperimentConfiguration.named("CollectingResource_Mixed_QLearning")
                         .environment(new CollectingResourceEnvironmentModule(ENV_WIDTH, ENV_HEIGHT, scenarioMixed))
                         .rewardModel(new RewardModelModule(MixedReward.class))
-                        .scheduler(SchedulerCollectingResource.class)
+                        .scheduler(SchedulerCollectingResource.class, DecentralizedTrainingExecutionStrategy.class)
                         .agentGroup(new AgentGroupConfiguration(
                                 CollectingResourceAgent.class,
                                 scenarioMixed.getNumberOfAgents(),

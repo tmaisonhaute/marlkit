@@ -8,7 +8,7 @@ import simulation.MLKModel;
 /**
  * Launcher for the deterministic TeamSurround setup.
  */
-@EngineAgents(scheduler = SchedulerTeamSurroundCentralizedExperiences.class, model = MLKModel.class, viewers = {
+@EngineAgents(scheduler = SchedulerTeamSurround.class, model = MLKModel.class, viewers = {
 		ViewerTeamSurround.class })
 public class LauncherTeamSurround extends MLKLauncher {
 

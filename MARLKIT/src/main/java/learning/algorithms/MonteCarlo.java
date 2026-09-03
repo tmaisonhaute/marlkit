@@ -5,11 +5,11 @@ import java.util.Map;
 
 import agent.MLKAgent;
 import agent.action.Action;
+import environment.observation.Observation;
+import experience.Experience;
 import learning.Algorithm;
 import learning.Batch;
-import learning.Experience;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import learning.policies.QValueBasedPolicy;
 import madkit.kernel.AgentLogger;
 import util.Pair;
@@ -17,7 +17,7 @@ import util.Pair;
 public class MonteCarlo implements Algorithm {
 	
 	private final double gamma;
-    private Map<Pair<PolicyInput, Action>, Integer> nbSelected;
+    private Map<Pair<Observation, Action>, Integer> nbSelected;
     private MLKAgent agent;
     private QValueBasedPolicy policy;
     
@@ -31,14 +31,6 @@ public class MonteCarlo implements Algorithm {
     public MonteCarlo(QValueBasedPolicy policy, double gamma) {
     	this.policy = policy;
         this.gamma = gamma;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init(MLKAgent agent) {
-        setAgent(agent);
     }
 
     @Override
@@ -86,7 +78,7 @@ public class MonteCarlo implements Algorithm {
     protected void updateQ(List<Experience> experiences, double[] cumulRewards) {
 		int experiencesLength = experiences.size();
 	    for (int k = 0; k < experiencesLength; k++) {
-	        Pair<PolicyInput, Action> stateAction = createStateAction(experiences.get(k));
+	        Pair<Observation, Action> stateAction = createStateAction(experiences.get(k));
 	        double cumulativeReward = cumulRewards[k];
 	
 	        double averageReward = getPolicy().getTable().getValue(stateAction);
@@ -102,8 +94,8 @@ public class MonteCarlo implements Algorithm {
      * @param experience
      * @return
      */
-    protected Pair<PolicyInput, Action> createStateAction(Experience experience) {
-		PolicyInput state = experience.getInput();
+    protected Pair<Observation, Action> createStateAction(Experience experience) {
+    	Observation state = experience.getObservation();
 		Action action = experience.getAction();
 		return new Pair<>(state, action);
 	}

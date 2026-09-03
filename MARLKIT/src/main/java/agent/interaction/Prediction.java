@@ -7,13 +7,12 @@ import java.util.Set;
 
 import agent.action.Action;
 import environment.observation.Observation;
-import learning.policies.PolicyInput;
 
 /**
  * Stores predictions about an MLKAgent's future actions based on observations.
  */
 public class Prediction {
-    private Map<PolicyInput, Map<Action, Integer>> inputActionCounts;
+    private Map<Observation, Map<Action, Integer>> inputActionCounts;
     private Set<Action> observedActions;
     
     /**
@@ -29,10 +28,10 @@ public class Prediction {
     /**
      * Records an observation-action pair for future predictions.
      * 
-     * @param PolicyInput the input the agent received
+     * @param Observation the input the agent received
      * @param action the action the agent took in response
      */
-    public void recordObservationAction(PolicyInput input, Action action) {
+    public void recordObservationAction(Observation input, Action action) {
     	if (!observedActions.contains(action)) {
     		observedActions.add(action);	
     	}
@@ -54,13 +53,11 @@ public class Prediction {
         
         int totalCount = actionCounts.values().stream().mapToInt(Integer::intValue).sum();
         if (totalCount == 0) {
-            // If we haven't seen this observation before, return uniform distribution
             double uniformProbability = 1.0 / Math.max(1, observedActions.size());
             for (Action action : observedActions) {
                 probabilities.put(action, uniformProbability);
             }
         } else {
-            // Calculate probabilities based on observed frequencies
             for (Map.Entry<Action, Integer> entry : actionCounts.entrySet()) {
                 probabilities.put(entry.getKey(), (double) entry.getValue() / totalCount);
             }

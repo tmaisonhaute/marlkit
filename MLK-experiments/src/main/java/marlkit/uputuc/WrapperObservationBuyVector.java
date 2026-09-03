@@ -5,14 +5,13 @@ import java.util.EnumMap;
 import java.util.List;
 
 import environment.observation.Observation;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
-import learning.policies.PolicyInput;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import util.Pair;
 
-public class WrapperObservationBuyVector implements WrapperPolicyInputVector {
+public class WrapperObservationBuyVector implements WrapperObservationVector {
 
 	@Override
-    public double[] transform(PolicyInput observation) {
+    public double[] transform(Observation observation) {
         ObservationBuy obs = (ObservationBuy) observation;
         List<Pair<ResourcesStock, Double>> stocksAndDistances = obs.getStocksAndDistances();
 

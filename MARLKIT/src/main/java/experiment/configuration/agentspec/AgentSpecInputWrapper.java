@@ -1,6 +1,6 @@
 package experiment.configuration.agentspec;
 
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 
 /**
  * Optional capability for agent specifications that provide a policy input wrapper.
@@ -17,5 +17,5 @@ public interface AgentSpecInputWrapper extends AgentSpec {
      *
      * @return the policy input wrapper
      */
-    WrapperPolicyInputVector getInputWrapper();
+    WrapperObservationVector getInputWrapper();
 }

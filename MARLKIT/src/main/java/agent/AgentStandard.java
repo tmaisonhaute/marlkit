@@ -5,14 +5,12 @@ import java.util.List;
 import agent.action.Action;
 import environment.MLKEnvironment;
 import environment.observation.Observation;
+import experience.Experience;
 import learning.Algorithm;
 import learning.Batch;
-import learning.Experience;
 import learning.Policy;
-import learning.policies.PolicyInput;
 import madkit.kernel.Mailbox;
 import madkit.simulation.SimuAgent;
-import reward.Reward;
 
 /**
  * Standard implementation of an agent in the multi-agent reinforcement learning system.
@@ -21,7 +19,7 @@ import reward.Reward;
 public class AgentStandard extends SimuAgent implements MLKAgent{
 	protected Policy policy;
 	protected Algorithm algorithm;
-	protected Batch pastExperiences;
+	protected Batch experienceBuffer;
 	protected Observation registeredObservation;
 	protected List<String> additionalRoles;
 	
@@ -32,16 +30,18 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 * @param algorithm the learning algorithm for this agent
 	 */
 	public AgentStandard(Policy policy, Algorithm algorithm) {
-		this();
+		super();
 		this.policy = policy;
 		this.algorithm = algorithm;
+		experienceBuffer = new Batch();
+		additionalRoles = new ArrayList<>();
 	}
 
 
 	
 	public AgentStandard() {
 		super();
-		pastExperiences = new Batch();
+		experienceBuffer = new Batch();
 		additionalRoles = new ArrayList<>();
 	}
 	
@@ -85,7 +85,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 * @return the selected action
 	 */
 	@Override
-	public Action selectAction(PolicyInput input) {
+	public Action selectAction(Observation input) {
 		return policy.selectAction(input);
 	}
 
@@ -124,17 +124,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		this.algorithm.init(this);
 	}
 	
-	/**
-	 * Records an experience composed of observation, action, and reward.
-	 *
-	 * @param input the PolicyInput received
-	 * @param act the action taken
-	 * @param rew the reward received
-	 */
-	@Override
-	public void feedbackExperience(PolicyInput input, Action act, Reward rew) {
-		pastExperiences.addExperience(input, act, rew);
-	}
+
 	
 	/**
 	 * Records a complete experience object.
@@ -143,7 +133,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void feedbackExperience(Experience experience) {
-		pastExperiences.addExperience(experience);
+		experienceBuffer.addExperience(experience);
 	}
 	
 	/**
@@ -153,9 +143,9 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void updatePolicy(int timestep) {
-		if(getAlgorithm().getLearningFrequency() > 0 && timestep % getAlgorithm().getLearningFrequency() == 0) {
-			learnOnBatch();
-		}
+	    if (getAlgorithm().shouldLearn(timestep, experienceBuffer)) {
+	        learnOnBatch();
+	    }
 	}
 
 	/**
@@ -163,7 +153,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void learnOnBatch() {
-		getAlgorithm().learnOnBatch(pastExperiences, getLogger());
+		getAlgorithm().learnOnBatch(experienceBuffer, getLogger());
 	}
 	
 	/**
@@ -171,7 +161,7 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	 */
 	@Override
 	public void endEpisode() {
-		getAlgorithm().endEpisode(pastExperiences, getLogger());
+		getAlgorithm().endEpisode(experienceBuffer, getLogger());
 	}
 
 	/**
@@ -229,7 +219,6 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 	public SimuAgent getSimuAgent() {
 		return this;
 	}
-	
 	
 	
 }

@@ -9,6 +9,8 @@ import environment.MLKEnvironment;
 import evaluation.SystemEvaluator;
 import reward.RewardModel;
 import simulation.MLKScheduler;
+import trainingexecutionstrategy.DecentralizedTrainingExecutionStrategy;
+import trainingexecutionstrategy.TrainingExecutionStrategy;
 
 /**
  * Declarative description of one MARLKIT experiment configuration.
@@ -193,13 +195,26 @@ public class ExperimentConfiguration {
         }
 
         /**
-         * Sets the scheduler class.
+         * Sets the scheduler class. 
+         * The training execution strategy will default to {@link DecentralizedTrainingExecutionStrategy}.
          *
          * @param schedulerClass the scheduler class
          * @return this builder
          */
         public Builder scheduler(Class<? extends MLKScheduler> schedulerClass) {
             this.schedulerModule = new SchedulerModule(schedulerClass);
+            return this;
+        }
+        
+        /**
+         * Sets the scheduler class and the training execution strategy class.
+         *
+         * @param schedulerClass the scheduler class
+         * @param trainingExecutionStrategyClass the training execution strategy class
+         * @return this builder
+         */
+        public Builder scheduler(Class<? extends MLKScheduler> schedulerClass, Class<? extends TrainingExecutionStrategy> trainingExecutionStrategyClass) {
+            this.schedulerModule = new SchedulerModule(schedulerClass, trainingExecutionStrategyClass);
             return this;
         }
 

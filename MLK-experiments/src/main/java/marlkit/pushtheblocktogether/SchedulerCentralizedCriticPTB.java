@@ -1,9 +1,10 @@
 package marlkit.pushtheblocktogether;
 
-import centralizedtraining.SchedulerCentralizedCritic;
+import centralizedtraining.CentralizedCriticTrainingExecutionStrategy;
+import simulation.MLKScheduler;
 import simulation.SchedulerTimedCriteria;
 
-public class SchedulerCentralizedCriticPTB extends SchedulerCentralizedCritic{
+public class SchedulerCentralizedCriticPTB extends MLKScheduler{
 	public static final int EPISODE_DURATION = 100;
 	public static final int MINIMUM_EPISODES_BEFORE_VIEW = 5_000;
 	public static final int UPDATE_DISPLAY_INTERVAL = 1000;
@@ -13,6 +14,7 @@ public class SchedulerCentralizedCriticPTB extends SchedulerCentralizedCritic{
 
 	public SchedulerCentralizedCriticPTB() {
 		setCriteriaModule(new SchedulerPTBCriteria());
+		setTrainingExecutionStrategy(new CentralizedCriticTrainingExecutionStrategy());
 	}
 
 	class SchedulerPTBCriteria extends SchedulerTimedCriteria {
@@ -22,6 +24,7 @@ public class SchedulerCentralizedCriticPTB extends SchedulerCentralizedCritic{
 			initStartDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_EPISODES_BEFORE_VIEW);
 			initEndDisplay(UPDATE_DISPLAY_INTERVAL, MINIMUM_EPISODES_BEFORE_VIEW, DISPLAYED_EPISODES);
 			initEndSimulation(MAXIMUM_EPISODE_COUNT);
+			initEvaluationCriterion();
 			setPauseDisplayValue(PAUSE_VALUE);
 		}
 	}

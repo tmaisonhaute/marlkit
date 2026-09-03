@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import environment.observation.Observation;
 import environment.observation.ObservationPositionValue;
 import environment.observation.ObservationPositionsValues;
-import learning.policies.PolicyInput;
 import util.Tuple;
 
-public class WrapperVectorObservationPositionsValues implements WrapperPolicyInputVector{
+public class WrapperVectorObservationPositionsValues implements WrapperObservationVector{
 
 	private boolean doWrapPositionValue;
 	
@@ -19,8 +19,8 @@ public class WrapperVectorObservationPositionsValues implements WrapperPolicyInp
 	}
 	
 	@Override
-	public double[] transform(PolicyInput input) {
-		ObservationPositionsValues obs = (ObservationPositionsValues) input;
+	public double[] transform(Observation observation) {
+		ObservationPositionsValues obs = (ObservationPositionsValues) observation;
 		
 		if (obs.getListObs().isEmpty()) {
 	        return new double[0];

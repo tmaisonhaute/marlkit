@@ -14,6 +14,7 @@ import marlkit.foraging.events.FoodCollectedEvent;
 import marlkit.foraging.events.MoveEvent;
 import marlkit.foraging.scenario.Scenario;
 import marlkit.foraging.scenario.ScenarioUniform;
+import marlkit.foraging.systemevaluator.ForagingEnvEvaluator;
 import reward.ReactionEvent;
 import reward.RewardModel;
 import rewardmodelimplementation.MixedReward;
@@ -23,7 +24,6 @@ public class EnvForaging extends EnvironmentStandard {
 
 	protected State2DGridInt state;
 	protected Scenario scenario;
-	protected MoveEvent moveEvent;
 	
 	public EnvForaging() {
         this(10, 10, new ScenarioUniform(5));
@@ -36,7 +36,7 @@ public class EnvForaging extends EnvironmentStandard {
     public EnvForaging(int width, int height, Scenario scenario, RewardModel rewardModel) { 
         super(width, height, rewardModel);
         this.scenario = scenario;
-        moveEvent = new MoveEvent();
+        setSystemEvaluator(new ForagingEnvEvaluator());
     }  
 
 	@Override
@@ -100,7 +100,7 @@ public class EnvForaging extends EnvironmentStandard {
 			newAgentsPositions.putIfAbsent(newPosition, new ArrayList<>());
 			newAgentsPositions.get(newPosition).add(ag);
 			
-			handleMoveEvent(ag, reactionEventsAction, oldPosition != newPosition);
+			handleMoveEvent(ag, reactionEventsAction, !oldPosition.equals(newPosition));
 		} 
 	}
 	
@@ -114,9 +114,11 @@ public class EnvForaging extends EnvironmentStandard {
 			Map<MLKAgent, List<ReactionEvent>> reactionEventsAction, boolean hasMoved) {
 		List<ReactionEvent> events = new ArrayList<>();
 		reactionEventsAction.putIfAbsent(ag, events);
-		if (hasMoved) {
-			reactionEventsAction.get(ag).add(moveEvent);	
-		}
+		MoveEvent moveEvent = new MoveEvent(hasMoved);
+		reactionEventsAction.get(ag).add(moveEvent);
+//		if (hasMoved) {
+//			reactionEventsAction.get(ag).add(moveEvent);	
+//		}
 	}
 	
 	/**

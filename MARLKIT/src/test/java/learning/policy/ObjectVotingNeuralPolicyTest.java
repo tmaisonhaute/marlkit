@@ -16,7 +16,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Move2DInt;
 import environment.observation.ObservationPositionValue;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import learning.nn.NeuralNetwork;
 import learning.policies.ObjectVotingNeuralPolicy;
 import util.Tuple;
@@ -30,7 +30,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenPolicy_whenInit_thenAgentSet() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObjectVotingNeuralPolicy policy = new ObjectVotingNeuralPolicy(network, wrapper, actions, 1.0, true);
         MLKAgent agent = agent(12345);
 
@@ -43,7 +43,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenObservation_whenSelectAction_thenActionIsReturnedFromActionSet() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObservationPositionValue observation = observation(1.0, 2.0);
 
         when(wrapper.transform(observation)).thenReturn(new double[] {
@@ -63,7 +63,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenObservation_whenSelectAction_thenWrapperIsUsed() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObservationPositionValue observation = observation(1.0, 2.0);
 
         when(wrapper.transform(observation)).thenReturn(new double[] {
@@ -81,7 +81,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenNoEntity_whenComputeLogits_thenZeroLogitsReturned() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObjectVotingNeuralPolicy policy = new ObjectVotingNeuralPolicy(network, wrapper, actions, 1.0, false);
 
         double[] logits = policy.computeLogits(new double[0][]);
@@ -93,7 +93,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenNullEntities_whenComputeLogits_thenZeroLogitsReturned() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObjectVotingNeuralPolicy policy = new ObjectVotingNeuralPolicy(network, wrapper, actions, 1.0, false);
 
         double[] logits = policy.computeLogits(null);
@@ -105,7 +105,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenRepeatedSameEntity_whenComputeLogits_thenMeanAggregationKeepsSameLogits() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObjectVotingNeuralPolicy policy = initializedPolicy(network, wrapper, actions, 12345);
 
         double[] entity = new double[] {1.0, 2.0, -1.0};
@@ -122,7 +122,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenNullEntityInsideBatch_whenComputeLogits_thenNullEntityIgnored() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObjectVotingNeuralPolicy policy = initializedPolicy(network, wrapper, actions, 12345);
 
         double[] entity = new double[] {1.0, 2.0, -1.0};
@@ -137,7 +137,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenBatchInputs_whenForwardLogits_thenBatchShapeIsCorrect() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
 
         ObservationPositionValue first = observation(1.0, 2.0);
         ObservationPositionValue second = observation(3.0, 4.0);
@@ -163,7 +163,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenEmptyObservation_whenForwardLogits_thenZeroLogitsReturned() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObservationPositionValue observation = observation(1.0, 2.0);
 
         when(wrapper.transform(observation)).thenReturn(new double[0]);
@@ -185,7 +185,7 @@ public class ObjectVotingNeuralPolicyTest {
 
         Action[] actions = new Action[] {up, down, left, right};
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObjectVotingNeuralPolicy policy = new ObjectVotingNeuralPolicy(network, wrapper, actions, 1.0, false);
 
         assertThat(policy.actionIndex(up)).isEqualTo(0);
@@ -198,7 +198,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenUnknownAction_whenActionIndex_thenThrows() {
         Action[] actions = new Action[] {Move2DInt.up(), Move2DInt.down()};
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObjectVotingNeuralPolicy policy = new ObjectVotingNeuralPolicy(network, wrapper, actions, 1.0, false);
 
         assertThatThrownBy(() -> policy.actionIndex(Move2DInt.left()))
@@ -210,7 +210,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenPolicy_whenGetSoftmaxTemperature_thenConfiguredTemperatureReturned() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObjectVotingNeuralPolicy policy = new ObjectVotingNeuralPolicy(network, wrapper, actions, 0.7, false);
 
         assertThat(policy.getSoftmaxTemperature()).isEqualTo(0.7);
@@ -220,7 +220,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenInvalidTemperature_whenConstruct_thenThrows() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
 
         assertThatThrownBy(() -> new ObjectVotingNeuralPolicy(network, wrapper, actions, 0.0, false))
             .isInstanceOf(IllegalArgumentException.class)
@@ -230,7 +230,7 @@ public class ObjectVotingNeuralPolicyTest {
     @Test
     public void givenEmptyActions_whenConstruct_thenThrows() {
         NeuralNetwork network = network(3, 1);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
 
         assertThatThrownBy(() -> new ObjectVotingNeuralPolicy(network, wrapper, new Action[0], 1.0, false))
             .isInstanceOf(IllegalArgumentException.class)
@@ -241,7 +241,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenNetworkOutputSizeMismatch_whenConstruct_thenThrows() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, 2);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
 
         assertThatThrownBy(() -> new ObjectVotingNeuralPolicy(network, wrapper, actions, 1.0, false))
             .isInstanceOf(IllegalArgumentException.class)
@@ -252,7 +252,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenInputAndGradient_whenUpdateFromLogitsGradient_thenLogitsChange() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObservationPositionValue observation = observation(1.0, 2.0);
 
         when(wrapper.transform(observation)).thenReturn(new double[] {
@@ -279,7 +279,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenEmptyObservation_whenUpdateFromLogitsGradient_thenLogitsRemainZero() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObservationPositionValue observation = observation(1.0, 2.0);
 
         when(wrapper.transform(observation)).thenReturn(new double[0]);
@@ -301,7 +301,7 @@ public class ObjectVotingNeuralPolicyTest {
     public void givenLogitsFromPolicy_whenSoftmaxApplied_thenProbabilitiesSumToOne() {
         Action[] actions = actions();
         NeuralNetwork network = network(3, actions.length);
-        WrapperPolicyInputVector wrapper = mock(WrapperPolicyInputVector.class);
+        WrapperObservationVector wrapper = mock(WrapperObservationVector.class);
         ObjectVotingNeuralPolicy policy = initializedPolicy(network, wrapper, actions, 12345);
 
         double[] logits = policy.computeLogits(new double[][] {
@@ -319,7 +319,7 @@ public class ObjectVotingNeuralPolicyTest {
 
     private ObjectVotingNeuralPolicy initializedPolicy(
             NeuralNetwork network,
-            WrapperPolicyInputVector wrapper,
+            WrapperObservationVector wrapper,
             Action[] actions,
             long seed
     ) {

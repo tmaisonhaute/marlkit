@@ -1,13 +1,14 @@
 package modelofotheragents;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import org.testng.annotations.Test;
 
 import agent.action.Action;
 import agent.action.ActionInt;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 
 public class FictitiousPlayDeterministicPredictActionTest {
 
@@ -17,7 +18,7 @@ public class FictitiousPlayDeterministicPredictActionTest {
         ActionInt defaultAction = new ActionInt(1);
         FictitiousPlayDeterministicPredictAction model =
                 new FictitiousPlayDeterministicPredictAction(defaultAction);
-        PolicyInput observation = new DummyPolicyInput();
+        Observation observation = new DummyObservation();
 
         // When
         Action predicted = model.predictAction(observation);
@@ -33,7 +34,7 @@ public class FictitiousPlayDeterministicPredictActionTest {
         ActionInt defaultAction = new ActionInt(0);
         FictitiousPlayDeterministicPredictAction model =
                 new FictitiousPlayDeterministicPredictAction(defaultAction);
-        PolicyInput observation = new DummyPolicyInput();
+        Observation observation = new DummyObservation();
 
         ActionInt actionA = new ActionInt(1);
         ActionInt actionB = new ActionInt(2);
@@ -56,8 +57,8 @@ public class FictitiousPlayDeterministicPredictActionTest {
         FictitiousPlayDeterministicPredictAction model =
                 new FictitiousPlayDeterministicPredictAction(defaultAction);
 
-        PolicyInput observation1 = new DummyPolicyInput(Arrays.asList(1.0));
-        PolicyInput observation2 = new DummyPolicyInput(Arrays.asList(2.0));
+        Observation observation1 = new DummyObservation(Arrays.asList(1.0));
+        Observation observation2 = new DummyObservation(Arrays.asList(2.0));
 
         ActionInt actionA = new ActionInt(1);
         ActionInt actionB = new ActionInt(2);
@@ -80,7 +81,7 @@ public class FictitiousPlayDeterministicPredictActionTest {
         ActionInt defaultAction = new ActionInt(0);
         FictitiousPlayDeterministicPredictAction model =
                 new FictitiousPlayDeterministicPredictAction(defaultAction);
-        PolicyInput observation = new DummyPolicyInput();
+        Observation observation = new DummyObservation();
 
         ActionInt actionA = new ActionInt(1);
         model.updateModel(observation, null, actionA);
@@ -89,8 +90,8 @@ public class FictitiousPlayDeterministicPredictActionTest {
         Action predicted = model.predictAction(observation);
 
         // Then
-        assertThat(model.getLastPredictedJointAction()).isEqualTo(predicted);
-        assertThat(model.getLastPredictedJointAction()).isNotSameAs(predicted);
+        assertThat(model.getLastPredictedAction()).isEqualTo(predicted);
+        assertThat(model.getLastPredictedAction()).isNotSameAs(predicted);
     }
 
     @Test
@@ -99,7 +100,7 @@ public class FictitiousPlayDeterministicPredictActionTest {
         ActionInt defaultAction = new ActionInt(0);
         FictitiousPlayDeterministicPredictAction model =
                 new FictitiousPlayDeterministicPredictAction(defaultAction);
-        PolicyInput observation = new DummyPolicyInput();
+        Observation observation = new DummyObservation();
 
         ActionInt actionA = new ActionInt(1);
         model.updateModel(observation, null, actionA);
@@ -112,30 +113,30 @@ public class FictitiousPlayDeterministicPredictActionTest {
         assertThat(predicted).isEqualTo(new ActionInt(1));
     }
 
-    private static final class DummyPolicyInput implements PolicyInput {
+    private static final class DummyObservation implements Observation {
         private final Object key;
 
-        private DummyPolicyInput() {
+        private DummyObservation() {
             this.key = new Object();
         }
 
-        private DummyPolicyInput(Object key) {
+        private DummyObservation(Object key) {
             this.key = key;
         }
 
         @Override
-        public PolicyInput add(PolicyInput other) {
+        public Observation add(Observation other) {
             return this;
         }
 
         @Override
-        public PolicyInput copy() {
+        public Observation copy() {
             return this;
         }
 
         @Override
         public boolean equals(Object obj) {
-            return this == obj || (obj instanceof DummyPolicyInput other && key.equals(other.key));
+            return this == obj || (obj instanceof DummyObservation other && key.equals(other.key));
         }
 
         @Override

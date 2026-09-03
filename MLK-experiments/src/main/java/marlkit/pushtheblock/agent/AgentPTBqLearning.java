@@ -3,9 +3,7 @@ package marlkit.pushtheblock.agent;
 import java.util.ArrayList;
 import java.util.List;
 
-import agent.AgentStandard;
 import agent.action.Action;
-import agent.action.Move2DInt;
 import learning.algorithms.QLearning;
 import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import learning.policies.QValueBasedPolicy;

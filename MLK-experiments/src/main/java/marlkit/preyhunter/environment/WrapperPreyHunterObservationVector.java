@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import environment.observation.Observation;
 import environment.observation.ObservationPositionValue;
 import environment.observation.ObservationPositionsValues;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
-import learning.policies.PolicyInput;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import util.Tuple;
 
 /**
@@ -24,7 +24,7 @@ import util.Tuple;
  *  0,         0,         0,
  *  dxPrey,    dyPrey,    OBS_PREY]
  */
-public class WrapperPreyHunterObservationVector implements WrapperPolicyInputVector {
+public class WrapperPreyHunterObservationVector implements WrapperObservationVector {
 
     private static final int VALUES_PER_ENTITY = 3;
 
@@ -41,7 +41,7 @@ public class WrapperPreyHunterObservationVector implements WrapperPolicyInputVec
     }
 
     @Override
-    public double[] transform(PolicyInput input) {
+    public double[] transform(Observation input) {
         if (!(input instanceof ObservationPositionsValues observation)) {
             throw new IllegalArgumentException("Expected ObservationPositionsValues.");
         }

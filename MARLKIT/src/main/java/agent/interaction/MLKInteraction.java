@@ -5,7 +5,7 @@ import java.util.Map;
 import agent.AgentsGroup;
 import agent.MLKAgent;
 import environment.observation.Observation;
-import learning.Experience;
+import experience.Experience;
 
 /**
  * Interface for defining interaction models between agents in a multi-agent system.

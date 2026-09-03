@@ -2,7 +2,7 @@ package marlkit.pushtheblock;
 
 
 import madkit.simulation.EngineAgents;
-import marlkit.pushtheblock.agent.AgentPTBTDActorCritic;
+import marlkit.pushtheblock.agent.AgentPTBqLearning;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
@@ -18,8 +18,8 @@ public class LauncherPTB extends MLKLauncher {
 		for (int i = 0; i < nbAgents; i++) {
 
 //			AgentPTBReinforce ag = new AgentPTBReinforce();
-			AgentPTBTDActorCritic ag = new AgentPTBTDActorCritic();
-//			AgentPTBqLearning ag = new AgentPTBqLearning();
+//			AgentPTBTDActorCritic ag = new AgentPTBTDActorCritic();
+			AgentPTBqLearning ag = new AgentPTBqLearning();
 			launchAgent(ag);
 		}
 	}

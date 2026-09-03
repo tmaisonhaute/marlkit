@@ -3,6 +3,8 @@ package experiment.configuration;
 import java.util.Objects;
 
 import simulation.MLKScheduler;
+import trainingexecutionstrategy.DecentralizedTrainingExecutionStrategy;
+import trainingexecutionstrategy.TrainingExecutionStrategy;
 
 /**
  * Module responsible for creating the scheduler of an experiment.
@@ -19,14 +21,29 @@ import simulation.MLKScheduler;
 public class SchedulerModule {
 
     private final Class<? extends MLKScheduler> schedulerClass;
+    private final Class<? extends TrainingExecutionStrategy> trainingExecutionStrategyClass;
 
     /**
      * Creates a scheduler module.
+     * The training execution strategy will default to {@link DecentralizedTrainingExecutionStrategy}.
      *
      * @param schedulerClass the scheduler class to instantiate
      */
     public SchedulerModule(Class<? extends MLKScheduler> schedulerClass) {
         this.schedulerClass = Objects.requireNonNull(schedulerClass, "schedulerClass");
+        this.trainingExecutionStrategyClass = DecentralizedTrainingExecutionStrategy.class;
+    }
+    
+    /**
+     * Creates a scheduler module.
+     * The training execution strategy will be set to the provided class.
+     *
+     * @param schedulerClass the scheduler class to instantiate
+     * @param trainingExecutionStrategyClass the training execution strategy class to use
+     */
+    public SchedulerModule(Class<? extends MLKScheduler> schedulerClass, Class<? extends TrainingExecutionStrategy> trainingExecutionStrategyClass) {
+        this.schedulerClass = Objects.requireNonNull(schedulerClass, "schedulerClass");
+        this.trainingExecutionStrategyClass = Objects.requireNonNull(trainingExecutionStrategyClass, "trainingExecutionStrategyClass");
     }
 
     /**
@@ -36,10 +53,15 @@ public class SchedulerModule {
      */
     public MLKScheduler createScheduler() {
         try {
-            return schedulerClass.getDeclaredConstructor().newInstance();
+        	MLKScheduler scheduler =  schedulerClass.getDeclaredConstructor().newInstance();
+        	TrainingExecutionStrategy strategy = trainingExecutionStrategyClass.getDeclaredConstructor().newInstance();
+        	
+        	scheduler.setTrainingExecutionStrategy(strategy);
+            return scheduler;
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(
-                    "Cannot instantiate scheduler: " + schedulerClass.getName(),
+                    "Cannot instantiate scheduler [" + schedulerClass.getName() 
+                    + "] or training execution strategy [" + trainingExecutionStrategyClass.getName() + "]",
                     e
             );
         }

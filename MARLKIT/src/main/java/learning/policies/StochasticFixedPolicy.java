@@ -2,6 +2,7 @@ package learning.policies;
 
 import agent.MLKAgent;
 import agent.action.Action;
+import environment.observation.Observation;
 import learning.Policy;
 import util.MapProba;
 
@@ -29,7 +30,7 @@ public class StochasticFixedPolicy implements Policy {
     }
 
     @Override
-    public Action selectAction(PolicyInput input) {
+    public Action selectAction(Observation input) {
         Action action = actionProbabilities.randomlySelectKey();
         if (action == null) {
             throw new IllegalStateException("No action could be selected from the stochastic policy.");

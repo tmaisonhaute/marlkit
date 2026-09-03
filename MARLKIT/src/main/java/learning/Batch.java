@@ -1,9 +1,13 @@
 package learning;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import agent.action.Action;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
+import experience.Experience;
 import reward.Reward;
 
 /**
@@ -38,16 +42,6 @@ public class Batch {
 		return experiences;
 	}
 	
-	/**
-     * Adds an experience to the batch.
-     *
-     * @param input the PolicyInput to add
-     * @param act the action to add
-     * @param rew the reward to add
-     */
-    public void addExperience(PolicyInput input, Action act, Reward rew) {
-        experiences.add(new Experience(input, act, rew));
-    }
     /**
      * Adds an experience to the batch.
      *
@@ -73,15 +67,15 @@ public class Batch {
 	}
 	
 	/**
-	 * Returns an array of all inputs in the batch.
-	 * @return an array of all inputs
+	 * Returns an array of all observations in the batch.
+	 * @return an array of all observations
 	 */
-	public PolicyInput[] getAllInputs() {
-		PolicyInput[] inputs = new PolicyInput[experiences.size()];
+	public Observation[] getAllObservations() {
+		Observation[] observations = new Observation[experiences.size()];
 		for (int i = 0; i < experiences.size(); i++) {
-			inputs[i] = experiences.get(i).getInput();
+			observations[i] = experiences.get(i).getObservation();
 		}
-		return inputs;
+		return observations;
 	}
 	/**
 	 * Returns an array of all actions in the batch.
@@ -122,6 +116,10 @@ public class Batch {
     	return cumulativeRewards;
     }
     
+    /**
+     * Computes the total rewards of all experiences in the batch.
+     * @return the total rewards
+     */
     public double totalRewards() {
 		double totalRewards = 0;
 		for (Experience experience : experiences) {
@@ -130,6 +128,48 @@ public class Batch {
 		return totalRewards;
     }
 
+    
+    /**
+     * Returns a batch containing experiences sampled randomly from this batch.
+     *
+     * <p>The sampled experiences are not removed from the current batch.</p>
+     *
+     * @param sampleSize the number of experiences to sample
+     * @param randomGenerator the random generator used for sampling
+     * @return a new batch containing the sampled experiences
+     */
+    public Batch sample(int sampleSize, RandomGenerator randomGenerator) {
+        if (sampleSize > experiences.size()) {
+            throw new IllegalArgumentException("sampleSize must not exceed the batch size.");
+        }
+
+        List<Experience> shuffledExperiences = new ArrayList<>(experiences);
+        Collections.shuffle(shuffledExperiences, new Random(randomGenerator.nextLong()));
+
+        return new Batch(shuffledExperiences.subList(0, sampleSize));
+    }
+    
+    /**
+     * Retains only the most recent experiences and returns the removed ones.
+     *
+     * @param maximumSize the maximum number of experiences to retain
+     * @return the experiences removed from the buffer
+     */
+    public List<Experience> retainLatest(int maximumSize) {
+        if (maximumSize < 0) {
+            throw new IllegalArgumentException("maximumSize must be non-negative.");
+        }
+
+        int count = experiences.size() - maximumSize;
+        List<Experience> removedExperiences = new ArrayList<>(Math.max(count, 0));
+
+        for (int i = 0; i < count; i++) {
+            removedExperiences.add(experiences.removeFirst());
+        }
+
+        return removedExperiences;
+    }
+    
 	
 }
 

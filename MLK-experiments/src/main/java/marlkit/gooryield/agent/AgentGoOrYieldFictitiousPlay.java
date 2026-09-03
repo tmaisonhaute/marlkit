@@ -9,7 +9,7 @@ import agent.modelofotheragent.ModelsManager;
 import agent.modelofotheragent.PredictionModelsManager;
 import agent.modelofotheragent.StandardGroupModelingPredictAction;
 import algorithm.QLearningJAL;
-import learning.Experience;
+import experience.Experience;
 import modelofotheragents.FictitiousPlayDeterministicPredictAction;
 
 public class AgentGoOrYieldFictitiousPlay extends AgentGoOrYield implements MLKAgentPredictingOthersAction {

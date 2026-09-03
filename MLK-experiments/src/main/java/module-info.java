@@ -31,12 +31,14 @@ open module marlkit.xp {
 	exports marlkit.pushtheblock;
 	exports marlkit.pushtheblocktogether;
 	exports marlkit.listenorgo;
-		exports marlkit.gooryield;
+	exports marlkit.gooryield;
 	exports marlkit.uputuc;
 	exports marlkit.foraging;
 	exports marlkit.maze;
 	exports marlkit.crossescape;
 	exports marlkit.teambattle;
 	exports marlkit.teamsurround;
+	exports marlkit.foragingcontinuously;
+	
 	
 }

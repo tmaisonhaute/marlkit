@@ -1,53 +1,15 @@
 package marlkit.foraging.launchers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import agent.AgentStandard;
-import agent.action.Action;
-import agent.action.Move2DInt;
-import learning.algorithms.QLearning;
-import learning.explorationstrategies.EpsilonGreedyPowerDecay;
-import learning.policies.QValueBasedPolicy;
-import madkit.simulation.EngineAgents;
-import madkit.simulation.SimuEnvironment;
-import marlkit.foraging.EnvForaging;
-import marlkit.foraging.SchedulerForaging;
-import marlkit.foraging.ViewerForaging;
 import marlkit.foraging.scenario.ScenarioDeterministic1;
 import rewardmodelimplementation.FullyCooperativeReward;
-import simulation.MLKLauncher;
-import simulation.MLKModel;
 
+/**
+ * Launches the Foraging experiment with a fully cooperative reward model.
+ */
+public class LauncherForagingFullyCooperative extends LauncherForaging {
 
-@EngineAgents(scheduler = SchedulerForaging.class, model = MLKModel.class, viewers = {
-		ViewerForaging.class })
-public class LauncherForagingFullyCooperative extends MLKLauncher {
-
-	@SuppressWarnings("unchecked")
-	@Override
-	protected <E extends SimuEnvironment> E onLaunchEnvironment() {
-		EnvForaging env = new EnvForaging(5, 6, new ScenarioDeterministic1(), new FullyCooperativeReward());
-		launchAgent(env, Integer.MAX_VALUE);
-		return (E) env;
-	}
-	
-	@Override
-	protected void onLaunchSimulatedAgents() {
-		Action goLeft = Move2DInt.left(); 
-		Action goRight = Move2DInt.right();
-		Action goUp = Move2DInt.up(); 
-		Action goDown = Move2DInt.down();
-		List<Action> possibleActions = new ArrayList<>(List.of(goLeft, goRight, goUp, goDown));
-		int nbAgents = 2;
-		
-		for (int i = 0; i < nbAgents; i++) {
-			QValueBasedPolicy policy = new QValueBasedPolicy(possibleActions, 1.0, new EpsilonGreedyPowerDecay(0.5));
-        	QLearning algorithm = new QLearning(policy, possibleActions, 0.2, 0.995);
-
-			AgentStandard ag = new AgentStandard(policy, algorithm);
-			launchAgent(ag);
-		}
+	public LauncherForagingFullyCooperative() {
+		super(new ScenarioDeterministic1(), new FullyCooperativeReward());
 	}
 
 	public static void main(String[] args) {

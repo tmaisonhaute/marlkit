@@ -9,10 +9,13 @@ public interface Algorithm {
 	
 	/**
 	 * Initializes the Algorithm with the agent that will use it.
+	 * Also initializes the policy associated with this algorithm.
 	 *
 	 * @param agent the agent using this algorithm
 	 */
-	public void init(MLKAgent agent);
+	public default void init(MLKAgent agent) {
+		setAgent(agent);
+	}
 
 	/**
 	 * Sets the policy used by this Algorithm.
@@ -56,6 +59,23 @@ public interface Algorithm {
 	 * @return the learning frequency
 	 */
 	public int getLearningFrequency();
+	
+	/**
+	 * Indicates whether the algorithm should learn from the currently accumulated
+	 * batch at the specified simulation step.
+	 *
+	 * <p>The default implementation uses the learning frequency returned by
+	 * {@link #getLearningFrequency()}. A non-positive frequency disables periodic
+	 * learning.</p>
+	 *
+	 * @param timestep the current simulation step
+	 * @param batch the batch of accumulated experiences
+	 * @return {@code true} if learning should occur
+	 */
+	default boolean shouldLearn(int timestep, Batch batch) {
+	    int frequency = getLearningFrequency();
+	    return frequency > 0 && (timestep + 1) % frequency == 0;
+	}
 	
 	
 	/**

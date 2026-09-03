@@ -5,7 +5,6 @@ import static madkit.simulation.SimuOrganization.ENVIRONMENT_ROLE;
 import java.util.Optional;
 import java.util.logging.Level;
 
-import agent.MLKAgent;
 import agent.communication.MLKAgentCommunicating;
 import agent.modelofotheragent.MLKAgentModelingOthers;
 import environment.MLKEnvironment;
@@ -17,7 +16,10 @@ import madkit.messages.SchedulingMessage;
 import madkit.simulation.SimuOrganization;
 import madkit.simulation.scheduler.MethodActivator;
 import madkit.simulation.scheduler.TickBasedScheduler;
+import trainingexecutionstrategy.DecentralizedTrainingExecutionStrategy;
+import trainingexecutionstrategy.TrainingExecutionStrategy;
 import util.criteria.Criterion;
+import util.criteria.ReadOnlyCriterion;
 
 /**
  * Scheduler for MARLKIT simulations that coordinates agent-environment interactions.
@@ -26,21 +28,18 @@ import util.criteria.Criterion;
 public abstract class MLKScheduler extends TickBasedScheduler {
 	protected MLKEnvironment env;
 	protected SchedulerCriteria criteriaModule;
+	protected ReadOnlyCriterion readOnlyEvaluationCriterion;
 	private SystemEvaluator systemEvaluator;
+	protected TrainingExecutionStrategy trainingExecutionStrategy = new DecentralizedTrainingExecutionStrategy();
 	
 	private Activator initEnvironment;
 	private Activator computeObservations;
 	private Activator envReaction;
+	private Activator buildExperiences;
 	private Activator reset;
 	private Activator clearPreviousStepVariables;
 	private Activator envEndEpisode;
 	private Activator envEnd;
-
-	private Activator agentsAct;
-	private Activator agentsMakeObservation;
-	private Activator agentsCollectExperience;
-	private Activator agentsUpdatePolicy;
-	private Activator agentsEndEpisode;
 	
 	private Activator agentsPreInfluenceCommunicate;
 	private Activator agentsHandlePreInfluenceCommunication;
@@ -53,6 +52,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	private MethodActivator viewers;
 	
 	private int counter = 0;
+	private boolean isActivated = false;
 
 	/**
 	 * Initializes the scheduler and sets up activators for agent and environment actions.
@@ -68,6 +68,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		addActivator(computeObservations);
 		envReaction = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "step");
 		addActivator(envReaction);
+		buildExperiences = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "buildExperiences");
+		addActivator(buildExperiences);
 		clearPreviousStepVariables = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "clearStepVariables");
 		addActivator(clearPreviousStepVariables);
 		reset = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "reset");
@@ -77,16 +79,9 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		envEnd = new MethodActivator(getModelGroup(), ENVIRONMENT_ROLE, "onEnd");
 		addActivator(envEnd);
 		
-		agentsMakeObservation = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "registerObservation");
-		addActivator(agentsMakeObservation);
-		agentsAct = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "takeAction");
-		addActivator(agentsAct);
-		agentsCollectExperience = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "collectExperience");
-		addActivator(agentsCollectExperience);
-		agentsUpdatePolicy = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "updatePolicy");
-		addActivator(agentsUpdatePolicy);
-		agentsEndEpisode = new MethodActivator(getModelGroup(), MLKAgent.DEFAULT_AGENT_ROLE, "endEpisode");
-		addActivator(agentsEndEpisode);
+		trainingExecutionStrategy.activate(getModelGroup());
+		trainingExecutionStrategy.getActivators().forEach(this::addActivator);
+		
 		
 		agentsPreInfluenceCommunicate = new MethodActivator(getModelGroup(), MLKAgentCommunicating.DEFAULT_AGENT_ROLE, "communicatePreInfluence");
 		addActivator(agentsPreInfluenceCommunicate);
@@ -106,11 +101,13 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		viewers = new MethodActivator(getEngineGroup(), SimuOrganization.VIEWER_ROLE, "display");
 		addActivator(viewers);
-
+		
+		isActivated = true;
 	}
 
 	public void setCriteriaModule(SchedulerCriteria criteriaModule) {
-		this.criteriaModule = criteriaModule;
+	    this.criteriaModule = criteriaModule;
+	    this.readOnlyEvaluationCriterion = null;
 	}
 	
 	public SchedulerCriteria getCriteriaModule() {
@@ -119,6 +116,18 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 
 	public void setSystemEvaluator(SystemEvaluator systemEvaluator) {
 		this.systemEvaluator = systemEvaluator;
+	}
+	
+	public void setTrainingExecutionStrategy(TrainingExecutionStrategy trainingExecutionStrategy) {
+		if (!isActivated) {
+			this.trainingExecutionStrategy = trainingExecutionStrategy;
+			return;
+		}
+		this.trainingExecutionStrategy.getActivators().forEach(this::removeActivator);
+		this.trainingExecutionStrategy = trainingExecutionStrategy;
+		this.trainingExecutionStrategy.activate(getModelGroup());
+		this.trainingExecutionStrategy.getActivators().forEach(this::addActivator);
+		
 	}
 
 	
@@ -135,6 +144,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		if (systemEvaluator != null) {
 			env.setSystemEvaluator(systemEvaluator);
 		}
+
+		env.setEvaluationCriterion(getReadOnlyEvaluationCriterion());
 		reset.execute(); //TODO Useful only because SimulationStart is called multiple times (madkit related issue).
 	}
 
@@ -169,6 +180,10 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		environmentReaction();
 		
+		getCriteriaEndEpisode().update(Optional.of(env.getState()));
+		
+		buildExperiences();
+		
 		agentsCollectExperience();
 		
 		agentsPostReactionCommunication();
@@ -181,11 +196,11 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		handleEndEpisode();
 		
+		
 		handleDisplay();
 		displayViewers();
 		
 		counter++;
-		getCriteriaEndEpisode().update(Optional.of(env.getState()));
 		
 		if(handleEndSimulation()) {
 			getLogger().info("Simulation has Ended");
@@ -218,7 +233,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 *  observationTriggers the observation phase for all agents, where they register their observations based on the current environment state.
 	 */
 	protected void agentsMakeObservation() {
-		agentsMakeObservation.execute();
+		trainingExecutionStrategy.agentsMakeObservation();
 	}
 
 	/**
@@ -232,7 +247,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 * Triggers the action selection and action sending phase for all agents.
 	 */
 	protected void agentsAct() {
-		agentsAct.execute();
+		trainingExecutionStrategy.agentsAct();
 	}
 
 	/**
@@ -241,12 +256,19 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	protected void environmentReaction() {
 		envReaction.execute();
 	}
+	
+	/**
+	 * Triggers the experience building phase for the environment, where it constructs experiences for all agents based on their actions, observations, and rewards.
+	 */
+	protected void buildExperiences() {
+		buildExperiences.execute(getCriteriaEndEpisode().isMet());
+	}
 
 	/**
 	 * Triggers the experience collection phase for all agents.
 	 */
 	protected void agentsCollectExperience() {
-		agentsCollectExperience.execute();
+		trainingExecutionStrategy.agentsCollectExperience();
 	}
 	
 	/**
@@ -279,7 +301,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 * @param simulationStep current simulation step index
 	 */
 	protected void agentsUpdatePolicy(int simulationStep) {
-		agentsUpdatePolicy.execute(simulationStep);
+		trainingExecutionStrategy.agentsUpdatePolicy(simulationStep);			
 	}
 
 	/**
@@ -330,12 +352,13 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 * </p>
 	 */
 	protected void episodeEnded() {
-		updateOnEndEpisode(Optional.of(env.getState()));
 		envEndEpisode.execute();
-		agentsEndEpisode.execute();
+		trainingExecutionStrategy.agentsEndEpisode();
 		
 		agentsEndEpisodeCommunicate.execute();
 		agentsHandleEndEpisodeCommunication.execute();
+		
+		updateOnEndEpisode(Optional.of(env.getState()));
 		
 		reset.execute();
 		getCriteriaEndEpisode().reset();
@@ -352,6 +375,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		getCriteriaEndSimulation().update(state);
 		getCriteriaStartDisplay().update(state);
 		getCriteriaEndDisplay().update(state);
+		getCriteriaEvaluation().update(state);
 	}
 	
 	/**
@@ -362,6 +386,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		getCriteriaStartDisplay().reset();
 		getCriteriaEndDisplay().reset();
 		getCriteriaEndSimulation().reset();
+		getCriteriaEvaluation().reset();
 	}
 	/**
 	 * Returns the criterion for ending an episode.
@@ -398,6 +423,22 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	public Criterion getCriteriaEndSimulation(){
 		return criteriaModule.getCriteriaEndSimulation();
 	}
+	
+	/**
+	 * Returns the evaluation criterion used for assessing the performance of the system.
+	 * @return The evaluation criterion.
+	 */
+	public Criterion getCriteriaEvaluation() {
+		return criteriaModule.getCriteriaEvaluation();
+	}
+	
+	public ReadOnlyCriterion getReadOnlyEvaluationCriterion() {
+		if (readOnlyEvaluationCriterion == null) {
+			readOnlyEvaluationCriterion = new ReadOnlyCriterion(getCriteriaEvaluation());
+		}
+		
+		return readOnlyEvaluationCriterion;
+	}
 
 	/**
 	 * Returns the pause in milliseconds for the display.
@@ -407,5 +448,6 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	protected int getPauseDisplayValue() {
 		return criteriaModule.getPauseDisplayValue();
 	}
+
 	
 }

@@ -1,7 +1,7 @@
 package agent.modelofotheragent;
 
 import agent.action.Action;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 
 /**
  * Prediction model for other agents' actions.
@@ -20,16 +20,16 @@ public interface ModelPredictAction {
 	 * @param observation observation used as input.
 	 * @return predicted action.
 	 */
-	Action predictAction(PolicyInput observation);
+	Action predictAction(Observation observation);
 
 	/**
-	 * Predict an action from an observation and an action.
+	 * Predict an action from an observation and an action made by the predicting agent.
 	 *
 	 * @param observation observation used as input.
 	 * @param action action of the predicting agent.
 	 * @return predicted action.
 	 */
-	Action predictAction(PolicyInput observation, Action action);
+	Action predictAction(Observation observation, Action action);
 	
 	/**
 	 * Update the model using the observation, predicted action, and actual action.
@@ -38,12 +38,12 @@ public interface ModelPredictAction {
 	 * @param predictedAction action predicted by the model.
 	 * @param actualAction action actually executed.
 	 */
-	void updateModel(PolicyInput observation, Action predictedAction, Action actualAction);
+	void updateModel(Observation observation, Action predictedAction, Action actualAction);
 	
 	/**
 	 * Return the last predicted action.
 	 *
 	 * @return last predicted action.
 	 */
-	Action getLastPredictedJointAction();
+	Action getLastPredictedAction();
 }

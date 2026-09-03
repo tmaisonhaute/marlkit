@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import agent.MLKAgent;
 import agent.action.Action;
+import environment.observation.Observation;
 import learning.ExplorationStrategy;
 import learning.Policy;
 import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
@@ -49,7 +50,7 @@ public class QValueBasedPolicy implements Policy{
 	}
 
 	@Override
-	public Action selectAction(PolicyInput input) {
+	public Action selectAction(Observation input) {
 		Optional<Action> exploratoryAction = getExplorationStrategy().getExploratoryAction(actionsSet, prng());
 		if (!exploratoryAction.isEmpty()) {
 			return exploratoryAction.get();
@@ -57,7 +58,7 @@ public class QValueBasedPolicy implements Policy{
         Action selectedAction = null;
         double maxVal = Double.NEGATIVE_INFINITY;
         for (Action act : actionsSet) {
-            Pair<PolicyInput, Action> newStateAction = new Pair<>(input, act);
+            Pair<Observation, Action> newStateAction = new Pair<>(input, act);
             double qval = getTable().getValue(newStateAction);
             if(qval > maxVal) {
             	selectedAction = act;

@@ -2,7 +2,7 @@ package learning.policies.valuefunction;
 
 import agent.action.Action;
 import agent.action.ActionSpace;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 import util.Pair;
 
 /**
@@ -14,7 +14,7 @@ import util.Pair;
  *
  * @see ValueFunction
  */
-public class QTable extends ValueFunction<Pair<PolicyInput, Action>> implements ActionEvaluator {
+public class QTable extends ValueFunction<Pair<Observation, Action>> implements ActionEvaluator {
 
 	/**
 	 * Creates a Q-table with the specified default value for unseen state-action pairs.
@@ -29,16 +29,16 @@ public class QTable extends ValueFunction<Pair<PolicyInput, Action>> implements 
 	/**
 	 * Returns Q(s, a) for the given input and action.
 	 *
-	 * @param PolicyInput the input (state/observation)
+	 * @param Observation the input (state/observation)
 	 * @param action      the action
 	 * @return the Q-value, or the default value if this pair has not been visited
 	 */
-	public Double getValue(PolicyInput input, Action action) {
+	public Double getValue(Observation input, Action action) {
 		  return getValue(new Pair<>(input, action));
     }
 
 	@Override
-	protected Pair<PolicyInput, Action> copyKey(Pair<PolicyInput, Action> key) {
+	protected Pair<Observation, Action> copyKey(Pair<Observation, Action> key) {
 	    return new Pair<>(
 	        key.getFirst().copy(),
 	        key.getSecond().copy()
@@ -54,9 +54,9 @@ public class QTable extends ValueFunction<Pair<PolicyInput, Action>> implements 
 	 * @return an ActionSpace containing all actions that have been seen with this
 	 *         observation
 	 */
-	public ActionSpace getActionSpace(PolicyInput observation) {
+	public ActionSpace getActionSpace(Observation observation) {
 		ActionSpace actionSpace = new ActionSpace();
-		for (Pair<PolicyInput, Action> key : tableValue.keySet()) {
+		for (Pair<Observation, Action> key : tableValue.keySet()) {
 			if (key.getFirst().equals(observation)) {
 				actionSpace.addAction(key.getSecond().copy());
 			}

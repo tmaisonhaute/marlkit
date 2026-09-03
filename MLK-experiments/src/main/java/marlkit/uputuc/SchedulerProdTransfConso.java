@@ -19,6 +19,7 @@ public class SchedulerProdTransfConso extends MLKScheduler {
 
 		public SchedulerProdTransfConsoCriteria() {
 			initEpisodeDuration(EPISODE_DURATION);
+			initEvaluationCriterion();
 			setCriteriaStartDisplay(new AlwaysMet());
 			setCriteriaEndDisplay(Criteria.not(new AlwaysMet()));
 			setCriteriaEndSimulation(new ReachTimeCriterion(MAXIMUM_EPISODE_COUNT));

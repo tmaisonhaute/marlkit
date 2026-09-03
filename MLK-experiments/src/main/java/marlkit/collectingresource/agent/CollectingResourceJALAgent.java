@@ -14,7 +14,7 @@ import agent.modelofotheragent.PredictionModelsManager;
 import agent.modelofotheragent.StandardGroupModelingPredictAction;
 import algorithm.QLearningJAL;
 import environment.observation.Observation;
-import learning.Experience;
+import experience.Experience;
 import learning.algorithms.QLearning;
 import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import marlkit.collectingresource.environment.UniteProductionSpatial;
@@ -44,7 +44,7 @@ public class CollectingResourceJALAgent extends CollectingResourceAgent implemen
 		this.modeledAgents = new HashSet<>();
 
 		QLearningJAL qPolicy = new QLearningJAL(possibleActions, groupModel);
-		qPolicy.setExplorationStrategy(new EpsilonGreedyExponentialDecay(1.0, 0.005));
+		qPolicy.setExplorationStrategy(new EpsilonGreedyExponentialDecay(0.05, 0.01));
 		QLearning qLearning = new QLearning(qPolicy, possibleActions, 0.2, 0.95);
 
 		setPolicy(qPolicy);

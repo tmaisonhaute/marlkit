@@ -4,7 +4,7 @@ import agent.modelofotheragent.MLKAgentPredictingOthersAction;
 import agent.modelofotheragent.ModelsManager;
 import agent.modelofotheragent.PredictionModelsManager;
 import algorithm.QLearningJAL;
-import learning.Experience;
+import experience.Experience;
 import modelofotheragents.MinimaxValueFunctionPredictAction;
 
 public class AgentGoOrYieldMinMax extends AgentGoOrYield implements MLKAgentPredictingOthersAction {

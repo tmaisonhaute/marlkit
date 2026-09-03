@@ -7,32 +7,28 @@ import agent.action.Action;
 import learning.Algorithm;
 import learning.Batch;
 import learning.Policy;
-import learning.policies.PolicyGradientPolicy;
+import learning.policies.CategoricalPolicyGradient;
 import madkit.kernel.AgentLogger;
 
 public class Reinforce implements Algorithm {
 
-    private PolicyGradientPolicy policy;
+    private CategoricalPolicyGradient policy;
     private MLKAgent agent;
 
     private final double alpha;
     private final double gamma;
 
-    public Reinforce(PolicyGradientPolicy policy, double alpha, double gamma) {
+    public Reinforce(CategoricalPolicyGradient policy, double alpha, double gamma) {
         this.policy = Objects.requireNonNull(policy);
         this.alpha = alpha;
         this.gamma = gamma;
         validateParameters();
     }
 
-    @Override
-    public void init(MLKAgent agent) {
-        setAgent(agent);
-    }
 
     @Override
     public void setPolicy(Policy policy) {
-        if (policy instanceof PolicyGradientPolicy pgPolicy) {
+        if (policy instanceof CategoricalPolicyGradient pgPolicy) {
             this.policy = pgPolicy;
         } else {
             throw new IllegalArgumentException("Reinforce requires a PolicyGradientPolicy.");
@@ -65,13 +61,13 @@ public class Reinforce implements Algorithm {
             return;
         }
 
-        double[][] logitsBatch = policy.forwardLogits(batch.getAllInputs());
+        double[][] logitsBatch = policy.forwardLogits(batch.getAllObservations());
         double[][] probsBatch = policy.softmax(logitsBatch);
         int[] actionIndices = toActionIndices(batch.getAllActions());
         double[] returns = batch.computeCumulativeRewards(gamma);
         double[][] gradients = computePolicyGradientSignal(probsBatch, actionIndices, returns);
 
-        policy.updateFromLogitsGradient(batch.getAllInputs(), gradients, alpha);
+        policy.updateFromLogitsGradient(batch.getAllObservations(), gradients, alpha);
 
         logger.info("Total rewards: " + batch.totalRewards());
     }

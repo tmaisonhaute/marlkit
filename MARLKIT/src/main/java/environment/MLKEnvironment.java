@@ -11,7 +11,9 @@ import agent.action.Action;
 import environment.observation.Observation;
 import environment.state.State;
 import evaluation.SystemEvaluator;
-import learning.Experience;
+import experience.Experience;
+import experience.ExperienceBuilder;
+import util.criteria.ReadOnlyCriterion;
 import util.grafana.Extra;
 import util.grafana.LearningData;
 import util.grafana.StepData;
@@ -79,6 +81,19 @@ public interface MLKEnvironment {
 	public Experience getExperienceJointAction(MLKAgent agent);
 	
 	/**
+	 * Sets the experience builder used to construct experiences for agents.
+	 * The ExperienceBuilder implements the logic for creating experiences. Different builders define different types of experiences.
+	 * @param experienceBuilder the experience builder to use
+	 */
+	public void setExperienceBuilder(ExperienceBuilder experienceBuilder);
+	
+	/**
+	 * Returns the experience builder used to construct experiences for agents.
+	 * @return the current experience builder
+	 */
+	public ExperienceBuilder getExperienceBuilder();
+	
+	/**
 	 * Returns the last action (influence) performed by the given agent.
 	 * @param agent the agent to get the last influence for
 	 * @return the last action performed by the agent, or null if the agent has not influenced the environment yet
@@ -96,6 +111,12 @@ public interface MLKEnvironment {
 	 * Executes one step in the environment, performs reaction to the influence of agents and computes their rewards.
 	 */
 	public abstract void step();
+	
+	/**
+	 * Builds experiences for all agents based on their actions, observations, and rewards.
+	 * @param terminal indicates whether the current step is terminal (end of episode) or not. 
+	 */
+	public void buildExperiences(boolean terminal);
 	
 	/**
 	 * Returns the current state of the environment.
@@ -173,6 +194,13 @@ public interface MLKEnvironment {
 	 * @return the current system evaluator
 	 */
 	public SystemEvaluator getSystemEvaluator();
+	
+	/**
+	 * Sets the evaluation criterion used to determine whether the environment's objectives have been met.
+	 * 
+	 * @param evaluationCriterion the Read Only evaluation criterion to set
+	 */
+	void setEvaluationCriterion(ReadOnlyCriterion evaluationCriterion);
 
 	/**
 	 * Initializes the log file with the specified lines.

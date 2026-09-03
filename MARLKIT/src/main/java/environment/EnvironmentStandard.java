@@ -16,12 +16,15 @@ import environment.observation.Observation;
 import evaluation.Measure;
 import evaluation.NoSystemEvaluation;
 import evaluation.SystemEvaluator;
-import learning.Experience;
+import experience.DefaultExperienceBuilder;
+import experience.Experience;
+import experience.ExperienceBuilder;
 import madkit.simulation.environment.Environment2D;
 import reward.ReactionEvent;
 import reward.Reward;
 import reward.RewardModel;
 import util.Pair;
+import util.criteria.ReadOnlyCriterion;
 import util.grafana.LearningData;
 
 /**
@@ -33,8 +36,10 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	protected AgentsGroup agents;
 	protected RewardModel rewardModel;
 	protected SystemEvaluator systemEvaluator;
+	protected ReadOnlyCriterion evaluationCriterion;
+	protected ExperienceBuilder experienceBuilder = new DefaultExperienceBuilder();
 	private boolean logSetup = false;
-	private final int EPISODES_BEFORE_LOG = 1_000;
+	private static final int EPISODES_BEFORE_LOG = 1_000;
 	
 	/**
 	 * The learning data that can be collected during the simulation.
@@ -46,6 +51,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	
 	private Map<MLKAgent, Observation> agentsObservations;
 	private Map<MLKAgent, Action> agentsActions;
+	private Map<MLKAgent, Reward> agentsRewards;
 	private Map<MLKAgent, Experience> agentsExperiences;
 	
 	/**
@@ -62,6 +68,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		this.evaluationMeasureNames = new ArrayList<>();
 		agentsObservations = new HashMap<>();
 		agentsActions = new HashMap<>();
+		agentsRewards = new HashMap<>();
 		agentsExperiences = new HashMap<>();
     }
 	
@@ -110,22 +117,21 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	
 	/**
 	 * Processes the environment reaction to agent influences.
-	 * Computes dynamics based on agent actions, calculates rewards, and stores the resulting
-	 * experiences for agents to collect via {@link #getExperience(MLKAgent)}.
+	 * Computes dynamics based on agent actions, calculates and stores rewards
 	 */
 	@Override
 	public void step(){
 		
 		//Reaction
 		Map<MLKAgent, List<ReactionEvent>> result = dynamics(agentsActions);
-		systemEvaluator.evaluate(result);
+		
+		if (evaluationCriterion.isMet()) {
+			systemEvaluator.evaluate(result);
+		}
 		
 		//Reward computation
-		Map<MLKAgent, Pair<Action, Reward>> rewards = rewardComputation(result);
+		agentsRewards = rewardModel.rewardFunctions(result);
 		
-		//Store experiences for agents to collect
-		agentsExperiences = combineObsActReward(rewards, agentsObservations);
-		collectAndLogLearningData(agentsExperiences);
 	}
 	/**
 	 * {@inheritDoc}
@@ -143,38 +149,8 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	public void influence(MLKAgent agent, Action action) {
 		agentsActions.put(agent, action);
 	}
+
 	
-	/**
-	 * Computes rewards for all agents based on the dynamics result.
-	 * Applies the reward model to the reaction events and combines actions with rewards.
-	 *
-	 * @param result map of agents to their reaction events from dynamics
-	 * @return map of agents to their action and computed reward
-	 */
-	protected Map<MLKAgent, Pair<Action, Reward>> rewardComputation(Map<MLKAgent, List<ReactionEvent>> result) {
-		Map<MLKAgent, Reward> rewards = rewardModel.rewardFunctions(result);
-		
-		return combineActionReward(agentsActions, rewards);
-	}
-	
-	/**
-	 * Combines separate action and reward maps into a single map of action-reward pairs per agent.
-	 *
-	 * @param actions map of agents to their actions
-	 * @param rewards map of agents to their rewards
-	 * @return map of agents to their action-reward pairs
-	 */
-	private Map<MLKAgent, Pair<Action, Reward>> combineActionReward(Map<MLKAgent, Action> actions, 
-																	Map<MLKAgent, Reward> rewards) {
-		Map<MLKAgent, Pair<Action, Reward>> actionRewardMap = new HashMap<>();
-		for (Map.Entry<MLKAgent, Action> entry : actions.entrySet()) {
-			MLKAgent agent = entry.getKey();
-			Action action = entry.getValue();
-			Reward reward = rewards.get(agent);
-			actionRewardMap.put(agent, new Pair<>(action, reward));
-		}
-		return actionRewardMap;
-	}
 	
 	/**
 	 * Collects, processes and logs learning data from agent experiences.
@@ -194,6 +170,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	public void clearStepVariables() {
 		agentsObservations.clear();
 		agentsActions.clear();
+		agentsRewards.clear();
 		agentsExperiences.clear();
 	}
 	
@@ -204,25 +181,37 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	
 	@Override
 	public Experience getExperienceJointAction(MLKAgent agent) {
-		Experience originalExperience = agentsExperiences.get(agent);
-		Map<MLKAgent, Action> allMappedActions = getAgentsActions();
-		MappedJointAction jointAction = new MappedJointAction(allMappedActions);
-		return new Experience(originalExperience.getInput(), jointAction, originalExperience.getReward());
+	    Experience originalExperience = agentsExperiences.get(agent);
+	    MappedJointAction jointAction = new MappedJointAction(getAgentsActions());
+	    return originalExperience.withAction(jointAction);
+	}
+	
+	@Override
+	public void setExperienceBuilder(ExperienceBuilder experienceBuilder) {
+		this.experienceBuilder = experienceBuilder;
+	}
+	
+	@Override
+	public ExperienceBuilder getExperienceBuilder() {
+		return experienceBuilder;
 	}
 	
 	@Override
 	public void onEpisodeEnd() {
-		systemEvaluator.onEpisodeEnd();
-		List<Measure> measures = systemEvaluator.getEpisodeMeasures();
-		collectEpisodeData(measures);
-		
-		finalizeEpisodeData();
-		
-		int epCount = learningData.getAverageEpisodesCount();
-		if (epCount > 0 && epCount % EPISODES_BEFORE_LOG == 0) {
-			String logMessage = generateLogCSV(learningData.getAverageEpisodesReward());
-			saveLogCSV(logMessage);
-			learningData.clearEpisodes();
+		if (evaluationCriterion.isMet()) {
+			systemEvaluator.onEpisodeEnd();
+			List<Measure> measures = systemEvaluator.getEpisodeMeasures();
+			collectEpisodeData(measures);
+			
+			finalizeEpisodeData();
+			
+			int epCount = learningData.getAverageEpisodesCount();
+			if (epCount > 0 && epCount % EPISODES_BEFORE_LOG == 0) {
+				String logMessage = generateLogCSV(learningData.getAverageEpisodesReward());
+				saveLogCSV(logMessage);
+				learningData.clearEpisodes();
+			}
+			
 		}
 		
 		systemEvaluator.reset();
@@ -334,29 +323,31 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	public abstract Map<MLKAgent, List<ReactionEvent>> dynamics(Map<MLKAgent, Action> actions);
 
 
-
+	
 	/**
-	 * Combines observations, actions, and rewards into experiences for each agent.
-	 *
-	 * @param actionRewardMap map of agents to their action/reward pairs
-	 * @param observationMap map of agents to their observations
-	 * @return map of agents to their complete experiences
+	 * {@inheritDoc}
+	 * 
+	 * Combines actions and rewards into experiences for each agent using the experience builder.
+	 * The types of experiences created depend on the implementation of the {@link ExperienceBuilder} used.
+	 * Stores the resulting experiences for agents to collect via {@link #getExperience(MLKAgent)}.
 	 */
-	protected Map<MLKAgent, Experience> combineObsActReward(Map<MLKAgent, Pair<Action, Reward>> actionRewardMap,
-	        Map<MLKAgent, Observation> observationMap) {
-	    Map<MLKAgent, Experience> combinedMap = new HashMap<>();
-	
-	    for (Map.Entry<MLKAgent, Observation> entry : observationMap.entrySet()) {
+	@Override
+	public void buildExperiences(boolean terminal) {
+	    Map<MLKAgent, Experience> experiences = new HashMap<>();
+
+	    for (Map.Entry<MLKAgent, Reward> entry : agentsRewards.entrySet()) {
 	        MLKAgent agent = entry.getKey();
-	        Observation observation = entry.getValue();
-	        Pair<Action, Reward> actionRewardPair = actionRewardMap.get(agent);
-	
-	        if (actionRewardPair != null) {
-	            Experience experience = new Experience(observation, actionRewardPair.getFirst(), actionRewardPair.getSecond());
-	            combinedMap.put(agent, experience);
-	        }
+	        Reward reward = entry.getValue();
+	        Experience experience = experienceBuilder.buildExperience(this, agent, reward, terminal);
+
+	        experiences.put(agent, experience);
 	    }
-	    return combinedMap;
+
+	    agentsExperiences = experiences;
+		if (evaluationCriterion.isMet()) {
+			collectAndLogLearningData(agentsExperiences);
+		}
+	    
 	}
 
 	/**
@@ -470,5 +461,9 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		return systemEvaluator;
 	}
 
+	@Override
+	public void setEvaluationCriterion(ReadOnlyCriterion evaluationCriterion) {
+	    this.evaluationCriterion = evaluationCriterion;
+	}
 	
 }

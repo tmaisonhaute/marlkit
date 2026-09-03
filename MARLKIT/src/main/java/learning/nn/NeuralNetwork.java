@@ -227,6 +227,46 @@ public class NeuralNetwork {
         double[][] deltas = backpropagateDeltas(pass, dLossDa);
         return computeParameterGradients(pass, deltas);
     }
+    
+    /**
+     * Computes the gradient of a scalar objective with respect to the network input.
+     *
+     * <p>The supplied output gradient represents the derivative of the objective
+     * with respect to the network output activations. This gradient is propagated
+     * backward through the network without modifying its parameters.</p>
+     *
+     * <p>For a network representing a scalar function {@code Q(x)}, passing
+     * {@code new double[] { 1.0 }} as the output gradient returns the input
+     * gradient {@code dQ/dx}.</p>
+     *
+     * @param input the network input at which the gradient is evaluated
+     * @param dObjectiveDOutput the gradient of the objective with respect to the
+     *                         network output activations
+     * @return the gradient of the objective with respect to the network input
+     * @throws NullPointerException if {@code input} or
+     *                              {@code dObjectiveDOutput} is {@code null}
+     * @throws IllegalArgumentException if the input or output-gradient dimensions
+     *                                  do not match the network architecture
+     */
+    public double[] inputGradient(double[] input, double[] dObjectiveDOutput) {
+        validateInputSize(input);
+        validateOutputGradientSize(dObjectiveDOutput);
+
+        ForwardPass pass = forwardWithCache(input);
+        double[][] deltas = backpropagateDeltas(pass, dObjectiveDOutput);
+
+        double[] gradient = new double[layerSizes[0]];
+        double[][] firstLayerWeights = weights[0];
+        double[] firstLayerDelta = deltas[1];
+
+        for (int inputIndex = 0; inputIndex < gradient.length; inputIndex++) {
+            for (int neuronIndex = 0; neuronIndex < firstLayerDelta.length; neuronIndex++) {
+                gradient[inputIndex] += firstLayerWeights[neuronIndex][inputIndex] * firstLayerDelta[neuronIndex];
+            }
+        }
+
+        return gradient;
+    }
 
     private ForwardPass forwardWithCache(double[] input) {
         double[][] activations = allocateActivations();

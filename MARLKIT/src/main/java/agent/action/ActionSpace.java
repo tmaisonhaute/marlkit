@@ -17,8 +17,8 @@ public class ActionSpace {
 		this.actions = new ArrayList<>(actions);
 	}
     
-    public static JointAction of(Action... actions) {
-        return new JointAction(List.of(actions));
+    public static OrderedJointAction of(Action... actions) {
+        return new OrderedJointAction(List.of(actions));
     }
 
     public List<Action> getActions() {

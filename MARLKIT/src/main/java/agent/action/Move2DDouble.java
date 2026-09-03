@@ -8,9 +8,7 @@ import util.Pair;
 /**
  * An action representing a 2D continuous movement with delta-x and delta-y components.
  */
-public class Move2DDouble implements Action {
-
-    protected Pair<Double, Double> value;
+public class Move2DDouble extends ActionContinuousVector {
 
     /**
      * Creates a new continuous 2D movement action.
@@ -18,11 +16,11 @@ public class Move2DDouble implements Action {
      * @param value a pair containing dx and dy movement values
      */
     public Move2DDouble(Pair<Double, Double> value) {
-        this.value = value;
+        this(value.getFirst(), value.getSecond());
     }
     
 	public Move2DDouble(double dx, double dy) {
-		this.value = new Pair<>(dx, dy);
+		super(new double[]{dx, dy});
 	}
 
     /**
@@ -31,7 +29,7 @@ public class Move2DDouble implements Action {
      * @return movement vector
      */
     public Pair<Double, Double> getValue() {
-        return value;
+        return new Pair<>(getFirst(), getSecond());
     }
 
     /**
@@ -40,24 +38,52 @@ public class Move2DDouble implements Action {
      * @param value new movement vector
      */
     public void setValue(Pair<Double, Double> value) {
-        this.value = value;
+		setFirst(value.getFirst());
+		setSecond(value.getSecond());
     }
 
+    /**
+     * Returns the first component of the movement vector (dx).
+     * @return first component (dx)
+     */
     public double getFirst() {
-        return value.getFirst();
+        return getValue(0);
     }
 
-    public double getSecond() {
-        return value.getSecond();
-    }
+	/**
+	 * Sets the first component of the movement vector (dx).
+	 * 
+	 * @param dx new first component
+	 */
+	public void setFirst(double dx) {
+		setValue(0, dx);
+	}
+	
+	/**
+	 * Returns the second component of the movement vector (dy).
+	 * 
+	 * @return second component (dy)
+	 */
+	public double getSecond() {
+		return getValue(1);
+	}
+	
+	
+	/**
+	 * Sets the second component of the movement vector (dy).
+	 * @param dy new component
+	 */
+	public void setSecond(double dy) {
+		setValue(1, dy);
+	}
 
     /**
      * Adds the movement values of another Move2DDouble to this one.
      * @param other
      */
     public void add(Move2DDouble other) {
-        value.setFirst(getFirst() + other.getFirst());
-        value.setSecond(getSecond() + other.getSecond());
+        setFirst(getFirst() + other.getFirst());
+        setSecond(getSecond() + other.getSecond());
     }
 
     /**
@@ -65,30 +91,14 @@ public class Move2DDouble implements Action {
      * @param vect
      */
     public void add(Pair<Double, Double> vect) {
-        value.setFirst(getFirst() + vect.getFirst());
-        value.setSecond(getSecond() + vect.getSecond());
+        setFirst(getFirst() + vect.getFirst());
+        setSecond(getSecond() + vect.getSecond());
     }
     
 	public void multiply(double scalar) {
-		value.setFirst(getFirst() * scalar);
-		value.setSecond(getSecond() * scalar);
+		setFirst(getFirst() * scalar);
+		setSecond(getSecond() * scalar);
 	}
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof Move2DDouble move) {
-            return this.value.equals(move.value);
-        }
-        return false;
-    }
     
     
     /**
@@ -111,8 +121,8 @@ public class Move2DDouble implements Action {
             return;
         }
 
-        value.setFirst(getFirst() / norm);
-        value.setSecond(getSecond() / norm);
+        setFirst(getFirst() / norm);
+        setSecond(getSecond() / norm);
     }
 
     /**
@@ -202,7 +212,7 @@ public class Move2DDouble implements Action {
 
     @Override
     public String toString() {
-        return "Move2DDouble [dx=" + value.getFirst() + "; dy=" + value.getSecond() + "]";
+        return "Move2DDouble [dx=" + getFirst() + "; dy=" + getSecond() + "]";
     }
 
     public static Move2DDouble up() {
@@ -244,6 +254,25 @@ public class Move2DDouble implements Action {
 
     @Override
     public Move2DDouble copy() {
-        return new Move2DDouble(new Pair<>(getFirst(), getSecond()));
+        Move2DDouble copy = new Move2DDouble(getFirst(), getSecond());
+        copy.setBounds(lowerBound, upperBound);
+        return copy;
     }
+    
+    /**
+     * Converts an ActionContinuousVector to a Move2DDouble.
+     * 
+     * <p>This method assumes that the ActionContinuousVector has exactly two components, representing the x and y movement values.</p>
+     * @param action the ActionContinuousVector to convert
+     * @return a Move2DDouble representing the same movement
+     * @throws IllegalArgumentException if the action does not contain exactly two components
+     */
+	public static Move2DDouble fromActionContinuousVector(ActionContinuousVector action) {
+		if (action.getSize() != 2) {
+			throw new IllegalArgumentException("ActionContinuousVector must have size 2 to convert to Move2DDouble.");
+		}
+		Move2DDouble move = new Move2DDouble(action.getValue(0), action.getValue(1));
+		move.setBounds(action.getLowerBound(), action.getUpperBound());
+		return move;
+	}
 }

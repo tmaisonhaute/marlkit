@@ -5,9 +5,13 @@ import agent.action.Action;
 import agent.action.ActionSpace;
 import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
-import learning.policies.PolicyInput;
+import environment.observation.MappedJointObservation;
+import environment.observation.Observation;
 import learning.policies.valuefunction.ActionEvaluator;
 
+/**
+ * This class implements a model of other agents that predicts their actions using a minimax approach based on a given action evaluator.
+ */
 public class MinimaxValueFunctionPredictAction implements GroupModelPredictAction {
 	protected ActionEvaluator evaluator;
 	protected MLKAgent predictingAgent;
@@ -35,12 +39,12 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 	}
 	
 	@Override
-	public void updateModel(PolicyInput observation, Action predictedAction, Action actualAction) {
+	public void updateModel(Observation observation, Action predictedAction, Action actualAction) {
 		// No model to update in this implementation
 	}
 
 	@Override
-	public MappedJointAction predictAction(PolicyInput observation) {
+	public MappedJointAction predictAction(Observation observation) {
 		throw new UnsupportedOperationException("This method should not be used. Minimax prediction requires the own action as input to filter the possible joint actions.");
 	}
 
@@ -58,7 +62,7 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 	 * @param action the action of the predicting agent that should be consistent with the predicted joint action
 	 * @return a JointAction representing the predicted actions of the other agents, consistent with the given own action, and chosen to be worst for the predicting agent according to the evaluator
 	 */
-	public MappedJointAction predictAction(PolicyInput observation, Action action) {
+	public MappedJointAction predictAction(Observation observation, Action action) {
 		if (predictingAgent == null) {
 			throw new IllegalStateException("Predicting agent must be set before calling predictAction.");
 		}
@@ -102,7 +106,7 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 	 * @param actionSpace the ActionSpace containing the JointActions to evaluate
 	 * @return the JointAction with the lowest value for the given observation according to the evaluator
 	 */
-	protected MappedJointAction getWorstJointAction(PolicyInput observation, ActionSpace actionSpace) {
+	protected MappedJointAction getWorstJointAction(Observation observation, ActionSpace actionSpace) {
 		MappedJointAction worstJointAction = null;
 		Double worstValue = Double.POSITIVE_INFINITY;
 		for ( Action actions : actionSpace.getActions()) {
@@ -121,8 +125,16 @@ public class MinimaxValueFunctionPredictAction implements GroupModelPredictActio
 	}
 
 	@Override
-	public MappedJointAction getLastPredictedJointAction() {
+	public MappedJointAction getLastPredictedAction() {
 		return lastPredictedJointAction;
+	}
+	@Override
+	public MappedJointAction predictActionFromMappedObservation(MappedJointObservation observation) {
+		throw new UnsupportedOperationException("This method should not be used. Minimax prediction requires the own action as input to filter the possible joint actions.");
+	}
+	@Override
+	public MappedJointAction predictActionFromMappedObservation(MappedJointObservation observation, Action action) {
+		throw new UnsupportedOperationException("This MOA does not implement individual observation prediction. Use predictAction(Observation observation, Action action) instead.");
 	}
 	
 	

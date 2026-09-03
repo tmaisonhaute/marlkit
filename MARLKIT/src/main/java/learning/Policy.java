@@ -6,7 +6,7 @@ import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 
 /**
  * Policy interface for reinforcement learning agents. A policy is a function that maps observations to actions.
@@ -36,22 +36,22 @@ public interface Policy {
 	}
 
 	/**
-     * Takes an action based on a single input (usually Observation).
+     * Selects an action based on a single observation.
      * 
-     * @param input based on which the action is taken
+     * @param observation based on which the action is taken
      * @return the action taken
      */
-	public abstract Action selectAction(PolicyInput input);
+	public abstract Action selectAction(Observation observation);
 
 	/**
-     * Takes a list of actions based on a list of PolicyInput (usually Observation).
+     * Takes a list of actions based on a list of Observation.
      * 
-     * @param inputs the list of PolicyInputs based on which the actions are taken
+     * @param observations the list of Observations based on which the actions are taken
      * @return the list of actions taken
      */
-	public default List<Action> takeActionsList(List<PolicyInput> inputs){
+	public default List<Action> takeActionsList(List<Observation> observations){
 		List<Action> actions = new ArrayList<>();
-		for(PolicyInput i : inputs) {
+		for(Observation i : observations) {
 			actions.add(selectAction(i));
 		}
 		return actions;

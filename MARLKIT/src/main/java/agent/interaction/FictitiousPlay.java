@@ -8,7 +8,7 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.interaction.wrapper.WapperActionProbabilities;
 import environment.observation.Observation;
-import learning.Experience;
+import experience.Experience;
 
 /**
  * Implementation of Fictitious Play interaction model using the Predictions class.
@@ -87,7 +87,7 @@ public class FictitiousPlay implements MLKInteraction {
             for (MLKAgent observingAgent : agentsPredictions.keySet()) {
                 if (!observingAgent.equals(activeAgent)) {
                     Predictions predictions = agentsPredictions.get(observingAgent);
-                    predictions.recordObservationAction(activeAgent, experience.getInput(), experience.getAction());
+                    predictions.recordObservationAction(activeAgent, experience.getObservation(), experience.getAction());
                 }
             }
         }

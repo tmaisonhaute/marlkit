@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
-import environment.observation.wrapperobservationvector.WrapperPolicyInputVector;
+import environment.observation.Observation;
+import environment.observation.wrapperobservationvector.WrapperObservationVector;
+import experience.Experience;
 import learning.Critic;
-import learning.Experience;
-import learning.policies.PolicyInput;
 import madkit.simulation.SimuAgent;
 
 /**
@@ -25,7 +25,7 @@ import madkit.simulation.SimuAgent;
 public class StateValueCritic implements Critic {
 
     private final NeuralNetwork network;
-    private final WrapperPolicyInputVector observationWrapper;
+    private final WrapperObservationVector observationWrapper;
     protected MLKAgent agent;
     protected Map<Experience, Experience> enrichedExperienceMap;
 
@@ -41,7 +41,7 @@ public class StateValueCritic implements Critic {
     public StateValueCritic(
             int inputSize,
             int hiddenSize,
-            WrapperPolicyInputVector observationWrapper) {
+            WrapperObservationVector observationWrapper) {
 
         this.observationWrapper = observationWrapper;
 
@@ -65,14 +65,10 @@ public class StateValueCritic implements Critic {
     public void enrichExperience(Experience originalExperience, Experience enrichedExperience) {
     	enrichedExperienceMap.put(originalExperience, enrichedExperience);
     }
-    
-    @Override
-	public void resetEnrichedExperiences() {
-		enrichedExperienceMap.clear();
-	}
+
     @Override
 	public Experience getEnrichedExperience(Experience originalExperience) {
-    	return enrichedExperienceMap.get(originalExperience);
+    	return enrichedExperienceMap.getOrDefault(originalExperience, originalExperience);
 	}
     @Override
     public void removeEnrichedExperience(Experience originalExperience) {
@@ -89,7 +85,7 @@ public class StateValueCritic implements Critic {
      * @param observation the state observation
      * @return the estimated state value
      */
-    public double getValue(PolicyInput observation) {
+    public double getValue(Observation observation) {
         double[] observationVector = observationWrapper.transform(observation);
         return getValue(observationVector);
     }
@@ -101,8 +97,9 @@ public class StateValueCritic implements Critic {
      * @return the estimated state value
      */
     public double getValue(double[] observationVector) {
-    	((SimuAgent) agent).getLogger().info("State value : " + network.predict(observationVector)[0]);
-        return network.predict(observationVector)[0];
+    	double value = network.predict(observationVector)[0];
+    	((SimuAgent) agent).getLogger().info("State value : " + value);
+        return value;
     }
 
     /**
@@ -117,7 +114,7 @@ public class StateValueCritic implements Critic {
      */
     public double computeTdTarget(
             double reward,
-            PolicyInput nextObservation,
+            Observation nextObservation,
             boolean terminal,
             double gamma) {
 
@@ -140,9 +137,9 @@ public class StateValueCritic implements Critic {
      * @return the TD error
      */
     public double computeTdError(
-    		PolicyInput observation,
+    		Observation observation,
             double reward,
-            PolicyInput nextObservation,
+            Observation nextObservation,
             boolean terminal,
             double gamma) {
 
@@ -166,9 +163,9 @@ public class StateValueCritic implements Critic {
      * @return the TD error
      */
     public double updateFromTransition(
-            PolicyInput observation,
+    		Observation observation,
             double reward,
-            PolicyInput nextObservation,
+            Observation nextObservation,
             boolean terminal,
             double gamma, 
             double learningRate) {
@@ -194,7 +191,7 @@ public class StateValueCritic implements Critic {
      * @param targetValue the target value for V(s)
      * @return the prediction error targetValue - V(s)
      */
-    public double updateTowardTarget(PolicyInput observation, double targetValue, double learningRate) {
+    public double updateTowardTarget(Observation observation, double targetValue, double learningRate) {
         double[] observationVector = observationWrapper.transform(observation);
         double currentValue = getValue(observationVector);
         double error = targetValue - currentValue;

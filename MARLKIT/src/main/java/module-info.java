@@ -47,6 +47,7 @@ open module marlkit.base {
 	exports learning.algorithms;
 	exports learning.explorationstrategies;
 	exports learning.nn;
+	exports learning.actionexplorationstrategies;
 	exports util;
 	exports util.criteria;
 	exports simulation;
@@ -58,4 +59,6 @@ open module marlkit.base {
 	exports experiment;
 	exports experiment.configuration;
 	exports experiment.configuration.agentspec;
+	exports trainingexecutionstrategy;
+	exports experience;
 }

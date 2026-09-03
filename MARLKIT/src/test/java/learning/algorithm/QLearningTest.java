@@ -14,8 +14,8 @@ import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Move2DInt;
 import environment.observation.ObservationPositionValue;
+import experience.DefaultExperience;
 import learning.Batch;
-import learning.Experience;
 import learning.algorithms.QLearning;
 import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
 import learning.policies.QValueBasedPolicy;
@@ -87,8 +87,8 @@ public class QLearningTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(10.0)));
-        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
+        batch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(10.0)));
+        batch.addExperience(new DefaultExperience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -119,9 +119,9 @@ public class QLearningTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
-        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(2.0)));
-        batch.addExperience(new Experience(obs3, Move2DInt.up(), new RewardStandard(3.0)));
+        batch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        batch.addExperience(new DefaultExperience(obs2, Move2DInt.down(), new RewardStandard(2.0)));
+        batch.addExperience(new DefaultExperience(obs3, Move2DInt.up(), new RewardStandard(3.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -153,7 +153,7 @@ public class QLearningTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        batch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -215,8 +215,8 @@ public class QLearningTest {
         // When - train multiple times
         for (int i = 0; i < 100; i++) {
             Batch batch = new Batch();
-            batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(10.0)));
-            batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
+            batch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(10.0)));
+            batch.addExperience(new DefaultExperience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
             qLearning.learnOnBatch(batch, logger);
         }
         
@@ -249,8 +249,8 @@ public class QLearningTest {
         policy.getTable().setValue(new Pair<>(obs2, Move2DInt.down()), 10.0);
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
-        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
+        batch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        batch.addExperience(new DefaultExperience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         

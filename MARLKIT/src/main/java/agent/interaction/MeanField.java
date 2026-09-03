@@ -13,7 +13,7 @@ import environment.observation.ObservationOneHotEncoding;
 import environment.observation.ObservationOneHotEncodings;
 import environment.observation.wrapperactionobservation.WrapperActionObservation;
 import environment.observation.wrapperactionobservation.WrapperActionObservationOneHotEncoding;
-import learning.Experience;
+import experience.Experience;
 
 /**
  * Implementation of the Mean Field interaction model for multi-agent learning.

@@ -1,13 +1,13 @@
 package util.criteria;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+
+import java.util.Optional;
+
 import org.testng.annotations.Test;
 
 import environment.state.State;
-
 public class ReachTimeCriterionTest {
 
     @Test

@@ -1,20 +1,21 @@
 package learning.algorithm;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import org.testng.annotations.Test;
 
 import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.Move2DInt;
 import environment.observation.ObservationPositionValue;
+import experience.DefaultExperience;
 import learning.Batch;
-import learning.Experience;
 import learning.algorithms.QLearning;
 import learning.algorithms.Sarsa;
 import learning.explorationstrategies.EpsilonGreedyExponentialDecay;
@@ -87,8 +88,8 @@ public class SarsaTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(10.0)));
-        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
+        batch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(10.0)));
+        batch.addExperience(new DefaultExperience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -119,9 +120,9 @@ public class SarsaTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
-        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(2.0)));
-        batch.addExperience(new Experience(obs3, Move2DInt.up(), new RewardStandard(3.0)));
+        batch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        batch.addExperience(new DefaultExperience(obs2, Move2DInt.down(), new RewardStandard(2.0)));
+        batch.addExperience(new DefaultExperience(obs3, Move2DInt.up(), new RewardStandard(3.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -153,7 +154,7 @@ public class SarsaTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        batch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -209,7 +210,7 @@ public class SarsaTest {
         );
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(5.0)));
+        batch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(5.0)));
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -246,8 +247,8 @@ public class SarsaTest {
         policy.getTable().setValue(new Pair<>(obs2, Move2DInt.down()), 10.0);
         
         Batch batch = new Batch();
-        batch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
-        batch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0))); // next action is down
+        batch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        batch.addExperience(new DefaultExperience(obs2, Move2DInt.down(), new RewardStandard(0.0))); // next action is down
         
         AgentLogger logger = mock(AgentLogger.class);
         
@@ -294,13 +295,13 @@ public class SarsaTest {
         
         // When - next action is "down" (not the max action)
         Batch sarsaBatch = new Batch();
-        sarsaBatch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
-        sarsaBatch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
+        sarsaBatch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        sarsaBatch.addExperience(new DefaultExperience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
         sarsa.learnOnBatch(sarsaBatch, logger);
         
         Batch qLearningBatch = new Batch();
-        qLearningBatch.addExperience(new Experience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
-        qLearningBatch.addExperience(new Experience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
+        qLearningBatch.addExperience(new DefaultExperience(obs1, Move2DInt.up(), new RewardStandard(1.0)));
+        qLearningBatch.addExperience(new DefaultExperience(obs2, Move2DInt.down(), new RewardStandard(0.0)));
         qLearning.learnOnBatch(qLearningBatch, logger);
         
         // Then - SARSA uses Q(obs2, down)=2, Q-Learning uses max=10

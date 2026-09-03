@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.testng.annotations.Test;
 
-import learning.policies.PolicyInput;
+import environment.observation.Observation;
 import learning.policies.valuefunction.QTable;
 import util.Pair;
 
@@ -16,9 +16,9 @@ public class QTableAction2DMoveTest {
         QTable qTable = new QTable(0.0);
 
         Move2DInt action = new Move2DInt(new Pair<>(1, 0));
-        PolicyInput input = new DummyPolicyInput();
+        Observation input = new DummyObservation();
 
-        Pair<PolicyInput, Action> key = new Pair<>(input, action);
+        Pair<Observation, Action> key = new Pair<>(input, action);
         qTable.setValue(key, 42.0);
 
         // When
@@ -34,9 +34,9 @@ public class QTableAction2DMoveTest {
         QTable qTable = new QTable(0.0);
 
         Move2DInt action = new Move2DInt(new Pair<>(1, 0));
-        PolicyInput input = new DummyPolicyInput();
+        Observation input = new DummyObservation();
 
-        Pair<PolicyInput, Action> key = new Pair<>(input, action);
+        Pair<Observation, Action> key = new Pair<>(input, action);
         qTable.setValue(key, 42.0);
 
         action.add(new Pair<>(1, 0));
@@ -55,10 +55,10 @@ public class QTableAction2DMoveTest {
 
         Move2DInt action1 = Move2DInt.left();
         Move2DInt action2 = Move2DInt.left();
-        PolicyInput input = new DummyPolicyInput();
+        Observation input = new DummyObservation();
 
-        Pair<PolicyInput, Action> key = new Pair<>(input, action1);
-        Pair<PolicyInput, Action> key2 = new Pair<>(input, action2);
+        Pair<Observation, Action> key = new Pair<>(input, action1);
+        Pair<Observation, Action> key2 = new Pair<>(input, action2);
         
         qTable.setValue(key, 42.0);
         action1.add(Move2DInt.right());
@@ -74,9 +74,9 @@ public class QTableAction2DMoveTest {
         assertThat(value2).isEqualTo(42.0);
     }
 
-    private static class DummyPolicyInput implements PolicyInput {
+    private static class DummyObservation implements Observation {
         @Override
-        public PolicyInput add(PolicyInput other) {
+        public Observation add(Observation other) {
             return null;
         }
         
@@ -89,8 +89,8 @@ public class QTableAction2DMoveTest {
         }
 
 		@Override
-		public PolicyInput copy() {
-			return new DummyPolicyInput();
+		public Observation copy() {
+			return new DummyObservation();
 		}
     }
 }

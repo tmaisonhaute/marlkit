@@ -6,7 +6,7 @@ import java.util.Map;
 import agent.AgentsGroup;
 import agent.MLKAgent;
 import environment.observation.Observation;
-import learning.Experience;
+import experience.Experience;
 
 /**
  * Implementation of independent learning where agents do not coordinate

@@ -52,7 +52,7 @@ public class ObservationOneHotEncoding implements Observation {
      *
      * @param obs the observation to add
      * @return this observation after modification
-     * @throws IllegalArgumentException if the input is not an ObservationOneHotEncoding
+     * @throws IllegalArgumentException if the obs is not an ObservationOneHotEncoding
      *                                  or the vector sizes don't match
      */
     @Override
