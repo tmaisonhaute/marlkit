@@ -1,8 +1,6 @@
 package experiment;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 import agent.MLKAgent;
 import environment.MLKEnvironment;
@@ -19,39 +17,22 @@ import simulation.MLKScheduler;
         model = MLKModel.class
 )
 public class ConfigurableExperimentLauncher extends MLKLauncher {
+	
+	protected ExperimentConfiguration configuration;
 
-    private static ExperimentConfiguration configuration;
-    private static CountDownLatch completionLatch;
-
-    public static void launch(ExperimentConfiguration config, String... args) {
-        configuration = Objects.requireNonNull(config, "config");
-        main(args);
-    }
-    
-    public static synchronized void launchAndWait(ExperimentConfiguration config, String... args) {
-        configuration = Objects.requireNonNull(config, "config");
-        completionLatch = new CountDownLatch(1);
-
-        main(args);
-
-        try {
-            completionLatch.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException("Experiment launch was interrupted.", e);
-        } finally {
-            configuration = null;
-            completionLatch = null;
-        }
-    }
+	
+	public void setConfiguration(ExperimentConfiguration config) {
+		this.configuration = config;
+	}
+	
+	public ExperimentConfiguration getConfiguration() {
+		return this.configuration;
+	}
 
     public static void main(String[] args) {
         executeThisAgent(args);
     }
-
-    public static ExperimentConfiguration getConfiguration() {
-        return configuration;
-    }
+    
 
     @SuppressWarnings("unchecked")
     @Override
@@ -101,7 +82,10 @@ public class ConfigurableExperimentLauncher extends MLKLauncher {
         }
     }
 
-    private static void ensureConfigurationIsSet() {
+    /**
+     * Ensures that the experiment configuration has been set before launching the experiment.
+     */
+    private void ensureConfigurationIsSet() {
         if (configuration == null) {
             throw new IllegalStateException(
                     "No ExperimentConfiguration has been set. "
@@ -123,8 +107,12 @@ public class ConfigurableExperimentLauncher extends MLKLauncher {
         super.onEnd();
 
         getLogger().talk("Experiment completed: " + configuration.getName());
-        if (completionLatch != null) {
-            completionLatch.countDown();
-        }
+
+    }
+    
+    @Override
+    public String getName() {
+    	return configuration.getName();
     }
 }
+

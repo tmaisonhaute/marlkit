@@ -16,7 +16,7 @@ import marlkit.pushtheblock.events.BlockPushedEvent;
 import marlkit.pushtheblock.events.BlockPushedOutEvent;
 import marlkit.pushtheblock.events.MoveEvent;
 import reward.ReactionEvent;
-import rewardmodelimplementation.MixedReward;
+import reward.RewardModel;
 import util.Pair;
 
 public class EnvPushTheBlock extends EnvironmentStandard {
@@ -25,8 +25,12 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 	
 	protected int numberOfBlocks;
 	
-	public EnvPushTheBlock() {
-		super(5, 5, new MixedReward());
+	public EnvPushTheBlock(RewardModel rewardModel) {
+		this(5, 5, rewardModel);
+	}
+	
+	public EnvPushTheBlock(int width, int height, RewardModel rewardModel) {
+		super(width, height, rewardModel);
 		numberOfBlocks = 1;
 	}
 

@@ -2,12 +2,14 @@ package marlkit.pushtheblock;
 
 
 import madkit.simulation.EngineAgents;
+import madkit.simulation.SimuEnvironment;
 import marlkit.pushtheblock.agent.AgentPTBqLearning;
+import rewardmodelimplementation.MixedReward;
 import simulation.MLKLauncher;
 import simulation.MLKModel;
 
 
-@EngineAgents(scheduler = SchedulerPTB.class, environment = EnvPushTheBlock.class, model = MLKModel.class, viewers = {
+@EngineAgents(scheduler = SchedulerPTB.class, model = MLKModel.class, viewers = {
 		ViewerPTB.class })
 public class LauncherPTB extends MLKLauncher {
 
@@ -23,6 +25,22 @@ public class LauncherPTB extends MLKLauncher {
 			launchAgent(ag);
 		}
 	}
+	
+	/**
+     * Create and launch the environment.
+     *
+     * @param <E> Environment type.
+     * @return Created environment.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected <E extends SimuEnvironment> E onLaunchEnvironment() {
+    	EnvPushTheBlock env = new EnvPushTheBlock(new MixedReward());
+        
+        launchAgent(env, Integer.MAX_VALUE);
+        
+        return (E) env;
+    }
 
 	public static void main(String[] args) {
 		executeThisAgent("--agentLogLevel", "INFO"

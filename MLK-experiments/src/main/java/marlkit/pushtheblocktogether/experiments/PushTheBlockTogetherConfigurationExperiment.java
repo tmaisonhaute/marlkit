@@ -14,17 +14,22 @@ import experiment.configuration.CommunicationModule;
 import experiment.configuration.ExperimentConfiguration;
 import experiment.configuration.LearningModule;
 import experiment.configuration.ModelOfOthersModule;
+import experiment.configuration.RewardModelModule;
 import experiment.configuration.SystemEvaluatorModule;
 import experiment.configuration.agentspec.DefaultAgentSpec;
-import marlkit.pushtheblock.SchedulerPTB;
+import madkit.kernel.Agent;
+import marlkit.pushtheblock.SchedulerPTBNoPause;
 import marlkit.pushtheblocktogether.EnvPushTheBlockTogether;
+import rewardmodelimplementation.MixedReward;
 
-public class PushTheBlockTogetherConfigurationExperiment {
+public class PushTheBlockTogetherConfigurationExperiment extends Agent {
 
     private static final int NB_AGENTS = 2;
-
-    public static void main(String[] args) {
-        LearningModule qLearningModule =
+    
+    @Override
+    protected void onActivation() {
+    	super.onActivation();
+    	LearningModule qLearningModule =
                 new LearningModule(new PushTheBlockQLearningComponentsCreator());
 
         CommunicationModule noCommunication =
@@ -38,7 +43,8 @@ public class PushTheBlockTogetherConfigurationExperiment {
 
         ExperimentConfiguration qLearningConfig = ExperimentConfiguration.named("PTBTogether_QLearning")
                 .environment(EnvPushTheBlockTogether.class)
-                .scheduler(SchedulerPTB.class)
+                .rewardModel(new RewardModelModule(MixedReward.class))
+                .scheduler(SchedulerPTBNoPause.class)
                 .agentGroup(new AgentGroupConfiguration(
                         AgentStandard.class,
                         NB_AGENTS,
@@ -50,11 +56,14 @@ public class PushTheBlockTogetherConfigurationExperiment {
                 .systemEvaluator(noSystemEvaluator)
                 .build();
 
-        ConfigurationRunner.launch(
-                List.of(qLearningConfig),
-                "--agentLogLevel", "INFO",
-                "--start"
-        );
+        launchAgent(new ConfigurationRunner(List.of(qLearningConfig)));
+
+    }
+    
+
+    public static void main(String[] args) {
+    	executeThisAgent("--agentLogLevel", "INFO",
+                "--start");
     }
 
     private static DefaultAgentSpec createAgentSpec() {

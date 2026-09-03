@@ -16,8 +16,10 @@ import util.MapProba;
 import util.Position;
 
 /**
- * Base scenario for Trade2D with spatial production units.
- */
+* Creates an empty collecting-resource scenario.
+* Units and agent positions are defined when {@link #setup(RandomGenerator, double, double)} 
+* invokes {@link #configure(RandomGenerator, double, double)}.
+*/
 public abstract class ScenarioCollectingResource {
 
     protected final List<UPConfig> configs;

@@ -13,6 +13,7 @@ import marlkit.pushtheblock.events.BlockPushedEvent;
 import marlkit.pushtheblock.events.BlockPushedOutEvent;
 import marlkit.pushtheblock.events.MoveEvent;
 import reward.ReactionEvent;
+import reward.RewardModel;
 import util.Pair;
 
 public class EnvPushTheBlockTogether extends EnvPushTheBlock {
@@ -21,8 +22,8 @@ public class EnvPushTheBlockTogether extends EnvPushTheBlock {
 	protected Map<Pair<Integer, Integer>, Integer> numberOfBlocksPushed;
 	protected static final int FORCEPUSHEDTRESHOLD = 2;
 	
-	public EnvPushTheBlockTogether() {
-		super();
+	public EnvPushTheBlockTogether(RewardModel rewardModel) {
+		super(rewardModel);
 		numberOfBlocks = 1; 
 	}
 	

@@ -18,7 +18,6 @@ import marlkit.preyhunter.environment.events.HunterPreyDistanceEvent;
 import marlkit.preyhunter.environment.events.PreyCatchEvent;
 import reward.ReactionEvent;
 import reward.RewardModel;
-import rewardmodelimplementation.MixedReward;
 import util.Pair;
 
 /**
@@ -40,8 +39,8 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     /**
      * Default constructor required by some MadKit launch modes.
      */
-    public EnvPreyVsHunter() {
-        this(10, 10, 1.0, Double.POSITIVE_INFINITY, 2.0, new MixedReward(), 1);
+    public EnvPreyVsHunter(RewardModel rewardModel) {
+        this(10, 10, 1.0, Double.POSITIVE_INFINITY, 2.0, rewardModel, 1);
     }
 
     public EnvPreyVsHunter(int width, int height, double captureRadius, double hunterViewRange, double preyViewRange,

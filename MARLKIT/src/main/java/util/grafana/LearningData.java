@@ -27,14 +27,17 @@ public class LearningData {
     private String logFilePath;
     private int totalEpisodes;
     private EpisodeData currentEpisodeData;
+    
+    private final String logName;
 
 
-    public LearningData() {
+    public LearningData(String logName) {
         this.currentEp = new Pair<>(new HashMap<>(), new HashMap<>());
         this.averageEpisodesReward = new ArrayList<>();
         this.agents = new HashSet<>();
         this.extraKeys = new HashSet<>();
         this.totalEpisodes = 1;
+        this.logName = logName;
     }
 
     /**
@@ -170,7 +173,7 @@ public class LearningData {
             Files.createDirectories(logDir);
         }
 
-        logFilePath = "logs/log_" + Instant.now().getEpochSecond() + ".csv";
+        logFilePath = "logs/log_" + Instant.now().getEpochSecond() + logName + ".csv";
         BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFilePath, true));
 
         logWriter.write("Episode" + "," + String.join(",", rows) + "\n");

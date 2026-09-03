@@ -16,16 +16,19 @@ import experiment.configuration.CommunicationModule;
 import experiment.configuration.ExperimentConfiguration;
 import experiment.configuration.LearningModule;
 import experiment.configuration.ModelOfOthersModule;
+import experiment.configuration.RewardModelModule;
 import experiment.configuration.SystemEvaluatorModule;
 import experiment.configuration.agentspec.AgentSpecInputSize;
 import experiment.configuration.agentspec.AgentSpecInputWrapper;
 import experiment.configuration.agentspec.DefaultAgentSpec;
+import madkit.kernel.Agent;
 import marlkit.preyhunter.agent.PreyAgent;
 import marlkit.preyhunter.environment.EnvPreyVsHunter;
 import marlkit.preyhunter.environment.WrapperPreyHunterObservationVector;
 import marlkit.preyhunter.scheduler.SchedulerPVH;
+import rewardmodelimplementation.MixedReward;
 
-public class PreyHunterConfigurationExperiment {
+public class PreyHunterConfigurationExperiment extends Agent{
 
     private static final int NB_HUNTER_AGENTS = 2;
     private static final int NB_PREY_AGENTS = 1;
@@ -35,9 +38,11 @@ public class PreyHunterConfigurationExperiment {
     private static final int NUMBER_OF_DIRECTIONS = 4;
     private static final double HUNTER_SPEED = 0.2;
     private static final double PREY_SPEED = 0.15;
-
-    public static void main(String[] args) {
-        LearningModule hunterPPOLearning =
+    
+    @Override
+    protected void onActivation() {
+    	super.onActivation();
+    	LearningModule hunterPPOLearning =
                 new LearningModule(new HunterPPOLearningComponentsCreator());
 
         LearningModule preyLearning =
@@ -57,6 +62,7 @@ public class PreyHunterConfigurationExperiment {
 
         ExperimentConfiguration ppoNoCommunication = ExperimentConfiguration.named("PVH_PPO_NoCommunication")
                 .environment(EnvPreyVsHunter.class)
+                .rewardModel(new RewardModelModule(MixedReward.class))
                 .scheduler(SchedulerPVH.class)
                 .agentGroup(new AgentGroupConfiguration(
                         AgentStandard.class,
@@ -79,6 +85,7 @@ public class PreyHunterConfigurationExperiment {
 
         ExperimentConfiguration ppoBroadcastObservation = ExperimentConfiguration.named("PVH_PPO_BroadcastObservation")
                 .environment(EnvPreyVsHunter.class)
+                .rewardModel(new RewardModelModule(MixedReward.class))
                 .scheduler(SchedulerPVH.class)
                 .agentGroup(new AgentGroupConfiguration(
                         AgentStandardCommunicating.class,
@@ -99,14 +106,13 @@ public class PreyHunterConfigurationExperiment {
                 .systemEvaluator(noSystemEvaluator)
                 .build();
 
-        ConfigurationRunner.launch(
-                List.of(
-                        ppoNoCommunication
-                        // ppoBroadcastObservation
-                ),
-                "--agentLogLevel", "INFO",
-                "--start"
-        );
+        launchAgent(new ConfigurationRunner(List.of(ppoNoCommunication, ppoBroadcastObservation)));
+
+    }
+
+    public static void main(String[] args) {
+    	executeThisAgent("--agentLogLevel", "INFO",
+                "--start");
     }
 
     private static HunterAgentSpec createHunterSpec() {

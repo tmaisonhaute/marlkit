@@ -45,7 +45,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 * The learning data that can be collected during the simulation.
 	 * It can be used to log agent rewards, and other statistics.
 	 */
-	private final LearningData learningData = new LearningData();
+	private LearningData learningData;
 
 	private List<String> evaluationMeasureNames;
 	
@@ -63,6 +63,15 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	 */
 	protected EnvironmentStandard(int width, int height, RewardModel rewardModel) {
 		super(width, height);
+		initVarConstructor(rewardModel);
+    }
+	
+	protected EnvironmentStandard(RewardModel rewardModel) {
+		super();
+		initVarConstructor(rewardModel);
+	}
+	
+	private void initVarConstructor(RewardModel rewardModel) {
 		this.rewardModel = rewardModel;
 		this.systemEvaluator = new NoSystemEvaluation();
 		this.evaluationMeasureNames = new ArrayList<>();
@@ -70,7 +79,9 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		agentsActions = new HashMap<>();
 		agentsRewards = new HashMap<>();
 		agentsExperiences = new HashMap<>();
-    }
+	}
+	
+	
 	
 	/**
 	 * Called when the environment is activated in the simulation.
@@ -80,6 +91,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	protected void onActivation() {
         super.onActivation();
 		requestRole(getCommunity(), getModelGroup(), "mlkenvironment");
+		this.learningData = new LearningData(getLauncher().getName() + "_seed" + getLauncher().getPRNGSeedIndex());
 		agents = new AgentsGroup();
 	}
 
