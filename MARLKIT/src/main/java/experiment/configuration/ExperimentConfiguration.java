@@ -3,6 +3,7 @@ package experiment.configuration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.OptionalInt;
 
 import agent.MLKAgent;
 import environment.MLKEnvironment;
@@ -41,6 +42,8 @@ public class ExperimentConfiguration {
 
     private final List<AgentGroupConfiguration> agentGroups;
     private final AgentModule agentModule;
+    
+    private final OptionalInt seedIndex;
 
     private ExperimentConfiguration(Builder builder) {
         this.name = Objects.requireNonNull(builder.name, "name");
@@ -56,6 +59,8 @@ public class ExperimentConfiguration {
 
         this.agentGroups = List.copyOf(builder.agentGroups);
         this.agentModule = new AgentModule();
+        
+        this.seedIndex = builder.seedIndex;
     }
 
     /**
@@ -76,6 +81,14 @@ public class ExperimentConfiguration {
     public String getName() {
         return name;
     }
+    
+    /**
+     * Returns the seed index for this configuration, if set.
+     * @return an OptionalInt containing the seed index, or empty if not set
+     */
+	public OptionalInt getSeedIndex() {
+		return seedIndex;
+	}
 
     /**
      * Creates a fresh reward model instance.
@@ -149,6 +162,7 @@ public class ExperimentConfiguration {
         private RewardModelModule rewardModelModule;
         private SchedulerModule schedulerModule;
         private SystemEvaluatorModule systemEvaluatorModule;
+        private OptionalInt seedIndex = null;
 
         private final List<AgentGroupConfiguration> agentGroups = new ArrayList<>();
 
@@ -189,8 +203,8 @@ public class ExperimentConfiguration {
          * @param rewardModelModule the reward model module
          * @return this builder
          */
-        public Builder rewardModel(RewardModelModule rewardModelModule) {
-            this.rewardModelModule = rewardModelModule;
+        public Builder rewardModel(Class<? extends RewardModel> rewardModelClass) {
+            this.rewardModelModule = new RewardModelModule(rewardModelClass);
             return this;
         }
 
@@ -250,6 +264,17 @@ public class ExperimentConfiguration {
             this.systemEvaluatorModule = systemEvaluatorModule;
             return this;
         }
+        
+        /**
+         * Sets the seed index for this configuration. If set, this seed index will be used to initialize the PRNG for the experiment run.
+         * If not, the PRNG will use the default seed index.
+         * @param seedIndex the seed index to use for this configuration
+         * @return this builder
+         */
+		public Builder seedIndex(int seedIndex) {
+			this.seedIndex = OptionalInt.of(seedIndex);
+			return this;
+		}
 
         /**
          * Builds the experiment configuration.
@@ -259,5 +284,6 @@ public class ExperimentConfiguration {
         public ExperimentConfiguration build() {
             return new ExperimentConfiguration(this);
         }
+        
     }
 }

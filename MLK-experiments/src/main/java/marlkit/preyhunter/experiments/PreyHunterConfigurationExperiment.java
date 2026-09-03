@@ -16,7 +16,6 @@ import experiment.configuration.CommunicationModule;
 import experiment.configuration.ExperimentConfiguration;
 import experiment.configuration.LearningModule;
 import experiment.configuration.ModelOfOthersModule;
-import experiment.configuration.RewardModelModule;
 import experiment.configuration.SystemEvaluatorModule;
 import experiment.configuration.agentspec.AgentSpecInputSize;
 import experiment.configuration.agentspec.AgentSpecInputWrapper;
@@ -62,7 +61,7 @@ public class PreyHunterConfigurationExperiment extends Agent{
 
         ExperimentConfiguration ppoNoCommunication = ExperimentConfiguration.named("PVH_PPO_NoCommunication")
                 .environment(EnvPreyVsHunter.class)
-                .rewardModel(new RewardModelModule(MixedReward.class))
+                .rewardModel(MixedReward.class)
                 .scheduler(SchedulerPVH.class)
                 .agentGroup(new AgentGroupConfiguration(
                         AgentStandard.class,
@@ -85,7 +84,7 @@ public class PreyHunterConfigurationExperiment extends Agent{
 
         ExperimentConfiguration ppoBroadcastObservation = ExperimentConfiguration.named("PVH_PPO_BroadcastObservation")
                 .environment(EnvPreyVsHunter.class)
-                .rewardModel(new RewardModelModule(MixedReward.class))
+                .rewardModel(MixedReward.class)
                 .scheduler(SchedulerPVH.class)
                 .agentGroup(new AgentGroupConfiguration(
                         AgentStandardCommunicating.class,

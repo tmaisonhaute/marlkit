@@ -14,7 +14,6 @@ import experiment.configuration.CommunicationModule;
 import experiment.configuration.ExperimentConfiguration;
 import experiment.configuration.LearningModule;
 import experiment.configuration.ModelOfOthersModule;
-import experiment.configuration.RewardModelModule;
 import experiment.configuration.SystemEvaluatorModule;
 import experiment.configuration.agentspec.DefaultAgentSpec;
 import madkit.kernel.Agent;
@@ -43,7 +42,7 @@ public class PushTheBlockTogetherConfigurationExperiment extends Agent {
 
         ExperimentConfiguration qLearningConfig = ExperimentConfiguration.named("PTBTogether_QLearning")
                 .environment(EnvPushTheBlockTogether.class)
-                .rewardModel(new RewardModelModule(MixedReward.class))
+                .rewardModel(MixedReward.class)
                 .scheduler(SchedulerPTBNoPause.class)
                 .agentGroup(new AgentGroupConfiguration(
                         AgentStandard.class,

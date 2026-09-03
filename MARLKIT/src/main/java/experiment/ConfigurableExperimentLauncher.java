@@ -1,6 +1,7 @@
 package experiment;
 
 import java.util.List;
+import java.util.OptionalInt;
 
 import agent.MLKAgent;
 import environment.MLKEnvironment;
@@ -19,6 +20,7 @@ import simulation.MLKScheduler;
 public class ConfigurableExperimentLauncher extends MLKLauncher {
 	
 	protected ExperimentConfiguration configuration;
+	protected static int currentSeedIndex = 0;
 
 	
 	public void setConfiguration(ExperimentConfiguration config) {
@@ -33,6 +35,18 @@ public class ConfigurableExperimentLauncher extends MLKLauncher {
         executeThisAgent(args);
     }
     
+    
+    @Override
+    public void onInitializeSimulationSeedIndex() {
+    	super.onInitializeSimulationSeedIndex();
+    	OptionalInt forcedSeedIndex = configuration.getSeedIndex();
+    	if (forcedSeedIndex != null && forcedSeedIndex.isPresent()) {
+    		setPRNGSeedIndex(forcedSeedIndex.getAsInt());
+    	}else {
+    		setPRNGSeedIndex(currentSeedIndex);
+    		ConfigurableExperimentLauncher.currentSeedIndex += 1;
+    	}
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -107,7 +121,6 @@ public class ConfigurableExperimentLauncher extends MLKLauncher {
         super.onEnd();
 
         getLogger().talk("Experiment completed: " + configuration.getName());
-
     }
     
     @Override

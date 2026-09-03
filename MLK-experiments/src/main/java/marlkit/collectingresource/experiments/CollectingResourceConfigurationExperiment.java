@@ -9,7 +9,6 @@ import experiment.configuration.CommunicationModule;
 import experiment.configuration.ExperimentConfiguration;
 import experiment.configuration.LearningModule;
 import experiment.configuration.ModelOfOthersModule;
-import experiment.configuration.RewardModelModule;
 import experiment.configuration.SystemEvaluatorModule;
 import madkit.kernel.Agent;
 import marlkit.collectingresource.agent.CollectingResourceAgent;
@@ -53,7 +52,7 @@ public class CollectingResourceConfigurationExperiment extends Agent{
             ExperimentConfiguration configFullyCoop =
                     ExperimentConfiguration.named("CollectingResource_FullyCooperative_QLearning")
                             .environment(new CollectingResourceEnvironmentModule(ENV_WIDTH, ENV_HEIGHT, scenarioFullyCoop))
-                            .rewardModel(new RewardModelModule(FullyCooperativeReward.class))
+                            .rewardModel(FullyCooperativeReward.class)
                             .scheduler(SchedulerCollectingResource.class)
                             .agentGroup(new AgentGroupConfiguration(
                                     CollectingResourceAgent.class,
@@ -71,7 +70,7 @@ public class CollectingResourceConfigurationExperiment extends Agent{
             ExperimentConfiguration configMixed =
                     ExperimentConfiguration.named("CollectingResource_Mixed_QLearning")
                             .environment(new CollectingResourceEnvironmentModule(ENV_WIDTH, ENV_HEIGHT, scenarioMixed))
-                            .rewardModel(new RewardModelModule(MixedReward.class))
+                            .rewardModel(MixedReward.class)
                             .scheduler(SchedulerCollectingResource.class, DecentralizedTrainingExecutionStrategy.class)
                             .agentGroup(new AgentGroupConfiguration(
                                     CollectingResourceAgent.class,
