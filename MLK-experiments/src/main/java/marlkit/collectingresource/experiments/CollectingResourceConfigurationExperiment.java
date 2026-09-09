@@ -2,13 +2,11 @@ package marlkit.collectingresource.experiments;
 
 import java.util.List;
 
-import communication.NoCommunication;
+import agentModule.QLearningAgentModule;
 import experiment.ConfigurationRunner;
 import experiment.configuration.AgentGroupConfiguration;
-import experiment.configuration.CommunicationModule;
+import experiment.configuration.AgentModule;
 import experiment.configuration.ExperimentConfiguration;
-import experiment.configuration.LearningModule;
-import experiment.configuration.ModelOfOthersModule;
 import experiment.configuration.SystemEvaluatorModule;
 import madkit.kernel.Agent;
 import marlkit.collectingresource.agent.CollectingResourceAgent;
@@ -35,17 +33,16 @@ public class CollectingResourceConfigurationExperiment extends Agent{
     @Override
     	protected void onActivation() {
     		super.onActivation();
-    		LearningModule qLearning =
-                    new LearningModule(new CollectingResourceQLearningComponentsCreator());
-
-            CommunicationModule noCommunication =
-                    new CommunicationModule(NoCommunication.class);
-
-            ModelOfOthersModule noModelOfOthers =
-                    new ModelOfOthersModule(null);
 
             SystemEvaluatorModule systemEvaluation =
                     new SystemEvaluatorModule(CollectingResourceEnvEvaluator.class);
+
+
+            AgentModule qLearningAgentModule = QLearningAgentModule.builder()
+            		.agentClass(CollectingResourceAgent.class)
+            		.epsilonDecay(0.003)
+            		.build();
+            
             
             ScenarioCollectingResource scenarioFullyCoop = new ScenarioSpatial5();
 
@@ -55,12 +52,10 @@ public class CollectingResourceConfigurationExperiment extends Agent{
                             .rewardModel(FullyCooperativeReward.class)
                             .scheduler(SchedulerCollectingResource.class)
                             .agentGroup(new AgentGroupConfiguration(
-                                    CollectingResourceAgent.class,
                                     scenarioFullyCoop.getNumberOfAgents(),
-                                    new CollectingResourceAgentSpec(scenarioFullyCoop),
-                                    qLearning,
-                                    noCommunication,
-                                    noModelOfOthers
+                                    qLearningAgentModule,
+                                    new CollectingResourceAgentSpec(scenarioFullyCoop)
+                                    
                             ))
                             .systemEvaluator(systemEvaluation)
                             .build();
@@ -73,12 +68,9 @@ public class CollectingResourceConfigurationExperiment extends Agent{
                             .rewardModel(MixedReward.class)
                             .scheduler(SchedulerCollectingResource.class, DecentralizedTrainingExecutionStrategy.class)
                             .agentGroup(new AgentGroupConfiguration(
-                                    CollectingResourceAgent.class,
                                     scenarioMixed.getNumberOfAgents(),
-                                    new CollectingResourceAgentSpec(scenarioMixed),
-                                    qLearning,
-                                    noCommunication,
-                                    noModelOfOthers
+                                    qLearningAgentModule,
+                                    new CollectingResourceAgentSpec(scenarioMixed)
                             ))
                             .systemEvaluator(systemEvaluation)
                             .build();

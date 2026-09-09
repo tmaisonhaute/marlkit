@@ -1,89 +1,59 @@
 package experiment.configuration;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import agent.MLKAgent;
 import agent.communication.MLKAgentCommunicating;
 import communication.CommunicationModel;
 import communication.NoCommunication;
+import experiment.configuration.agentspec.AgentSpec;
 import learning.Algorithm;
 import learning.Policy;
 
-/**
- * Internal module responsible for creating agents from agent group configurations.
- * <p>
- * This class instantiates agents using the standard constructor:
- * </p>
- * <pre>
- * Agent(Policy policy, Algorithm algorithm)
- * </pre>
- * <p>
- * If a communication model different from {@link NoCommunication} is provided, the
- * created agent must implement {@link MLKAgentCommunicating}. The communication model
- * is then assigned after construction through
- * {@link MLKAgentCommunicating#setCommunicationModel(CommunicationModel)}.
- * </p>
- * <p>
- * Model-of-other-agents configuration is intentionally not handled yet.
- * </p>
- */
+
 public class AgentModule {
 
-    /**
-     * Creates all agents for the given agent group.
-     *
-     * @param groupConfiguration the group configuration
-     * @return the created agents
-     */
-    public List<MLKAgent> createAgents(AgentGroupConfiguration groupConfiguration) {
-        Objects.requireNonNull(groupConfiguration, "groupConfiguration");
+    private final Class<? extends MLKAgent> agentClass;
+    private final LearningModule learningModule;
+    private final CommunicationModule communicationModule;
+    private final ModelOfOthersModule modelOfOthersModule;
 
-        List<MLKAgent> agents = new ArrayList<>();
-
-        for (int i = 0; i < groupConfiguration.getNumberOfAgents(); i++) {
-            LearningComponents learning = groupConfiguration
-                    .getLearningModule()
-                    .createLearning(groupConfiguration.getAgentSpec());
-
-            CommunicationModel communicationModel = groupConfiguration
-                    .getCommunicationModule()
-                    .createCommunicationModel();
-
-            MLKAgent agent = instantiateAgent(
-                    groupConfiguration.getAgentClass(),
-                    learning.getPolicy(),
-                    learning.getAlgorithm(),
-                    groupConfiguration.getAgentSpec().getOtherRoleNames()
-            );
-
-            configureCommunication(agent, communicationModel);
-
-            // TODO configure model of others.
-
-            agents.add(agent);
-        }
-
-        return agents;
+    public AgentModule(Class<? extends MLKAgent> agentClass, LearningModule learningModule, CommunicationModule communicationModule, ModelOfOthersModule modelOfOthersModule) {
+        this.agentClass = Objects.requireNonNull(agentClass, "agentClass");
+        this.learningModule = Objects.requireNonNull(learningModule, "learningModule");
+        this.communicationModule = Objects.requireNonNull(communicationModule, "communicationModule");
+        this.modelOfOthersModule = Objects.requireNonNull(modelOfOthersModule, "modelOfOthersModule");
     }
 
-    private MLKAgent instantiateAgent(
-            Class<? extends MLKAgent> agentClass,
-            Policy policy,
-            Algorithm algorithm,
-            List<String> otherRoleNames
-    ) {
+    public MLKAgent createAgent(AgentSpec agentSpec) {
+        Objects.requireNonNull(agentSpec, "agentSpec");
+
+        LearningComponents learningComponents = learningModule.createLearning(agentSpec);
+        CommunicationModel communicationModel = communicationModule.createCommunicationModel();
+
+        MLKAgent agent = instantiateAgent(
+                learningComponents.getPolicy(),
+                learningComponents.getAlgorithm()
+        );
+
+        for (String role : agentSpec.getOtherRoleNames()) {
+            agent.addAdditionalRole(role);
+        }
+
+        configureCommunication(agent, communicationModel);
+
+        // TODO Configure the model of other agents.
+
+        return agent;
+    }
+
+    private MLKAgent instantiateAgent(Policy policy, Algorithm algorithm) {
         try {
-            Constructor<? extends MLKAgent> constructor = agentClass.getConstructor(Policy.class, Algorithm.class);
-            
-            MLKAgent agent = constructor.newInstance(policy, algorithm);
-			for (String role : otherRoleNames) {
-				agent.addAdditionalRole(role);
-			}
-            
-            return agent;
+            Constructor<? extends MLKAgent> constructor =
+                    agentClass.getConstructor(Policy.class, Algorithm.class);
+
+            return constructor.newInstance(policy, algorithm);
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(
                     "Cannot instantiate agent: " + agentClass.getName()
@@ -108,5 +78,21 @@ public class AgentModule {
         }
 
         communicatingAgent.setCommunicationModel(communicationModel);
+    }
+
+    public Class<? extends MLKAgent> getAgentClass() {
+        return agentClass;
+    }
+
+    public LearningModule getLearningModule() {
+        return learningModule;
+    }
+
+    public CommunicationModule getCommunicationModule() {
+        return communicationModule;
+    }
+
+    public ModelOfOthersModule getModelOfOthersModule() {
+        return modelOfOthersModule;
     }
 }

@@ -2,7 +2,6 @@ package experiment.configuration;
 
 import java.util.Objects;
 
-import agent.MLKAgent;
 import experiment.configuration.agentspec.AgentSpec;
 
 /**
@@ -26,62 +25,29 @@ import experiment.configuration.agentspec.AgentSpec;
  */
 public class AgentGroupConfiguration {
 
-    private final Class<? extends MLKAgent> agentClass;
     private final int numberOfAgents;
+    private final AgentModule agentFactory;
     private final AgentSpec agentSpec;
 
-    private final LearningModule learningModule;
-    private final CommunicationModule communicationModule;
-    private final ModelOfOthersModule modelOfOthersModule;
-
-    /**
-     * Creates an agent group configuration.
-     *
-     * @param agentClass the concrete agent class to instantiate
-     * @param numberOfAgents the number of agents to create
-     * @param agentSpec the agent specification used by the learning module
-     * @param learningModule the learning module for this agent group
-     * @param communicationModule the communication module for this agent group
-     * @param modelOfOthersModule the model-of-others module for this agent group
-     */
-    public AgentGroupConfiguration( Class<? extends MLKAgent> agentClass, int numberOfAgents, AgentSpec agentSpec,
-            LearningModule learningModule, CommunicationModule communicationModule, 
-            ModelOfOthersModule modelOfOthersModule
-    ) {
-        this.agentClass = Objects.requireNonNull(agentClass, "agentClass");
-        this.agentSpec = Objects.requireNonNull(agentSpec, "agentSpec");
-        this.learningModule = Objects.requireNonNull(learningModule, "learningModule");
-        this.communicationModule = Objects.requireNonNull(communicationModule, "communicationModule");
-        this.modelOfOthersModule = Objects.requireNonNull(modelOfOthersModule, "modelOfOthersModule");
-
+    public AgentGroupConfiguration(int numberOfAgents, AgentModule agentFactory, AgentSpec agentSpec) {
         if (numberOfAgents <= 0) {
             throw new IllegalArgumentException("numberOfAgents must be > 0.");
         }
 
         this.numberOfAgents = numberOfAgents;
-    }
-
-    public Class<? extends MLKAgent> getAgentClass() {
-        return agentClass;
+        this.agentFactory = Objects.requireNonNull(agentFactory, "agentFactory");
+        this.agentSpec = Objects.requireNonNull(agentSpec, "agentSpec");
     }
 
     public int getNumberOfAgents() {
         return numberOfAgents;
     }
 
+    public AgentModule getAgentFactory() {
+        return agentFactory;
+    }
+
     public AgentSpec getAgentSpec() {
         return agentSpec;
-    }
-
-    public LearningModule getLearningModule() {
-        return learningModule;
-    }
-
-    public CommunicationModule getCommunicationModule() {
-        return communicationModule;
-    }
-
-    public ModelOfOthersModule getModelOfOthersModule() {
-        return modelOfOthersModule;
     }
 }

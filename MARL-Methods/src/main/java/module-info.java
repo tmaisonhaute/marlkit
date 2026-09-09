@@ -3,10 +3,11 @@ open module marlkit.methods {
 	requires transitive marlkit.base;
     
 
+	exports agentModule;
+	exports algorithm;
+	exports centralizedtraining;
+	exports communicationimplementation;
     exports learningstructure;
     exports modelofotheragents;
     exports rewardmodelimplementation;
-    exports communicationimplementation;
-    exports centralizedtraining;
-    exports algorithm;
 }

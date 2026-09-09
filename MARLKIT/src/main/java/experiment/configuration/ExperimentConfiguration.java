@@ -41,7 +41,6 @@ public class ExperimentConfiguration {
     private final SystemEvaluatorModule systemEvaluatorModule;
 
     private final List<AgentGroupConfiguration> agentGroups;
-    private final AgentModule agentModule;
     
     private final OptionalInt seedIndex;
 
@@ -58,7 +57,6 @@ public class ExperimentConfiguration {
         }
 
         this.agentGroups = List.copyOf(builder.agentGroups);
-        this.agentModule = new AgentModule();
         
         this.seedIndex = builder.seedIndex;
     }
@@ -136,7 +134,13 @@ public class ExperimentConfiguration {
         List<MLKAgent> agents = new ArrayList<>();
 
         for (AgentGroupConfiguration groupConfiguration : agentGroups) {
-            agents.addAll(agentModule.createAgents(groupConfiguration));
+            for (int i = 0; i < groupConfiguration.getNumberOfAgents(); i++) {
+                MLKAgent agent = groupConfiguration
+                        .getAgentFactory()
+                        .createAgent(groupConfiguration.getAgentSpec());
+
+                agents.add(agent);
+            }
         }
 
         return agents;

@@ -11,6 +11,7 @@ import communicationimplementation.BroadcastRelativeObservationPositions;
 import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import evaluation.NoSystemEvaluation;
 import experiment.ConfigurationRunner;
+import experiment.configuration.AgentModule;
 import experiment.configuration.AgentGroupConfiguration;
 import experiment.configuration.CommunicationModule;
 import experiment.configuration.ExperimentConfiguration;
@@ -50,7 +51,7 @@ public class PreyHunterConfigurationExperiment extends Agent{
         CommunicationModule noCommunication =
                 new CommunicationModule(NoCommunication.class);
 
-        CommunicationModule broadcastObservation =
+        CommunicationModule broadcastObservationModule =
                 new CommunicationModule(BroadcastRelativeObservationPositions.class);
 
         ModelOfOthersModule noModelOfOthers =
@@ -59,25 +60,42 @@ public class PreyHunterConfigurationExperiment extends Agent{
         SystemEvaluatorModule noSystemEvaluator =
                 new SystemEvaluatorModule(NoSystemEvaluation.class);
 
+        AgentModule preyAgentModule = new AgentModule(
+        		PreyAgent.class,
+        		preyLearning,
+        		noCommunication,
+        		noModelOfOthers
+        		);
+        
+        AgentModule ppoAgentModule = new AgentModule(
+        		AgentStandard.class,
+                hunterPPOLearning,
+                noCommunication,
+                noModelOfOthers
+        );
+        
+        AgentModule ppoBroadcastAgentModule = new AgentModule(
+        		AgentStandardCommunicating.class,
+                hunterPPOLearning,
+                broadcastObservationModule,
+                noModelOfOthers
+        );
+        
+        
+
         ExperimentConfiguration ppoNoCommunication = ExperimentConfiguration.named("PVH_PPO_NoCommunication")
                 .environment(EnvPreyVsHunter.class)
                 .rewardModel(MixedReward.class)
                 .scheduler(SchedulerPVH.class)
                 .agentGroup(new AgentGroupConfiguration(
-                        AgentStandard.class,
                         NB_HUNTER_AGENTS,
-                        createHunterSpec(),
-                        hunterPPOLearning,
-                        noCommunication,
-                        noModelOfOthers
+                        ppoAgentModule,
+                        createHunterSpec()
                 ))
                 .agentGroup(new AgentGroupConfiguration(
-                        PreyAgent.class,
                         NB_PREY_AGENTS,
-                        createPreySpec(),
-                        preyLearning,
-                        noCommunication,
-                        noModelOfOthers
+                        preyAgentModule,
+                        createPreySpec()
                 ))
                 .systemEvaluator(noSystemEvaluator)
                 .build();
@@ -87,20 +105,14 @@ public class PreyHunterConfigurationExperiment extends Agent{
                 .rewardModel(MixedReward.class)
                 .scheduler(SchedulerPVH.class)
                 .agentGroup(new AgentGroupConfiguration(
-                        AgentStandardCommunicating.class,
                         NB_HUNTER_AGENTS,
-                        createHunterSpec(),
-                        hunterPPOLearning,
-                        broadcastObservation,
-                        noModelOfOthers
+                        ppoBroadcastAgentModule,
+                        createHunterSpec()
                 ))
                 .agentGroup(new AgentGroupConfiguration(
-                        PreyAgent.class,
                         NB_PREY_AGENTS,
-                        createPreySpec(),
-                        preyLearning,
-                        noCommunication,
-                        noModelOfOthers
+                        preyAgentModule,
+                        createPreySpec()
                 ))
                 .systemEvaluator(noSystemEvaluator)
                 .build();

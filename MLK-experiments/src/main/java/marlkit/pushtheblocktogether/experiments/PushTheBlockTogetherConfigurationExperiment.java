@@ -9,6 +9,7 @@ import agent.action.Move2DInt;
 import communication.NoCommunication;
 import evaluation.NoSystemEvaluation;
 import experiment.ConfigurationRunner;
+import experiment.configuration.AgentModule;
 import experiment.configuration.AgentGroupConfiguration;
 import experiment.configuration.CommunicationModule;
 import experiment.configuration.ExperimentConfiguration;
@@ -39,18 +40,22 @@ public class PushTheBlockTogetherConfigurationExperiment extends Agent {
 
         SystemEvaluatorModule noSystemEvaluator =
                 new SystemEvaluatorModule(NoSystemEvaluation.class);
+        
+        AgentModule qLearningAgentModule = new AgentModule(
+        		AgentStandard.class,
+                qLearningModule,
+                noCommunication,
+                noModelOfOthers
+        );
 
         ExperimentConfiguration qLearningConfig = ExperimentConfiguration.named("PTBTogether_QLearning")
                 .environment(EnvPushTheBlockTogether.class)
                 .rewardModel(MixedReward.class)
                 .scheduler(SchedulerPTBNoPause.class)
                 .agentGroup(new AgentGroupConfiguration(
-                        AgentStandard.class,
                         NB_AGENTS,
-                        createAgentSpec(),
-                        qLearningModule,
-                        noCommunication,
-                        noModelOfOthers
+                        qLearningAgentModule,
+                        createAgentSpec()
                 ))
                 .systemEvaluator(noSystemEvaluator)
                 .build();
