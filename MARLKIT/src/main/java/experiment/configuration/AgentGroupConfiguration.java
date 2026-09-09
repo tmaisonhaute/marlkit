@@ -44,12 +44,8 @@ public class AgentGroupConfiguration {
      * @param communicationModule the communication module for this agent group
      * @param modelOfOthersModule the model-of-others module for this agent group
      */
-    public AgentGroupConfiguration(
-            Class<? extends MLKAgent> agentClass,
-            int numberOfAgents,
-            AgentSpec agentSpec,
-            LearningModule learningModule,
-            CommunicationModule communicationModule,
+    public AgentGroupConfiguration( Class<? extends MLKAgent> agentClass, int numberOfAgents, AgentSpec agentSpec,
+            LearningModule learningModule, CommunicationModule communicationModule, 
             ModelOfOthersModule modelOfOthersModule
     ) {
         this.agentClass = Objects.requireNonNull(agentClass, "agentClass");

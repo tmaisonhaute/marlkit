@@ -207,6 +207,17 @@ public class ExperimentConfiguration {
             this.rewardModelModule = new RewardModelModule(rewardModelClass);
             return this;
         }
+        
+        /**
+         * Sets the reward model module.
+         *
+         * @param rewardModelModule the reward model module
+         * @return this builder
+         */
+        public Builder rewardModel(RewardModelModule rewardModelModule) {
+            this.rewardModelModule = rewardModelModule;
+            return this;
+        }
 
         /**
          * Sets the scheduler class. 
