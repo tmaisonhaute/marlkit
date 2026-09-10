@@ -2,17 +2,17 @@ package marlkit.preyhunter.experiments;
 
 import java.util.List;
 
-import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Move2DDouble;
 import agent.communication.AgentStandardCommunicating;
+import agentmodule.PPOAgentModuleBuilder;
 import communication.NoCommunication;
 import communicationimplementation.BroadcastRelativeObservationPositions;
 import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import evaluation.NoSystemEvaluation;
 import experiment.ConfigurationRunner;
-import experiment.configuration.AgentModule;
 import experiment.configuration.AgentGroupConfiguration;
+import experiment.configuration.AgentModule;
 import experiment.configuration.CommunicationModule;
 import experiment.configuration.ExperimentConfiguration;
 import experiment.configuration.LearningModule;
@@ -42,8 +42,6 @@ public class PreyHunterConfigurationExperiment extends Agent{
     @Override
     protected void onActivation() {
     	super.onActivation();
-    	LearningModule hunterPPOLearning =
-                new LearningModule(new HunterPPOLearningComponentsCreator());
 
         LearningModule preyLearning =
                 new LearningModule(new PreyComponentsCreator(PREY_SPEED));
@@ -66,21 +64,14 @@ public class PreyHunterConfigurationExperiment extends Agent{
         		noCommunication,
         		noModelOfOthers
         		);
+
         
-        AgentModule ppoAgentModule = new AgentModule(
-        		AgentStandard.class,
-                hunterPPOLearning,
-                noCommunication,
-                noModelOfOthers
-        );
+        AgentModule ppoAgentModule = PPOAgentModuleBuilder.builder().build();
         
-        AgentModule ppoBroadcastAgentModule = new AgentModule(
-        		AgentStandardCommunicating.class,
-                hunterPPOLearning,
-                broadcastObservationModule,
-                noModelOfOthers
-        );
-        
+		AgentModule ppoBroadcastAgentModule = PPOAgentModuleBuilder.builder()
+				.agentClass(AgentStandardCommunicating.class)
+				.communication(broadcastObservationModule)
+				.build();
         
 
         ExperimentConfiguration ppoNoCommunication = ExperimentConfiguration.named("PVH_PPO_NoCommunication")

@@ -3,18 +3,14 @@ package marlkit.pushtheblocktogether.experiments;
 import java.util.ArrayList;
 import java.util.List;
 
-import agent.AgentStandard;
 import agent.action.Action;
 import agent.action.Move2DInt;
-import communication.NoCommunication;
+import agentmodule.QLearningAgentModuleBuilder;
 import evaluation.NoSystemEvaluation;
 import experiment.ConfigurationRunner;
-import experiment.configuration.AgentModule;
 import experiment.configuration.AgentGroupConfiguration;
-import experiment.configuration.CommunicationModule;
+import experiment.configuration.AgentModule;
 import experiment.configuration.ExperimentConfiguration;
-import experiment.configuration.LearningModule;
-import experiment.configuration.ModelOfOthersModule;
 import experiment.configuration.SystemEvaluatorModule;
 import experiment.configuration.agentspec.DefaultAgentSpec;
 import madkit.kernel.Agent;
@@ -29,24 +25,12 @@ public class PushTheBlockTogetherConfigurationExperiment extends Agent {
     @Override
     protected void onActivation() {
     	super.onActivation();
-    	LearningModule qLearningModule =
-                new LearningModule(new PushTheBlockQLearningComponentsCreator());
-
-        CommunicationModule noCommunication =
-                new CommunicationModule(NoCommunication.class);
-
-        ModelOfOthersModule noModelOfOthers =
-                new ModelOfOthersModule(null);
 
         SystemEvaluatorModule noSystemEvaluator =
                 new SystemEvaluatorModule(NoSystemEvaluation.class);
         
-        AgentModule qLearningAgentModule = new AgentModule(
-        		AgentStandard.class,
-                qLearningModule,
-                noCommunication,
-                noModelOfOthers
-        );
+        AgentModule qLearningAgentModule = QLearningAgentModuleBuilder.builder()
+        		.build();
 
         ExperimentConfiguration qLearningConfig = ExperimentConfiguration.named("PTBTogether_QLearning")
                 .environment(EnvPushTheBlockTogether.class)

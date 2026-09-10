@@ -2,7 +2,7 @@ package marlkit.collectingresource.experiments;
 
 import java.util.List;
 
-import agentModule.QLearningAgentModule;
+import agentmodule.QLearningAgentModuleBuilder;
 import experiment.ConfigurationRunner;
 import experiment.configuration.AgentGroupConfiguration;
 import experiment.configuration.AgentModule;
@@ -38,7 +38,7 @@ public class CollectingResourceConfigurationExperiment extends Agent{
                     new SystemEvaluatorModule(CollectingResourceEnvEvaluator.class);
 
 
-            AgentModule qLearningAgentModule = QLearningAgentModule.builder()
+            AgentModule qLearningAgentModule = QLearningAgentModuleBuilder.builder()
             		.agentClass(CollectingResourceAgent.class)
             		.epsilonDecay(0.003)
             		.build();

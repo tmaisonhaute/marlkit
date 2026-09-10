@@ -1,4 +1,4 @@
-package agentModule;
+package agentmodule;
 
 import java.util.Objects;
 
@@ -52,14 +52,14 @@ import learning.policies.QValueBasedPolicy;
  * implement {@link MLKAgentCommunicating}.
  * </p>
  */
-public final class QLearningAgentModule {
+public final class QLearningAgentModuleBuilder {
 
     private static final double DEFAULT_INITIAL_EPSILON = 1.0;
     private static final double DEFAULT_EPSILON_DECAY = 0.001;
     private static final double DEFAULT_ALPHA = 0.2;
     private static final double DEFAULT_GAMMA = 0.95;
 
-    private QLearningAgentModule() {
+    private QLearningAgentModuleBuilder() {
     }
 
     /**
