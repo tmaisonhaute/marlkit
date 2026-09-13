@@ -227,23 +227,11 @@ public final class PPOAgentModuleBuilder {
             validate();
 
             LearningComponentsCreator learningComponentsCreator =
-                    new PPOComponentsCreator(
-                            softmaxTemperature,
-                            learningRate,
-                            gamma,
-                            clipEpsilon,
-                            ppoEpochs,
-                            hiddenLayers
-                    );
+                    new PPOComponentsCreator(softmaxTemperature, learningRate, gamma, clipEpsilon, ppoEpochs, hiddenLayers);
 
-            LearningModule learningModule =
-                    new LearningModule(learningComponentsCreator);
+            LearningModule learningModule = new LearningModule(learningComponentsCreator);
 
-            return new AgentModule(
-                    agentClass,
-                    learningModule,
-                    communicationModule,
-                    modelOfOthersModule
+            return new AgentModule(agentClass, learningModule, communicationModule, modelOfOthersModule
             );
         }
 
@@ -332,22 +320,10 @@ public final class PPOAgentModuleBuilder {
             }
 
             NeuralNetworkCategoricalPolicy policy =
-                    new NeuralNetworkCategoricalPolicy(
-                            agentSpec.getPossibleActions(),
-                            inputWrapperSpec.getInputWrapper(),
-                            inputSizeSpec.getInputSize(),
-                            hiddenLayers,
-                            softmaxTemperature
-                    );
+                    new NeuralNetworkCategoricalPolicy(agentSpec.getPossibleActions(), inputWrapperSpec.getInputWrapper(),
+                    		inputSizeSpec.getInputSize(), hiddenLayers, softmaxTemperature);
 
-            PPOCategorical algorithm =
-                    new PPOCategorical(
-                            policy,
-                            learningRate,
-                            gamma,
-                            clipEpsilon,
-                            ppoEpochs
-                    );
+            PPOCategorical algorithm = new PPOCategorical(policy, learningRate, gamma, clipEpsilon, ppoEpochs);
 
             return new LearningComponents(policy, algorithm);
         }

@@ -69,7 +69,6 @@ public class NeuralNetworkCategoricalPolicy implements CategoricalPolicyGradient
         double[] logits = forwardLogits(input);
         double[] probabilities = VectorOperator.softmax(logits, softmaxTemperature);
         int actionIndex = sample(probabilities, prng());
-
         return actions.get(actionIndex).copy();
     }
     

@@ -173,7 +173,7 @@ public class LearningData {
             Files.createDirectories(logDir);
         }
 
-        logFilePath = "logs/log_" + Instant.now().getEpochSecond() + logName + ".csv";
+        logFilePath = "logs/log_" + Instant.now().getEpochSecond() + "_" + logName + ".csv";
         BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFilePath, true));
 
         logWriter.write("Episode" + "," + String.join(",", rows) + "\n");

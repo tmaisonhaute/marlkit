@@ -6,8 +6,8 @@ package experiment.configuration.agentspec;
 public interface AgentSpecInputSize extends AgentSpec {
 
     /**
-  *  * Returns the expected vector input size for learning components.
- *   *
+     * Returns the expected vector input size for learning components.
+     *
      * @return the input vector size
      */
     int getInputSize();

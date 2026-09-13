@@ -11,7 +11,7 @@ import learning.Policy;
  * <p>Concrete subclasses define the policy and learning algorithm used by the
  * hunter.</p>
  */
-public abstract class HunterAgent extends AgentStandard {
+public class HunterAgent extends AgentStandard {
 
     /**
      * Creates a hunter agent without configuring its policy or algorithm.
@@ -29,7 +29,7 @@ public abstract class HunterAgent extends AgentStandard {
      * @param policy the policy used to select actions
      * @param algorithm the learning algorithm used to update the policy
      */
-    protected HunterAgent(Policy policy, Algorithm algorithm) {
+    public HunterAgent(Policy policy, Algorithm algorithm) {
         super(policy, algorithm);
     }
 }

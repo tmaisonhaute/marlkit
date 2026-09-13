@@ -7,6 +7,7 @@ import agent.MLKAgent;
 import evaluation.Measure;
 import evaluation.SystemEvaluator;
 import marlkit.preyhunter.environment.events.PreyCatchEvent;
+import marlkit.preyhunter.scheduler.SchedulerPVH;
 import reward.ReactionEvent;
 
 public class PreyHunterSystemEvaluator implements SystemEvaluator {
@@ -21,6 +22,10 @@ public class PreyHunterSystemEvaluator implements SystemEvaluator {
     private boolean captured;
     private int elapsedTime;
     private int captureTime;
+    
+	public PreyHunterSystemEvaluator() {
+		this(SchedulerPVH.EPISODE_DURATION);
+	}
 
     public PreyHunterSystemEvaluator(int maxEpisodeTime) {
         if (maxEpisodeTime <= 0) {
