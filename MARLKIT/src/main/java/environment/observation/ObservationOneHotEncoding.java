@@ -56,7 +56,7 @@ public class ObservationOneHotEncoding implements Observation {
      *                                  or the vector sizes don't match
      */
     @Override
-    public Observation add(Observation obs) {
+    public void add(Observation obs) {
         if (!(obs instanceof ObservationOneHotEncoding)) {
             throw new IllegalArgumentException(
                     "Cannot add a non-ObservationOneHotEncoding instance.");
@@ -76,7 +76,6 @@ public class ObservationOneHotEncoding implements Observation {
             }
             this.OHE = newOHE;
         }
-        return this;
     }
 
     /**

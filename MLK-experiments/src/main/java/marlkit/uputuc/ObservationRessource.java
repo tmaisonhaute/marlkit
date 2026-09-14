@@ -14,8 +14,7 @@ public class ObservationRessource implements Observation {
     }
 
     @Override
-    public Observation add(Observation other) {
-        return null;
+    public void add(Observation other) {
     }
 
     public Resource getRessource(){

@@ -384,12 +384,15 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 		for (Map.Entry<MLKAgent, Observation> entry : observations2.entrySet()) {
 			MLKAgent agent = entry.getKey();
 			Observation observation = entry.getValue();
+			
 			if (mergedObservations.containsKey(agent)) {
+				
 				Observation existingObservation = mergedObservations.get(agent);
 				if (existingObservation == null) {
 					mergedObservations.put(agent, observation);
 				} else {
-					mergedObservations.put(agent, existingObservation.add(observation));
+					existingObservation.add(observation);
+					mergedObservations.put(agent, existingObservation);
 				}
 			}
 			else {

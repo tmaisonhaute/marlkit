@@ -10,8 +10,7 @@ import environment.observation.Observation;
 public final class ObservationGoOrYield implements Observation {
 
 	@Override
-	public Observation add(Observation other) {
-		return this;
+	public void add(Observation other) {
 	}
 
 	@Override

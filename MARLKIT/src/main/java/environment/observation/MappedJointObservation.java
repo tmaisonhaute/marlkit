@@ -136,7 +136,7 @@ public class MappedJointObservation implements Observation {
     }
 
     /**
-     * Combines this observation with another observation.
+     * Adds the observations from another mapped joint observation to this one.
      *
      * <p>If the supplied observation is mapped, all its associations are added
      * or replaced. Otherwise, the operation cannot determine the agent
@@ -146,18 +146,16 @@ public class MappedJointObservation implements Observation {
      * @return the combined mapped joint observation
      */
     @Override
-    public MappedJointObservation add(Observation other) {
+    public void add(Observation other) {
         if (!(other instanceof MappedJointObservation otherMapped)) {
             throw new IllegalArgumentException("MappedJointObservation can only be added to another MappedJointObservation.");
         }
 
-        MappedJointObservation result = copy();
 
         for (Map.Entry<MLKAgent, Observation> entry : otherMapped.agentObservations.entrySet()) {
-            result.addObservation(entry.getKey(), entry.getValue());
+            this.addObservation(entry.getKey(), entry.getValue());
         }
 
-        return result;
     }
 
     /**

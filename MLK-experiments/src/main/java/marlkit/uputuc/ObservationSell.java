@@ -25,9 +25,8 @@ public class ObservationSell implements Observation {
 	}
 
 	@Override
-	public Observation add(Observation other) {
+	public void add(Observation other) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

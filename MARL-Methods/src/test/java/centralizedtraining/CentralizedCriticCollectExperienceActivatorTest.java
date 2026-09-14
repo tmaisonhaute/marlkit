@@ -299,11 +299,9 @@ public class CentralizedCriticCollectExperienceActivatorTest {
         }
 
         @Override
-        public Observation add(Observation other) {
+        public void add(Observation other) {
             DummyObservation otherInput = (DummyObservation) other;
-            List<String> mergedValues = new ArrayList<>(values);
-            mergedValues.addAll(otherInput.values);
-            return new DummyObservation(mergedValues);
+            values.addAll(otherInput.values);
         }
 
         @Override

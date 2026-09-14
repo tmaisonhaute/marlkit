@@ -70,23 +70,18 @@ public class ObservationPositionsValues implements Observation {
 	}
 	
 	/**
-	 * Concatenates this observation with another, combining all position-value pairs.
-	 *
+	 * Add this observation with another, combining all position-value pairs.
+	 * 
 	 * @param other the observation to concatenate
 	 * @return a new observation containing all position-value pairs
 	 * @throws IllegalArgumentException if other is not an ObservationPositionsValues
 	 */
 	@Override
-	public Observation add(Observation other) {
+	public void add(Observation other) {
 		if (other instanceof ObservationPositionsValues o ) {
-			ObservationPositionsValues newObs = new ObservationPositionsValues();
-			for (ObservationPositionValue e : this.obs) {
-				newObs.addObservationPosition(e);
-			}
 			for (ObservationPositionValue e : o.obs) {
-				newObs.addObservationPosition(e);
+				this.addObservationPosition(e);
 			}
-			return newObs;
 		}else {
 			throw new IllegalArgumentException("Impossible to add a ObservationPositionsValues element with an element which isn't.");
 		}

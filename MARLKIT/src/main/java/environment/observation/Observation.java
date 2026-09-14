@@ -6,12 +6,12 @@ package environment.observation;
  */
 public interface Observation{
 	/**
-	 * Combines this observation with another observation.
+	 * Add another observation to this one with another observation.
 	 *
 	 * @param other the observation to add
 	 * @return the combined observation
 	 */
-	Observation add(Observation other);
+	void add(Observation other);
 	
 	/**
      * Implementations must override equals() to provide meaningful equality comparison.

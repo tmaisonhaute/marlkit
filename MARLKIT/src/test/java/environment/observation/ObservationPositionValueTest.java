@@ -21,11 +21,11 @@ public class ObservationPositionValueTest {
             new Tuple(Arrays.asList(4.0, 8.0)), 20.0);
         
         // When
-        Observation result = obs1.add(obs2);
+        obs1.add(obs2);
         
         // Then
-        assertThat(result).isInstanceOf(ObservationPositionValue.class);
-        ObservationPositionValue combinedObs = (ObservationPositionValue) result;
+        assertThat(obs1).isInstanceOf(ObservationPositionValue.class);
+        ObservationPositionValue combinedObs = (ObservationPositionValue) obs1;
         
         // Position should be the average of the two positions
         assertThat(combinedObs.getPosition().getValue(0)).isEqualTo(3.0);
@@ -45,11 +45,11 @@ public class ObservationPositionValueTest {
             new Tuple(Arrays.asList(4.0, 8.0)), 20.0);
         
         // When
-        Observation result = obs1.add(obs2);
+        obs1.add(obs2);
         
         // Then
-        assertThat(result).isInstanceOf(ObservationPositionValue.class);
-        ObservationPositionValue combinedObs = (ObservationPositionValue) result;
+        assertThat(obs1).isInstanceOf(ObservationPositionValue.class);
+        ObservationPositionValue combinedObs = (ObservationPositionValue) obs1;
         
         // Position should be the average of the two positions
         assertThat(combinedObs.getPosition().getValue(0)).isEqualTo(1.0);
@@ -69,11 +69,11 @@ public class ObservationPositionValueTest {
             new Tuple(Arrays.asList(0.0, 0.0)), 0.0);
         
         // When
-        Observation result = obs1.add(obs2);
+        obs1.add(obs2);
         
         // Then
-        assertThat(result).isInstanceOf(ObservationPositionValue.class);
-        ObservationPositionValue combinedObs = (ObservationPositionValue) result;
+        assertThat(obs1).isInstanceOf(ObservationPositionValue.class);
+        ObservationPositionValue combinedObs = (ObservationPositionValue) obs1;
         
         // Position should be zeros
         assertThat(combinedObs.getPosition().getValue(0)).isEqualTo(0.0);
@@ -93,11 +93,11 @@ public class ObservationPositionValueTest {
             new Tuple(Arrays.asList(4.0, 8.0, 12.0)), 20.0);
         
         // When
-        Observation result = obs1.add(obs2);
+        obs1.add(obs2);
         
         // Then
-        assertThat(result).isInstanceOf(ObservationPositionValue.class);
-        ObservationPositionValue combinedObs = (ObservationPositionValue) result;
+        assertThat(obs1).isInstanceOf(ObservationPositionValue.class);
+        ObservationPositionValue combinedObs = (ObservationPositionValue) obs1;
         
         // Position should be the average of the two positions
         assertThat(combinedObs.getPosition().getValue(0)).isEqualTo(3.0);
@@ -114,11 +114,9 @@ public class ObservationPositionValueTest {
         ObservationPositionValue obs1 = new ObservationPositionValue(
             new Tuple(Arrays.asList(2.0, 4.0)), 10.0);
         
-        // Create a mock Observation that is not ObservationPositionValue
         Observation differentObservation = new Observation() {
             @Override
-            public Observation add(Observation other) {
-                return null;
+            public void add(Observation other) {
             }
 
 			@Override

@@ -270,8 +270,7 @@ public class MinimaxValueFunctionPredictActionTest {
     private static final class DummyObservation implements Observation {
 
         @Override
-        public Observation add(Observation other) {
-            return this;
+        public void add(Observation other) {
         }
 
         @Override

@@ -86,8 +86,7 @@ public class ObservationListenOrGo implements Observation {
      * @return a new {@link ObservationListenOrGo} containing the combined data.
      * @throws IllegalArgumentException if {@code other} is not an {@link ObservationListenOrGo}.
      */
-    @Override
-    public Observation add(Observation other) {
+    public Observation with(Observation other) {
         if (!(other instanceof ObservationListenOrGo)) {
             throw new IllegalArgumentException("Cannot add different types of observations");
         }
@@ -100,6 +99,18 @@ public class ObservationListenOrGo implements Observation {
         combinedOthers.addAll(otherObs.othersDirections);
         
         return new ObservationListenOrGo(combinedListens, combinedOthers);
+    }
+    
+    @Override
+    public void add(Observation other) {
+    	if (!(other instanceof ObservationListenOrGo)) {
+            throw new IllegalArgumentException("Cannot add different types of observations");
+        }
+    	ObservationListenOrGo otherObs = (ObservationListenOrGo) other;
+        this.listenResults.addAll(otherObs.listenResults);
+        
+        this.othersDirections.addAll(otherObs.othersDirections);
+        
     }
     
     @Override

@@ -7,13 +7,13 @@ import java.util.Objects;
 import environment.observation.Observation;
 
 /**
- * Observation for Trade2D, exposing production units.
+ * Observation for Collecting resource, exposing production units.
  */
 public class ObservationUnites2D implements Observation {
 	private final List<UniteProductionSpatial> unites;
 
 	/**
-	 * Create an observation for the Trade2D state.
+	 * Create an observation for the Collecting resource state.
 	 *
 	 * @param unites Units available in the environment.
 	 */
@@ -22,17 +22,17 @@ public class ObservationUnites2D implements Observation {
 	}
 
 	/**
-	 * Trade2D observations are not mergeable.
+	 * Collecting resource observations are not mergeable.
 	 *
 	 * @param other Observation to merge.
 	 * @return Never returns normally.
 	 */
 	@Override
-	public Observation add(Observation other) {
+	public void add(Observation other) {
 		if (other instanceof ObservationUnites2D) {
-			throw new UnsupportedOperationException("Trade2D observations do not support merging.");
+			throw new UnsupportedOperationException("Collecting resource observations do not support merging.");
 		}
-		throw new IllegalArgumentException("Impossible to add a ObservationUnites2D element with an element which isn't.");
+		throw new IllegalArgumentException("Impossible to add a ObservationUnites2D to another Observation");
 	}
 
 	/**

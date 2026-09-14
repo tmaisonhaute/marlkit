@@ -76,8 +76,7 @@ public class QTableAction2DMoveTest {
 
     private static class DummyObservation implements Observation {
         @Override
-        public Observation add(Observation other) {
-            return null;
+        public void add(Observation other) {
         }
         
         public boolean equals(Object o) {

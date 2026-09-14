@@ -1,5 +1,8 @@
 package algorithm;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import java.lang.reflect.Proxy;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -7,8 +10,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.random.RandomGenerator;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.testng.annotations.Test;
 
 import agent.MLKAgent;
@@ -546,8 +547,7 @@ public class TDActorCriticTest {
         }
 
         @Override
-        public Observation add(Observation other) {
-            return this;
+        public void add(Observation other) {
         }
 
         @Override

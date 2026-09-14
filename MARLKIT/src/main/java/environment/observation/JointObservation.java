@@ -80,7 +80,7 @@ public class JointObservation implements Observation {
     }
 
     /**
-     * Returns a new joint observation with the specified observation appended.
+     * Adds the specified observation to this joint observation, preserving the order of the local observations.
      *
      * <p>If {@code other} is also a joint observation, all its local
      * observations are appended individually while preserving their order.</p>
@@ -90,20 +90,18 @@ public class JointObservation implements Observation {
      * @throws NullPointerException if {@code other} is {@code null}
      */
     @Override
-    public JointObservation add(Observation other) {
+    public void add(Observation other) {
         Objects.requireNonNull(other, "other");
 
-        JointObservation result = copy();
 
         if (other instanceof JointObservation jointObservation) {
             for (Observation observation : jointObservation.observations) {
-                result.addObservation(observation);
+                this.addObservation(observation);
             }
         } else {
-            result.addObservation(other);
+            this.addObservation(other);
         }
 
-        return result;
     }
 
     /**

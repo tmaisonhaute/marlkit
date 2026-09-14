@@ -15,18 +15,14 @@ public class ObservationBuy implements Observation {
 	
 
 	@Override
-	public Observation add(Observation other) {
+	public void add(Observation other) {
 		if (!(other instanceof ObservationBuy)) {
 	        throw new IllegalArgumentException("Impossible to add a ObservationBuy element with an element which isn't.");
 	    }
 		ObservationBuy otherOA = (ObservationBuy) other;
-		ObservationBuy result = new ObservationBuy();
 
-		List<Pair<ResourcesStock, Double>> totalStocksAndDistances = this.getStocksAndDistances();
-		totalStocksAndDistances.addAll(otherOA.getStocksAndDistances());
+		this.getStocksAndDistances().addAll(otherOA.getStocksAndDistances());
 		
-		result.setStocksAndDistances(totalStocksAndDistances);
-		return result;
 	}
 
 	public List<Pair<ResourcesStock, Double>> getStocksAndDistances() {

@@ -66,18 +66,18 @@ public class ObservationPositionValue implements Observation {
 	 * @throws IllegalArgumentException if other is not an ObservationPositionValue
 	 */
 	@Override
-	public Observation add(Observation other) {
+	public void add(Observation other) {
 	    if (!(other instanceof ObservationPositionValue)) {
 	        throw new IllegalArgumentException("Impossible to add a ObservationPositionValue element with an element which isn't.");
 	    }
 	    
 	    ObservationPositionValue otherOPV = (ObservationPositionValue) other;
 	    
-	    // Fix: Use 0.5 explicitly instead of 1/2 which would result in integer division (0)
+
 	    Tuple averagePosition = this.position.add(otherOPV.position).multiply(0.5);
 	    double averageValue = (this.value + otherOPV.value) * 0.5;
-	    
-	    return new ObservationPositionValue(averagePosition, averageValue);
+	    this.position = averagePosition;
+	    this.value = averageValue;
 	}
 
     @Override

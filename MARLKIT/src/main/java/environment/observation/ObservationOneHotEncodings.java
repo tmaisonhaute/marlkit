@@ -56,13 +56,12 @@ public class ObservationOneHotEncodings implements Observation {
      * @throws IllegalArgumentException if the observation is not of type ObservationOneHotEncoding
      */
     @Override
-    public Observation add(Observation obs) {
+    public void add(Observation obs) {
         if (!(obs instanceof ObservationOneHotEncoding)) {
             throw new IllegalArgumentException(
                     "Cannot add a non-ObservationOneHotEncoding instance.");
         }
         oneHotEncodings.add((ObservationOneHotEncoding) obs);
-        return this;
     }
 
     /**

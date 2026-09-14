@@ -139,8 +139,7 @@ public class NActionFrequenciesDeterministicPredictionActionTest {
         }
 
         @Override
-        public Observation add(Observation other) {
-            return this;
+        public void add(Observation other) {
         }
 
         @Override
