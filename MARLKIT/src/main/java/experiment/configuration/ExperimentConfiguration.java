@@ -8,6 +8,7 @@ import java.util.OptionalInt;
 import agent.MLKAgent;
 import environment.MLKEnvironment;
 import evaluation.SystemEvaluator;
+import experience.ExperienceBuilder;
 import reward.RewardModel;
 import simulation.MLKScheduler;
 import trainingexecutionstrategy.DecentralizedTrainingExecutionStrategy;
@@ -37,6 +38,7 @@ public class ExperimentConfiguration {
 
     private final EnvironmentModule environmentModule;
     private final RewardModelModule rewardModelModule;
+    private final ExperienceBuilder experienceBuilder;
     private final SchedulerModule schedulerModule;
     private final SystemEvaluatorModule systemEvaluatorModule;
 
@@ -51,6 +53,7 @@ public class ExperimentConfiguration {
         this.rewardModelModule = Objects.requireNonNull(builder.rewardModelModule, "rewardModelModule");
         this.schedulerModule = Objects.requireNonNull(builder.schedulerModule, "schedulerModule");
         this.systemEvaluatorModule = Objects.requireNonNull(builder.systemEvaluatorModule, "systemEvaluatorModule");
+        this.experienceBuilder = builder.experienceBuilder; 
 
         if (builder.agentGroups.isEmpty()) {
             throw new IllegalArgumentException("At least one agent group must be defined.");
@@ -98,13 +101,20 @@ public class ExperimentConfiguration {
     }
 
     /**
-     * Creates a fresh environment instance using a fresh reward model.
+     * Creates a fresh environment instance using a fresh reward model. 
+     * Also sets the experience builder if it was provided in the configuration.
      *
      * @return a new environment
      */
     public MLKEnvironment createEnvironment() {
         RewardModel rewardModel = createRewardModel();
-        return environmentModule.createEnvironment(rewardModel);
+        MLKEnvironment environment = environmentModule.createEnvironment(rewardModel);
+
+        if (experienceBuilder != null) {
+            environment.setExperienceBuilder(experienceBuilder);
+        }
+
+        return environment;
     }
 
     /**
@@ -166,6 +176,7 @@ public class ExperimentConfiguration {
         private RewardModelModule rewardModelModule;
         private SchedulerModule schedulerModule;
         private SystemEvaluatorModule systemEvaluatorModule;
+        private ExperienceBuilder experienceBuilder;
         private OptionalInt seedIndex = null;
 
         private final List<AgentGroupConfiguration> agentGroups = new ArrayList<>();
@@ -222,6 +233,11 @@ public class ExperimentConfiguration {
             this.rewardModelModule = rewardModelModule;
             return this;
         }
+        
+		public Builder experienceBuilder(ExperienceBuilder experienceBuilder) {
+			this.experienceBuilder = experienceBuilder;
+			return this;
+		}
 
         /**
          * Sets the scheduler class. 

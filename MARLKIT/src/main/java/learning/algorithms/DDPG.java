@@ -167,7 +167,7 @@ public class DDPG implements ActorCritic, EvaluationAware {
      *
      * @return the target actor
      */
-    protected DeterministicPolicyGradient getTargetActor() {
+    public DeterministicPolicyGradient getTargetActor() {
         return targetActor;
     }
 

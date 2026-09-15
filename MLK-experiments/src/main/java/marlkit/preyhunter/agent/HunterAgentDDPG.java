@@ -4,10 +4,13 @@ import agent.action.Action;
 import agent.action.ActionContinuousVector;
 import agent.action.Move2DDouble;
 import environment.observation.Observation;
+import learning.Algorithm;
 import learning.ContinuousActionExplorationStrategy;
+import learning.Policy;
 import learning.actionexplorationstrategies.GaussianNoise;
 import learning.algorithms.DDPG;
 import learning.nn.ActionValueCritic;
+import learning.policies.DeterministicPolicyGradient;
 import learning.policies.MLPDeterministicPolicy;
 import marlkit.preyhunter.environment.WrapperPreyHunterObservationVector;
 import util.criteria.ReadOnlyCriterion;
@@ -47,6 +50,22 @@ public class HunterAgentDDPG extends HunterAgent {
     protected HunterAgentDDPG() {
         super();
     }
+    
+	public HunterAgentDDPG(Policy policy, Algorithm algorithm) {
+		super();
+		if (policy instanceof DeterministicPolicyGradient) {
+			setPolicy(policy);
+		}
+		else {
+			throw new IllegalArgumentException("HunterAgentDDPG requires a DeterministicPolicyGradient.");
+		}
+		if (algorithm instanceof DDPG) {
+			setAlgorithm(algorithm);
+		}
+		else {
+			throw new IllegalArgumentException("HunterAgentDDPG requires a DDPG algorithm.");
+		}
+	}
 
     /**
      * Creates a DDPG hunter with the specified observation capacity.

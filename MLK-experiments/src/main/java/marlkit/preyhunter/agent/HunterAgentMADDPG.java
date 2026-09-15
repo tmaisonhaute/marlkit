@@ -6,10 +6,13 @@ import java.util.Objects;
 import agent.modelofotheragent.StandardGroupModelingPredictAction;
 import centralizedtraining.CentralizedCriticTrainingExecutionStrategy;
 import environment.observation.wrapperobservationvector.WrapperJointObservation;
+import learning.Algorithm;
 import learning.ContinuousActionExplorationStrategy;
+import learning.Policy;
 import learning.actionexplorationstrategies.GaussianNoise;
 import learning.algorithms.MADDPG;
 import learning.nn.ActionValueCritic;
+import learning.policies.DeterministicPolicyGradient;
 import learning.policies.MLPDeterministicPolicy;
 import marlkit.preyhunter.environment.WrapperPreyHunterObservationVector;
 import modelofotheragents.AccessOtherPolicy;
@@ -24,7 +27,22 @@ import util.criteria.ReadOnlyCriterion;
  */
 public class HunterAgentMADDPG extends HunterAgentDDPG {
 
-    private final MLPDeterministicPolicy targetActor;
+    
+    public HunterAgentMADDPG(Policy policy, Algorithm algorithm) {
+		super();
+		if (policy instanceof DeterministicPolicyGradient) {
+			setPolicy(policy);
+		}
+		else {
+			throw new IllegalArgumentException("HunterAgentDDPG requires a DeterministicPolicyGradient.");
+		}
+		if (algorithm instanceof MADDPG) {
+			setAlgorithm(algorithm);
+		}
+		else {
+			throw new IllegalArgumentException("HunterAgentDDPG requires a MADDPG algorithm.");
+		}
+	}
 
     /**
      * Creates a MADDPG hunter.
@@ -53,7 +71,7 @@ public class HunterAgentMADDPG extends HunterAgentDDPG {
         ContinuousActionExplorationStrategy actionNoiseStrategy = new GaussianNoise(speed * NOISE_COEFFFICIENT);
 
         MLPDeterministicPolicy actor = createActor(actorWrapper, actorObservationSize, speed, actionNoiseStrategy);
-        this.targetActor = createActor(actorWrapper, actorObservationSize, speed);
+        MLPDeterministicPolicy targetActor = createActor(actorWrapper, actorObservationSize, speed);
 
         WrapperJointObservation criticWrapper = new WrapperJointObservation(actorWrapper, actorObservationSize, numberOfHunters);
         int criticObservationSize = criticWrapper.getVectorSize();
@@ -104,8 +122,8 @@ public class HunterAgentMADDPG extends HunterAgentDDPG {
      *
      * @return the target actor
      */
-    public MLPDeterministicPolicy getTargetActor() {
-        return targetActor;
+    public DeterministicPolicyGradient getTargetActor() {
+        return getMADDPG().getTargetActor();
     }
 
     /**

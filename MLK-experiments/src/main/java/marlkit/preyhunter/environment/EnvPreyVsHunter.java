@@ -36,15 +36,8 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     private final double preyViewRange;
     protected final int requiredHuntersToCapture;
 
-    /**
-     * Default constructor required by some MadKit launch modes.
-     */
-    public EnvPreyVsHunter(RewardModel rewardModel) {
-        this(10, 10, 1.0, Double.POSITIVE_INFINITY, 2.0, rewardModel, 1);
-    }
 
-    public EnvPreyVsHunter(int width, int height, double captureRadius, double hunterViewRange, double preyViewRange,
-            RewardModel rewardModel, int requiredHuntersToCapture) {
+    public EnvPreyVsHunter(int width, int height, double captureRadius, double hunterViewRange, double preyViewRange, int requiredHuntersToCapture, RewardModel rewardModel) {
         super(width, height, rewardModel);
 
         if (captureRadius < 0.0) {
@@ -152,6 +145,7 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
 
         return results;
     }
+    
 
     /**
      * Initializes an empty event list for every registered agent.

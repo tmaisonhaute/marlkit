@@ -22,25 +22,25 @@ import simulation.MLKModel;
 )
 public abstract class LauncherPVH extends MLKLauncher {
 
-    protected static final int ENV_WIDTH = 10;
-    protected static final int ENV_HEIGHT = 10;
+    public static final int ENV_WIDTH = 10;
+    public static final int ENV_HEIGHT = 10;
 
-    protected static final int NB_HUNTER_AGENTS = 2;
-    protected static final int NB_PREY_AGENTS = 1;
+    public static final int NB_HUNTER_AGENTS = 2;
+    public static final int NB_PREY_AGENTS = 1;
 
-    protected static final double CAPTURE_RADIUS = 1.2;
-    protected static final double HUNTER_VIEW_RANGE = 5.0;
-    protected static final double PREY_VIEW_RANGE = 0.0;
+    public static final double CAPTURE_RADIUS = 1.2;
+    public static final double HUNTER_VIEW_RANGE = 5.0;
+    public static final double PREY_VIEW_RANGE = 0.0;
 
-    protected static final boolean HUNTERS_OBSERVE_OTHER_HUNTERS = true;
+    public static final boolean HUNTERS_OBSERVE_OTHER_HUNTERS = true;
 
-    protected static final int NUMBER_OF_DIRECTIONS = 4;
-    protected static final double HUNTER_SPEED = 0.2;
-    protected static final double PREY_SPEED = 0.15;
+    public static final int NUMBER_OF_DIRECTIONS = 4;
+    public static final double HUNTER_SPEED = 0.2;
+    public static final double PREY_SPEED = 0.15;
 
     protected final RewardModel rewardModel = new MixedReward();//new FullyCooperativeReward();
     
-    protected static final int REQUIRED_HUNTERS_TO_CATCH = 2;
+    public static final int REQUIRED_HUNTERS_TO_CATCH = 2;
 
     /**
      * Create and launch the PreyHunter environment.
@@ -51,7 +51,7 @@ public abstract class LauncherPVH extends MLKLauncher {
     @SuppressWarnings("unchecked")
     @Override
     protected <E extends SimuEnvironment> E onLaunchEnvironment() {
-        EnvPreyVsHunter env = new EnvPreyVsHunter(ENV_WIDTH, ENV_HEIGHT, CAPTURE_RADIUS, HUNTER_VIEW_RANGE, PREY_VIEW_RANGE, rewardModel, REQUIRED_HUNTERS_TO_CATCH);
+        EnvPreyVsHunter env = new EnvPreyVsHunter(ENV_WIDTH, ENV_HEIGHT, CAPTURE_RADIUS, HUNTER_VIEW_RANGE, PREY_VIEW_RANGE, REQUIRED_HUNTERS_TO_CATCH, rewardModel);
 
         configureEnvironment(env);
         
