@@ -6,6 +6,7 @@ import agent.action.Action;
 import agent.action.Move2DDouble;
 import agentmodule.PPOAgentModuleBuilder;
 import communication.NoCommunication;
+import communicationimplementation.BroadcastAveragedPolicyParameters;
 import communicationimplementation.BroadcastRelativeObservationPositions;
 import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import experiment.ConfigurationRunner;
@@ -25,6 +26,7 @@ import madkit.kernel.Agent;
 import marlkit.preyhunter.agent.HunterAgent;
 import marlkit.preyhunter.agent.HunterAgentCommunicating;
 import marlkit.preyhunter.agent.PreyAgent;
+import marlkit.preyhunter.communication.BroadcastObservationAndAveragedParameters;
 import marlkit.preyhunter.environment.EnvPreyVsHunter;
 import marlkit.preyhunter.environment.WrapperPreyHunterObservationVector;
 import marlkit.preyhunter.launchers.LauncherPVH;
@@ -50,38 +52,41 @@ public class CommunicationComparisonConfigurationExperiment extends Agent{
 	    	EnvironmentModule environmentModule = new ConfigurableEnvironmentModule(EnvPreyVsHunter.class, LauncherPVH.ENV_WIDTH, LauncherPVH.ENV_HEIGHT, 
 	    			LauncherPVH.CAPTURE_RADIUS, LauncherPVH.HUNTER_VIEW_RANGE, LauncherPVH.PREY_VIEW_RANGE, LauncherPVH.REQUIRED_HUNTERS_TO_CATCH);
 
-	        LearningModule preyLearning =
-	                new LearningModule(new PreyComponentsCreator(PREY_SPEED));
+	        LearningModule preyLearning = new LearningModule(new PreyComponentsCreator(PREY_SPEED));
 
-	        CommunicationModule noCommunication =
-	                new CommunicationModule(NoCommunication.class);
+	        CommunicationModule noCommunication = new CommunicationModule(NoCommunication.class);
 
-	        CommunicationModule broadcastObservationModule =
-	                new CommunicationModule(BroadcastRelativeObservationPositions.class);
+	        CommunicationModule broadcastObservationModule = new CommunicationModule(BroadcastRelativeObservationPositions.class);
+	        
+	        CommunicationModule broadcastPolicyParametersModule = new CommunicationModule(BroadcastPolicyParameters50.class);
+	        
+	        CommunicationModule broadcastObservationAndPolicyParametersModule = new CommunicationModule(BroadcastObservationAndPolicyParameters50.class);
 
-	        ModelOfOthersModule noModelOfOthers =
-	                new ModelOfOthersModule(null);
+	        ModelOfOthersModule noModelOfOthers = new ModelOfOthersModule(null);
 
-	        SystemEvaluatorModule preyHunterSystemEvaluator =
-	                new SystemEvaluatorModule(PreyHunterSystemEvaluator.class);
+	        SystemEvaluatorModule preyHunterSystemEvaluator = new SystemEvaluatorModule(PreyHunterSystemEvaluator.class);
 
-	        AgentModule preyAgentModule = new AgentModule(
-	        		PreyAgent.class,
-	        		preyLearning,
-	        		noCommunication,
-	        		noModelOfOthers
-	        		);
+	        AgentModule preyAgentModule = new AgentModule(PreyAgent.class, preyLearning, noCommunication, noModelOfOthers);
 
 	        
 	        AgentModule ppoAgentModule = PPOAgentModuleBuilder.builder()
 	        		.agentClass(HunterAgent.class)
 	        		.build();
 	        
-			AgentModule ppoBroadcastAgentModule = PPOAgentModuleBuilder.builder()
+			AgentModule ppoBroadcastObservationAgentModule = PPOAgentModuleBuilder.builder()
 					.agentClass(HunterAgentCommunicating.class)
 					.communication(broadcastObservationModule)
 					.build();
 			
+			AgentModule ppoBroadcastPolicyAgentModule = PPOAgentModuleBuilder.builder()
+					.agentClass(HunterAgentCommunicating.class)
+					.communication(broadcastPolicyParametersModule)
+					.build();
+			
+			AgentModule ppoBroadcastObservationAndPolicyAgentModule = PPOAgentModuleBuilder.builder()
+					.agentClass(HunterAgentCommunicating.class)
+					.communication(broadcastObservationAndPolicyParametersModule)
+					.build();
 
 	        
 
@@ -100,7 +105,6 @@ public class CommunicationComparisonConfigurationExperiment extends Agent{
 	                        createPreySpec()
 	                ))
 	                .systemEvaluator(preyHunterSystemEvaluator)
-	                .seedIndex(3)
 	                .build();
 
 	        ExperimentConfiguration ppoBroadcastObservation = ExperimentConfiguration.named("PVH_PPO_BroadcastObservation")
@@ -109,7 +113,7 @@ public class CommunicationComparisonConfigurationExperiment extends Agent{
 	                .scheduler(SchedulerPVHNoPause.class)
 	                .agentGroup(new AgentGroupConfiguration(
 	                        NB_HUNTER_AGENTS,
-	                        ppoBroadcastAgentModule,
+	                        ppoBroadcastObservationAgentModule,
 	                        createHunterSpec()
 	                ))
 	                .agentGroup(new AgentGroupConfiguration(
@@ -119,8 +123,43 @@ public class CommunicationComparisonConfigurationExperiment extends Agent{
 	                ))
 	                .systemEvaluator(preyHunterSystemEvaluator)
 	                .build();
+	        
+	        ExperimentConfiguration ppoBroadcastPolicy = ExperimentConfiguration.named("PVH_PPO_BroadcastPolicy")
+	                .environment(environmentModule)
+	                .rewardModel(MixedReward.class)
+	                .scheduler(SchedulerPVHNoPause.class)
+	                .agentGroup(new AgentGroupConfiguration(
+	                        NB_HUNTER_AGENTS,
+	                        ppoBroadcastPolicyAgentModule,
+	                        createHunterSpec()
+	                ))
+	                .agentGroup(new AgentGroupConfiguration(
+	                        NB_PREY_AGENTS,
+	                        preyAgentModule,
+	                        createPreySpec()
+	                ))
+	                .systemEvaluator(preyHunterSystemEvaluator)
+	                .build();
+	        
+	        ExperimentConfiguration ppoBroadcastObservationAndPolicy = ExperimentConfiguration.named("PVH_PPO_BroadcastObservationPolicy")
+	                .environment(environmentModule)
+	                .rewardModel(MixedReward.class)
+	                .scheduler(SchedulerPVHNoPause.class)
+	                .agentGroup(new AgentGroupConfiguration(
+	                        NB_HUNTER_AGENTS,
+	                        ppoBroadcastObservationAndPolicyAgentModule,
+	                        createHunterSpec()
+	                ))
+	                .agentGroup(new AgentGroupConfiguration(
+	                        NB_PREY_AGENTS,
+	                        preyAgentModule,
+	                        createPreySpec()
+	                ))
+	                .systemEvaluator(preyHunterSystemEvaluator)
+	                .build();
+	        
 
-	        launchAgent(new ConfigurationRunner(List.of(ppoNoCommunication, ppoBroadcastObservation)));
+	        launchAgent(new ConfigurationRunner(List.of(ppoNoCommunication, ppoBroadcastObservation, ppoBroadcastPolicy, ppoBroadcastObservationAndPolicy), 2));
 
 	    }
 
@@ -178,6 +217,18 @@ public class CommunicationComparisonConfigurationExperiment extends Agent{
 			}
 	    }
 	    
+	    public static class BroadcastPolicyParameters50 extends BroadcastAveragedPolicyParameters{
+
+			public BroadcastPolicyParameters50() {
+				super(0.5);
+			}
+	    }
 	    
+	    public static class BroadcastObservationAndPolicyParameters50 extends BroadcastObservationAndAveragedParameters{
+	    	public BroadcastObservationAndPolicyParameters50() {
+				super(0.5);
+			}
+	    	
+	    }
 	    
 	}

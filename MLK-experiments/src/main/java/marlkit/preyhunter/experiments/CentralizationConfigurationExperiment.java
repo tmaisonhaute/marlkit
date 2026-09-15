@@ -5,6 +5,7 @@ import java.util.List;
 import agent.action.Action;
 import agent.action.Move2DDouble;
 import agentmodule.DDPGAgentModuleBuilder;
+import agentmodule.MADDPGAgentModuleBuilder;
 import communication.NoCommunication;
 import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import experience.TransitionExperienceBuilder;
@@ -26,6 +27,7 @@ import experiment.configuration.agentspec.AgentSpecInputWrapper;
 import experiment.configuration.agentspec.AgentSpecLowerUpperBound;
 import experiment.configuration.agentspec.DefaultAgentSpec;
 import madkit.kernel.Agent;
+import marlkit.preyhunter.agent.HunterAgent;
 import marlkit.preyhunter.agent.HunterAgentDDPG;
 import marlkit.preyhunter.agent.PreyAgent;
 import marlkit.preyhunter.environment.EnvPreyVsHunter;
@@ -77,9 +79,9 @@ public class CentralizationConfigurationExperiment extends Agent{
         		.agentClass(HunterAgentDDPG.class)
         		.build();
         
-//		AgentModule maddpgAgentModule = MADDPGAgentModuleBuilder.builder()
-//				.agentClass(HunterAgent.class)
-//				.build();
+		AgentModule maddpgAgentModule = MADDPGAgentModuleBuilder.builder()
+				.agentClass(HunterAgent.class)
+				.build();
         
         
 
