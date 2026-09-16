@@ -4,6 +4,7 @@ import agent.action.Action;
 import agent.action.ActionContinuousVector;
 import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
+import agent.modelofotheragent.MLKAgentPredictingOthersAction;
 import environment.observation.MappedJointObservation;
 import environment.observation.Observation;
 import experience.TransitionExperience;
@@ -23,7 +24,6 @@ import madkit.simulation.SimuAgent;
  * reused as an approximation.</p>
  */
 public class MADDPG extends DDPG {
-	protected GroupModelPredictAction actionsPredictor;
 
     /**
      * Creates a MADDPG algorithm.
@@ -55,19 +55,6 @@ public class MADDPG extends DDPG {
         super(actor, targetActor, critic, targetCritic);
     }
     
-    
-    /**
-     * Sets the group action predictor used to construct joint target actions.
-     *
-     * <p>The predictor may directly access the other agents' target actors or use
-     * learned models of their policies. MADDPG only consumes its predictions and
-     * does not update the predictor.</p>
-     *
-     * @param actionsPredictor the group action predictor
-     */
-    public void setActionsPredictor(GroupModelPredictAction actionsPredictor) {
-        this.actionsPredictor = actionsPredictor;
-    }
 
     /**
      * Returns the group action predictor used by MADDPG.
@@ -75,7 +62,7 @@ public class MADDPG extends DDPG {
      * @return the group action predictor, or {@code null} if none has been configured
      */
     public GroupModelPredictAction getActionsPredictor() {
-        return actionsPredictor;
+        return getActionPredictor();
     }
     
     /**
@@ -164,9 +151,11 @@ public class MADDPG extends DDPG {
     protected MappedJointAction buildJointTargetAction(TransitionExperience criticTransition, MappedJointObservation jointNextObservation, Observation actorNextObservation) {
         MappedJointAction jointTargetAction;
 
-        if (actionsPredictor != null) {
-            jointTargetAction = actionsPredictor.predictActionFromMappedObservation(jointNextObservation);
-        }
+        GroupModelPredictAction actionPredictor = getActionPredictor();
+
+        if (actionPredictor != null) {
+            jointTargetAction = actionPredictor.predictActionFromMappedObservation(jointNextObservation);
+        } 
         else {
         	((SimuAgent) getAgent()).getLogger().warning("No action predictor configured for MADDPG. Using historical joint actions as an approximation.");
             if (!(criticTransition.getAction() instanceof MappedJointAction historicalJointAction)) {
@@ -178,6 +167,26 @@ public class MADDPG extends DDPG {
 
         ActionContinuousVector localTargetAction = getTargetActor().forwardAction(actorNextObservation);
         return jointTargetAction.withAction(getAgent(), localTargetAction);
+    }
+    
+    /**
+     * Returns the group action predictor used by MADDPG. 
+     * 
+     * <p>
+     * This method expects the agent to implement MLKAgentPredictingOthersAction. If the agent does not implement this interface, an IllegalStateException is thrown.
+     * </p>
+     * @return
+     */
+    protected GroupModelPredictAction getActionPredictor() {
+        if (!(getAgent() instanceof MLKAgentPredictingOthersAction predictingAgent)) {
+            throw new IllegalStateException("MADDPG requires an agent implementing MLKAgentPredictingOthersAction.");
+        }
+
+        if (predictingAgent.getModelsManager() == null) {
+            return null;
+        }
+
+        return predictingAgent.getModelsManager().getGroupModelPredictAction();
     }
 }
 

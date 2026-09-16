@@ -16,8 +16,7 @@ public class FictitiousPlayDeterministicPredictActionTest {
     public void givenNoHistory_whenPredict_thenReturnDefaultCopy() {
         // Given
         ActionInt defaultAction = new ActionInt(1);
-        FictitiousPlayDeterministicPredictAction model =
-                new FictitiousPlayDeterministicPredictAction(defaultAction);
+        FictitiousPlayDeterministicPredictAction model = new FictitiousPlayDeterministicPredictAction(defaultAction);
         Observation observation = new DummyObservation();
 
         // When

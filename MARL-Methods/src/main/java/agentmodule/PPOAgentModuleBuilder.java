@@ -181,7 +181,7 @@ public final class PPOAgentModuleBuilder {
         }
 
         /**
-         * Sets the sizes of the hidden neural-network layers.
+         * Sets the sizes of the hidden neural network layers.
          *
          * @param hiddenLayers the hidden layer sizes
          * @return this builder
@@ -206,9 +206,9 @@ public final class PPOAgentModuleBuilder {
         }
 
         /**
-         * Sets the model-of-others module.
+         * Sets the model of others module.
          *
-         * @param modelOfOthersModule the model-of-others module
+         * @param modelOfOthersModule the model of others module
          * @return this builder
          */
         public Builder modelOfOthers(ModelOfOthersModule modelOfOthersModule) {

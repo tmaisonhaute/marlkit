@@ -214,9 +214,9 @@ public final class DDPGAgentModuleBuilder {
         }
 
         /**
-         * Sets the target-network soft-update coefficient.
+         * Sets the target network soft update coefficient.
          *
-         * @param tau the soft-update coefficient
+         * @param tau the soft update coefficient
          * @return this builder
          */
         public Builder tau(double tau) {
@@ -225,7 +225,7 @@ public final class DDPGAgentModuleBuilder {
         }
 
         /**
-         * Sets the mini-batch size used for learning.
+         * Sets the mini batch size used for learning.
          *
          * @param learningBatchSize the learning batch size
          * @return this builder
@@ -236,9 +236,9 @@ public final class DDPGAgentModuleBuilder {
         }
 
         /**
-         * Sets the replay-buffer capacity.
+         * Sets the replay buffer capacity.
          *
-         * @param replayBufferCapacity the replay-buffer capacity
+         * @param replayBufferCapacity the replay buffer capacity
          * @return this builder
          */
         public Builder replayBufferCapacity(int replayBufferCapacity) {
@@ -260,9 +260,9 @@ public final class DDPGAgentModuleBuilder {
         }
 
         /**
-         * Sets the model-of-others module.
+         * Sets the model of others module.
          *
-         * @param modelOfOthersModule the model-of-others module
+         * @param modelOfOthersModule the model of others module
          * @return this builder
          */
         public Builder modelOfOthers(ModelOfOthersModule modelOfOthersModule) {

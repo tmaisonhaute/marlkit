@@ -46,7 +46,7 @@ public class LauncherPVHMADDPG extends LauncherPVH {
 	
 	public static void main(String[] args) {
         executeThisAgent(
-                "--agentLogLevel", "INFO",
+                "--agentLogLevel", "INFO", "--seed", "9",
                 "--start"
         );
     }

@@ -31,7 +31,7 @@ public class SchedulerModule {
      */
     public SchedulerModule(Class<? extends MLKScheduler> schedulerClass) {
         this.schedulerClass = Objects.requireNonNull(schedulerClass, "schedulerClass");
-        this.trainingExecutionStrategyClass = DecentralizedTrainingExecutionStrategy.class;
+        this.trainingExecutionStrategyClass = null;
     }
     
     /**
@@ -50,19 +50,36 @@ public class SchedulerModule {
      * Creates a fresh scheduler instance.
      *
      * @return a new scheduler
+     * @throws IllegalStateException if the scheduler class cannot be instantiated
      */
     public MLKScheduler createScheduler() {
         try {
-        	MLKScheduler scheduler =  schedulerClass.getDeclaredConstructor().newInstance();
-        	TrainingExecutionStrategy strategy = trainingExecutionStrategyClass.getDeclaredConstructor().newInstance();
-        	
-        	scheduler.setTrainingExecutionStrategy(strategy);
+            MLKScheduler scheduler = schedulerClass.getDeclaredConstructor().newInstance();
+
+            if (trainingExecutionStrategyClass != null) {
+                scheduler.setTrainingExecutionStrategy(createTrainingExecutionStrategy());
+            }
+
             return scheduler;
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(
-                    "Cannot instantiate scheduler [" + schedulerClass.getName() 
-                    + "] or training execution strategy [" + trainingExecutionStrategyClass.getName() + "]",
+                    "Cannot instantiate scheduler: " + schedulerClass.getName(),
                     e
+            );
+        }
+    }
+
+    /**
+     * Creates a fresh training execution strategy instance.
+     * @return a new training execution strategy
+     * @throws IllegalStateException if the training execution strategy class cannot be instantiated
+     */
+    private TrainingExecutionStrategy createTrainingExecutionStrategy() {
+        try {
+            return trainingExecutionStrategyClass.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(
+                    "Cannot instantiate training execution strategy: " + trainingExecutionStrategyClass.getName(),e
             );
         }
     }

@@ -51,7 +51,8 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 
 	private MethodActivator viewers;
 	
-	private int counter = 0;
+	private int counterTimeStep = 0;
+	private int counterEpisode = 0;
 	private boolean isActivated = false;
 
 	/**
@@ -192,7 +193,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		agentsUpdateModelsOfOtherAgents();
 		
-		agentsUpdatePolicy(counter);
+		agentsUpdatePolicy(counterTimeStep);
 		
 		handleEndEpisode();
 		
@@ -200,7 +201,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		handleDisplay();
 		displayViewers();
 		
-		counter++;
+		counterTimeStep++;
 		
 		if(handleEndSimulation()) {
 			getLogger().info("Simulation has Ended");
@@ -330,6 +331,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	protected void handleEndEpisode() {
 		if (getCriteriaEndEpisode().isMet()) {
 			episodeEnded();	
+			counterEpisode++;
 		}
 	}
 	
@@ -362,7 +364,7 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 		
 		reset.execute();
 		getCriteriaEndEpisode().reset();
-		getLogger().info("Episode ended");
+		getLogger().info("Episode ended [" + counterEpisode + "]");
 	}
 	
 	/**

@@ -26,6 +26,8 @@ import learning.actionexplorationstrategies.GaussianNoise;
 import learning.algorithms.MADDPG;
 import learning.nn.ActionValueCritic;
 import learning.policies.MLPDeterministicPolicy;
+import modelofotheragents.factory.MADDPGAccessOtherTargetPoliciesFactory;
+
 
 /**
  * Provides a configurable {@link AgentModule} based on MADDPG.
@@ -126,11 +128,9 @@ public final class MADDPGAgentModuleBuilder {
         private int learningBatchSize = DEFAULT_LEARNING_BATCH_SIZE;
         private int replayBufferCapacity = DEFAULT_REPLAY_BUFFER_CAPACITY;
 
-        private CommunicationModule communicationModule =
-                new CommunicationModule(NoCommunication.class);
+        private CommunicationModule communicationModule = new CommunicationModule(NoCommunication.class);
 
-        private ModelOfOthersModule modelOfOthersModule =
-                new ModelOfOthersModule(null);
+        private ModelOfOthersModule modelOfOthersModule = new ModelOfOthersModule(new MADDPGAccessOtherTargetPoliciesFactory());
 
         private Builder() {
         }
@@ -220,9 +220,9 @@ public final class MADDPGAgentModuleBuilder {
         }
 
         /**
-         * Sets the target-network soft-update coefficient.
+         * Sets the target network soft update coefficient.
          *
-         * @param tau the soft-update coefficient
+         * @param tau the soft update coefficient
          * @return this builder
          */
         public Builder tau(double tau) {
@@ -231,7 +231,7 @@ public final class MADDPGAgentModuleBuilder {
         }
 
         /**
-         * Sets the mini-batch size used for learning.
+         * Sets the mini batch size used for learning.
          *
          * @param learningBatchSize the learning batch size
          * @return this builder
@@ -242,9 +242,9 @@ public final class MADDPGAgentModuleBuilder {
         }
 
         /**
-         * Sets the replay-buffer capacity.
+         * Sets the replay buffer capacity.
          *
-         * @param replayBufferCapacity the replay-buffer capacity
+         * @param replayBufferCapacity the replay buffer capacity
          * @return this builder
          */
         public Builder replayBufferCapacity(int replayBufferCapacity) {
@@ -266,9 +266,9 @@ public final class MADDPGAgentModuleBuilder {
         }
 
         /**
-         * Sets the model-of-others module.
+         * Sets the model of others module.
          *
-         * @param modelOfOthersModule the model-of-others module
+         * @param modelOfOthersModule the model of others module
          * @return this builder
          */
         public Builder modelOfOthers(ModelOfOthersModule modelOfOthersModule) {

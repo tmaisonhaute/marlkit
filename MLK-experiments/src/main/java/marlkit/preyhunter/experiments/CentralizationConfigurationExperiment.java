@@ -6,7 +6,9 @@ import agent.action.Action;
 import agent.action.Move2DDouble;
 import agentmodule.DDPGAgentModuleBuilder;
 import agentmodule.MADDPGAgentModuleBuilder;
+import centralizedtraining.CentralizedCriticTrainingExecutionStrategy;
 import communication.NoCommunication;
+import environment.observation.wrapperobservationvector.WrapperJointObservation;
 import environment.observation.wrapperobservationvector.WrapperObservationVector;
 import experience.TransitionExperienceBuilder;
 import experiment.ConfigurationRunner;
@@ -22,13 +24,14 @@ import experiment.configuration.SystemEvaluatorModule;
 import experiment.configuration.agentspec.AgentSpecActionSize;
 import experiment.configuration.agentspec.AgentSpecCriticActionSize;
 import experiment.configuration.agentspec.AgentSpecCriticInputSize;
+import experiment.configuration.agentspec.AgentSpecCriticInputWrapper;
 import experiment.configuration.agentspec.AgentSpecInputSize;
 import experiment.configuration.agentspec.AgentSpecInputWrapper;
 import experiment.configuration.agentspec.AgentSpecLowerUpperBound;
 import experiment.configuration.agentspec.DefaultAgentSpec;
 import madkit.kernel.Agent;
-import marlkit.preyhunter.agent.HunterAgent;
 import marlkit.preyhunter.agent.HunterAgentDDPG;
+import marlkit.preyhunter.agent.HunterAgentMADDPG;
 import marlkit.preyhunter.agent.PreyAgent;
 import marlkit.preyhunter.environment.EnvPreyVsHunter;
 import marlkit.preyhunter.environment.WrapperPreyHunterObservationVector;
@@ -80,7 +83,7 @@ public class CentralizationConfigurationExperiment extends Agent{
         		.build();
         
 		AgentModule maddpgAgentModule = MADDPGAgentModuleBuilder.builder()
-				.agentClass(HunterAgent.class)
+				.agentClass(HunterAgentMADDPG.class)
 				.build();
         
         
@@ -93,7 +96,7 @@ public class CentralizationConfigurationExperiment extends Agent{
                 .agentGroup(new AgentGroupConfiguration(
                         NB_HUNTER_AGENTS,
                         ddpgAgentModule,
-                        createHunterSpec()
+                        createDDPGHunterSpec()
                 ))
                 .agentGroup(new AgentGroupConfiguration(
                         NB_PREY_AGENTS,
@@ -103,26 +106,28 @@ public class CentralizationConfigurationExperiment extends Agent{
                 .systemEvaluator(preyHunterSystemEvaluator)
                 .build();
         
-//        ExperimentConfiguration maddpg = ExperimentConfiguration.named("PVH_PPO_NoCommunication")
-//                .environment(environmentModule)
-//                .rewardModel(MixedReward.class)
-//                .scheduler(SchedulerPVHCentralizedCriticNoPause.class)
-//                .agentGroup(new AgentGroupConfiguration(
-//                        NB_HUNTER_AGENTS,
-//                        maddpgAgentModule,
-//                        createHunterSpec()
-//                ))
-//                .agentGroup(new AgentGroupConfiguration(
-//                        NB_PREY_AGENTS,
-//                        preyAgentModule,
-//                        createPreySpec()
-//                ))
-//                .systemEvaluator(preyHunterSystemEvaluator)
-//                .build();
+        ExperimentConfiguration maddpg = ExperimentConfiguration.named("MADDPG")
+                .environment(environmentModule)
+                .rewardModel(MixedReward.class)
+                .experienceBuilder(new TransitionExperienceBuilder())
+                .scheduler(SchedulerPVHNoPause.class, CentralizedCriticTrainingExecutionStrategy.class)
+                .agentGroup(new AgentGroupConfiguration(
+                        NB_HUNTER_AGENTS,
+                        maddpgAgentModule,
+                        createMADDPGHunterSpec()
+                ))
+                .agentGroup(new AgentGroupConfiguration(
+                        NB_PREY_AGENTS,
+                        preyAgentModule,
+                        createPreySpec()
+                ))
+                .systemEvaluator(preyHunterSystemEvaluator)
+                .seedIndex(0)
+                .build();
         
 
 
-        launchAgent(new ConfigurationRunner(List.of(ddpg)));
+        launchAgent(new ConfigurationRunner(List.of(maddpg), 1));
 
     }
 
@@ -131,15 +136,24 @@ public class CentralizationConfigurationExperiment extends Agent{
                 "--start");
     }
 
-    private static HunterAgentSpec createHunterSpec() {
+    private static DDPGHunterAgentSpec createDDPGHunterSpec() {
         int maxVisibleHunters = HUNTERS_OBSERVE_OTHER_HUNTERS ? NB_HUNTER_AGENTS - 1 : 0;
         int maxVisiblePreys = NB_PREY_AGENTS;
 
         List<Action> actions = Move2DDouble.getDirectionalMoves(NUMBER_OF_DIRECTIONS, HUNTER_SPEED);
-        WrapperPreyHunterObservationVector wrapper =
-                new WrapperPreyHunterObservationVector(maxVisibleHunters, maxVisiblePreys);
+        WrapperPreyHunterObservationVector wrapper = new WrapperPreyHunterObservationVector(maxVisibleHunters, maxVisiblePreys);
 
-        return new HunterAgentSpec(actions, wrapper);
+        return new DDPGHunterAgentSpec(actions, wrapper);
+    }
+    
+    private static MADDPGHunterAgentSpec createMADDPGHunterSpec() {
+        int maxVisibleHunters = HUNTERS_OBSERVE_OTHER_HUNTERS ? NB_HUNTER_AGENTS - 1 : 0;
+        int maxVisiblePreys = NB_PREY_AGENTS;
+
+        List<Action> actions = Move2DDouble.getDirectionalMoves(NUMBER_OF_DIRECTIONS, HUNTER_SPEED);
+        WrapperPreyHunterObservationVector actorWrapper = new WrapperPreyHunterObservationVector(maxVisibleHunters, maxVisiblePreys);
+
+        return new MADDPGHunterAgentSpec(actions, actorWrapper, NB_HUNTER_AGENTS);
     }
 
     private static DefaultAgentSpec createPreySpec() {
@@ -147,7 +161,7 @@ public class CentralizationConfigurationExperiment extends Agent{
         return new DefaultAgentSpec(actions);
     }
 
-    private static class HunterAgentSpec implements AgentSpecInputSize, AgentSpecInputWrapper, AgentSpecActionSize,
+    private static class DDPGHunterAgentSpec implements AgentSpecInputSize, AgentSpecInputWrapper, AgentSpecActionSize,
 		    AgentSpecCriticInputSize, AgentSpecCriticActionSize, AgentSpecLowerUpperBound {
 		
 		private static final int ACTION_SIZE = 2;
@@ -156,7 +170,7 @@ public class CentralizationConfigurationExperiment extends Agent{
 		private final WrapperObservationVector inputWrapper;
 		private final int inputSize;
 		
-		private HunterAgentSpec(List<Action> possibleActions, WrapperPreyHunterObservationVector inputWrapper) {
+		protected DDPGHunterAgentSpec(List<Action> possibleActions, WrapperPreyHunterObservationVector inputWrapper) {
 		    this.possibleActions = List.copyOf(possibleActions);
 		    this.inputWrapper = inputWrapper;
 		    this.inputSize = inputWrapper.getVectorSize();
@@ -206,5 +220,37 @@ public class CentralizationConfigurationExperiment extends Agent{
 		public int getCriticInputSize() {
 		    return inputSize * NB_HUNTER_AGENTS;
 		}
+    }
+    
+    private static class MADDPGHunterAgentSpec extends DDPGHunterAgentSpec implements AgentSpecCriticInputWrapper {
+
+        private final WrapperObservationVector criticInputWrapper;
+        private final int criticInputSize;
+        private final int criticActionSize;
+
+        private MADDPGHunterAgentSpec(List<Action> possibleActions, WrapperPreyHunterObservationVector actorInputWrapper, int numberOfHunters) {
+            super(possibleActions, actorInputWrapper);
+
+            WrapperJointObservation jointWrapper = new WrapperJointObservation(actorInputWrapper, actorInputWrapper.getVectorSize(), numberOfHunters);
+
+            this.criticInputWrapper = jointWrapper;
+            this.criticInputSize = jointWrapper.getVectorSize();
+            this.criticActionSize = getActionSize() * numberOfHunters;
+        }
+
+        @Override
+        public WrapperObservationVector getCriticInputWrapper() {
+            return criticInputWrapper;
+        }
+
+        @Override
+        public int getCriticInputSize() {
+            return criticInputSize;
+        }
+
+        @Override
+        public int getCriticActionSize() {
+            return criticActionSize;
+        }
     }
 }

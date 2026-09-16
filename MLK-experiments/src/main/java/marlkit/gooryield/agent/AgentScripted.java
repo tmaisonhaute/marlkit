@@ -16,8 +16,7 @@ public class AgentScripted extends AgentStandard {
     @Override
     protected void onActivation() {
         GoOrYieldSwitchingPolicy policy = new GoOrYieldSwitchingPolicy(prng());
-        RandomPolicySwitchAlgorithm algorithm =
-                new RandomPolicySwitchAlgorithm(policy, switchPeriod);
+        RandomPolicySwitchAlgorithm algorithm = new RandomPolicySwitchAlgorithm(policy, switchPeriod);
 
         setPolicy(policy);
         setAlgorithm(algorithm);

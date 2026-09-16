@@ -28,8 +28,7 @@ public class NActionFrequenciesDeterministicPredictionActionTest {
     public void givenNoHistory_whenPredict_thenReturnDefaultCopy() {
         // Given
         ActionInt defaultAction = new ActionInt(1);
-        NActionFrequenciesDeterministicPredictionAction model =
-                new NActionFrequenciesDeterministicPredictionAction(defaultAction, 3);
+        NActionFrequenciesDeterministicPredictionAction model = new NActionFrequenciesDeterministicPredictionAction(defaultAction, 3);
         Observation observation = new DummyObservation();
 
         // When

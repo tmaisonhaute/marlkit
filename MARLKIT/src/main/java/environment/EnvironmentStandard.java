@@ -39,7 +39,7 @@ public abstract class EnvironmentStandard extends Environment2D implements MLKEn
 	protected ReadOnlyCriterion evaluationCriterion;
 	protected ExperienceBuilder experienceBuilder = new DefaultExperienceBuilder();
 	private boolean logSetup = false;
-	private static final int EPISODES_BEFORE_LOG = 1_000;
+	private static final int EPISODES_BEFORE_LOG = 1_00;
 	
 	/**
 	 * The learning data that can be collected during the simulation.

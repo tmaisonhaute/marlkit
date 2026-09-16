@@ -15,7 +15,7 @@ import experiment.configuration.agentspec.AgentSpec;
  *   <li>the agent specification used to create learning components;</li>
  *   <li>the learning module used for this group;</li>
  *   <li>the communication module used for this group;</li>
- *   <li>the model-of-others module used for this group.</li>
+ *   <li>the model of others module used for this group.</li>
  * </ul>
  * <p>
  * This makes it possible to define experiments with several agent populations,
@@ -26,28 +26,43 @@ import experiment.configuration.agentspec.AgentSpec;
 public class AgentGroupConfiguration {
 
     private final int numberOfAgents;
-    private final AgentModule agentFactory;
+    private final AgentModule agentModule;
     private final AgentSpec agentSpec;
+    private final String groupId;
 
-    public AgentGroupConfiguration(int numberOfAgents, AgentModule agentFactory, AgentSpec agentSpec) {
+    public AgentGroupConfiguration(int numberOfAgents, AgentModule agentModule, AgentSpec agentSpec, String groupId) {
         if (numberOfAgents <= 0) {
             throw new IllegalArgumentException("numberOfAgents must be > 0.");
         }
 
         this.numberOfAgents = numberOfAgents;
-        this.agentFactory = Objects.requireNonNull(agentFactory, "agentFactory");
+        this.agentModule = Objects.requireNonNull(agentModule, "agentModule");
         this.agentSpec = Objects.requireNonNull(agentSpec, "agentSpec");
+        this.groupId = groupId; 
+    }
+    
+    public AgentGroupConfiguration(int numberOfAgents, AgentModule agentModule, AgentSpec agentSpec) {
+        this(numberOfAgents, agentModule, agentSpec, null);
     }
 
     public int getNumberOfAgents() {
         return numberOfAgents;
     }
 
-    public AgentModule getAgentFactory() {
-        return agentFactory;
+    public AgentModule getAgentModule() {
+        return agentModule;
     }
 
     public AgentSpec getAgentSpec() {
         return agentSpec;
     }
+    
+    /**
+     * Return the id of the group. This id can be used to identify a group of agents that should be treated differently, especially model by other agents.
+     * This id can be null, in which case the group is not identifiable.
+     * @return the id of the group, or null if the group is not identifiable.
+     */
+	public String getGroupId() {
+		return groupId;
+	}
 }

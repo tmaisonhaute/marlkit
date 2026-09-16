@@ -3,6 +3,9 @@ package marlkit.preyhunter.agent;
 import java.util.List;
 import java.util.Objects;
 
+import agent.modelofotheragent.MLKAgentPredictingOthersAction;
+import agent.modelofotheragent.ModelsManager;
+import agent.modelofotheragent.PredictionModelsManager;
 import agent.modelofotheragent.StandardGroupModelingPredictAction;
 import centralizedtraining.CentralizedCriticTrainingExecutionStrategy;
 import environment.observation.wrapperobservationvector.WrapperJointObservation;
@@ -25,8 +28,8 @@ import util.criteria.ReadOnlyCriterion;
  * <p>Each hunter executes actions from its local observation. During training,
  * its critic receives the mapped observations and actions of all hunters.</p>
  */
-public class HunterAgentMADDPG extends HunterAgentDDPG {
-
+public class HunterAgentMADDPG extends HunterAgentDDPG implements MLKAgentPredictingOthersAction {
+	protected PredictionModelsManager modelsManager;
     
     public HunterAgentMADDPG(Policy policy, Algorithm algorithm) {
 		super();
@@ -34,13 +37,13 @@ public class HunterAgentMADDPG extends HunterAgentDDPG {
 			setPolicy(policy);
 		}
 		else {
-			throw new IllegalArgumentException("HunterAgentDDPG requires a DeterministicPolicyGradient.");
+			throw new IllegalArgumentException("HunterAgentMADDPG requires a DeterministicPolicyGradient.");
 		}
 		if (algorithm instanceof MADDPG) {
 			setAlgorithm(algorithm);
 		}
 		else {
-			throw new IllegalArgumentException("HunterAgentDDPG requires a MADDPG algorithm.");
+			throw new IllegalArgumentException("HunterAgentMADDPG requires a MADDPG algorithm.");
 		}
 	}
 
@@ -114,7 +117,8 @@ public class HunterAgentMADDPG extends HunterAgentDDPG {
             actionsPredictor.addModelPredictAction(hunter, new AccessOtherPolicy(hunter.getTargetActor()));
         }
 
-        ((MADDPG) getAlgorithm()).setActionsPredictor(actionsPredictor);
+        
+        this.setModelsManager(new PredictionModelsManager(actionsPredictor));
     }
 
     /**
@@ -142,5 +146,20 @@ public class HunterAgentMADDPG extends HunterAgentDDPG {
     protected void onActivation() {
         super.onActivation();
         requestRole(getCommunity(), getModelGroup(), CentralizedCriticTrainingExecutionStrategy.CENTRALIZED_CRITIC_AGENT_ROLE);
+    	requestRole(getCommunity(), getModelGroup(), MLKAgentPredictingOthersAction.DEFAULT_AGENT_ROLE);
     }
+
+	@Override
+	public void setModelsManager(ModelsManager modelsManager) {
+	    if (!(modelsManager instanceof PredictionModelsManager predictionModelsManager)) {
+	        throw new IllegalArgumentException("HunterAgentMADDPG requires a PredictionModelsManager.");
+	    }
+
+	    this.modelsManager = predictionModelsManager;
+	}
+
+	@Override
+	public PredictionModelsManager getModelsManager() {
+		return modelsManager;
+	}
 }

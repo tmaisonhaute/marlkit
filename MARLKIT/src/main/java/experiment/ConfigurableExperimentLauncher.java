@@ -86,10 +86,7 @@ public class ConfigurableExperimentLauncher extends MLKLauncher {
 
         for (MLKAgent agent : agents) {
             if (!(agent instanceof SimuAgent simuAgent)) {
-                throw new IllegalStateException(
-                        "Configured agent must extend SimuAgent: "
-                                + agent.getClass().getName()
-                );
+                throw new IllegalStateException("Configured agent must extend SimuAgent: " + agent.getClass().getName());
             }
 
             launchAgent(simuAgent);

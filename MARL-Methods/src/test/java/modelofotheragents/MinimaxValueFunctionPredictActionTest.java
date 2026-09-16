@@ -33,8 +33,7 @@ public class MinimaxValueFunctionPredictActionTest {
     @Test
     public void givenPredictActionWithoutOwnAction_whenCalled_thenThrowUnsupportedOperationException() {
         // Given
-        MinimaxValueFunctionPredictAction model =
-                new MinimaxValueFunctionPredictAction(new DummyEvaluator());
+        MinimaxValueFunctionPredictAction model = new MinimaxValueFunctionPredictAction(new DummyEvaluator());
         model.setPredictingAgent(SELF);
 
         // When / Then

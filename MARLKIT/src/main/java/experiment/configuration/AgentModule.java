@@ -43,8 +43,6 @@ public class AgentModule {
 
         configureCommunication(agent, communicationModel);
 
-        // TODO Configure the model of other agents.
-
         return agent;
     }
 
@@ -79,6 +77,7 @@ public class AgentModule {
 
         communicatingAgent.setCommunicationModel(communicationModel);
     }
+
 
     public Class<? extends MLKAgent> getAgentClass() {
         return agentClass;

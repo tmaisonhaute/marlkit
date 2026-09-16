@@ -1,7 +1,9 @@
 package experiment.configuration;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.OptionalInt;
 
@@ -27,9 +29,9 @@ import trainingexecutionstrategy.TrainingExecutionStrategy;
  * {@link RewardModelModule}, then passes it to the {@link EnvironmentModule}.
  * </p>
  * <p>
- * Unlike a hand-written launcher, this class can describe several homogeneous groups
+ * Unlike a hand written launcher, this class can describe several homogeneous groups
  * of agents. Each group can have its own agent class, learning module, communication
- * module, and model-of-others module.
+ * module, and model of others module.
  * </p>
  */
 public class ExperimentConfiguration {
@@ -141,20 +143,38 @@ public class ExperimentConfiguration {
      * @return the created agents
      */
     public List<MLKAgent> createAgents() {
-        List<MLKAgent> agents = new ArrayList<>();
+        Map<AgentGroupConfiguration, List<MLKAgent>> agentsByGroup = new LinkedHashMap<>();
 
-        for (AgentGroupConfiguration groupConfiguration : agentGroups) {
+        createAllAgents(agentsByGroup);
+        configureMOAForAllAgents(agentsByGroup);
+
+        return agentsByGroup.values().stream().flatMap(List::stream).toList();
+    }
+    
+    /**
+     * Creates all agents for all configured agent groups and stores them in the provided map.
+     * @param agentsByGroup a map to store the created agents by their corresponding agent group configuration
+     */
+	private void createAllAgents( Map<AgentGroupConfiguration, List<MLKAgent>> agentsByGroup) {
+		for (AgentGroupConfiguration groupConfiguration : agentGroups) {
+			List<MLKAgent> groupAgents = new ArrayList<>();
             for (int i = 0; i < groupConfiguration.getNumberOfAgents(); i++) {
                 MLKAgent agent = groupConfiguration
-                        .getAgentFactory()
+                        .getAgentModule()
                         .createAgent(groupConfiguration.getAgentSpec());
-
-                agents.add(agent);
+                
+                groupAgents.add(agent);
             }
+            agentsByGroup.put(groupConfiguration, groupAgents);
         }
-
-        return agents;
-    }
+	}
+	
+	private void configureMOAForAllAgents(Map<AgentGroupConfiguration, List<MLKAgent>> agentsByGroup) {
+		for (AgentGroupConfiguration groupConfiguration : agentGroups) {
+			groupConfiguration.getAgentModule()
+			.getModelOfOthersModule().configure(groupConfiguration, agentsByGroup);
+		}
+	}
 
     /**
      * Creates a fresh system evaluator instance.

@@ -163,7 +163,7 @@ public final class QLearningAgentModuleBuilder {
         /**
          * Sets the model of others module.
          *
-         * @param modelOfOthersModule the model-of-others module
+         * @param modelOfOthersModule the model of others module
          * @return this builder
          */
         public Builder modelOfOthers(ModelOfOthersModule modelOfOthersModule) {

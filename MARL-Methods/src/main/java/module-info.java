@@ -9,5 +9,6 @@ open module marlkit.methods {
 	exports communicationimplementation;
     exports learningstructure;
     exports modelofotheragents;
+    exports modelofotheragents.factory; 
     exports rewardmodelimplementation;
 }
