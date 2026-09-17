@@ -8,7 +8,7 @@ import agent.modelofotheragent.MLKAgentPredictingOthersAction;
 import agent.modelofotheragent.ModelsManager;
 import agent.modelofotheragent.PredictionModelsManager;
 import agent.modelofotheragent.StandardGroupModelingPredictAction;
-import algorithm.QLearningJAL;
+import algorithm.QValueBasedJALPolicy;
 import experience.Experience;
 import modelofotheragents.NActionFrequenciesDeterministicPredictionAction;
 
@@ -34,32 +34,33 @@ public class AgentGoOrYieldActionFrequenciesPrediction extends AgentGoOrYield im
 
     @Override
     protected void initPolicyAndAlgorithm() {
-        StandardGroupModelingPredictAction groupModelPrediction = new StandardGroupModelingPredictAction();
-
-        for (MLKAgent other : otherAgents) {
-            if (other != this) {
-                NActionFrequenciesDeterministicPredictionAction model =
-                        new NActionFrequenciesDeterministicPredictionAction(yield, windowSize);
-                groupModelPrediction.addModelPredictAction(other, model);
-            }
+        if (modelsManager == null) {
+            throw new IllegalStateException("Models manager must be configured before agent activation.");
         }
 
-        QLearningJAL qPolicy = new QLearningJAL(possibleActions, groupModelPrediction);
-        setExplorationStrategy(qPolicy);
+        QValueBasedJALPolicy qPolicy = new QValueBasedJALPolicy(possibleActions);
 
+        setExplorationStrategy(qPolicy);
         setPolicy(qPolicy);
         setupAlgorithm(qPolicy);
-
-        modelsManager = new PredictionModelsManager(groupModelPrediction);
     }
 
+    /**
+     * Sets the other agents to be modeled by this agent.
+     * @param agents the list of other agents to be modeled. The agent itself will be excluded from the list.
+     */
     public void setOtherAgents(List<? extends MLKAgent> agents) {
-        this.otherAgents = new ArrayList<>();
+        StandardGroupModelingPredictAction groupModelPrediction = new StandardGroupModelingPredictAction();
+
         for (MLKAgent agent : agents) {
             if (agent != this) {
-                this.otherAgents.add(agent);
+                NActionFrequenciesDeterministicPredictionAction model = new NActionFrequenciesDeterministicPredictionAction(yield, windowSize);
+
+                groupModelPrediction.addModelPredictAction(agent, model);
             }
         }
+
+        setModelsManager(new PredictionModelsManager(groupModelPrediction));
     }
 
     @Override

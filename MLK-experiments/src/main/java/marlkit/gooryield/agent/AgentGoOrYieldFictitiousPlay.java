@@ -8,7 +8,7 @@ import agent.modelofotheragent.MLKAgentPredictingOthersAction;
 import agent.modelofotheragent.ModelsManager;
 import agent.modelofotheragent.PredictionModelsManager;
 import agent.modelofotheragent.StandardGroupModelingPredictAction;
-import algorithm.QLearningJAL;
+import algorithm.QValueBasedJALPolicy;
 import experience.Experience;
 import modelofotheragents.FictitiousPlayDeterministicPredictAction;
 
@@ -29,38 +29,32 @@ public class AgentGoOrYieldFictitiousPlay extends AgentGoOrYield implements MLKA
 
     @Override
     protected void initPolicyAndAlgorithm() {
-        StandardGroupModelingPredictAction groupModelPrediction = new StandardGroupModelingPredictAction();
-
-        for (MLKAgent other : otherAgents) {
-            if (other != this) {
-            	FictitiousPlayDeterministicPredictAction model = new FictitiousPlayDeterministicPredictAction(yield);
-            	model.setLogger(getLogger());
-                groupModelPrediction.addModelPredictAction(
-                        other,
-                        model
-                );
-            }
+        if (modelsManager == null) {
+            throw new IllegalStateException("Models manager must be configured before agent activation.");
         }
 
-        QLearningJAL qPolicy = new QLearningJAL(possibleActions, groupModelPrediction);
-        setExplorationStrategy(qPolicy);
+        QValueBasedJALPolicy qPolicy = new QValueBasedJALPolicy(possibleActions);
 
+        setExplorationStrategy(qPolicy);
         setPolicy(qPolicy);
         setupAlgorithm(qPolicy);
-
-
-        modelsManager = new PredictionModelsManager(groupModelPrediction);
     }
 
 
-	public void setOtherAgents(List<? extends MLKAgent> agents) {
-	    this.otherAgents = new ArrayList<>();
-	    for (MLKAgent agent : agents) {
-	        if (agent != this) {
-	            this.otherAgents.add(agent);
-	        }
-	    }
-	}
+    public void setOtherAgents(List<? extends MLKAgent> agents) {
+        StandardGroupModelingPredictAction groupModelPrediction = new StandardGroupModelingPredictAction();
+
+        for (MLKAgent agent : agents) {
+            if (agent != this) {
+                FictitiousPlayDeterministicPredictAction model = new FictitiousPlayDeterministicPredictAction(yield);
+
+                model.setLogger(getLogger());
+                groupModelPrediction.addModelPredictAction(agent, model);
+            }
+        }
+
+        setModelsManager(new PredictionModelsManager(groupModelPrediction));
+    }
 
 
     @Override

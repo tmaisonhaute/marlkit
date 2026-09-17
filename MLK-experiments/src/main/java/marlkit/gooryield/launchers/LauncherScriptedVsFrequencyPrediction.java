@@ -28,10 +28,8 @@ public class LauncherScriptedVsFrequencyPrediction extends MLKLauncher {
 
     @Override
     protected void onLaunchSimulatedAgents() {
-        AgentGoOrYieldActionFrequenciesPrediction testedAgent =
-                new AgentGoOrYieldActionFrequenciesPrediction(getWindowSize());
-        AgentScripted scriptedAgent =
-                new AgentScripted(getSwitchPeriod());
+        AgentGoOrYieldActionFrequenciesPrediction testedAgent = new AgentGoOrYieldActionFrequenciesPrediction(getWindowSize());
+        AgentScripted scriptedAgent = new AgentScripted(getSwitchPeriod());
 
         testedAgent.setOtherAgents(List.of(scriptedAgent));
 

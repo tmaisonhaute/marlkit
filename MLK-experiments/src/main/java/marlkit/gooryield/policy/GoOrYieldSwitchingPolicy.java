@@ -2,7 +2,6 @@ package marlkit.gooryield.policy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.random.RandomGenerator;
 
 import agent.MLKAgent;
 import agent.action.Action;
@@ -16,19 +15,23 @@ public class GoOrYieldSwitchingPolicy implements Policy {
     protected final List<StochasticFixedPolicy> availablePolicies;
     protected StochasticFixedPolicy currentPolicy;
 
-    public GoOrYieldSwitchingPolicy(RandomGenerator prng) {
+    public GoOrYieldSwitchingPolicy() {
         this.availablePolicies = new ArrayList<>();
-        this.availablePolicies.add(new AlwaysYieldPolicy(prng));
-        this.availablePolicies.add(new AlwaysGoPolicy(prng));
-        this.availablePolicies.add(new Go50Yield50Policy(prng));
-        this.availablePolicies.add(new Go75Yield25Policy(prng));
-        this.availablePolicies.add(new Go25Yield75Policy(prng));
-        this.currentPolicy = availablePolicies.get(0);
+        
     }
+    
 
     @Override
     public void init(MLKAgent agent) {
-        this.agent = agent;
+    	this.agent = agent;
+    	
+    	this.availablePolicies.add(new AlwaysGoPolicy(prng()));
+    	this.availablePolicies.add(new Go75Yield25Policy(prng()));
+    	this.availablePolicies.add(new Go25Yield75Policy(prng()));
+    	this.availablePolicies.add(new AlwaysYieldPolicy(prng()));
+    	this.availablePolicies.add(new Go50Yield50Policy(prng()));
+        this.currentPolicy = availablePolicies.get(0);
+        
         for (StochasticFixedPolicy policy : availablePolicies) {
             policy.init(agent);
         }
@@ -45,10 +48,22 @@ public class GoOrYieldSwitchingPolicy implements Policy {
         return currentPolicy.selectAction(input);
     }
 
+    /**
+     * Selects a random policy from the available policies and sets it as the current policy.
+     */
     public void selectRandomPolicy() {
         int index = prng().nextInt(availablePolicies.size());
         currentPolicy = availablePolicies.get(index);
     }
+    
+    /**
+     * Selects the next policy in the list of available policies and sets it as the current policy.
+     */
+	public void selectNextPolicy() {
+		int currentIndex = availablePolicies.indexOf(currentPolicy);
+		int nextIndex = (currentIndex + 1) % availablePolicies.size();
+		currentPolicy = availablePolicies.get(nextIndex);
+	}
 
     public StochasticFixedPolicy getCurrentPolicy() {
         return currentPolicy;

@@ -12,7 +12,7 @@ import agent.modelofotheragent.MLKAgentPredictingOthersAction;
 import agent.modelofotheragent.ModelsManager;
 import agent.modelofotheragent.PredictionModelsManager;
 import agent.modelofotheragent.StandardGroupModelingPredictAction;
-import algorithm.QLearningJAL;
+import algorithm.QValueBasedJALPolicy;
 import environment.observation.Observation;
 import experience.Experience;
 import learning.algorithms.QLearning;
@@ -43,7 +43,7 @@ public class CollectingResourceJALAgent extends CollectingResourceAgent implemen
 		this.groupModel = new StandardGroupModelingPredictAction();
 		this.modeledAgents = new HashSet<>();
 
-		QLearningJAL qPolicy = new QLearningJAL(possibleActions, groupModel);
+		QValueBasedJALPolicy qPolicy = new QValueBasedJALPolicy(possibleActions);
 		qPolicy.setExplorationStrategy(new EpsilonGreedyExponentialDecay(0.05, 0.01));
 		QLearning qLearning = new QLearning(qPolicy, possibleActions, 0.2, 0.95);
 

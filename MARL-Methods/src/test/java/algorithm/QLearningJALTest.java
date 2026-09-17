@@ -5,15 +5,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.random.RandomGenerator;
 
 import org.testng.annotations.Test;
 
-import agent.MLKAgent;
 import agent.action.Action;
 import agent.action.ActionInt;
 import agent.action.MappedJointAction;
 import agent.modelofotheragent.GroupModelPredictAction;
+import agent.modelofotheragent.MLKAgentPredictingOthersAction;
+import agent.modelofotheragent.ModelsManager;
+import agent.modelofotheragent.PredictionModelsManager;
 import environment.MLKEnvironment;
 import environment.observation.MappedJointObservation;
 import environment.observation.Observation;
@@ -26,21 +29,27 @@ import util.Pair;
 
 public class QLearningJALTest {
 
-    private static final MLKAgent SELF = new DummyAgent("self");
-    private static final MLKAgent OTHER = new DummyAgent("other");
+    private static final DummyAgent SELF = new DummyAgent("self");
+    private static final DummyAgent OTHER = new DummyAgent("other");
 
     private static MappedJointAction fixedPrediction() {
         MappedJointAction prediction = new MappedJointAction();
         prediction.addAction(OTHER, new ActionInt(99));
         return prediction;
     }
+    
+//    @BeforeMethod
+//    public void setUp() {
+//    	SELF.setModelsManager(new PredictionModelsManager(new RecordingGroupModelPredictAction(fixedPrediction())));
+//    }
 
     @Test
     public void givenExplorationReturnsAction_whenSelectAction_thenReturnExploratoryActionAndDoNotCallModel() {
         // Given
         ActionInt exploratoryAction = new ActionInt(9);
         RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(fixedPrediction());
-        QLearningJAL policy = new TestableQLearningJAL(List.of(new ActionInt(1), new ActionInt(2)), model);
+        SELF.setModelsManager(new PredictionModelsManager(model));
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(List.of(new ActionInt(1), new ActionInt(2)));
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.of(exploratoryAction)));
         policy.init(SELF);
 
@@ -60,7 +69,8 @@ public class QLearningJALTest {
         DummyObservation input = new DummyObservation();
 
         RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(fixedPrediction());
-        QLearningJAL policy = new TestableQLearningJAL(List.of(action1, action2), model);
+        SELF.setModelsManager(new PredictionModelsManager(model));
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(List.of(action1, action2));
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
         policy.init(SELF);
 
@@ -84,7 +94,8 @@ public class QLearningJALTest {
     public void givenNullModelAndExplorationReturnsAction_whenSelectAction_thenReturnExploratoryAction() {
         // Given
         ActionInt exploratoryAction = new ActionInt(9);
-        QLearningJAL policy = new TestableQLearningJAL(List.of(new ActionInt(1), new ActionInt(2)), null);
+        SELF.setModelsManager(new PredictionModelsManager(null));
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(List.of(new ActionInt(1), new ActionInt(2)));
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.of(exploratoryAction)));
         policy.init(SELF);
 
@@ -99,7 +110,8 @@ public class QLearningJALTest {
     public void givenEmptyActionSetAndNoExploration_whenSelectAction_thenReturnNull() {
         // Given
         RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(fixedPrediction());
-        QLearningJAL policy = new TestableQLearningJAL(List.of(), model);
+        SELF.setModelsManager(new PredictionModelsManager(model));
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(List.of());
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
         policy.init(SELF);
 
@@ -119,8 +131,10 @@ public class QLearningJALTest {
         DummyObservation input = new DummyObservation();
         RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(fixedPrediction());
 
-        QLearningJAL policy1 = new TestableQLearningJAL(List.of(action1, action2), model);
-        QLearningJAL policy2 = new TestableQLearningJAL(List.of(action1, action2), model);
+        SELF.setModelsManager(new PredictionModelsManager(model));
+        
+        QValueBasedJALPolicy policy1 = new TestableQLearningJAL(List.of(action1, action2));
+        QValueBasedJALPolicy policy2 = new TestableQLearningJAL(List.of(action1, action2));
 
         policy1.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
         policy2.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
@@ -142,10 +156,8 @@ public class QLearningJALTest {
     @Test(expectedExceptions = NullPointerException.class)
     public void givenNullModelAndNoExploration_whenSelectAction_thenThrowException() {
         // Given
-        QLearningJAL policy = new TestableQLearningJAL(
-                List.of(new ActionInt(1), new ActionInt(2)),
-                null
-        );
+    	SELF.setModelsManager(new PredictionModelsManager(null));
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(List.of(new ActionInt(1), new ActionInt(2)));
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
         policy.init(SELF);
 
@@ -160,10 +172,10 @@ public class QLearningJALTest {
         ActionInt action2 = new ActionInt(2);
         DummyObservation input = new DummyObservation();
 
-        RecordingGroupModelPredictAction model =
-            new RecordingGroupModelPredictAction(fixedPrediction());
+        RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(fixedPrediction());
+        SELF.setModelsManager(new PredictionModelsManager(model));
 
-        QLearningJAL policy = new TestableQLearningJAL(List.of(action1, action2), model);
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(List.of(action1, action2));
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
         policy.init(SELF);
 
@@ -186,10 +198,10 @@ public class QLearningJALTest {
         ActionInt action1 = new ActionInt(1);
         ActionInt action2 = new ActionInt(2);
 
-        RecordingGroupModelPredictAction model =
-            new RecordingGroupModelPredictAction(fixedPrediction());
-
-        QLearningJAL policy = new TestableQLearningJAL(List.of(action1, action2), model);
+        RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(fixedPrediction());
+        SELF.setModelsManager(new PredictionModelsManager(model));
+        
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(List.of(action1, action2));
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
         policy.init(SELF);
 
@@ -209,10 +221,10 @@ public class QLearningJALTest {
 
         MappedJointAction predicted = new MappedJointAction();
         predicted.addAction(OTHER, otherAction);
-        RecordingGroupModelPredictAction model =
-                new RecordingGroupModelPredictAction(predicted);
+        RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(predicted);
+        SELF.setModelsManager(new PredictionModelsManager(model));
 
-        QLearningJAL policy = new TestableQLearningJAL(List.of(ownAction), model);
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(List.of(ownAction));
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
         policy.init(SELF);
 
@@ -235,10 +247,10 @@ public class QLearningJALTest {
 
         MappedJointAction predicted = new MappedJointAction();
         predicted.addAction(OTHER, otherAction);
-        RecordingGroupModelPredictAction model =
-                new RecordingGroupModelPredictAction(predicted);
+        RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(predicted);
+        SELF.setModelsManager(new PredictionModelsManager(model));
 
-        QLearningJAL policy = new TestableQLearningJAL(List.of(ownAction), model);
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(List.of(ownAction));
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
         policy.init(SELF);
 
@@ -263,10 +275,10 @@ public class QLearningJALTest {
         List<Action> actions = new ArrayList<>();
         actions.add(action1);
 
-        RecordingGroupModelPredictAction model =
-            new RecordingGroupModelPredictAction(fixedPrediction());
+        RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(fixedPrediction());
+        SELF.setModelsManager(new PredictionModelsManager(model));
 
-        QLearningJAL policy = new TestableQLearningJAL(actions, model);
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(actions);
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
         policy.init(SELF);
 
@@ -288,10 +300,10 @@ public class QLearningJALTest {
         DummyObservation input = new DummyObservation();
 
         MappedJointAction sharedPrediction = fixedPrediction();
-        RecordingGroupModelPredictAction model =
-                new RecordingGroupModelPredictAction(sharedPrediction);
+        RecordingGroupModelPredictAction model = new RecordingGroupModelPredictAction(sharedPrediction);
+        SELF.setModelsManager(new PredictionModelsManager(model));
 
-        QLearningJAL policy = new TestableQLearningJAL(List.of(action1, action2), model);
+        QValueBasedJALPolicy policy = new TestableQLearningJAL(List.of(action1, action2));
         policy.setExplorationStrategy(new FixedExplorationStrategy(Optional.empty()));
         policy.init(SELF);
 
@@ -308,13 +320,13 @@ public class QLearningJALTest {
         assertThat(selected).isEqualTo(action1);
     }
 
-    private static final class TestableQLearningJAL extends QLearningJAL {
+    private static final class TestableQLearningJAL extends QValueBasedJALPolicy {
 
         private final RandomGenerator randomGenerator;
 
-        private TestableQLearningJAL(List<Action> actionsSet, GroupModelPredictAction moaGroupPredictAction) {
-            super(actionsSet, moaGroupPredictAction);
-            this.randomGenerator = new java.util.Random(0);
+        private TestableQLearningJAL(List<Action> actionsSet) {
+            super(actionsSet);
+            this.randomGenerator = new Random(0);
         }
 
         @Override
@@ -415,8 +427,9 @@ public class QLearningJALTest {
         }
     }
 
-    private static final class DummyAgent implements MLKAgent {
+    private static final class DummyAgent implements MLKAgentPredictingOthersAction {
         private final String name;
+        protected PredictionModelsManager modelsManager;
 
         private DummyAgent(String name) {
             this.name = name;
@@ -531,6 +544,17 @@ public class QLearningJALTest {
 		@Override
 		public List<String> getAdditionalRole() {
 			return null;
+		}
+
+		@Override
+		public void setModelsManager(ModelsManager modelsManager) {
+			this.modelsManager = (PredictionModelsManager) modelsManager;
+			
+		}
+
+		@Override
+		public PredictionModelsManager getModelsManager() {
+			return modelsManager;
 		}
     }
 }

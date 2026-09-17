@@ -3,7 +3,7 @@ package marlkit.gooryield.agent;
 import agent.modelofotheragent.MLKAgentPredictingOthersAction;
 import agent.modelofotheragent.ModelsManager;
 import agent.modelofotheragent.PredictionModelsManager;
-import algorithm.QLearningJAL;
+import algorithm.QValueBasedJALPolicy;
 import experience.Experience;
 import modelofotheragents.MinimaxValueFunctionPredictAction;
 
@@ -25,7 +25,7 @@ public class AgentGoOrYieldMinMax extends AgentGoOrYield implements MLKAgentPred
 	protected void initPolicyAndAlgorithm() {
 		MinimaxValueFunctionPredictAction groupModelPrediction = new MinimaxValueFunctionPredictAction();
 		
-		QLearningJAL qPolicy = new QLearningJAL(possibleActions, groupModelPrediction);
+		QValueBasedJALPolicy qPolicy = new QValueBasedJALPolicy(possibleActions);
 		setExplorationStrategy(qPolicy);
 		
 		groupModelPrediction.setActionEvaluator(qPolicy.getTable());

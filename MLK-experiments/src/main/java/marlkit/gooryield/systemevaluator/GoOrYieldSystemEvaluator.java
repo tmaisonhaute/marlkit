@@ -1,5 +1,6 @@
 package marlkit.gooryield.systemevaluator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,11 +16,15 @@ public class GoOrYieldSystemEvaluator implements SystemEvaluator {
     protected Measure goGoProportionMeasure;
     protected Measure yieldYieldProportionMeasure;
     protected Measure totalRewardMeasure;
+    protected Measure selfGoProportionMeasure;
+    protected Measure opponentGoProportionMeasure;
 
     protected int yieldGoCount;
     protected int goGoCount;
     protected int yieldYieldCount;
     protected int totalStepsCount;
+    protected List<Boolean> selfGoList;
+    protected List<Boolean> opponentGoList;
 
     protected double totalRewardValue;
 
@@ -28,6 +33,11 @@ public class GoOrYieldSystemEvaluator implements SystemEvaluator {
         this.goGoProportionMeasure = new Measure("GoGoProportion", 0.0);
         this.yieldYieldProportionMeasure = new Measure("YieldYieldProportion", 0.0);
         this.totalRewardMeasure = new Measure("TotalReward", 0.0);
+        this.selfGoProportionMeasure = new Measure("SelfGoProportion", 0.0);
+        this.opponentGoProportionMeasure = new Measure("OpponentGoProportion", 0.0);
+        selfGoList = new ArrayList<>();
+        opponentGoList = new ArrayList<>();
+        
     }
 
     /**
@@ -90,6 +100,16 @@ public class GoOrYieldSystemEvaluator implements SystemEvaluator {
         else if (representativeEvent.isGoYield()) {
             yieldGoCount++;
         }
+		
+        selfGoList.add(representativeEvent.isSelfGo());
+		opponentGoList.add(representativeEvent.isOtherGo());
+		if (opponentGoList.size() > 500) {
+			opponentGoList.remove(0);
+		}
+		if (selfGoList.size() > 500) {
+			selfGoList.remove(0);
+		}
+		
     }
 
     /**
@@ -114,11 +134,15 @@ public class GoOrYieldSystemEvaluator implements SystemEvaluator {
         double yieldGoProp = totalStepsCount == 0 ? 0.0 : ((double) yieldGoCount) / totalStepsCount;
         double goGoProp = totalStepsCount == 0 ? 0.0 : ((double) goGoCount) / totalStepsCount;
         double yieldYieldProp = totalStepsCount == 0 ? 0.0 : ((double) yieldYieldCount) / totalStepsCount;
+        double selfGoProp = selfGoList.isEmpty() ? 0.0 : ((double) selfGoList.stream().filter(go -> go).count()) / selfGoList.size();
+        double opponentGoProp = opponentGoList.isEmpty() ? 0.0 : ((double) opponentGoList.stream().filter(go -> go).count()) / opponentGoList.size();
 
         yieldGoProportionMeasure.setValue(yieldGoProp);
         goGoProportionMeasure.setValue(goGoProp);
         yieldYieldProportionMeasure.setValue(yieldYieldProp);
         totalRewardMeasure.setValue(totalRewardValue);
+        selfGoProportionMeasure.setValue(selfGoProp);
+        opponentGoProportionMeasure.setValue(opponentGoProp);
     }
 
     @Override
@@ -127,7 +151,9 @@ public class GoOrYieldSystemEvaluator implements SystemEvaluator {
                 yieldGoProportionMeasure,
                 goGoProportionMeasure,
                 yieldYieldProportionMeasure,
-                totalRewardMeasure
+                totalRewardMeasure,
+                selfGoProportionMeasure,
+                opponentGoProportionMeasure
         );
     }
 
@@ -137,16 +163,14 @@ public class GoOrYieldSystemEvaluator implements SystemEvaluator {
                 yieldGoProportionMeasure.toString(),
                 goGoProportionMeasure.toString(),
                 yieldYieldProportionMeasure.toString(),
-                totalRewardMeasure.toString()
+                totalRewardMeasure.toString(),
+                selfGoProportionMeasure.toString(),
+                opponentGoProportionMeasure.toString()
         );
     }
 
     @Override
     public void reset() {
-        //yieldGoCount = 0;
-        //goGoCount = 0;
-        //yieldYieldCount = 0;
-        //totalStepsCount = 0;
         totalRewardValue = 0.0;
     }
 }

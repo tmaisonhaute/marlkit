@@ -16,6 +16,7 @@ import marlkit.gooryield.agent.action.ActionYield;
 import marlkit.gooryield.environment.events.MatrixRewardEvent;
 import marlkit.gooryield.systemevaluator.GoOrYieldSystemEvaluator;
 import reward.ReactionEvent;
+import reward.RewardModel;
 import rewardmodelimplementation.MixedReward;
 
 /**
@@ -50,8 +51,13 @@ public class EnvGoOrYield extends EnvironmentStandard {
 	}
 
 	public EnvGoOrYield() {
-		super(1, 1, new MixedReward());
+		this(new MixedReward());
+	}
+	
+	public EnvGoOrYield(RewardModel rewardModel) {
+		super(1, 1, rewardModel);
 		setSystemEvaluator(new GoOrYieldSystemEvaluator());
+		
 	}
 
 	@Override

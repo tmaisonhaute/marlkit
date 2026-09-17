@@ -58,17 +58,13 @@ public class CentralizationConfigurationExperiment extends Agent{
     	EnvironmentModule environmentModule = new ConfigurableEnvironmentModule(EnvPreyVsHunter.class, LauncherPVH.ENV_WIDTH, LauncherPVH.ENV_HEIGHT, 
     			LauncherPVH.CAPTURE_RADIUS, LauncherPVH.HUNTER_VIEW_RANGE, LauncherPVH.PREY_VIEW_RANGE, LauncherPVH.REQUIRED_HUNTERS_TO_CATCH);
 
-        LearningModule preyLearning =
-                new LearningModule(new PreyComponentsCreator(PREY_SPEED));
+        LearningModule preyLearning = new LearningModule(new PreyComponentsCreator(PREY_SPEED));
 
-        CommunicationModule noCommunication =
-                new CommunicationModule(NoCommunication.class);
+        CommunicationModule noCommunication = new CommunicationModule(NoCommunication.class);
 
-        ModelOfOthersModule noModelOfOthers =
-                new ModelOfOthersModule(null);
+        ModelOfOthersModule noModelOfOthers = new ModelOfOthersModule(null);
 
-        SystemEvaluatorModule preyHunterSystemEvaluator =
-                new SystemEvaluatorModule(PreyHunterSystemEvaluator.class);
+        SystemEvaluatorModule preyHunterSystemEvaluator = new SystemEvaluatorModule(PreyHunterSystemEvaluator.class);
 
         AgentModule preyAgentModule = new AgentModule(
         		PreyAgent.class,

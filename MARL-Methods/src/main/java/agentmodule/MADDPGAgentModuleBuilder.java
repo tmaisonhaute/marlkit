@@ -113,8 +113,7 @@ public final class MADDPGAgentModuleBuilder {
 
         private Class<? extends MLKAgent> agentClass = AgentStandard.class;
 
-        private int[] actorHiddenLayers =
-                Arrays.copyOf(DEFAULT_ACTOR_HIDDEN_LAYERS, DEFAULT_ACTOR_HIDDEN_LAYERS.length);
+        private int[] actorHiddenLayers = Arrays.copyOf(DEFAULT_ACTOR_HIDDEN_LAYERS, DEFAULT_ACTOR_HIDDEN_LAYERS.length);
 
         private int criticHiddenSize = DEFAULT_CRITIC_HIDDEN_SIZE;
 
@@ -287,8 +286,7 @@ public final class MADDPGAgentModuleBuilder {
         public AgentModule build() {
             validate();
 
-            LearningComponentsCreator learningComponentsCreator =
-                    new MADDPGComponentsCreator(
+            LearningComponentsCreator learningComponentsCreator = new MADDPGComponentsCreator(
                             actorHiddenLayers,
                             criticHiddenSize,
                             noiseCoefficient,
@@ -300,8 +298,7 @@ public final class MADDPGAgentModuleBuilder {
                             replayBufferCapacity
                     );
 
-            LearningModule learningModule =
-                    new LearningModule(learningComponentsCreator);
+            LearningModule learningModule = new LearningModule(learningComponentsCreator);
 
             return new AgentModule(
                     agentClass,
@@ -460,30 +457,24 @@ public final class MADDPGAgentModuleBuilder {
             double maximumAbsoluteBound =
                     Math.max(Math.abs(lowerBound), Math.abs(upperBound));
 
-            ContinuousActionExplorationStrategy explorationStrategy =
-                    new GaussianNoise(maximumAbsoluteBound * noiseCoefficient);
+            ContinuousActionExplorationStrategy explorationStrategy = new GaussianNoise(maximumAbsoluteBound * noiseCoefficient);
 
-            MLPDeterministicPolicy actor =
-                    new MLPDeterministicPolicy(inputWrapperSpec.getInputWrapper(), inputSizeSpec.getInputSize(), actorHiddenLayers,
+            MLPDeterministicPolicy actor = new MLPDeterministicPolicy(inputWrapperSpec.getInputWrapper(), inputSizeSpec.getInputSize(), actorHiddenLayers,
                             actionSizeSpec.getActionSize(), lowerBound, upperBound, explorationStrategy
                     );
 
-            MLPDeterministicPolicy targetActor =
-                    new MLPDeterministicPolicy(inputWrapperSpec.getInputWrapper(), inputSizeSpec.getInputSize(), actorHiddenLayers,
+            MLPDeterministicPolicy targetActor = new MLPDeterministicPolicy(inputWrapperSpec.getInputWrapper(), inputSizeSpec.getInputSize(), actorHiddenLayers,
                             actionSizeSpec.getActionSize(), lowerBound, upperBound
                     );
 
-            ActionValueCritic critic =
-                    new ActionValueCritic(criticInputSizeSpec.getCriticInputSize(), criticActionSizeSpec.getCriticActionSize(),
+            ActionValueCritic critic = new ActionValueCritic(criticInputSizeSpec.getCriticInputSize(), criticActionSizeSpec.getCriticActionSize(),
                             criticHiddenSize, criticInputWrapperSpec.getCriticInputWrapper());
 
-            ActionValueCritic targetCritic =
-                    new ActionValueCritic(criticInputSizeSpec.getCriticInputSize(), criticActionSizeSpec.getCriticActionSize(),
+            ActionValueCritic targetCritic = new ActionValueCritic(criticInputSizeSpec.getCriticInputSize(), criticActionSizeSpec.getCriticActionSize(),
                             criticHiddenSize, criticInputWrapperSpec.getCriticInputWrapper());
 
-            MADDPG algorithm =
-                    new MADDPG(actor, targetActor, critic, targetCritic, actorLearningRate, criticLearningRate, 
-                    		gamma, tau, learningBatchSize, replayBufferCapacity);
+            MADDPG algorithm = new MADDPG(actor, targetActor, critic, targetCritic, actorLearningRate, criticLearningRate, 
+            		gamma, tau, learningBatchSize, replayBufferCapacity);
 
             return new LearningComponents(actor, algorithm);
         }

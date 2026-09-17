@@ -1,7 +1,8 @@
 package marlkit.gooryield.agent;
 
 import agent.AgentStandard;
-import marlkit.gooryield.algorithm.RandomPolicySwitchAlgorithm;
+import learning.Algorithm;
+import marlkit.gooryield.algorithm.SequentialPolicySwitchAlgorithm;
 import marlkit.gooryield.policy.GoOrYieldSwitchingPolicy;
 
 public class AgentScripted extends AgentStandard {
@@ -11,16 +12,11 @@ public class AgentScripted extends AgentStandard {
     public AgentScripted(int switchPeriod) {
         super();
         this.switchPeriod = switchPeriod;
-    }
-
-    @Override
-    protected void onActivation() {
-        GoOrYieldSwitchingPolicy policy = new GoOrYieldSwitchingPolicy(prng());
-        RandomPolicySwitchAlgorithm algorithm = new RandomPolicySwitchAlgorithm(policy, switchPeriod);
-
+        
+        GoOrYieldSwitchingPolicy policy = new GoOrYieldSwitchingPolicy();
+        Algorithm algorithm = new SequentialPolicySwitchAlgorithm(policy, switchPeriod);
         setPolicy(policy);
         setAlgorithm(algorithm);
-
-        super.onActivation();
     }
+
 }
