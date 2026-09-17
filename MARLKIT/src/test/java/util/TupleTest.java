@@ -62,7 +62,7 @@ public class TupleTest {
         Tuple tuple2 = new Tuple(values2);
 
         // When
-        Tuple result = tuple1.add(tuple2);
+        Tuple result = Tuple.add(tuple1, tuple2);
 
         // Then
         assertThat(result.getSize()).isEqualTo(3);
@@ -92,7 +92,7 @@ public class TupleTest {
         Tuple tuple = new Tuple(values);
 
         // When
-        Tuple result = tuple.multiply(2.0);
+        Tuple result = Tuple.multiply(tuple, 2.0);
 
         // Then
         assertThat(result.getSize()).isEqualTo(3);
@@ -108,7 +108,7 @@ public class TupleTest {
         Tuple tuple = new Tuple(values);
 
         // When
-        Tuple result = tuple.multiply(0.0);
+        Tuple result = Tuple.multiply(tuple, 0.0);
 
         // Then
         assertThat(result.getValue(0)).isEqualTo(0.0);

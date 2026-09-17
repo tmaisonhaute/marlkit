@@ -74,7 +74,7 @@ public class ObservationPositionValue implements Observation {
 	    ObservationPositionValue otherOPV = (ObservationPositionValue) other;
 	    
 
-	    Tuple averagePosition = this.position.add(otherOPV.position).multiply(0.5);
+	    Tuple averagePosition = Tuple.multiply(Tuple.add(position, otherOPV.position),0.5);
 	    double averageValue = (this.value + otherOPV.value) * 0.5;
 	    this.position = averagePosition;
 	    this.value = averageValue;

@@ -48,19 +48,51 @@ public class Tuple {
 	}
 	
 	/**
+	 * Adds two tuples element-wise. Throws an exception if the tuples have different sizes.
+	 * @param t1 the first tuple
+	 * @param t2 the second tuple
+	 * @return a new tuple with summed values
+	 * @throws IllegalArgumentException if tuples have different sizes
+	 */
+	public static Tuple add(Tuple t1, Tuple t2) {
+		if (t1.getSize() != t2.getSize()) {
+			throw new IllegalArgumentException("Tuple of differents size can't be added");
+		}
+		List<Double> newL = new ArrayList<>();
+		for (int i = 0; i < t1.getSize(); i++) {
+			Double v = t1.getValue(i) + t2.getValue(i);
+			newL.add(v);
+		}
+		return new Tuple(newL);
+    }
+	
+	/**
 	 * Adds another tuple element-wise.
 	 *
 	 * @param t the tuple to add
 	 * @return a new tuple with summed values
 	 * @throws IllegalArgumentException if tuples have different sizes
 	 */
-	public Tuple add(Tuple t){
+	public void add(Tuple t){
 		if (t.getSize() != this.getSize()) {
 			throw new IllegalArgumentException("Tuple of differents size can't be added");
 		}
-		List<Double> newL = new ArrayList<>();
 		for (int i = 0; i < this.getSize(); i++) {
 			Double v = this.getValue(i) + t.getValue(i);
+			this.setValue(i, v);
+		}
+	}
+	
+	/**
+	 * Multiplies all elements of a tuple by a scalar.
+	 * @param t the tuple to scale
+	 * @param m the multiplier
+	 * @return a new tuple with scaled values
+	 */
+	public static Tuple multiply(Tuple t, double m) {
+		List<Double> newL = new ArrayList<>();
+		for (int i = 0; i < t.getSize(); i++) {
+			Double v = t.getValue(i) * m;
 			newL.add(v);
 		}
 		return new Tuple(newL);
@@ -72,13 +104,11 @@ public class Tuple {
 	 * @param m the multiplier
 	 * @return a new tuple with scaled values
 	 */
-	public Tuple multiply(double m){
-		List<Double> newL = new ArrayList<>();
+	public void multiply(double m){
 		for(int i = 0; i < this.getSize(); i ++) {
 			Double v = this.getValue(i) * m;
-			newL.add(v);
+			this.setValue(i, v);
 		}
-		return new Tuple(newL);
 	}
 	
 	/**

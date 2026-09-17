@@ -1,10 +1,11 @@
 package environment.state;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import org.testng.annotations.Test;
 
 import agent.MLKAgent;
@@ -165,5 +166,70 @@ public class State2DGridIntTest {
 		assertThat(containsAgentMarkers).isFalse();
 		assertThat(containsCellValue).isTrue();
 	}
+	
+	@Test
+	public void givenTwoMutuallyVisibleAgents_whenGetObservations_thenObservationsAreCorrectAndConsistent() {
+	    // Given
+	    State2DGridInt grid = new State2DGridInt(5, 5, 3, true, true);
+
+	    MLKAgent firstAgent = mock(MLKAgent.class);
+	    MLKAgent secondAgent = mock(MLKAgent.class);
+
+	    grid.addAgent(firstAgent, 1, 1);
+	    grid.addAgent(secondAgent, 3, 2);
+	    grid.setValue(2, 2, 5);
+
+	    // When
+	    Map<MLKAgent, Observation> observations = grid.getObservations();
+
+	    // Then
+	    assertThat(observations).containsKeys(firstAgent, secondAgent);
+	    assertThat(observations.get(firstAgent)).isInstanceOf(ObservationPositionsValues.class);
+	    assertThat(observations.get(secondAgent)).isInstanceOf(ObservationPositionsValues.class);
+
+	    ObservationPositionsValues firstObservation = (ObservationPositionsValues) observations.get(firstAgent);
+	    ObservationPositionsValues secondObservation = (ObservationPositionsValues) observations.get(secondAgent);
+
+	    Tuple firstAgentPosition = findPosition(firstObservation, -1.0);
+	    Tuple secondAgentPosition = findPosition(secondObservation, -1.0);
+
+	    Tuple secondRelativeToFirst = findPosition(firstObservation, -2.0);
+	    Tuple firstRelativeToSecond = findPosition(secondObservation, -2.0);
+
+	    Tuple resourceRelativeToFirst = findPosition(firstObservation, 5.0);
+	    Tuple resourceRelativeToSecond = findPosition(secondObservation, 5.0);
+
+	    assertThat(firstAgentPosition).isEqualTo(new Tuple(List.of(1.0, 1.0)));
+	    assertThat(secondAgentPosition).isEqualTo(new Tuple(List.of(3.0, 2.0)));
+
+	    assertThat(secondRelativeToFirst).isEqualTo(new Tuple(List.of(2.0, 1.0)));
+	    assertThat(firstRelativeToSecond).isEqualTo(new Tuple(List.of(-2.0, -1.0)));
+
+	    assertThat(resourceRelativeToFirst).isEqualTo(new Tuple(List.of(1.0, 1.0)));
+	    assertThat(resourceRelativeToSecond).isEqualTo(new Tuple(List.of(-1.0, 0.0)));
+
+	    assertThat(secondRelativeToFirst.getValue(0)).isEqualTo(-firstRelativeToSecond.getValue(0));
+	    assertThat(secondRelativeToFirst.getValue(1)).isEqualTo(-firstRelativeToSecond.getValue(1));
+
+	    assertThat(resourceRelativeToFirst.getValue(0) - secondRelativeToFirst.getValue(0)).isEqualTo(resourceRelativeToSecond.getValue(0));
+	    assertThat(resourceRelativeToFirst.getValue(1) - secondRelativeToFirst.getValue(1)).isEqualTo(resourceRelativeToSecond.getValue(1));
+	}
+	
+	/**
+	 * Helper method to find the position of a specific value in the observation.
+	 * @param observation the observation to search
+	 * @param value the value to find
+	 * @return the position of the value in the observation
+	 */
+	private Tuple findPosition(ObservationPositionsValues observation, double value) {
+	    for (int i = 0; i < observation.getListObs().size(); i++) {
+	        if (Double.compare(observation.getObs(i).getValue(), value) == 0) {
+	            return observation.getObs(i).getPosition();
+	        }
+	    }
+
+	    throw new AssertionError("No observation found with value " + value + ".");
+	}
+	
 }
 
