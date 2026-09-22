@@ -316,6 +316,9 @@ public abstract class MLKScheduler extends TickBasedScheduler {
 	 * Handles the logic for displaying the simulation based on the criteria for starting and ending the display.
 	 */
 	protected void handleDisplay() {
+		if (viewers.size() == 0) {
+			return;
+		}
 		if (getCriteriaStartDisplay().isMet()) {
 			setPause(getPauseDisplayValue());
 		}

@@ -18,8 +18,7 @@ import simulation.MLKModel;
 /**
  * Launcher for the Trade2D experiment.
  */
-@EngineAgents(scheduler = SchedulerCollectingResource.class, model = MLKModel.class, viewers = {
-		ViewerCollectingResource.class })
+@EngineAgents(scheduler = SchedulerCollectingResource.class, model = MLKModel.class, viewers = {ViewerCollectingResource.class })
 public abstract class LauncherCollectingResource extends MLKLauncher {
 
 	/**

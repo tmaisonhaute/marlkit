@@ -14,6 +14,7 @@ import marlkit.collectingresource.scenario.ScenarioCollectingResource;
 import marlkit.collectingresource.scenario.ScenarioSpatial5;
 import marlkit.collectingresource.scheduler.SchedulerCollectingResource;
 import marlkit.collectingresource.systemevaluator.CollectingResourceEnvEvaluator;
+import rewardmodelimplementation.FairMixedReward;
 import rewardmodelimplementation.FullyCooperativeReward;
 import rewardmodelimplementation.MixedReward;
 import trainingexecutionstrategy.DecentralizedTrainingExecutionStrategy;
@@ -25,7 +26,7 @@ import trainingexecutionstrategy.DecentralizedTrainingExecutionStrategy;
  * This class defines experiment configurations for the Collecting Resource environment.
  * </p>
  */
-public class CollectingResourceConfigurationExperiment extends Agent{
+public class ConfigurationExperimentRunner extends Agent{
 
     private static final int ENV_WIDTH = 10;
     private static final int ENV_HEIGHT = 10;
@@ -62,8 +63,7 @@ public class CollectingResourceConfigurationExperiment extends Agent{
             
             ScenarioCollectingResource scenarioMixed = new ScenarioSpatial5();
             
-            ExperimentConfiguration configMixed =
-                    ExperimentConfiguration.named("CollectingResource_Mixed_QLearning")
+            ExperimentConfiguration configMixed = ExperimentConfiguration.named("CollectingResource_Mixed_QLearning")
                             .environment(new CollectingResourceEnvironmentModule(ENV_WIDTH, ENV_HEIGHT, scenarioMixed))
                             .rewardModel(MixedReward.class)
                             .scheduler(SchedulerCollectingResource.class, DecentralizedTrainingExecutionStrategy.class)
@@ -74,8 +74,21 @@ public class CollectingResourceConfigurationExperiment extends Agent{
                             ))
                             .systemEvaluator(systemEvaluation)
                             .build();
+            
+            ExperimentConfiguration configFair = ExperimentConfiguration.named("CollectingResource_Fair_QLearning")
+                    .environment(new CollectingResourceEnvironmentModule(ENV_WIDTH, ENV_HEIGHT, scenarioMixed))
+                    .rewardModel(FairMixedRewardConfig.class)
+                    .scheduler(SchedulerCollectingResource.class, DecentralizedTrainingExecutionStrategy.class)
+                    .agentGroup(new AgentGroupConfiguration(
+                            scenarioMixed.getNumberOfAgents(),
+                            qLearningAgentModule,
+                            new CollectingResourceAgentSpec(scenarioMixed)
+                    ))
+                    .systemEvaluator(systemEvaluation)
+                    .build();
+            		
     		
-            launchAgent(new ConfigurationRunner(List.of(configFullyCoop, configMixed)));
+            launchAgent(new ConfigurationRunner(List.of(configFair)));
     	}
 
 
@@ -85,4 +98,13 @@ public class CollectingResourceConfigurationExperiment extends Agent{
         
 
     }
+    
+    public static class FairMixedRewardConfig extends FairMixedReward{
+
+		public FairMixedRewardConfig() {
+			super(0.5);
+		}
+    	
+    }
+    
 }
