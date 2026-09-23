@@ -36,7 +36,6 @@ public class AgentGoOrYield extends AgentStandard {
     
     protected void setExplorationStrategy(QValueBasedPolicy qPolicy) {
     	 qPolicy.setExplorationStrategy(new EpsilonGreedyExponentialDecay(1.0, 0.0001));
-//    	qPolicy.setExplorationStrategy(new EpsilonGreedyFix(0.05));
     }
     protected void setupAlgorithm(QValueBasedPolicy qPolicy) {
     	QLearning qLearning = new QLearning(qPolicy, possibleActions, 0.2, 0.95);

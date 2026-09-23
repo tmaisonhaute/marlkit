@@ -20,7 +20,7 @@ import reward.RewardModel;
 import rewardmodelimplementation.MixedReward;
 
 /**
- * Two-agent, single-step, single-state matrix game: GoOrYield.
+ * Two agent, single step, single state matrix game: GoOrYield.
  */
 public class EnvGoOrYield extends EnvironmentStandard {
 

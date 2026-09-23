@@ -18,7 +18,7 @@ import simulation.MLKModel;
 public class LauncherScriptedVsIndependent extends MLKLauncher {
 
     protected int getSwitchPeriod() {
-        return 10000;
+        return 5000;
     }
 
     @Override
