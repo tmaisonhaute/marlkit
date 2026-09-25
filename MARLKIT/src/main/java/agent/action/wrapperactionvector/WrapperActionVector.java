@@ -4,7 +4,7 @@ import agent.action.Action;
 
 /**
  * Interface for converting actions to and from vector representations.
- * Useful for neural network-based learning algorithms.
+ * Useful for neural network based learning algorithms.
  */
 public interface WrapperActionVector {
 

@@ -253,6 +253,11 @@ public class Move2DDouble extends ActionContinuousVector {
     }
 
     @Override
+    /**
+     * Creates a copy of this Move2DDouble instance.
+     * 
+     * @return a new Move2DDouble instance with the same values and bounds
+     */
     public Move2DDouble copy() {
         Move2DDouble copy = new Move2DDouble(getFirst(), getSecond());
         copy.setBounds(lowerBound, upperBound);
@@ -266,10 +271,14 @@ public class Move2DDouble extends ActionContinuousVector {
      * @param action the ActionContinuousVector to convert
      * @return a Move2DDouble representing the same movement
      * @throws IllegalArgumentException if the action does not contain exactly two components
+     * @throws NullPointerException if the action is null
      */
 	public static Move2DDouble fromActionContinuousVector(ActionContinuousVector action) {
+		if (action == null) {
+			throw new NullPointerException("ActionContinuousVector action cannot be null.");
+		}
 		if (action.getSize() != 2) {
-			throw new IllegalArgumentException("ActionContinuousVector must have size 2 to convert to Move2DDouble.");
+			throw new IllegalArgumentException("ActionContinuousVector action must have size 2 to convert to Move2DDouble.");
 		}
 		Move2DDouble move = new Move2DDouble(action.getValue(0), action.getValue(1));
 		move.setBounds(action.getLowerBound(), action.getUpperBound());

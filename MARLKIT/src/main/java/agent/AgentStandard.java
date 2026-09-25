@@ -37,8 +37,10 @@ public class AgentStandard extends SimuAgent implements MLKAgent{
 		additionalRoles = new ArrayList<>();
 	}
 
-
-	
+	/**
+	 * Creates a new standard agent with no initial policy or algorithm. The policy
+	 * and algorithm should be set later using the respective setter methods.
+	 */
 	public AgentStandard() {
 		super();
 		experienceBuffer = new Batch();

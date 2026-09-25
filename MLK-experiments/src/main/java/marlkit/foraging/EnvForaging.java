@@ -50,11 +50,6 @@ public class EnvForaging extends EnvironmentStandard {
 	}
 	
 	
-	@Override	
-	public void addAgent(MLKAgent agent) {
-		agents.addAgent(agent);
-	}
-	
 	@Override
 	public void setupState() {
 		scenario.initState(prng(), state);

@@ -110,16 +110,6 @@ public class EnvPreyVsHunter extends EnvironmentStandard {
     }
 
     /**
-     * Registers an agent in the environment.
-     *
-     * @param agent agent to add
-     */
-    @Override
-    public void addAgent(MLKAgent agent) {
-        agents.addAgent(agent);
-    }
-
-    /**
      * Resets the environment.
      */
     @Override

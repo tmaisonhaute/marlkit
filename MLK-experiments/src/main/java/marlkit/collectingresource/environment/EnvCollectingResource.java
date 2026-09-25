@@ -64,15 +64,6 @@ public class EnvCollectingResource extends EnvironmentStandard {
 		setupAgents();
 	}
 
-	/**
-	 * Register an agent in the environment.
-	 *
-	 * @param agent Agent to add.
-	 */
-	@Override
-	public void addAgent(MLKAgent agent) {
-		agents.addAgent(agent);
-	}
 
 	/**
 	 * Reset stocks and reassign all positions.

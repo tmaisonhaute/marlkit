@@ -37,10 +37,24 @@ public class AgentsGroup {
 
 	/**
 	 * Adds an agent to the group.
+	 * 
+	 * <p>
+	 * If the agent is null, an IllegalArgumentException is thrown.
+	 * </p>
+	 * <p>
+	 * If the agent is already contained, an IllegalArgumentException is thrown.
+	 * </p>
 	 *
 	 * @param agent the agent to add
+	 * @throws IllegalArgumentException if the agent is null
 	 */
 	public void addAgent(MLKAgent agent) {
+		if (agent == null) {
+			throw new IllegalArgumentException("Agent cannot be null");
+		}
+		if (agents.contains(agent)) {
+			throw new IllegalArgumentException("Agent already exists in the group");
+		}
 		agents.add(agent);
 	}
 

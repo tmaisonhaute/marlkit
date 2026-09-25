@@ -46,11 +46,6 @@ public class EnvMazeEscape extends EnvironmentStandard {
 	}
 
 	@Override
-	public void addAgent(MLKAgent agent) {
-		agents.addAgent(agent);
-	}
-
-	@Override
 	public void setupState() {
 		scenario.applyTo(state);
 		terminalReached = false;

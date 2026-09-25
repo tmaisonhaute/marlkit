@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 
 import util.Pair;
 
-public class Move2DTest {
+public class Move2DIntTest {
 
     @Test
     public void givenMove2D_whenGetFirstAndSecond_thenReturnComponents() {

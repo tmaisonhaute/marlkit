@@ -7,18 +7,50 @@ import java.util.Objects;
 
 import agent.MLKAgent;
 
+/**
+ * Represents a joint action where each agent is associated with a specific action.
+ * 
+ * <p>
+ * This class uses a mapping to associate each agent with its corresponding action.
+ * </p>
+ * 
+ * <p>
+ * The order of agents is preserved based on the order of insertion into the map.
+ * </p>
+ * 
+ * @see JointAction
+ * 
+ */
 public class MappedJointAction implements JointAction {
 
     protected Map<MLKAgent, Action> agentActions;
 
+    /**
+     * Creates a new MappedJointAction with an empty mapping of agents to actions.
+     */
     public MappedJointAction() {
         this.agentActions = new LinkedHashMap<>();
     }
 
+    /**
+     * Creates a new MappedJointAction with the specified mapping of agents to actions.
+     * @param agentActions the mapping of agents to their corresponding actions
+     */
     public MappedJointAction(Map<MLKAgent, Action> agentActions) {
-        this.agentActions = new LinkedHashMap<>(agentActions);
+        Objects.requireNonNull(agentActions, "agentActions");
+
+        this.agentActions = new LinkedHashMap<>();
+
+        for (Map.Entry<MLKAgent, Action> entry : agentActions.entrySet()) {
+            addAction(entry.getKey(), entry.getValue());
+        }
     }
 
+    /**
+     * Creates a new MappedJointAction with the specified mapping of agents to actions.
+     * @param agentActions the mapping of agents to their corresponding actions
+     * @return a new MappedJointAction instance containing the specified agent-action associations
+     */
     public static MappedJointAction of(Map<MLKAgent, Action> agentActions) {
         return new MappedJointAction(agentActions);
     }
@@ -28,8 +60,12 @@ public class MappedJointAction implements JointAction {
      *
      * @param agent the agent associated with the action
      * @param action the action to associate with the agent
+     * @throws NullPointerException if either the agent or action is null
      */
     public void addAction(MLKAgent agent, Action action) {
+    	Objects.requireNonNull(agent, "agent cannot be null during addAction");
+    	Objects.requireNonNull(action, "action cannot be null during addAction");
+    	
         agentActions.put(agent, action);
     }
 
@@ -50,12 +86,15 @@ public class MappedJointAction implements JointAction {
     }
 
     /**
-     * Returns the map of all agent-action associations.
+     * Returns a copy of the mappings between agents and actions.
      *
-     * @return the map associating each agent with its action
+     * <p>Modifying the returned map does not modify this joint action. The action
+     * objects themselves are not copied.</p>
+     *
+     * @return a copy of the agent action mappings preserving their insertion order
      */
     public Map<MLKAgent, Action> getMappedActions() {
-        return agentActions;
+        return new LinkedHashMap<>(agentActions);
     }
 
     /**

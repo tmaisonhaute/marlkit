@@ -66,11 +66,6 @@ public class EnvPreyVsHunterGrid extends EnvironmentStandard {
     }
 
     @Override
-    public void addAgent(MLKAgent agent) {
-        agents.addAgent(agent);
-    }
-
-    @Override
     public void reset() {
         setupState();
         setupAgents();

@@ -5,9 +5,9 @@ import agent.action.Move2DInt;
 import util.Pair;
 
 /**
- * Wrapper that converts Action2DMove to/from a 2-dimensional vector representation.
+ * Wrapper that converts Action2DMoveInt to/from a 2-dimensional vector representation.
  */
-public class WrapperAction2DMoveVector implements WrapperActionVector {
+public class WrapperMove2DIntVector implements WrapperActionVector {
 
 	/**
 	 * Converts a 2D movement action to a 2-element vector [dx, dy].

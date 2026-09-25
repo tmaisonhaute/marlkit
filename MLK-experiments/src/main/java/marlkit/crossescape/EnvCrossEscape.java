@@ -60,11 +60,6 @@ public class EnvCrossEscape extends EnvironmentStandard {
 	}
 
 	@Override
-	public void addAgent(MLKAgent agent) {
-		agents.addAgent(agent);
-	}
-
-	@Override
 	public void setupState() {
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {

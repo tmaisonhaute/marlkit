@@ -15,7 +15,7 @@ public class WrapperAction2DMoveVectorTest {
     public void givenAction2DMove_whenTransformToVector_thenCorrectVectorReturned() {
         // Given
         Move2DInt action = new Move2DInt(new Pair<>(2, 3));
-        WrapperAction2DMoveVector wrapper = new WrapperAction2DMoveVector();
+        WrapperMove2DIntVector wrapper = new WrapperMove2DIntVector();
         
         // When
         double[] vector = wrapper.transform(action);
@@ -30,7 +30,7 @@ public class WrapperAction2DMoveVectorTest {
     public void givenVector_whenTransformToAction_thenCorrectAction2DMoveReturned() {
         // Given
         double[] vector = {2, 3};
-        WrapperAction2DMoveVector wrapper = new WrapperAction2DMoveVector();
+        WrapperMove2DIntVector wrapper = new WrapperMove2DIntVector();
         
         // When
         Action action = wrapper.transform(vector);
@@ -46,7 +46,7 @@ public class WrapperAction2DMoveVectorTest {
     public void givenInvalidVector_whenTransformToAction_thenExceptionThrown() {
         // Given
         double[] invalidVector = {1, 2, 3}; // Vector with wrong size
-        WrapperAction2DMoveVector wrapper = new WrapperAction2DMoveVector();
+        WrapperMove2DIntVector wrapper = new WrapperMove2DIntVector();
         
         // When/Then
         assertThatThrownBy(() -> wrapper.transform(invalidVector))
@@ -57,7 +57,7 @@ public class WrapperAction2DMoveVectorTest {
     @Test
     public void givenPredefinedActions_whenTransformed_thenCorrectVectorsReturned() {
         // Given
-        WrapperAction2DMoveVector wrapper = new WrapperAction2DMoveVector();
+        WrapperMove2DIntVector wrapper = new WrapperMove2DIntVector();
         Move2DInt up = Move2DInt.up();
         Move2DInt down = Move2DInt.down();
         Move2DInt left = Move2DInt.left();

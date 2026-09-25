@@ -80,17 +80,7 @@ public class EnvListenOrGo extends EnvironmentStandard {
     	}
     }
 
-    
-    /**
-     * Registers an agent in the environment.
-     *
-     * @param agent the agent to add.
-     */
-    @Override
-    public void addAgent(MLKAgent agent) {
-        agents.addAgent(agent);
-        
-    }
+
     
     /**
      * Computes and dispatches the current observation to each agent.

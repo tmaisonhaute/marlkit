@@ -55,11 +55,6 @@ public class EnvPushTheBlock extends EnvironmentStandard {
 		}
 	}
 	
-	@Override
-	public void addAgent(MLKAgent agent) {
-		agents.addAgent(agent);
-	}
-	
 	protected void placeBlocks() {
 		for (int k = 0; k < getNumberOfBlocks(); k++) {
 			placeBlock();
