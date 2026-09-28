@@ -51,7 +51,7 @@ public class ConfigurationRunner extends Agent{
     	
 		for (ExperimentConfiguration configuration : configurations) {
 			for (int i = 0; i < numberOfRuns; i++) {
-				ConfigurableExperimentLauncher configLaunch = new ConfigurableExperimentLauncher();
+				ConfigurableExperimentLauncher configLaunch = new ConfigurableExperimentLauncher(i);
 				configLaunch.setConfiguration(configuration);
 				launchAgent(configLaunch);
 			}
