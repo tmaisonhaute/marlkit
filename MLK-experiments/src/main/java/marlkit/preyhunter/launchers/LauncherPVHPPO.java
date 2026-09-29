@@ -1,10 +1,14 @@
 package marlkit.preyhunter.launchers;
 
 import marlkit.preyhunter.agent.HunterAgentPPO;
+import simulation.LauncherMetadata;
 
 /**
  * Launcher for the PreyHunter experiment using PPO for hunter agents.
  */
+@LauncherMetadata(
+    title = "PPO No Communication",
+    documentationAnchor = "ppo-no-communication")
 public class LauncherPVHPPO extends LauncherPVH {
 
 	

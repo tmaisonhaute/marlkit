@@ -36,6 +36,16 @@ tasks.named('processResources') {
 			line.replace('../../../resources/marlkit/foraging/figures/', 'figures/')
 		}
 	}
+	filesMatching('marlkit/gooryield/README.md') {
+		filter { line ->
+			line.replace('../../../resources/marlkit/gooryield/figures/', 'figures/')
+		}
+	}
+	filesMatching('marlkit/preyhunter/README.md') {
+		filter { line ->
+			line.replace('../../../resources/marlkit/preyhunter/figures/', 'figures/')
+		}
+	}
 }
 
 application {

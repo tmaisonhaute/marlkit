@@ -3,7 +3,11 @@ package marlkit.preyhunter.launchers;
 
 import communicationimplementation.BroadcastRelativeObservationPositions;
 import marlkit.preyhunter.agent.HunterAgentCommunicatingPPO;
+import simulation.LauncherMetadata;
 
+@LauncherMetadata(
+    title = "PPO Broadcast Observation",
+    documentationAnchor = "ppo-broadcast-observation")
 public class LauncherPVHPPOBroadcastObservation extends LauncherPVH {
 	
 	@Override

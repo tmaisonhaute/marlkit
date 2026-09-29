@@ -8,8 +8,12 @@ import marlkit.gooryield.agent.AgentGoOrYield;
 import marlkit.gooryield.agent.AgentScripted;
 import marlkit.gooryield.environment.EnvGoOrYield;
 import simulation.MLKLauncher;
+import simulation.LauncherMetadata;
 import simulation.MLKModel;
 
+@LauncherMetadata(
+    title = "Scripted Opponent vs Independent Agent",
+    documentationAnchor = "scripted-opponent-vs-independent-agent")
 @EngineAgents(
         scheduler = SchedulerGoOrYield.class,
         environment = EnvGoOrYield.class,

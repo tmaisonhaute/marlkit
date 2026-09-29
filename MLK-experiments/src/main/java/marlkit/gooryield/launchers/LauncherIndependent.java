@@ -7,8 +7,12 @@ import marlkit.gooryield.ViewerGoOrYield;
 import marlkit.gooryield.agent.AgentGoOrYield;
 import marlkit.gooryield.environment.EnvGoOrYield;
 import simulation.MLKLauncher;
+import simulation.LauncherMetadata;
 import simulation.MLKModel;
 
+@LauncherMetadata(
+		title = "Two Independent Agents",
+		documentationAnchor = "two-independent-agents")
 @EngineAgents(
 		scheduler = SchedulerGoOrYield.class,
 		environment = EnvGoOrYield.class,

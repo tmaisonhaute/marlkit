@@ -7,8 +7,12 @@ import marlkit.gooryield.ViewerGoOrYield;
 import marlkit.gooryield.agent.AgentGoOrYieldMinMax;
 import marlkit.gooryield.environment.EnvGoOrYield;
 import simulation.MLKLauncher;
+import simulation.LauncherMetadata;
 import simulation.MLKModel;
 
+@LauncherMetadata(
+		title = "Two Minimax Agents",
+		documentationAnchor = "two-minimax-agents")
 @EngineAgents(
 		scheduler = SchedulerGoOrYield.class,
 		environment = EnvGoOrYield.class,

@@ -9,8 +9,12 @@ import marlkit.gooryield.agent.AgentGoOrYieldActionFrequenciesPrediction;
 import marlkit.gooryield.agent.AgentScripted;
 import marlkit.gooryield.environment.EnvGoOrYield;
 import simulation.MLKLauncher;
+import simulation.LauncherMetadata;
 import simulation.MLKModel;
 
+@LauncherMetadata(
+    title = "Scripted Opponent vs Action-Frequency Agent",
+    documentationAnchor = "scripted-opponent-vs-action-frequency-agent")
 @EngineAgents(
         scheduler = SchedulerGoOrYield.class,
         environment = EnvGoOrYield.class,

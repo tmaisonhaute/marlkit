@@ -3,11 +3,15 @@ package marlkit.preyhunter.launchers;
 import experience.TransitionExperienceBuilder;
 import marlkit.preyhunter.agent.HunterAgentDDPG;
 import marlkit.preyhunter.environment.EnvPreyVsHunter;
+import simulation.LauncherMetadata;
 
 /**
  * Launcher for the PreyHunter experiment using DDPG for hunter agents.
  * 
  */
+@LauncherMetadata(
+		title = "DDPG Decentralized Training",
+		documentationAnchor = "ddpg-decentralized-training")
 public class LauncherPVHDDPG extends LauncherPVH {
 
 	@Override
