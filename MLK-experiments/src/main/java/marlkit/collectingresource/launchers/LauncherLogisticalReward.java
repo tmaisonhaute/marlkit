@@ -4,7 +4,9 @@ import marlkit.collectingresource.reward.LogisticalRewardModel;
 import marlkit.collectingresource.scenario.ScenarioCollectingResource;
 import marlkit.collectingresource.scenario.ScenarioSpatial5;
 import reward.RewardModel;
+import simulation.LauncherMetadata;
 
+@LauncherMetadata(title = "Logistical Reward", documentationAnchor = "logistical-reward")
 public class LauncherLogisticalReward extends LauncherCollectingResource {
 	private static final double DEFAULT_COEFFICIENT = 1.0;
 

@@ -27,6 +27,11 @@ open module marlkit.xp {
 	requires transitive marlkit.base;
 	requires transitive madkit.base;
 	requires transitive marlkit.methods;
+	requires javafx.controls;
+	requires javafx.web;
+	requires org.commonmark;
+	requires org.commonmark.ext.gfm.tables;
+	requires io.github.classgraph;
 	exports marlkit.hello;
 	exports marlkit.pushtheblock;
 	exports marlkit.pushtheblocktogether;
