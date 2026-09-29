@@ -6,6 +6,7 @@ plugins {
 
 extraJavaModuleInfo {
     automaticModule("com.beust:jcommander", "com.beust.jcommander")
+	automaticModule("io.github.classgraph:classgraph", "io.github.classgraph")
     automaticModule("org.webjars:jquery", "org.webjars.jquery")
     automaticModule("commons-collections:commons-collections", "org.apache.commons.collections")
   	automaticModule("org.encog:encog-core", "org.encog") 

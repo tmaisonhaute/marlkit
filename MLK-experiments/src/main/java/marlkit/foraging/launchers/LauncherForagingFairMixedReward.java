@@ -5,8 +5,12 @@ import marlkit.foraging.SchedulerForaging;
 import marlkit.foraging.ViewerForaging;
 import marlkit.foraging.scenario.ScenarioDeterministic1;
 import rewardmodelimplementation.FairMixedReward;
+import simulation.LauncherMetadata;
 import simulation.MLKModel;
 
+@LauncherMetadata(
+		title = "Fair Mixed Reward",
+		documentationAnchor = "fair-mixed-reward")
 @EngineAgents(scheduler = SchedulerForaging.class, model = MLKModel.class, viewers = {
 		ViewerForaging.class })
 public class LauncherForagingFairMixedReward extends LauncherForaging {

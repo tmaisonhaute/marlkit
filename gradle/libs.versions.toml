@@ -7,6 +7,9 @@ commonsBeanutils = "1.9.4"
 commonsConfiguration2 = "2.11.0"
 concurrentunit = "0.4.6"
 controlsfx = "11.2.1"
+classgraph = "4.8.181"
+commonmark = "0.22.0"
+commonmarkTables = "0.22.0"
 fastutil = "8.5.15"
 madkit = "6.0.4"
 picocli = "4.7.6"
@@ -18,6 +21,9 @@ typetools = "0.6.3"
 assertJ = { module = "org.assertj:assertj-core", version.ref = "assertJ" }
 commonsBeanutils = { module = "commons-beanutils:commons-beanutils", version.ref = "commonsBeanutils" }
 commonsConfiguration2 = { module = "org.apache.commons:commons-configuration2", version.ref = "commonsConfiguration2" }
+classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
+commonmark = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
+commonmarkTables = { module = "org.commonmark:commonmark-ext-gfm-tables", version.ref = "commonmarkTables" }
 concurrentunit = { module = "net.jodah:concurrentunit", version.ref = "concurrentunit" }
 controlsfx = { module = "org.controlsfx:controlsfx", version.ref = "controlsfx" }
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }

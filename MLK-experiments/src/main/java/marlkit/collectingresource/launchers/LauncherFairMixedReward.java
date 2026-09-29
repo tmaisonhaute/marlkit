@@ -4,7 +4,9 @@ import marlkit.collectingresource.scenario.ScenarioCollectingResource;
 import marlkit.collectingresource.scenario.ScenarioSpatial5;
 import reward.RewardModel;
 import rewardmodelimplementation.FairMixedReward;
+import simulation.LauncherMetadata;
 
+@LauncherMetadata(title = "Fair Mixed Reward", documentationAnchor = "fair-mixed-reward")
 public class LauncherFairMixedReward extends LauncherCollectingResource {
 	private static final double DEFAULT_DELTA = 0.5;
 
