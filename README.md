@@ -2,7 +2,7 @@
 
 MARLKIT is an open-source Java library for designing, implementing, and
 comparing multi-agent reinforcement learning (MARL) experiments. It is built
-on top of [MaDKit](https://madkit.org/) and provides reusable abstractions for
+on top of [MaDKit](https://github.com/fmichel/MaDKit) and provides reusable abstractions for
 environments, agents, learning algorithms, rewards, communication, training,
 simulation control, and evaluation.
 
@@ -60,18 +60,14 @@ The main responsibilities are:
 
 | Component | Responsibility |
 | --- | --- |
-| **Environment** | Maintains the world state, applies joint actions, and emits reaction events. |
-| **State** | Represents the environment state, such as a grid, positions, values, or continuous variables. |
-| **Observation** | Defines the information available to each agent. |
-| **Action** | Defines the actions an agent can select. |
-| **Agent** | Selects actions, receives feedback, and participates in the simulation lifecycle. |
-| **Policy** | Maps observations or learned values to actions, including exploration. |
-| **Learning algorithm** | Updates values, policies, models, or neural-network parameters. |
+| **Environment** | Maintains the world state, reaction to joint actions' influences, and emits reaction events. |
+| **Agent** | Selects actions using a **Policy**, receives feedback and update its policy with an **Algorithm**, and participates in the simulation lifecycle. |
+| **Learning** | Contains the **Algorithm** and the **Policy**. The learning algorithm updates values, policies, models, or neural-network parameters. **Policy** Maps observations or learned values to actions, including exploration. |
 | **Reward model** | Converts environment events and outcomes into rewards for agents. |
 | **Communication** | Controls messages, broadcasts, filters, or shared observations between agents. |
-| **Scheduler** | Controls episode duration, display, evaluation, pauses, and stopping criteria. |
-| **Launcher** | Creates the environment and agents and starts one complete experiment configuration. |
-| **Viewer and evaluator** | Displays the simulation and records or computes experiment results. |
+| **Model of Other Agents** | Controls how agents model others and use this model. No modeling is an option. |
+| **Training and Execution Strategy** | Decides whether some process are centralized during training, execution or both.|
+| **System Evaluator** | Records and computes experiment results, based on reaction events. |
 
 ### One simulation step
 
