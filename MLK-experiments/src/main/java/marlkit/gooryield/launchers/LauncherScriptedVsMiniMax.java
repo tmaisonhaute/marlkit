@@ -8,8 +8,12 @@ import marlkit.gooryield.agent.AgentGoOrYieldMinMax;
 import marlkit.gooryield.agent.AgentScripted;
 import marlkit.gooryield.environment.EnvGoOrYield;
 import simulation.MLKLauncher;
+import simulation.LauncherMetadata;
 import simulation.MLKModel;
 
+@LauncherMetadata(
+    title = "Scripted Opponent vs Minimax Agent",
+    documentationAnchor = "scripted-opponent-vs-minimax-agent")
 @EngineAgents(
         scheduler = SchedulerGoOrYield.class,
         environment = EnvGoOrYield.class,

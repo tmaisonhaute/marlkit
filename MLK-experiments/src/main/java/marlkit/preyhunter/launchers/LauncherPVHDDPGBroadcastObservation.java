@@ -5,12 +5,16 @@ import marlkit.preyhunter.agent.HunterAgentCommunicatingDDPG;
 import marlkit.preyhunter.agent.HunterAgentDDPG;
 import simulation.MLKScheduler;
 import util.criteria.ReadOnlyCriterion;
+import simulation.LauncherMetadata;
 
 /**
  * Launcher for the PreyHunter experiment using DDPG for hunter agents, with broadcast relative observation positions.
  * 
  * 
  */
+@LauncherMetadata(
+    title = "DDPG Broadcast Observation",
+    documentationAnchor = "ddpg-broadcast-observation")
 public class LauncherPVHDDPGBroadcastObservation extends LauncherPVHDDPG {
 	
 	@Override

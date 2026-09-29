@@ -10,12 +10,16 @@ import marlkit.preyhunter.environment.EnvPreyVsHunter;
 import marlkit.preyhunter.scheduler.SchedulerPVHCentralizedCritic;
 import marlkit.preyhunter.viewer.ViewerPVH;
 import simulation.MLKModel;
+import simulation.LauncherMetadata;
 
 @EngineAgents(
         scheduler = SchedulerPVHCentralizedCritic.class,
         model = MLKModel.class,
         viewers = { ViewerPVH.class }
 )
+@LauncherMetadata(
+    title = "MADDPG Centralized Critic",
+    documentationAnchor = "maddpg-centralized-critic")
 public class LauncherPVHMADDPG extends LauncherPVH {
 
 	@Override

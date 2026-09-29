@@ -2,7 +2,11 @@ package marlkit.preyhunter.launchers;
 
 import communicationimplementation.BroadcastAveragedPolicyParameters;
 import marlkit.preyhunter.agent.HunterAgentCommunicatingPPO;
+import simulation.LauncherMetadata;
 
+@LauncherMetadata(
+    title = "PPO Averaged Policy Parameters",
+    documentationAnchor = "ppo-averaged-policy-parameters")
 public class LauncherPVHPPOAveragedPolicyParameters extends LauncherPVH {
 
     protected static final double RECEIVED_PARAMETERS_WEIGHT = 0.5;

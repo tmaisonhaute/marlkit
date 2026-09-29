@@ -9,8 +9,12 @@ import marlkit.gooryield.ViewerGoOrYield;
 import marlkit.gooryield.agent.AgentGoOrYieldFictitiousPlay;
 import marlkit.gooryield.environment.EnvGoOrYield;
 import simulation.MLKLauncher;
+import simulation.LauncherMetadata;
 import simulation.MLKModel;
 
+@LauncherMetadata(
+		title = "Two Fictitious-Play Agents",
+		documentationAnchor = "two-fictitious-play-agents")
 @EngineAgents(
 		scheduler = SchedulerGoOrYield.class,
 		environment = EnvGoOrYield.class,

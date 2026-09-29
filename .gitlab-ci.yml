@@ -1,9 +1,10 @@
-variables:
-  VERSION: "1.0.0"
-
 stages:
   - build
   - test
+
+variables:
+  VERSION: "0.9"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 .gradle_script: &gradle_script
   - GRADLE_USER_HOME="$(pwd)/.gradle"
@@ -13,15 +14,16 @@ stages:
 default:
   tags:
     - linux
-  image: eclipse-temurin:23.0.1_11-jdk-alpine
+  image: eclipse-temurin:25-jdk-alpine-3.21
   before_script:
     - *gradle_script
   cache: &global_cache
-    key: MARLKIT-$CI_PROJECT_ID
+    key: $CI_PROJECT_ID-$CI_COMMIT_REF_SLUG
     paths:
-      - MARLKIT/build
-      - gradle/wrapper/
-      - .gradle
+      - .gradle/caches     
+      - .gradle/wrapper     
+      - .gradle/notifications
+      - build
 
 build:
   stage: build
@@ -30,7 +32,12 @@ build:
 test:
   stage: test
   script: ./gradlew --build-cache check
+  cache:
+    # inherit all global cache settings
+    <<: *global_cache
+    # override the policy
+    policy: pull
   artifacts:
     when: on_failure
-    reports:
-      junit: MARLKIT/build/test-results/test/**/TEST-*.xml
+    paths:
+      - MARLKIT/build/reports/tests/test/*

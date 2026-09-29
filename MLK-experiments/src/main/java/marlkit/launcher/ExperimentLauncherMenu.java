@@ -50,6 +50,9 @@ public final class ExperimentLauncherMenu extends Application {
 		Button documentationButton = new Button("Go to section");
 		documentationButton.setDisable(true);
 		documentationButton.setMaxWidth(Double.MAX_VALUE);
+		Button beginningButton = new Button("Go to beginning");
+		beginningButton.setDisable(true);
+		beginningButton.setMaxWidth(Double.MAX_VALUE);
 		Button launchButton = new Button("Launch selected experiment");
 		launchButton.setDisable(true);
 		status = new Label("Select an experiment and launcher.");
@@ -58,6 +61,7 @@ public final class ExperimentLauncherMenu extends Application {
 		WebView documentationView = new WebView();
 		documentationEngine = documentationView.getEngine();
 		documentationEngine.getLoadWorker().stateProperty().addListener((observable, oldState, newState) -> {
+			beginningButton.setDisable(newState != State.SUCCEEDED);
 			if (newState == State.SUCCEEDED && pendingAnchor != null) {
 				typesetMathAndScrollTo(pendingAnchor);
 			}
@@ -90,13 +94,14 @@ public final class ExperimentLauncherMenu extends Application {
 				typesetMathAndScrollTo(pendingAnchor);
 			}
 		});
+		beginningButton.setOnAction(event -> scrollToBeginning());
 		launcherList.getSelectionModel().selectedItemProperty().addListener(selectionListener(launchButton));
 		launchButton.setOnAction(event -> launch(launcherList.getSelectionModel().getSelectedItem()));
 
 		VBox launcherPane = new VBox(10,
 				new Label("Experiment"), experimentSelection,
-				new Label("Documentation"), documentationNavigation, documentationButton,
-				new Separator(), new Label("Launchers"), launcherList, launchButton);
+				new Label("Documentation"), documentationNavigation, documentationButton, beginningButton,
+				new Separator(), new Label("Experiment launchers"), launcherList, launchButton);
 		launcherPane.setPadding(new Insets(12));
 		VBox.setVgrow(launcherList, Priority.ALWAYS);
 		HBox footer = new HBox(status);
@@ -162,6 +167,11 @@ public final class ExperimentLauncherMenu extends Application {
 				+ anchor + "')?.scrollIntoView({behavior: 'smooth', block: 'start'})); } else { document.getElementById('"
 				+ anchor + "')?.scrollIntoView({behavior: 'smooth', block: 'start'}); }");
 		pendingAnchor = null;
+	}
+
+	private void scrollToBeginning() {
+		pendingAnchor = null;
+		documentationEngine.executeScript("window.scrollTo({top: 0, behavior: 'smooth'});");
 	}
 
 	private void launch(LauncherDescriptor launcher) {
