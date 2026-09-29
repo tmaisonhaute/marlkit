@@ -4,7 +4,9 @@ import marlkit.collectingresource.scenario.ScenarioCollectingResource;
 import marlkit.collectingresource.scenario.ScenarioSpatial5;
 import reward.RewardModel;
 import rewardmodelimplementation.MixedReward;
+import simulation.LauncherMetadata;
 
+@LauncherMetadata(title = "Mixed Reward", documentationAnchor = "mixed-reward")
 public class LauncherMixedReward extends LauncherCollectingResource {
 	private ScenarioCollectingResource scenario;
 	private RewardModel rewardModel;

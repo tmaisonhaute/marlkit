@@ -4,7 +4,9 @@ import marlkit.collectingresource.scenario.ScenarioCollectingResource;
 import marlkit.collectingresource.scenario.ScenarioSpatial5;
 import reward.RewardModel;
 import rewardmodelimplementation.FullyCooperativeReward;
+import simulation.LauncherMetadata;
 
+@LauncherMetadata(title = "Fully Cooperative Reward", documentationAnchor = "fully-cooperative-reward")
 public class LauncherFullyCooperativeReward extends LauncherCollectingResource {
 	private final ScenarioCollectingResource scenario;
 	private final RewardModel rewardModel;
