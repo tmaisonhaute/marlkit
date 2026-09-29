@@ -20,7 +20,20 @@ import simulation.MLKScheduler;
 public class ConfigurableExperimentLauncher extends MLKLauncher {
 	
 	protected ExperimentConfiguration configuration;
-	protected static int currentSeedIndex = 0;
+	protected int seedLaunchIndex = 0;
+	
+	/**
+	 * Creates a new instance of ConfigurableExperimentLauncher with the specified seed launch index.
+	 * 
+	 * <p> 
+	 * The seed launch index is used to determine the starting point. It is add to the seedIndex of the configuration if it is not null. 
+	 * </p>
+	 * @param seedLaunchIndex
+	 */
+	public ConfigurableExperimentLauncher(int seedLaunchIndex) {
+		super();
+		this.seedLaunchIndex = seedLaunchIndex;
+	}
 
 	
 	public void setConfiguration(ExperimentConfiguration config) {
@@ -39,13 +52,12 @@ public class ConfigurableExperimentLauncher extends MLKLauncher {
     @Override
     public void onInitializeSimulationSeedIndex() {
     	super.onInitializeSimulationSeedIndex();
+    	int currentSeed = seedLaunchIndex;
     	OptionalInt forcedSeedIndex = configuration.getSeedIndex();
     	if (forcedSeedIndex != null && forcedSeedIndex.isPresent()) {
-    		setPRNGSeedIndex(forcedSeedIndex.getAsInt());
-    	}else {
-    		setPRNGSeedIndex(currentSeedIndex);
-    		ConfigurableExperimentLauncher.currentSeedIndex += 1;
+    		currentSeed = seedLaunchIndex + forcedSeedIndex.getAsInt();
     	}
+    	setPRNGSeedIndex(currentSeed);
     }
 
     @SuppressWarnings("unchecked")

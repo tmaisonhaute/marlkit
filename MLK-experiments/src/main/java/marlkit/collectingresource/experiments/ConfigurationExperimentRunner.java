@@ -64,16 +64,17 @@ public class ConfigurationExperimentRunner extends Agent{
             ScenarioCollectingResource scenarioMixed = new ScenarioSpatial5();
             
             ExperimentConfiguration configMixed = ExperimentConfiguration.named("CollectingResource_Mixed_QLearning")
-                            .environment(new CollectingResourceEnvironmentModule(ENV_WIDTH, ENV_HEIGHT, scenarioMixed))
-                            .rewardModel(MixedReward.class)
-                            .scheduler(SchedulerCollectingResource.class, DecentralizedTrainingExecutionStrategy.class)
-                            .agentGroup(new AgentGroupConfiguration(
-                                    scenarioMixed.getNumberOfAgents(),
-                                    qLearningAgentModule,
-                                    new CollectingResourceAgentSpec(scenarioMixed)
-                            ))
-                            .systemEvaluator(systemEvaluation)
-                            .build();
+                    .environment(new CollectingResourceEnvironmentModule(ENV_WIDTH, ENV_HEIGHT, scenarioMixed))
+                    .rewardModel(MixedReward.class)
+                    .scheduler(SchedulerCollectingResource.class, DecentralizedTrainingExecutionStrategy.class)
+                    .agentGroup(new AgentGroupConfiguration(
+                            scenarioMixed.getNumberOfAgents(),
+                            qLearningAgentModule,
+                            new CollectingResourceAgentSpec(scenarioMixed)
+                    ))
+                    .systemEvaluator(systemEvaluation)
+                    .seedIndex(5)
+                    .build();
             
             ExperimentConfiguration configFair = ExperimentConfiguration.named("CollectingResource_Fair_QLearning")
                     .environment(new CollectingResourceEnvironmentModule(ENV_WIDTH, ENV_HEIGHT, scenarioMixed))
@@ -88,7 +89,7 @@ public class ConfigurationExperimentRunner extends Agent{
                     .build();
             		
     		
-            launchAgent(new ConfigurationRunner(List.of(configFair)));
+            launchAgent(new ConfigurationRunner(List.of(configFullyCoop, configMixed, configFair), 3));
     	}
 
 

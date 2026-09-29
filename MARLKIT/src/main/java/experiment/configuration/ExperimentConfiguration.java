@@ -171,8 +171,7 @@ public class ExperimentConfiguration {
 	
 	private void configureMOAForAllAgents(Map<AgentGroupConfiguration, List<MLKAgent>> agentsByGroup) {
 		for (AgentGroupConfiguration groupConfiguration : agentGroups) {
-			groupConfiguration.getAgentModule()
-			.getModelOfOthersModule().configure(groupConfiguration, agentsByGroup);
+			groupConfiguration.getAgentModule().getModelOfOthersModule().configure(groupConfiguration, agentsByGroup);
 		}
 	}
 
@@ -197,7 +196,7 @@ public class ExperimentConfiguration {
         private SchedulerModule schedulerModule;
         private SystemEvaluatorModule systemEvaluatorModule;
         private ExperienceBuilder experienceBuilder;
-        private OptionalInt seedIndex = null;
+        private OptionalInt seedIndex = OptionalInt.empty();
 
         private final List<AgentGroupConfiguration> agentGroups = new ArrayList<>();
 
